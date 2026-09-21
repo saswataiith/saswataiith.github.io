@@ -1,6 +1,9 @@
 """Spinodal decomposition and connectivity, explained step by step.
 
-Install NumPy and Pillow, then run:
+Install the two packages:
+    pip install numpy scikit-image
+
+Run:
     python bicontinuity.py
     python bicontinuity.py my_output_folder
 
@@ -21,7 +24,7 @@ import json
 import sys
 
 import numpy as np
-from PIL import Image
+from skimage.io import imsave
 
 
 # Change these values to explore the model. The seed makes a run reproducible.
@@ -161,9 +164,7 @@ def save_image(composition, filename):
         rgb[:, :, channel] = np.interp(display_values, levels, colors[:, channel])
 
     image_pixels = rgb.astype('uint8').transpose(1, 0, 2)[::-1]
-    image = Image.fromarray(image_pixels)
-    image = image.resize((1024, 1024), Image.Resampling.NEAREST)
-    image.save(filename)
+    imsave(filename, image_pixels)
 
 
 def run(output='bicontinuity_output'):
