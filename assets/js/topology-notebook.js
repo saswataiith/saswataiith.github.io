@@ -9,7 +9,7 @@
     for(const key of ['high','low']){
      const d=results[key],wx=d.wrapping_components.some(c=>c.wrap_x),wy=d.wrapping_components.some(c=>c.wrap_y);
      wrapBoth.push(wx||wy);
-     rows+=`<tr><td>${mean}</td><td>c ${key==='high'?'≥':'<'} ${threshold}</td><td>${(100*d.area_fraction).toFixed(1)}%</td><td>${d.components}</td><td>${(100*d.largest_fraction_of_phase).toFixed(1)}%</td><td>${wx&&wy?'x and y':wx?'x only':wy?'y only':'none'}</td></tr>`;
+     rows+=`<tr><td>${mean}</td><td>c ${key==='high'?'≥':'<'} ${threshold}</td><td>${(100*(key==='high'?Number(mean):1-Number(mean))).toFixed(0)}%</td><td>${(100*d.area_fraction).toFixed(1)}%</td><td>${d.components}</td><td>${(100*d.largest_fraction_of_phase).toFixed(1)}%</td><td>${wx&&wy?'x and y':wx?'x only':wy?'y only':'none'}</td></tr>`;
     }
     summaries.push(`At mean c = ${mean}, ${wrapBoth.every(Boolean)?'both regions have a periodic wrapping component':wrapBoth.some(Boolean)?'only one region has a periodic wrapping component':'neither region has a periodic wrapping component'}.`);
    }

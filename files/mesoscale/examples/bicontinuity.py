@@ -1,7 +1,7 @@
 """Two-dimensional spinodal comparison: mean c=0.5 and 0.4.
 Requires NumPy and Pillow. Run: python bicontinuity.py
 Same zero-mean perturbation, 256-square periodic grid, dx=1, dt=.2, time=400.
-f(c)=c²(1-c)², M=kappa=1, chemical energy only. Educational, not calibrated.
+f(c)=A*c²(1-c)², A=M=kappa=1, chemical energy only. Educational, not calibrated.
 Connectivity is a digital 4-neighbor test with periodic edges and winding detection.
 A corner-only contact does not count as a connection. Thresholds matter.
 """
@@ -30,6 +30,7 @@ def connectivity(mask):
     return {'components':len(components),'area_fraction':float(mask.mean()),'largest_fraction_of_phase':max((c['pixels'] for c in components),default=0)/max(1,int(mask.sum())), 'wrapping_components':[c for c in components if c['wrap_x'] or c['wrap_y']]}
 
 def run(output='bicontinuity_output'):
+    A=1.0  # Bulk minima c=0,1: ideal high-c phase fraction equals mean c.
     out=Path(output);out.mkdir(exist_ok=True,parents=True);n=256;dt=.2
     rng=np.random.default_rng(42);noise=.01*rng.standard_normal((n,n));noise-=noise.mean()
     k=2*np.pi*np.fft.fftfreq(n);k2=k[:,None]**2+k[None,:]**2;denom=1+dt*k2*k2
@@ -37,7 +38,7 @@ def run(output='bicontinuity_output'):
     result={}
     for mean in [.5,.4]:
         c=mean+noise
-        for _ in range(2000):c=np.fft.ifft2((np.fft.fft2(c)-dt*k2*np.fft.fft2(2*c*(1-c)*(1-2*c)))/denom).real
+        for _ in range(2000):c=np.fft.ifft2((np.fft.fft2(c)-dt*k2*np.fft.fft2(2*A*c*(1-c)*(1-2*c)))/denom).real
         assert np.isfinite(c).all() and abs(c.mean()-mean)<1e-10
         tag=f'{mean:.1f}';np.save(out/f'composition-{tag}.npy',c)
         v=np.clip(c,0,1);rgb=np.stack([np.interp(v,[0,.25,.5,.75,1],palette[:,j]) for j in range(3)],axis=-1)

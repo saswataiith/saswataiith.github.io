@@ -111,3 +111,5 @@ The displayed wrong-energy comparison now uses actual nonlinear Cahn–Hilliard 
 The Materials Data Explorer link now appears only in the personal notebook story `#learning-with-my-wife`, following the user’s correction. The story credits Joyita’s ML experiments and demonstration of SHAP as the inspiration for his interest in AI/ML. Removed the Teaching feature and library entry.
 
 Portrait-minimum refinement: individual permutation of all 65,536 pixels, 241 simulation frames at 8 fps plus four-second final hold. CH mobility 1e-5, AC mobility .03; nonuniform times from 0 to 3e7 are explicitly shown. The chosen CH rate M*k² is below L for all nonzero resolved modes. This is an illustrative parameter choice, not a universal claim that CH is slower. Energy monotonicity and CH mean conservation checked.
+
+Bicontinuity table: explicitly uses f(c)=A c²(1-c)² with A=1 (unchanged physics). Shows ideal bulk lever-rule fractions separately from measured threshold-region areas. Diffuse interfaces and finite-time bulk compositions explain differences. Table has readable headers, cell spacing, caption, and keyboard-accessible horizontal scrolling.
