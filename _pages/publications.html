@@ -1,36 +1,7 @@
 ---
-layout: archive
+layout: scholar
 title: "Publications"
 permalink: /publications/
-author_profile: true
+nav_active: publications
 ---
-
-{% if site.author.googlescholar %}
-  <div class="wordwrap">You can also find my articles on <a href="{{site.author.googlescholar}}">my Google Scholar profile</a>.</div>
-{% endif %}
-
-{% include base_path %}
-
-<!-- New style rendering if publication categories are defined -->
-{% if site.publication_category %}
-  {% for category in site.publication_category  %}
-    {% assign title_shown = false %}
-    {% for post in site.publications reversed %}
-      {% if post.category != category[0] %}
-        {% continue %}
-      {% endif %}
-      {% unless title_shown %}
-        <h2>{{ category[1].title }}</h2><hr />
-        {% assign title_shown = true %}
-      {% endunless %}
-      {% include archive-single.html %}
-    {% endfor %}
-  {% endfor %}
-{% else %}
-  {% for post in site.publications reversed %}
-    {% include archive-single.html %}
-  {% endfor %}
-{% endif %}
-
-
-
+<section class="page-heading"><span class="eyebrow">PUBLICATIONS</span><h1>Research in<br><em>print and practice.</em></h1><p>Selected work in microstructural evolution, diffusion, functional materials and scientific computing.</p><a class="button secondary" href="https://scholar.google.co.in/citations?hl=en&amp;user=i9VAh7sAAAAJ">Complete record on Google Scholar ↗</a></section><section class="section publication-list">{% for paper in site.data.selected_publications %}<article class="publication"><span class="pub-year">{{ paper.year }}</span><div><span class="pub-journal">{{ paper.journal }} <span class="topic">{{ paper.topic }}</span></span><h3><a href="{{ paper.url }}">{{ paper.title }} ↗</a></h3><p>{{ paper.authors }}</p><span class="link-note">{% if paper.url contains 'arxiv' %}Open preprint{% elsif paper.url contains 'doi.org' %}Publisher record{% else %}Find publication on Google Scholar{% endif %}</span></div></article>{% endfor %}</section>

@@ -1,0 +1,77 @@
+---
+layout: scholar
+title: "The ink-drop experiment"
+permalink: /resources/examples/walkers/
+nav_active: resources
+---
+<section class="page-heading"><span class="eyebrow">MS5033 · WORKED EXAMPLE · JULIA + NUMPY</span><h1>The ink-drop experiment.</h1><p>An ink drop spreads through molecular random walks.</p></section>
+<section class="section"><h2>The physical idea.</h2><p class="wide-copy">Think of the walkers as independent dye molecules released in a localized ink drop. This idealized model illustrates diffusion without fluid flow, convection or molecular interactions. Every walker takes a unit step along one of four lattice directions. Following many independent walkers connects microscopic motion to diffusion: ⟨r²⟩ = 4Dt, with D = ¼ for one step per unit time.</p><div class="formula-box">\[\langle r^2\rangle=4Dt,\qquad D=\frac14\]</div><p class="small muted">Teaching adaptation of demo2_many_walkers_diffusion.jl. The examples simplify the course material to make each numerical idea visible.</p>
+<div class="lesson-viewer" data-lesson="walkers"><div class="lesson-screen"><canvas width="700" height="540" aria-label="Computed simulation result"></canvas></div><div class="lesson-controls"><button class="button secondary" type="button" data-play>Play</button><label>Time / step <output data-time>0</output><input type="range" min="0" max="40" value="0" step="1" aria-label="Simulation frame"></label></div><p data-caption aria-live="polite"></p><noscript><p>Enable JavaScript for the result viewer. The downloadable scripts and diagnostics remain available.</p></noscript></div>
+<p class="small muted">Precomputed NumPy results from the downloadable code; the browser scrubs saved states. Horizontal axis: x. Vertical axis: y. 100,000 walkers; 256 × 256 histogram bins from −128 to 128; color uses a square-root scale from probability 0 to 0.001 (values above 0.001 saturate). </p>
+<p><a class="button secondary" href="/assets/examples/ink/ink.mp4" download>Download high-resolution ink-drop movie ↓</a></p><video controls preload="none" poster="/assets/examples/ink/frame-40.png" style="width:100%;max-width:900px"><source src="/assets/examples/ink/ink.mp4" type="video/mp4"></video><a href="/assets/examples/walkers/diagnostics.csv" download>Download measured diagnostics (CSV) ↗</a></section>
+<section class="section"><h2>Model and numerical choices.</h2><p>This adaptation updates every walker once per sweep on an unbounded lattice. The course demonstration instead selects walkers asynchronously in a periodic box. The displayed histogram window is not a boundary. Mean-square displacement uses unwrapped coordinates.</p><h3>Try this.</h3><p>Increase the number of walkers and examine how fluctuations in the measured mean-square displacement decrease. Then double the step length: what happens to D?</p></section>
+<section class="section"><h2>Read it. Run it. Change it.</h2><p>Both versions implement the same model. Python uses NumPy; Julia uses FFTW for spectral examples. Scripts write CSV snapshots and diagnostics into the output folder. The random-number generators differ, so walker paths differ while their ensemble statistics should agree.</p><p><a class="button secondary" href="/files/mesoscale/examples/walkers.py" download>Download NumPy version ↓</a> <a class="button secondary" href="/files/mesoscale/examples/walkers.jl" download>Download Julia version ↓</a></p>
+<div class="code-switch"><div class="filters" role="group" aria-label="Code language"><button data-language="python" aria-pressed="true">Python / NumPy</button><button data-language="julia" aria-pressed="false">Julia</button></div><div data-code="python"><pre><code>python -m pip install numpy
+python walkers.py results</code></pre><details><summary>Read the complete NumPy code</summary><pre><code>&quot;&quot;&quot;Teaching adaptation of demo2_many_walkers_diffusion.jl.
+Run: python walkers.py [output_directory]. Requires NumPy.
+Each walker takes one unit cardinal step per sweep on an unbounded 2D lattice.
+This changes the classroom code&#x27;s asynchronous periodic convention explicitly.
+MSD uses unwrapped coordinates; theoretical MSD=steps, D=1/4.
+&quot;&quot;&quot;
+import sys
+from pathlib import Path
+import numpy as np
+
+def run(output=&#x27;walkers_output&#x27;):
+    out=Path(output);out.mkdir(parents=True,exist_ok=True)
+    rng=np.random.default_rng(7);n=100000;pos=np.zeros((n,2),dtype=int)
+    dirs=np.array([[1,0],[-1,0],[0,1],[0,-1]]);rows=[]
+    for step in range(401):
+        if step:
+            pos+=dirs[rng.integers(0,4,n)]
+        if step%10==0:
+            msd=np.mean(np.sum(pos*pos,axis=1));rows.append([step,msd,step])
+            hist,_,_=np.histogram2d(pos[:,0],pos[:,1],bins=256,range=[[-128,128],[-128,128]])
+            np.savetxt(out/f&#x27;density_{step:04d}.csv&#x27;,hist/n,delimiter=&#x27;,&#x27;)
+    np.savetxt(out/&#x27;diagnostics.csv&#x27;,rows,delimiter=&#x27;,&#x27;,header=&#x27;steps,msd,theory&#x27;,comments=&#x27;&#x27;)
+    assert abs(rows[-1][1]/400-1)&lt;.04
+    print(&#x27;Walker MSD at 400 steps&#x27;,rows[-1][1],&#x27;theory 400&#x27;)
+if __name__==&#x27;__main__&#x27;:run(*sys.argv[1:2])
+</code></pre></details></div><div data-code="julia" hidden><pre><code>julia -e 'using Pkg; Pkg.add("FFTW")'
+julia walkers.jl results</code></pre><details><summary>Read the complete Julia code</summary><pre><code># Teaching adaptation of demo2_many_walkers_diffusion.jl.
+# julia walkers.jl [output_directory]; standard-library dependencies only.
+# All walkers step each sweep, unbounded 2D lattice, unit steps. D=1/4.
+# Julia/NumPy RNGs differ; compare ensemble statistics, not paths.
+using Random, Statistics, DelimitedFiles, Printf
+function run(output=&quot;walkers_output&quot;)
+    mkpath(output);rng=MersenneTwister(7);n=100000;pos=zeros(Int,n,2)
+    dirs=[1 0;-1 0;0 1;0 -1];rows=Vector{Float64}[]
+    for step=0:400
+        if step&gt;0
+            for w=1:n
+                d=rand(rng,1:4);pos[w,1]+=dirs[d,1];pos[w,2]+=dirs[d,2]
+            end
+        end
+        if step%10==0
+            msd=mean(sum(abs2,pos;dims=2));push!(rows,[step,msd,step]);hist=zeros(256,256)
+            for w=1:n
+                a=floor(Int,pos[w,1]+128)+1;b=floor(Int,pos[w,2]+128)+1
+                # Histogram window only; walkers are not confined to this window.
+                a==257 &amp;&amp; pos[w,1]==128 &amp;&amp; (a=256)
+                b==257 &amp;&amp; pos[w,2]==128 &amp;&amp; (b=256)
+                1&lt;=a&lt;=256 &amp;&amp; 1&lt;=b&lt;=256 &amp;&amp; (hist[a,b]+=1/n)
+            end
+            writedlm(joinpath(output,@sprintf(&quot;density_%04d.csv&quot;,step)),hist,&#x27;,&#x27;)
+        end
+    end
+    open(joinpath(output,&quot;diagnostics.csv&quot;),&quot;w&quot;) do io
+        println(io,&quot;steps,msd,theory&quot;);writedlm(io,permutedims(hcat(rows...)),&#x27;,&#x27;)
+    end
+    @assert abs(rows[end][2]/400-1)&lt;.04
+    println(&quot;Walker MSD at 400 steps &quot;,rows[end][2],&quot; theory 400&quot;)
+end
+if abspath(PROGRAM_FILE) == @__FILE__
+    run(ARGS...)
+end
+</code></pre></details></div></div></section>
+<section class="resource-note"><h2>Make the result explainable.</h2><p>Keep the parameters, boundary conditions and diagnostics with every plot. These examples teach numerical methods; they are not calibrated material predictions.</p><a href="{{ '/resources/#worked-examples' | relative_url }}">← All worked examples</a></section><script src="{{ '/assets/js/lessons.js' | relative_url }}" defer></script>

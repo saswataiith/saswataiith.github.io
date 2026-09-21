@@ -1,0 +1,132 @@
+---
+layout: scholar
+title: "Elasticity reshapes phase separation"
+permalink: /resources/examples/elastic/
+nav_active: resources
+---
+<section class="page-heading"><span class="eyebrow">MS5033 · WORKED EXAMPLE · JULIA + NUMPY</span><h1>Elasticity reshapes phase separation.</h1><p>Connect your classroom kernel to a working solver.</p></section>
+<section class="section"><h2>The physical idea.</h2><p class="wide-copy">Composition fluctuations carry eigenstrain E(c−c̄), with E = εc I. Eliminating displacement gives an elastic kernel B(n). The update includes B alongside the gradient term: ĉⁿ⁺¹ = [ĉⁿ − Δt M k² FFT(f′(cⁿ))] / [1 + Δt M k²(κk²+B)].</p><div class="formula-box">\[\widehat c^{\,n+1}=\frac{\widehat c^{\,n}-\Delta t\,M k^2\mathcal F[f^{\prime}(c^n)]}{1+\Delta t\,M k^2(\kappa k^2+B)}\]</div><p class="small muted">Teaching adaptation of PhaseField_Examples_Spectral.ipynb, elastochemical section; thesis Chapter 3. The examples simplify the course material to make each numerical idea visible.</p>
+<div class="lesson-viewer" data-lesson="elastic"><div class="lesson-screen"><canvas width="700" height="540" aria-label="Computed simulation result"></canvas></div><div class="lesson-controls"><button class="button secondary" type="button" data-play>Play</button><label>Time / step <output data-time>0</output><input type="range" min="0" max="80" value="0" step="1" aria-label="Simulation frame"></label></div><p data-caption aria-live="polite"></p><noscript><p>Enable JavaScript for the result viewer. The downloadable scripts and diagnostics remain available.</p></noscript></div>
+<p><a class="button secondary" href="/assets/examples/elastic/elastic-256.mp4" download>Download high-resolution movie (MP4) ↓</a></p><details><summary>Watch the high-resolution movie</summary><video controls preload="none" poster="/assets/examples/elastic/frame-80.png" style="width:100%;max-width:900px" aria-label="Elastic phase separation on a 256 by 256 grid"><source src="/assets/examples/elastic/elastic-256.mp4" type="video/mp4"></video></details><p class="small muted">The 256 × 256 run uses a larger domain at unchanged grid spacing; it is not a fixed-domain convergence study. Saved states are spaced by 5 time units (81 frames). Precomputed NumPy results from the downloadable code; the browser scrubs saved states. Horizontal axis: x. Vertical axis: y. Fixed color scale: c = 0 (blue), 0.25 (cyan), 0.5 (green), 0.75 (yellow), 1 (red). Coordinates are grid indices. </p>
+<a href="/assets/examples/elastic/diagnostics.csv" download>Download measured diagnostics (CSV) ↗</a></section>
+<section class="section"><h2>Model and numerical choices.</h2><p>The dimensionless 2D homogeneous stiffness uses C11 = 4, C12 = 2, C44 = 3 and εc = 0.2. A periodic 256 × 256 grid with Δx = 1 is evolved to t = 400 using Δt = 0.2. The real discrete elastic kernel is symmetrized across conjugate Fourier partners on Nyquist lines. The mean-stress-free zero mode has B(0) = 0. This is a 2D constitutive example, not a full 3D plane-strain eigenstrain model.</p><h3>Derive the kernel before coding it.</h3><div class="formula-box">\[\begin{aligned}Q_{11}&=C_{11}n_1^2+C_{44}n_2^2\\Q_{22}&=C_{44}n_1^2+C_{11}n_2^2\\Q_{12}&=(C_{12}+C_{44})n_1n_2\\B(\mathbf n)&=\mathbf E:\mathbf C:\mathbf E-(\boldsymbol\sigma^0\mathbf n)\cdot\mathbf Q^{-1}\cdot(\boldsymbol\sigma^0\mathbf n)\end{aligned}\]</div><p>Here σ⁰ = C:E. The diagonal shear coefficient is C₄₄. The supplied notebook cell used C₁₂ in these positions; this adaptation corrects that contraction. For isotropic stiffness, this kernel is independent of direction. Positive elastic energy penalizes composition fluctuations.</p><p>To isolate elastic effects, compare chemical and elastic runs with the same 256 × 256 grid, initial condition, time and color scale. The default chemical gallery uses a different grid and is not a controlled side-by-side experiment.</p><h3>Try this.</h3><p>Set C44 = (C11−C12)/2 and check that B becomes direction independent. Set εc = 0 to recover the chemical solver on the same 256 × 256 grid and initial field. Change εc and inspect suppression of fluctuations.</p></section>
+<section class="resource-note"><h2>Bitter–Crum &amp; Eshelby.</h2><p>Understand the assumptions behind shape-independent elastic energy, uniform strain inside ellipsoidal inclusions, and the anisotropic patterns in the worked example.</p><a href="{{ "/research/formulation/theorems/" | relative_url }}">Explore the theorems and their limits →</a></section><section class="resource-note"><span class="eyebrow">THESIS APPENDICES A &amp; B</span><h2>Where the elastic kernel and driving forces come from.</h2><p>Follow the derivation of the Khachaturyan elastic-energy kernel, then obtain the composition and order-parameter derivatives, including the real-space chain rule.</p><a class="button secondary" href="{{ "/research/formulation/appendices/" | relative_url }}">Read the derivations →</a></section><section class="section"><h2>Read it. Run it. Change it.</h2><p>Both versions implement the same model. Python uses NumPy; Julia uses FFTW for spectral examples. Scripts write CSV snapshots and diagnostics into the output folder. The random-number generators differ, so walker paths differ while their ensemble statistics should agree.</p><p><a class="button secondary" href="/files/mesoscale/examples/phase_field.py" download>Download NumPy version ↓</a> <a class="button secondary" href="/files/mesoscale/examples/phase_field.jl" download>Download Julia version ↓</a></p>
+<div class="code-switch"><div class="filters" role="group" aria-label="Code language"><button data-language="python" aria-pressed="true">Python / NumPy</button><button data-language="julia" aria-pressed="false">Julia</button></div><div data-code="python"><pre><code>python -m pip install numpy
+python phase_field.py elastic results</code></pre><details><summary>Read the complete NumPy code</summary><pre><code>&quot;&quot;&quot;MS5033 teaching adaptation of PhaseField_Examples_Spectral.ipynb.
+Run: python phase_field.py [chemical|elastic] [output_directory]
+Requires NumPy. CSV rows index x, columns index y; all units dimensionless.
+Periodic 2D homogeneous elasticity; zero mean stress. Not a calibrated alloy.
+The explicit bulk term means time-step convergence must be checked.
+&quot;&quot;&quot;
+import sys
+from pathlib import Path
+import numpy as np
+
+
+def kernel(kx, ky, c11=4., c12=2., c44=3., eigenstrain=.2):
+    &quot;&quot;&quot;B = E:C:E - (sigma0.n).Q^-1.(sigma0.n), E=eigenstrain*I.
+    Q_ik=C_ijkl*n_j*n_l; Q11=C11*nx²+C44*ny² (not C12).
+    This is a 2D constitutive model, not a reduction with epsilon_zz eigenstrain.
+    &quot;&quot;&quot;
+    k2 = kx*kx + ky*ky
+    radius = np.sqrt(np.where(k2 == 0, 1., k2))
+    nx, ny = kx/radius, ky/radius
+    q11 = c11*nx*nx + c44*ny*ny
+    q22 = c44*nx*nx + c11*ny*ny
+    q12 = (c12+c44)*nx*ny
+    det = q11*q22-q12*q12
+    det = np.where(k2 == 0, 1., det)
+    stress = (c11+c12)*eigenstrain
+    b = 2*(c11+c12)*eigenstrain**2-stress**2*(q22*nx*nx-2*q12*nx*ny+q11*ny*ny)/det
+    return np.where(k2 == 0, 0., b)
+
+
+def run(mode=&#x27;chemical&#x27;, output=&#x27;phase_output&#x27;, n=None, dt=.2, steps=2000):
+    out=Path(output);out.mkdir(parents=True,exist_ok=True)
+    if n is None: n = 256 if mode == &#x27;elastic&#x27; else 64
+    if mode not in (&#x27;chemical&#x27;,&#x27;elastic&#x27;): raise ValueError(&#x27;Choose chemical or elastic&#x27;)
+    k=2*np.pi*np.fft.fftfreq(n);kx,ky=np.meshgrid(k,k,indexing=&#x27;ij&#x27;);k2=kx*kx+ky*ky
+    b=kernel(kx,ky) if mode == &#x27;elastic&#x27; else np.zeros_like(k2)
+    # Real-field discrete operator: symmetrize conjugate partners on even grids.
+    # Only Nyquist lines can differ from the continuum directional kernel.
+    partner=(-np.arange(n)) % n
+    b=.5*(b+b[np.ix_(partner,partner)])
+    i,j=np.meshgrid(np.arange(n),np.arange(n),indexing=&#x27;ij&#x27;)
+    # Deterministic broadband perturbation, identical across Julia and NumPy.
+    noise=np.sin((i+1)*12.9898+(j+1)*78.233)*43758.5453
+    noise=.02*(noise-np.floor(noise)-.5);noise-=noise.mean();c=.5+noise
+    initial_mean=c.mean();records=[]
+    denominator=1+dt*k2*(k2+b)
+    def record(step):
+        h=np.fft.fft2(c)
+        energy=np.mean(c*c*(1-c)**2)+.5*np.sum((k2+b)*np.abs(h)**2)/n**4
+        records.append([step*dt,c.mean(),energy,c.min(),c.max()])
+        np.savetxt(out/f&#x27;field_{step:04d}.csv&#x27;,c,delimiter=&#x27;,&#x27;)
+    record(0)
+    for step in range(1,steps+1):
+        h=(np.fft.fft2(c)-dt*k2*np.fft.fft2(2*c*(1-c)*(1-2*c)))/denominator
+        c=np.fft.ifft2(h).real
+        if step%25 == 0 or step==steps: record(step)
+    assert np.isfinite(c).all()
+    assert abs(c.mean()-initial_mean)&lt;1e-10
+    np.savetxt(out/&#x27;diagnostics.csv&#x27;,records,delimiter=&#x27;,&#x27;,header=&#x27;time,mean,energy_density,min,max&#x27;,comments=&#x27;&#x27;)
+    print(mode,&#x27;mean drift&#x27;,abs(c.mean()-initial_mean),&#x27;energy&#x27;,records[0][2],records[-1][2])
+    return c,np.array(records)
+
+if __name__==&#x27;__main__&#x27;: run(*(sys.argv[1:3]))
+</code></pre></details></div><div data-code="julia" hidden><pre><code>julia -e 'using Pkg; Pkg.add("FFTW")'
+julia phase_field.jl elastic results</code></pre><details><summary>Read the complete Julia code</summary><pre><code># MS5033 teaching adaptation of PhaseField_Examples_Spectral.ipynb.
+# julia phase_field.jl [chemical|elastic] [output_directory]
+# Install FFTW: julia -e &#x27;using Pkg; Pkg.add(&quot;FFTW&quot;)&#x27;
+# Dimensionless periodic 2D model. CSV rows=x, columns=y.
+using FFTW, Statistics, DelimitedFiles, Printf
+
+function kernel(kx,ky; c11=4.,c12=2.,c44=3.,eigenstrain=.2)
+    k2=kx .^ 2  .+  ky .^ 2
+    radius=sqrt.(ifelse.(k2 .== 0,1.,k2)); nx=kx ./ radius; ny=ky ./ radius
+    # Acoustic tensor Q_ik=C_ijkl*n_j*n_l: diagonal shear term is C44.
+    q11=c11 .* nx .^ 2  .+  c44 .* ny .^ 2
+    q22=c44 .* nx .^ 2  .+  c11 .* ny .^ 2
+    q12=(c12+c44) .* nx .* ny
+    det=q11 .* q22 .- q12 .^ 2; det[k2 .== 0] .= 1.
+    stress=(c11+c12)*eigenstrain
+    b=2*(c11+c12)*eigenstrain^2  .-  stress^2 .* (q22 .* nx .^ 2 .- 2  .* q12 .* nx .* ny .+ q11 .* ny .^ 2) ./ det
+    b[k2 .== 0] .= 0.; return b
+end
+
+function run(mode=&quot;chemical&quot;,output=&quot;phase_output&quot;;n=(mode==&quot;elastic&quot; ? 256 : 64),dt=.2,steps=2000)
+    mode in (&quot;chemical&quot;,&quot;elastic&quot;) || error(&quot;Choose chemical or elastic&quot;)
+    mkpath(output)
+    k=2π .* fftfreq(n);kx=repeat(reshape(k,n,1),1,n);ky=permutedims(kx);k2=kx .^ 2 .+ ky .^ 2
+    b=mode==&quot;elastic&quot; ? kernel(kx,ky) : zeros(n,n)
+    # Conjugate-pair symmetrization of the discrete real-field kernel.
+    partner=mod.(-(0:n-1),n) .+ 1
+    b=0.5 .* (b .+ b[partner,partner])
+    noise=[sin(i*12.9898+j*78.233)*43758.5453 for i=1:n,j=1:n]
+    noise=.02 .* (noise .- floor.(noise) .-  .5);noise .-=mean(noise);c=.5 .+ noise
+    initial_mean=mean(c);records=Vector{Float64}[]
+    denominator=1  .+ dt .* k2 .* (k2 .+ b)
+    function record(step)
+        h=fft(c);energy=mean(c .^ 2 .* (1  .- c) .^ 2)+.5*sum((k2 .+ b) .* abs2.(h))/n^4
+        push!(records,[step*dt,mean(c),energy,minimum(c),maximum(c)])
+        writedlm(joinpath(output,@sprintf(&quot;field_%04d.csv&quot;,step)),c,&#x27;,&#x27;)
+    end
+    record(0)
+    for step=1:steps
+        h=(fft(c) .- dt .* k2 .* fft(2  .* c .* (1  .- c) .* (1  .- 2  .* c))) ./ denominator
+        c=real.(ifft(h))
+        (step%25==0 || step==steps) &amp;&amp; record(step)
+    end
+    @assert all(isfinite,c)
+    @assert abs(mean(c)-initial_mean)&lt;1e-10
+    open(joinpath(output,&quot;diagnostics.csv&quot;),&quot;w&quot;) do io
+        println(io,&quot;time,mean,energy_density,min,max&quot;);writedlm(io,permutedims(hcat(records...)),&#x27;,&#x27;)
+    end
+    println(mode,&quot; mean drift &quot;,abs(mean(c)-initial_mean),&quot; energy &quot;,records[1][3],&quot; → &quot;,records[end][3])
+    return c,records
+end
+if abspath(PROGRAM_FILE) == @__FILE__
+    run(ARGS...)
+end
+</code></pre></details></div></div></section>
+<section class="resource-note"><h2>Make the result explainable.</h2><p>Keep the parameters, boundary conditions and diagnostics with every plot. These examples teach numerical methods; they are not calibrated material predictions.</p><a href="{{ '/resources/#worked-examples' | relative_url }}">← All worked examples</a></section><script src="{{ '/assets/js/lessons.js' | relative_url }}" defer></script>

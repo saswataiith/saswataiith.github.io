@@ -1,0 +1,58 @@
+[
+  {
+    "year": 2026,
+    "journal": "Acta Materialia \u00b7 302 \u00b7 121649",
+    "title": "Extracting composition-dependent diffusion coefficients over a very large composition range in NiCoFeCrMn high entropy alloy following strategic design of diffusion couples and physics informed neural network numerical method",
+    "authors": "Suman Sadhu, Saswata Bhattacharyya and Aloke Paul",
+    "url": "https://scholar.google.com/scholar?q=Extracting+composition-dependent+diffusion+coefficients+NiCoFeCrMn+121649",
+    "topic": "Diffusion"
+  },
+  {
+    "year": 2025,
+    "journal": "Computational Materials Science \u00b7 246 \u00b7 113438",
+    "title": "MicroSim: A high-performance phase-field solver based on CPU and GPU implementations",
+    "authors": "Tanmay Dutta et al., including Saswata Bhattacharyya",
+    "url": "https://doi.org/10.1016/j.commatsci.2024.113438",
+    "topic": "Scientific computing"
+  },
+  {
+    "year": 2025,
+    "journal": "Acta Materialia \u00b7 284 \u00b7 120586",
+    "title": "Interplay between thermal and compositional gradients decides the microstructure during thermomigration: A phase-field study",
+    "authors": "Sandip Guin, Soumya Bandyopadhyay, Saswata Bhattacharyya and Rajdip Mukherjee",
+    "url": "https://arxiv.org/abs/2406.00649",
+    "topic": "Phase-field"
+  },
+  {
+    "year": 2024,
+    "journal": "Intermetallics \u00b7 175 \u00b7 108513",
+    "title": "Effect of molybdenum addition on precipitate coarsening kinetics in Inconel 740H: A phase-field study",
+    "authors": "Sourav Ghosh, Hemanth Kumar, Christian Brandl, Abhik N. Choudhury, Saswata Bhattacharyya and Rajdip Mukherjee",
+    "url": "https://scholar.google.com/scholar?q=Effect+of+molybdenum+addition+precipitate+coarsening+Inconel+740H+108513",
+    "topic": "Phase-field"
+  },
+  {
+    "year": 2023,
+    "journal": "Physical Review B \u00b7 108 \u00b7 134116",
+    "title": "Role of electrostriction on domain switching near the morphotropic phase region in a ferroelectric solid solution: Thermodynamic analysis and phase-field simulations",
+    "authors": "Soumya Bandyopadhyay, Vaishnavi S. M., Tushar Jogi, Ranjith Ramadurai and Saswata Bhattacharyya",
+    "url": "https://doi.org/10.1103/PhysRevB.108.134116",
+    "topic": "Functional materials"
+  },
+  {
+    "year": 2023,
+    "journal": "AIP Publishing \u00b7 Edited volume",
+    "title": "Strain Engineering in Functional Materials and Devices",
+    "authors": "Edited by Ranjith Ramadurai and Saswata Bhattacharyya",
+    "url": "https://scholar.google.com/scholar?q=Strain+Engineering+in+Functional+Materials+and+Devices+Ramadurai+Bhattacharyya",
+    "topic": "Functional materials"
+  },
+  {
+    "year": 2023,
+    "journal": "Philosophical Magazine \u00b7 103(18) \u00b7 1717\u20131737",
+    "title": "Utilising physics-informed neural networks for optimisation of diffusion coefficients in pseudo-binary diffusion couples",
+    "authors": "Hemanth Kumar, Neelamegan Esakkiraja, Anuj Dash, Aloke Paul and Saswata Bhattacharyya",
+    "url": "https://scholar.google.com/scholar?q=Utilising+physics-informed+neural+networks+optimisation+diffusion+coefficients+pseudo-binary",
+    "topic": "Diffusion"
+  }
+]

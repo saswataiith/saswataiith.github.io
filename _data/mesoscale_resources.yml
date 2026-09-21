@@ -1,0 +1,137 @@
+[
+  {
+    "title": "PINNs, explained simply",
+    "category": "Tutorial",
+    "topic": "PINN inverse diffusion OLS NN FNO PINO artificial intelligence machine learning",
+    "description": "Interactive equation and boundary checks, a staged diffusion inverse problem, and the complete teaching notebook.",
+    "url": "/resources/pinns/",
+    "label": "Explore the PINN lesson",
+    "level": "Introduction"
+  },
+  {
+    "title": "Monte Carlo: Ising and Potts",
+    "category": "Tutorial",
+    "topic": "Monte Carlo MC spin alignment grain growth",
+    "description": "256 × 256 course simulations with high-resolution movies, diagnostics, and Julia/NumPy source.",
+    "url": "/resources/examples/monte-carlo/",
+    "label": "Open Monte Carlo lab",
+    "level": "Intermediate"
+  },
+  {
+    "title": "Elasticity reshapes phase separation",
+    "category": "Tutorial",
+    "topic": "Julia NumPy elastic",
+    "description": "A worked lesson with computed visual results, Julia and NumPy source, numerical diagnostics and exercises.",
+    "url": "/resources/examples/elastic/",
+    "label": "Work through the lesson",
+    "level": "Intermediate"
+  },
+  {
+    "title": "Chemical spinodal decomposition",
+    "category": "Tutorial",
+    "topic": "Julia NumPy chemical",
+    "description": "A worked lesson with computed visual results, Julia and NumPy source, numerical diagnostics and exercises.",
+    "url": "/resources/examples/chemical/",
+    "label": "Work through the lesson",
+    "level": "Getting started"
+  },
+  {
+    "title": "Diffusion through Fourier modes",
+    "category": "Tutorial",
+    "topic": "Julia NumPy diffusion",
+    "description": "A worked lesson with computed visual results, Julia and NumPy source, numerical diagnostics and exercises.",
+    "url": "/resources/examples/diffusion/",
+    "label": "Work through the lesson",
+    "level": "Getting started"
+  },
+  {
+    "title": "The ink-drop experiment",
+    "category": "Tutorial",
+    "topic": "Julia NumPy walkers",
+    "description": "A worked lesson with computed visual results, Julia and NumPy source, numerical diagnostics and exercises.",
+    "url": "/resources/examples/walkers/",
+    "label": "Work through the lesson",
+    "level": "Getting started"
+  },
+  {
+    "title": "MicroSim: microstructure simulator",
+    "category": "Software",
+    "topic": "Phase-field",
+    "description": "An open-source collection of phase-field solvers for CPU and GPU architectures. Start here for the full software stack.",
+    "url": "https://github.com/ICME-India/MicroSim",
+    "label": "Source code",
+    "level": "Research"
+  },
+  {
+    "title": "MicroSim documentation",
+    "category": "Documentation",
+    "topic": "Numerical methods",
+    "description": "Installation and solver documentation for preparing, running and understanding a MicroSim calculation.",
+    "url": "https://microsim.co.in/docs/",
+    "label": "Read documentation",
+    "level": "Getting started"
+  },
+  {
+    "title": "Binary spinodal decomposition",
+    "category": "Software",
+    "topic": "Phase-field",
+    "description": "My repository for studying spinodal decomposition in binary systems using a spectral method.",
+    "url": "https://github.com/saswataiith/Spinodal",
+    "label": "Explore repository",
+    "level": "Intermediate"
+  },
+  {
+    "title": "A reproducible Cahn–Hilliard example",
+    "category": "Tutorial",
+    "topic": "Numerical methods",
+    "description": "A small Python example with periodic boundaries, mean-composition checks and an energy diagnostic. Includes the source for this website’s illustrative images.",
+    "url": "/resources/spinodal/",
+    "label": "Work through the example",
+    "level": "Getting started"
+  },
+  {
+    "title": "MicroSim example simulations",
+    "category": "Tutorial",
+    "topic": "Phase-field",
+    "description": "Example simulations supplied with the MicroSim repository. Follow the instructions for the chosen solver and record its version.",
+    "url": "https://github.com/ICME-India/MicroSim/tree/main/Example_simulations_tutorial",
+    "label": "View examples",
+    "level": "Intermediate"
+  },
+  {
+    "title": "GPU phase-field: KKS-CuFFT",
+    "category": "Software",
+    "topic": "HPC",
+    "description": "Explore the CUDA and FFT-based KKS solver module in MicroSim. Consult the repository requirements before compiling.",
+    "url": "https://github.com/ICME-India/MicroSim/tree/main/KKS_CuFFT",
+    "label": "Explore module",
+    "level": "Advanced"
+  },
+  {
+    "title": "Parallel GPU phase-field: KKS FD CUDA MPI",
+    "category": "Software",
+    "topic": "HPC",
+    "description": "The finite-difference CUDA/MPI module for parallel phase-field simulations in the MicroSim stack.",
+    "url": "https://github.com/ICME-India/MicroSim/tree/main/KKS_FD_CUDA_MPI",
+    "label": "Explore module",
+    "level": "Advanced"
+  },
+  {
+    "title": "MicroSim workshop videos",
+    "category": "Video",
+    "topic": "Phase-field",
+    "description": "The MicroSim team’s channel for demonstrations, tutorials and workshop recordings.",
+    "url": "https://www.youtube.com/channel/UCnmLKb-kqQCNXWa0Oz6Ua_g",
+    "label": "Watch tutorials",
+    "level": "Getting started"
+  },
+  {
+    "title": "MS5033: Mesoscale Microstructure Modeling",
+    "category": "Course material",
+    "topic": "Julia random walks coarse graining variational methods Fourier phase-field elastic stress effects",
+    "description": "Course folder with Julia examples, computational notebooks, assignments and simulation videos. Topics include random walks, coarse graining, variational methods, Fourier methods and phase-field modeling. Classroom topics also include elastic stress effects on microstructural evolution. Access is subject to the folder’s Google Drive permissions.",
+    "url": "https://drive.google.com/drive/folders/1fQPUxD6eaqAwvuxqXIoifjT4P-geNWhxAfMzf9dkHvvQX3n-zdMG8CQfqd5Fq1uu6wPy6exA",
+    "label": "Open course folder",
+    "level": "Course collection"
+  }
+]
