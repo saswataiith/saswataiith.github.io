@@ -26,7 +26,7 @@ for step in range(2001):
   im=Image.new('RGB',(1120,845),'#f5f7f2');d=ImageDraw.Draw(im)
   d.text((24,16),'CAHN-HILLIARD IN BOTH PANELS: THE ENERGY CHANGES',font=font,fill='#173d40')
   for x,a,title,e in [(24,left,'Portrait energy: restores the face',energies[0]),(584,u,'Double-well energy: makes domains',energies[1])]:
-   d.text((x,63),title,font=font,fill='#173d40');im.paste(Image.fromarray(np.uint8(np.clip((a+1)*127.5,0,255))).resize((512,624)),(x,108));d.text((x,750),f'Own energy / channel / area: {e:.6f}',font=font,fill='#173d40')
+   d.text((x,63),title,font=font,fill='#173d40');im.paste(Image.fromarray(np.uint8(np.clip((a+1)*127.5,0,255))).resize((512,624)),(x,108));d.text((x,750),f'Mean energy density (dimensionless): {e:.6f}',font=font,fill='#173d40')
   d.text((24,790),f'Time {t:.1f} | each channel mean conserved',font=font,fill='#173d40')
   im.save(out/f'frame-{step//25:03d}.png')
  if step==2000:break
