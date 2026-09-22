@@ -108,10 +108,11 @@ if (canvas) {
     ctx.fillText("Click a destination inside the selected phase", 360, 710);
     const index = Math.floor(progress),
       fraction = progress - index;
-    ctx.strokeStyle = "#fff9c4";
-    ctx.lineWidth = 2.2;
+    // Keep dashes and gaps readable at the displayed size, including phones.
+    const screenScale = 720 / Math.max(280, canvas.getBoundingClientRect().width);
+    ctx.lineJoin = "round";
     ctx.lineCap = "round";
-    ctx.setLineDash([9, 5, 2, 5]);
+    ctx.setLineDash([18 * screenScale, 12 * screenScale, 0.01, 12 * screenScale]);
     ctx.beginPath();
     for (let iterator = 0; iterator < route.length; iterator++) {
       const [x, y] = point(route[iterator]);
@@ -120,6 +121,12 @@ if (canvas) {
         ctx.moveTo(ox + (x + 0.5) * scale, oy + (y + 0.5) * scale);
       else ctx.lineTo(ox + (x + 0.5) * scale, oy + (y + 0.5) * scale);
     }
+    // Outline only the marks, leaving genuinely empty gaps between them.
+    ctx.strokeStyle = "#ffffff";
+    ctx.lineWidth = 5.5 * screenScale;
+    ctx.stroke();
+    ctx.strokeStyle = "#17232d";
+    ctx.lineWidth = 2.8 * screenScale;
     ctx.stroke();
     ctx.setLineDash([]);
     for (const [id, label] of [
@@ -389,6 +396,7 @@ if (canvas) {
     status.textContent = `A path exists: ${route.length - 1} pixel steps. Follow the turtle.`;
     draw();
   };
+  new ResizeObserver(draw).observe(canvas);
   turtle.onload = draw;
   background.onload = () => {
     paintMap();

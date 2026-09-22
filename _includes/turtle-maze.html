@@ -1,6 +1,6 @@
 <div class="turtle-maze" id="turtle-maze" style="padding:clamp(12px,3vw,28px);background:#f3f5eb;border:1px solid #cad6c5;border-radius:20px;margin:24px 0">
 <span class="eyebrow">A TURTLE’S TEST</span><h4>Explore the spinodal labyrinth at mean c = 0.5.</h4>
-<p>Let the classic KTurtle explore this computed microstructure. Its centre stays inside the chosen phase. Click a point to ask: <strong>can I get there without crossing the other phase?</strong> The pale dot-dash line follows the middle of the channel; the turtle follows this route. Destinations move to a nearby channel centre. If a destination is unreachable, watch the turtle try seven blocked moves before asking “Help me!” You can also try a trapped region below.</p>
+<p>Let the classic KTurtle explore this computed microstructure. Its centre stays inside the chosen phase. Click a point to ask: <strong>can I get there without crossing the other phase?</strong> The black-and-white dash-dot line follows the middle of the channel; the turtle follows this route. Destinations move to a nearby channel centre. If a destination is unreachable, watch the turtle try seven blocked moves before asking “Help me!” You can also try a trapped region below.</p>
 <label for="turtle-phase">Explore <select id="turtle-phase"><option value="0">Low-c phase (blue)</option><option value="1">High-c phase (red)</option></select></label>
 <canvas id="turtle-canvas" width="1440" height="1440" style="width:100%;max-width:800px;height:auto;display:block;margin:16px auto" role="img" aria-label="Turtle exploring paths within a phase of the computed spinodal microstructure at mean composition 0.5"></canvas>
 <div class="lesson-controls"><button type="button" class="button secondary" id="turtle-play">Follow the turtle</button><button type="button" class="button secondary" id="turtle-step">One step</button><button type="button" class="button secondary" id="turtle-reset">Start again</button><button type="button" class="button secondary" id="turtle-new">Explore another region</button><button type="button" class="button secondary" id="turtle-trap">Try a trapped region</button></div>
@@ -10,4 +10,4 @@
 <p class="small muted">Turtle artwork: <a href="https://apps.kde.org/kturtle/">KDE KTurtle</a>, <a href="/assets/images/kturtle/LICENSE.txt">GPL version 2 or later</a>.</p>
 <noscript><p>Enable JavaScript to explore the spinodal paths.</p></noscript>
 </div>
-<script type="module" src="{{ '/assets/js/turtle-maze.js' | relative_url }}?v=20260922-centres"></script>
+<script type="module" src="{{ '/assets/js/turtle-maze.js' | relative_url }}?v=20260922-dashdot"></script>
