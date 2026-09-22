@@ -225,7 +225,7 @@ function scan() {
       );
       set(
         "plate-result",
-        `Sampled global minimum ${fmt(m.lo)} at ${locations(m)}. Local minima: ${m.flat ? "all angles" : m.local.map((p) => degrees(p.angle)).join(", ")}. Grid ${config.n}²; angle step ${180 / config.count}°. Energy spread ${((100 * (m.hi - m.lo)) / Math.max(Math.abs(m.hi), 1e-30)).toPrecision(3)}%. ${m.hi - m.lo < 0.005 * Math.max(Math.abs(m.hi), 1e-30) ? "Weak or unresolved orientation preference. Refine the grid before interpreting these minima." : ""}`,
+        `Sampled global minimum ${fmt(m.lo)} at ${locations(m)}. Local minima: ${m.flat ? "all angles" : m.local.map((p) => degrees(p.angle)).join(", ")}. Grid ${config.n}²; angle step ${180 / config.count}°. ${Math.abs(zener(config.cm) - 1) < 1e-10 && Math.abs(zener(config.cp) - 1) < 1e-10 && config.eigen[0] === config.eigen[1] && config.eigen[2] === 0 ? "Both phases are isotropic with dilatational misfit: any angular differences here arise from the periodic cell and discretization, not a crystallographic direction in an infinite medium." : ""} Energy spread ${((100 * (m.hi - m.lo)) / Math.max(Math.abs(m.hi), 1e-30)).toPrecision(3)}%. ${m.hi - m.lo < 0.005 * Math.max(Math.abs(m.hi), 1e-30) ? "Weak or unresolved orientation preference. Refine the grid before interpreting these minima." : ""}`,
       );
       set(
         "plate-progress",
