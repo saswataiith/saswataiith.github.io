@@ -162,7 +162,7 @@
           "name": "Dr. Sandeep Sugathan",
           "initials": "SS",
           "url": "https://www.researchgate.net/profile/Sandeep-Sugathan",
-          "photo_source": "",
+          "photo_source": "https://kr.linkedin.com/in/sandeepsugathan",
           "remote_image": "",
           "note": "Research Professor, Kookmin University, South Korea.",
           "linkedin": "https://kr.linkedin.com/in/sandeepsugathan",
@@ -173,13 +173,15 @@
               "url": "https://doi.org/10.1016/j.commatsci.2019.109284",
               "kind": "Paper · 2020"
             }
-          ]
+          ],
+          "image": "/assets/images/group/dr-sandeep-sugathan.png",
+          "photo_provenance": "LinkedIn portrait supplied and identified by Saswata Bhattacharya on 22 September 2026."
         },
         {
           "name": "Dr. Tushar Jogi",
           "initials": "TJ",
           "url": "https://www.mpie.de/person/134427/3079071",
-          "photo_source": "",
+          "photo_source": "https://de.linkedin.com/in/tushar-jogi-phd",
           "remote_image": "",
           "note": "Postdoctoral researcher, Max Planck Institute for Sustainable Materials, Germany.",
           "linkedin": "https://de.linkedin.com/in/tushar-jogi-phd",
@@ -190,7 +192,9 @@
               "url": "https://doi.org/10.1103/PhysRevB.108.134116",
               "kind": "Paper · 2023"
             }
-          ]
+          ],
+          "image": "/assets/images/group/dr-tushar-jogi.png",
+          "photo_provenance": "LinkedIn portrait supplied and identified by Saswata Bhattacharya on 22 September 2026."
         },
         {
           "name": "Dr. Soumya Bandyopadhyay",
