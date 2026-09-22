@@ -1,4 +1,4 @@
-"""Actual Cahn-Hilliard evolution, without a prescribed cubist target.
+"""A portrait disintegrating into abstract art under Cahn-Hilliard evolution.
 Usage: python portrait_ch_abstraction.py photo.png output
 Three independent signed RGB fields; image analogy, not a material model.
 Left: F=integral sum_j (u_j-r_j)^2/2, exact Fourier evolution M=1.
@@ -27,7 +27,7 @@ for step in range(2001):
   d.text((24,16),'CAHN-HILLIARD IN BOTH PANELS: THE ENERGY CHANGES',font=font,fill='#173d40')
   for x,a,title,e in [(24,left,'Portrait energy: restores the face',energies[0]),(584,u,'Double-well energy: makes domains',energies[1])]:
    d.text((x,63),title,font=font,fill='#173d40');im.paste(Image.fromarray(np.uint8(np.clip((a+1)*127.5,0,255))).resize((512,624)),(x,108));d.text((x,750),f'Own energy / channel / area: {e:.6f}',font=font,fill='#173d40')
-  d.text((24,790),f'Time {t:.1f} | each channel mean conserved | no cubist target on the right',font=font,fill='#173d40')
+  d.text((24,790),f'Time {t:.1f} | each channel mean conserved',font=font,fill='#173d40')
   im.save(out/f'frame-{step//25:03d}.png')
  if step==2000:break
  u=ifft((fft(u)-dt*k2*fft(u**3-u-S*u))/(1+dt*k2*(S+kap*k2)))

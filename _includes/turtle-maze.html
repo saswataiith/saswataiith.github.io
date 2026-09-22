@@ -1,11 +1,13 @@
 <div class="turtle-maze" id="turtle-maze" style="padding:clamp(12px,3vw,28px);background:#f3f5eb;border:1px solid #cad6c5;border-radius:20px;margin:24px 0">
-<span class="eyebrow">A TURTLE’S TEST</span><h4>Can I get there without leaving my phase?</h4>
-<p>Our turtle can walk only on the pale paths. Follow it from <strong>START</strong> to the carrot at <strong>END</strong>. The purple gates join opposite edges: out on the right, back in on the left!</p>
-<canvas id="turtle-canvas" width="1440" height="1080" style="width:100%;height:auto;display:block" role="img" aria-label="Cartoon maze with a turtle tracing a connected path, crossing the right periodic edge and reappearing at the left, then reaching a carrot. An isolated island has no path to the start."></canvas>
-<div class="lesson-controls"><button type="button" class="button secondary" id="turtle-play">Follow the turtle</button><button type="button" class="button secondary" id="turtle-step">One step</button><button type="button" class="button secondary" id="turtle-reset">Start again</button></div>
+<span class="eyebrow">A TURTLE’S TEST</span><h4>Explore the spinodal labyrinth at mean c = 0.5.</h4>
+<p>Let the classic KTurtle explore this computed microstructure. Its centre stays inside the chosen phase. Click a point to ask: <strong>can I get there without crossing the other phase?</strong> The pale trail shows the route.</p>
+<label for="turtle-phase">Explore <select id="turtle-phase"><option value="0">Low-c phase (blue)</option><option value="1">High-c phase (red)</option></select></label>
+<canvas id="turtle-canvas" width="1440" height="1440" style="width:100%;max-width:800px;height:auto;display:block;margin:16px auto" role="img" aria-label="Turtle exploring paths within a phase of the computed spinodal microstructure at mean composition 0.5"></canvas>
+<div class="lesson-controls"><button type="button" class="button secondary" id="turtle-play">Follow the turtle</button><button type="button" class="button secondary" id="turtle-step">One step</button><button type="button" class="button secondary" id="turtle-reset">Start again</button><button type="button" class="button secondary" id="turtle-new">Explore another region</button></div>
 <label style="display:block;margin:16px 0"><input type="checkbox" id="turtle-periodic" checked> Join opposite edges (periodic boundaries)</label>
-<p id="turtle-status" aria-live="polite">Ready? A connected path lets us travel without crossing a wall.</p>
-<p class="small muted">The green walls represent the other phase. The little island is disconnected from our path. Reaching the carrot proves connectivity between these two points. It does not establish that the whole phase is connected, or that both phases are bicontinuous. Crossing a seam alone is not proof of a noncontractible wrapping loop; that requires a path returning to a periodic copy of its starting point.</p>
-<noscript><p>Enable JavaScript to follow the turtle through the maze.</p></noscript>
+<p id="turtle-status" aria-live="polite">Loading the spinodal field…</p>
+<p class="small muted">The route uses the same c = 0.5 simulation shown above, split at c = 0.5 with four edge-sharing neighbors. The turtle is enlarged so we can see it; its centre marks the tested pixel. Reaching a destination proves a path between two points, not bicontinuity of both phases. Try each phase and compare with the connectivity measurements below. Crossing an edge alone does not prove a wrapping loop.</p>
+<p class="small muted">Turtle artwork: <a href="https://apps.kde.org/kturtle/">KDE KTurtle</a>, <a href="/assets/images/kturtle/LICENSE.txt">GPL version 2 or later</a>.</p>
+<noscript><p>Enable JavaScript to explore the spinodal paths.</p></noscript>
 </div>
-<script src="{{ '/assets/js/turtle-maze.js' | relative_url }}" defer></script>
+<script type="module" src="{{ '/assets/js/turtle-maze.js' | relative_url }}?v=20260922"></script>

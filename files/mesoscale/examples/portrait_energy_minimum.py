@@ -21,13 +21,12 @@ for i,t in enumerate(times):
  ac=r+(u0-r)*np.exp(-.03*t);ch=r+np.fft.ifft2(e0*np.exp(-1e-5*k2*t)).real
  energies=[.5*np.mean((a-r)**2) for a in [ac,ch]]
  records.append([t,ac.mean(),ch.mean(),*energies])
- im=Image.new('RGB',(1160,790),'#f5f7f2');d=ImageDraw.Draw(im)
+ im=Image.new('RGB',(1160,754),'#f5f7f2');d=ImageDraw.Draw(im)
  d.text((24,14),'MY PORTRAIT IS THE ENERGY MINIMUM',font=font,fill='#173d40')
  d.text((24,51),f'Forward relaxation | time {t:.3g} | L=0.03, M=0.00001 | nonuniform time sampling',font=small,fill='#173d40')
  for x,a,title,e in [(24,ac,'Allen-Cahn | nonconserved',energies[0]),(604,ch,'Cahn-Hilliard | conserved',energies[1])]:
   d.text((x,99),title,font=small,fill='#173d40');im.paste(Image.fromarray(np.uint8(np.clip((a+1)*127.5,0,255))).resize((528,528)),(x,139))
   d.text((x,687),f'Energy / area: {e:.7f}',font=small,fill='#173d40');d.text((x,718),f'Mean field: {a.mean():+.5f}',font=small,fill='#173d40')
- d.text((24,756),'65,536 shuffled pixels | prescribed portrait minimum | CH mobility chosen for slower evolution',font=small,fill='#173d40')
  im.save(out/f'frame-{i:03d}.png')
 assert abs(ch.mean()-u0.mean())<1e-10
 assert max(energies)<1e-6
