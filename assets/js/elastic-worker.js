@@ -1,5 +1,5 @@
 const size = 256;
-const displaySize = 128;
+const displaySize = 256;
 const pointCount = size * size;
 const timeStep = 0.2;
 let composition;
@@ -171,17 +171,11 @@ function sendState(parameters) {
     minimum = Math.min(minimum, value);
     maximum = Math.max(maximum, value);
   }
-  // Average each 2 x 2 block for the compact browser display. The solver
-  // itself always evolves all 256 x 256 degrees of freedom.
+  // Copy the full field. The canvas has the same number of pixels as the
+  // simulated system, so the browser neither enlarges nor downsamples it.
   for (let row = 0; row < displaySize; row += 1) {
     for (let column = 0; column < displaySize; column += 1) {
-      const sourceRow = 2 * row;
-      const sourceColumn = 2 * column;
-      display[row * displaySize + column] = 0.25 * (
-        composition[sourceRow * size + sourceColumn]
-        + composition[(sourceRow + 1) * size + sourceColumn]
-        + composition[sourceRow * size + sourceColumn + 1]
-        + composition[(sourceRow + 1) * size + sourceColumn + 1]);
+      display[row * displaySize + column] = composition[row * size + column];
     }
   }
   postMessage({ type: 'state', field: display, time: currentStep * timeStep,

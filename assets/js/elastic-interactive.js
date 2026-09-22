@@ -9,7 +9,7 @@
   };
   const canvas = laboratory.querySelector('canvas');
   const context = canvas.getContext('2d');
-  const image = context.createImageData(128, 128);
+  const image = context.createImageData(256, 256);
   const controls = [...laboratory.querySelectorAll('[data-parameter]')];
   const runButton = laboratory.querySelector('[data-run]');
   const resetButton = laboratory.querySelector('[data-reset]');
@@ -62,7 +62,7 @@
 
   function createWorker() {
     if (worker) worker.terminate();
-    worker = new Worker('/assets/js/elastic-worker.js?v=3');
+    worker = new Worker('/assets/js/elastic-worker.js?v=4');
     worker.onmessage = event => {
       if (event.data.type === 'complete') {
         isRunning = false;
