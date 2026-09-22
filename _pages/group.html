@@ -1,45 +1,8 @@
 ---
 layout: scholar
-title: "Computational Microstructures Group"
+title: "CμS Group"
 permalink: /group/
 nav_active: group
-description: "Current and former group members, and collaborators in computational materials science at IIT Hyderabad."
+description: "Computational Microstructures and Simulations group at IIT Hyderabad."
 ---
-<section class="page-heading group-heading">
-  <span class="eyebrow">PEOPLE · COMPUTATIONAL MATERIALS SCIENCE</span>
-  <h1>Computational<br><em>Microstructures Group</em></h1>
-  <p>Our work brings together phase-field modeling, microstructure evolution, elastic stress effects and inverse methods for materials research. Led by Prof. Saswata Bhattacharya at IIT Hyderabad, we connect physical mechanisms with computational models, in collaboration with experimental researchers.</p>
-  <div class="inline-links"><a href="#current">Current members ↓</a><a href="#former">Former members ↓</a><a href="#collaborators">Collaborators ↓</a></div>
-</section>
-{% for section in site.data.group.sections %}
-<section class="section group-section" id="{{ section.id }}">
-  <span class="eyebrow">{% if section.id == 'current' %}OUR GROUP TODAY{% elsif section.id == 'former' %}PART OF OUR JOURNEY{% else %}WORKING TOGETHER{% endif %}</span>
-  <h2>{{ section.title }}</h2>
-  <div class="people-grid{% if section.id == 'collaborators' %} collaborator-list{% else %} member-list{% endif %}">
-    {% for person in section.people %}
-    <article class="person">
-      {% if person.image %}
-      <img class="person-portrait" src="{{ person.image | relative_url }}" alt="{{ person.name | escape }}" width="240" height="260" loading="lazy">
-      {% else %}
-      <div class="person-initials" aria-hidden="true">{{ person.initials }}</div>
-      {% endif %}
-      <div class="person-details">
-        <h3>{{ person.name }}</h3>
-        {% if person.note != '' %}<p>{{ person.note }}</p>{% endif %}
-        {% if person.research %}<p class="person-research">{{ person.research }}</p>{% endif %}
-        {% if person.works %}<ul class="person-works">{% for work in person.works %}<li><span>{{ work.kind }}</span><a href="{{ work.url }}">{{ work.title }} ↗</a></li>{% endfor %}</ul>{% endif %}
-        {% if person.url != '' %}<a class="person-link" href="{{ person.url }}">{% if person.link_label %}{{ person.link_label }}{% elsif person.url contains 'msme.iith.ac.in/people/students' %}IITH profile{% else %}Research profile{% endif %} ↗</a>{% endif %}
-        {% if person.linkedin %}<a class="person-link" href="{{ person.linkedin }}">LinkedIn ↗</a>{% endif %}
-
-      </div>
-    </article>
-    {% endfor %}
-  </div>
-</section>
-{% endfor %}
-<section class="section group-collaboration">
-  <span class="eyebrow">EXPERIMENTS AND COMPUTATION</span>
-  <h2>Complementary expertise.</h2>
-  <p>In our diffusion collaboration, Prof. Aloke Paul’s group at IISc leads the experimental diffusion studies and measurements. My group at IIT Hyderabad develops the PINN and numerical inverse-modeling methods that connect those measurements with transport equations.</p>
-  <div class="inline-links"><a href="/research/#pinns">PINN inverse modeling →</a><a href="/resources/pinns/#multiobjective">The multiobjective view →</a></div>
-</section>
+<section class="page-heading group-heading"><span class="eyebrow">CμS · IIT HYDERABAD</span><h1>Computational Microstructures<br><em>&amp; Simulations</em></h1><p>Our group has its own website, with current and former members, their research, and our collaborators.</p><div class="inline-links"><a href="https://cmslab-iith.github.io/">Visit the CμS group website →</a><a href="https://cmslab-iith.github.io/people.html#current">Current members →</a><a href="https://cmslab-iith.github.io/people.html#former">Former members →</a><a href="https://cmslab-iith.github.io/collaborators.html">Collaborators →</a></div></section>
