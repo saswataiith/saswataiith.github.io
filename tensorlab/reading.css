@@ -1,0 +1,16 @@
+@font-face{font-family:STIX;src:url('./fonts/STIXTwoText.ttf') format('truetype');font-weight:400 700;font-display:swap}
+:root{font-family:system-ui,-apple-system,sans-serif}
+h1,.titleline h1,.chapter-intro h2,.book-body h2,dialog h2{font-family:STIX,Georgia,serif;font-weight:500;letter-spacing:-.025em}
+.chapter-text,.book-body,dialog{font-family:STIX,Georgia,serif}
+.chapter-text p,.book-body p{font-size:19px;line-height:1.75;color:#344258}
+.chapter-text li,.book-body li{font-size:18px;line-height:1.7;margin:.5em 0}
+.equation,.formula{font-family:STIX,Georgia,serif}.equation{font-size:20px;padding:16px 22px}
+.equation mjx-container[display=true]{margin:.5em 0!important}
+mjx-container{max-width:100%}mjx-container[display=true]{overflow-x:auto;overflow-y:hidden;padding:.2em 0}
+.eyebrow,.references summary,.chapter-pager,.selfcheck button,.selfcheck #feedback{font-family:system-ui,-apple-system,sans-serif}
+.book-body h3{font-size:23px;font-weight:500;margin:1.5em 0 .6em}
+.insight{border-left:3px solid #229780;padding:8px 20px;background:#eaf5f1;margin:24px 0}
+.book-body a,.chapter-text a{color:#126f60;text-underline-offset:3px}
+.titleline h1{font-size:40px}.plot-head h2,.metric strong,nav button b,.control output{font-family:system-ui,sans-serif}
+.aside-note>span{font-family:STIX,Georgia,serif}.book-body table{display:block;overflow-x:auto}.book-body th{white-space:normal}
+@media(max-width:800px){.titleline h1{font-size:30px}.chapter-text p,.book-body p{font-size:18px}.equation{font-size:17px;padding:12px}.chapter-text li,.book-body li{font-size:17px}}
