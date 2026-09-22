@@ -1,0 +1,221 @@
+{
+  "checks": 41,
+  "results": [
+    {
+      "test": "solve_direct vs dense minimizer",
+      "error": 1.5000359109701155e-10,
+      "limit": 1e-08
+    },
+    {
+      "test": "solve_equivalent vs dense minimizer",
+      "error": 1.637093903133208e-10,
+      "limit": 1e-08
+    },
+    {
+      "test": "solve_direct laminate strain",
+      "error": 1.5013141070313398e-11,
+      "limit": 1e-08
+    },
+    {
+      "test": "solve_direct laminate stress",
+      "error": 1.0452979627706416e-12,
+      "limit": 1e-10
+    },
+    {
+      "test": "solve_direct mean strain",
+      "error": 2.3852447794681098e-17,
+      "limit": 1e-12
+    },
+    {
+      "test": "solve_equivalent laminate strain",
+      "error": 1.8822630344673197e-11,
+      "limit": 1e-08
+    },
+    {
+      "test": "solve_equivalent laminate stress",
+      "error": 1.4461296743428775e-12,
+      "limit": 1e-10
+    },
+    {
+      "test": "solve_equivalent mean strain",
+      "error": 3.903127820947816e-18,
+      "limit": 1e-12
+    },
+    {
+      "test": "Fourier displacement amplitude/sign",
+      "error": 9.215718466126788e-19,
+      "limit": 1e-14
+    },
+    {
+      "test": "Homogeneous isotropic energy including mean",
+      "error": 2.220446049250313e-16,
+      "limit": 1e-09
+    },
+    {
+      "test": "contrast 0.2: strain agreement",
+      "error": 8.121371588932005e-11,
+      "limit": 1e-08
+    },
+    {
+      "test": "contrast 0.2: energy agreement",
+      "error": 1.1102230246251565e-16,
+      "limit": 1e-10
+    },
+    {
+      "test": "contrast 0.2: direct equilibrium",
+      "error": 8.417214651044822e-11,
+      "limit": 1e-09
+    },
+    {
+      "test": "contrast 0.2: equivalent equilibrium",
+      "error": 7.480797377231248e-11,
+      "limit": 1e-09
+    },
+    {
+      "test": "contrast 0.2: stress matching",
+      "error": 2.1307655679796375e-11,
+      "limit": 1e-09
+    },
+    {
+      "test": "contrast 0.5: strain agreement",
+      "error": 6.539422835641113e-11,
+      "limit": 1e-08
+    },
+    {
+      "test": "contrast 0.5: energy agreement",
+      "error": 0.0,
+      "limit": 1e-10
+    },
+    {
+      "test": "contrast 0.5: direct equilibrium",
+      "error": 7.127979168224112e-11,
+      "limit": 1e-09
+    },
+    {
+      "test": "contrast 0.5: equivalent equilibrium",
+      "error": 9.981684328069286e-11,
+      "limit": 1e-09
+    },
+    {
+      "test": "contrast 0.5: stress matching",
+      "error": 2.432140411371876e-11,
+      "limit": 1e-09
+    },
+    {
+      "test": "contrast 1: strain agreement",
+      "error": 3.276802267815427e-11,
+      "limit": 1e-08
+    },
+    {
+      "test": "contrast 1: energy agreement",
+      "error": 1.1102230246251565e-16,
+      "limit": 1e-10
+    },
+    {
+      "test": "contrast 1: direct equilibrium",
+      "error": 3.276885421682615e-11,
+      "limit": 1e-09
+    },
+    {
+      "test": "contrast 1: equivalent equilibrium",
+      "error": 1.424231500443958e-14,
+      "limit": 1e-09
+    },
+    {
+      "test": "contrast 1: stress matching",
+      "error": 0.0,
+      "limit": 1e-09
+    },
+    {
+      "test": "contrast 2: strain agreement",
+      "error": 1.1740991234629984e-11,
+      "limit": 1e-08
+    },
+    {
+      "test": "contrast 2: energy agreement",
+      "error": 0.0,
+      "limit": 1e-10
+    },
+    {
+      "test": "contrast 2: direct equilibrium",
+      "error": 4.811374691874226e-11,
+      "limit": 1e-09
+    },
+    {
+      "test": "contrast 2: equivalent equilibrium",
+      "error": 4.9734473672993626e-11,
+      "limit": 1e-09
+    },
+    {
+      "test": "contrast 2: stress matching",
+      "error": 1.0395312053066563e-11,
+      "limit": 1e-09
+    },
+    {
+      "test": "contrast 5: strain agreement",
+      "error": 1.7012081344307652e-11,
+      "limit": 1e-08
+    },
+    {
+      "test": "contrast 5: energy agreement",
+      "error": 0.0,
+      "limit": 1e-10
+    },
+    {
+      "test": "contrast 5: direct equilibrium",
+      "error": 8.771560245183674e-11,
+      "limit": 1e-09
+    },
+    {
+      "test": "contrast 5: equivalent equilibrium",
+      "error": 7.965191786987693e-11,
+      "limit": 1e-09
+    },
+    {
+      "test": "contrast 5: stress matching",
+      "error": 1.3051010544327306e-11,
+      "limit": 1e-09
+    },
+    {
+      "test": "Independent anisotropies with shear",
+      "error": 2.2984736304668425e-11,
+      "limit": 1e-08
+    },
+    {
+      "test": "Imposed tensor shear",
+      "error": 8.874577257824356e-19,
+      "limit": 1e-12
+    },
+    {
+      "test": "65 to 129 relative energy change",
+      "error": 1.2483681042896322e-05,
+      "limit": 0.002
+    },
+    {
+      "test": "Refinement reduces energy difference",
+      "error": 0.007546727213630327,
+      "limit": 0.5
+    },
+    {
+      "test": "solve_direct rejects unconverged solve",
+      "passed": true
+    },
+    {
+      "test": "solve_equivalent rejects unconverged solve",
+      "passed": true
+    }
+  ],
+  "spatial_convergence": {
+    "grids": [
+      33,
+      65,
+      129
+    ],
+    "energies": [
+      2.223838244109954e-06,
+      2.227523024719576e-06,
+      2.227550832753679e-06
+    ]
+  },
+  "scope": "2D, periodic, prescribed mean strain, positive cubic stiffness; no vacuum or evolving phase field"
+}

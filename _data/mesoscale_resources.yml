@@ -1,5 +1,14 @@
 [
   {
+    "title": "Two ways to solve inhomogeneous elasticity",
+    "category": "Tutorial",
+    "topic": "elasticity eigenstrain iterative perturbation equivalent eigenstrain NumPy Elastic.ipynb",
+    "description": "Corrected course notebook and two fully explained solvers, with stress maps, orientation sweeps and independent validation.",
+    "url": "/resources/elastic-solvers/",
+    "label": "Run and explore the solvers",
+    "level": "Intermediate"
+  },
+  {
     "title": "PINNs, explained simply",
     "category": "Tutorial",
     "topic": "PINN inverse diffusion OLS NN FNO PINO artificial intelligence machine learning",
