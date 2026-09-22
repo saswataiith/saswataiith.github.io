@@ -1,4 +1,9 @@
-import { explore, trace } from "./turtle-path.mjs";
+import {
+  explore,
+  trace,
+  trapPlan,
+  HELP_AFTER_ATTEMPTS,
+} from "./turtle-path.mjs?v=20260922-traps";
 const canvas = document.getElementById("turtle-canvas");
 if (canvas) {
   const ctx = canvas.getContext("2d");
@@ -37,6 +42,13 @@ if (canvas) {
     frame = 0,
     last = 0,
     region = 0;
+  let trap = null,
+    attempts = 0,
+    attemptClock = 0;
+  function clearAttempts() {
+    attempts = 0;
+    attemptClock = 0;
+  }
   const turtle = new Image();
   turtle.src = "/assets/images/kturtle/turtle.svg";
   const background = new Image();
@@ -79,7 +91,7 @@ if (canvas) {
     ctx.stroke();
     for (const [id, label] of [
       [start, "START"],
-      [route[route.length - 1], "END"],
+      [trap ? trap.target : route[route.length - 1], "END"],
     ]) {
       const [x, y] = point(id);
       const px = ox + (x + 0.5) * scale,
@@ -109,11 +121,14 @@ if (canvas) {
       dy = b[1] - a[1];
     if (Math.abs(dx) > 1) dx = -Math.sign(dx);
     if (Math.abs(dy) > 1) dy = -Math.sign(dy);
+    if (trap && index === route.length - 1) {
+      [dx, dy] = trap.blocked[attempts % trap.blocked.length];
+    }
     const x = (a[0] + 0.5 + fraction * dx + data.size) % data.size,
       y = (a[1] + 0.5 + fraction * dy + data.size) % data.size;
     canvas.setAttribute(
       "aria-label",
-      `Spinodal path, ${phase.value === "0" ? "low" : "high"} composition phase: step ${index} of ${route.length - 1}.`,
+      `Spinodal path, ${phase.value === "0" ? "low" : "high"} composition phase: step ${index} of ${route.length - 1}. Blocked attempts: ${attempts}.${attempts >= HELP_AFTER_ATTEMPTS ? " Help me!" : ""}`,
     );
     ctx.save();
     ctx.beginPath();
@@ -123,7 +138,13 @@ if (canvas) {
       for (const shiftY of [-width, 0, width]) {
         ctx.save();
         ctx.translate(ox + x * scale + shiftX, oy + y * scale + shiftY);
-        ctx.rotate(Math.atan2(dy, dx) + Math.PI / 2);
+        ctx.rotate(
+          Math.atan2(dy, dx) +
+            Math.PI / 2 +
+            (trap && index === route.length - 1 && playing
+              ? 0.3 * Math.sin((attemptClock * 2 * Math.PI) / 0.65)
+              : 0),
+        );
         ctx.shadowColor = "white";
         ctx.shadowBlur = 4;
         if (turtle.complete && turtle.naturalWidth)
@@ -131,11 +152,36 @@ if (canvas) {
         ctx.restore();
       }
     ctx.restore();
+    if (attempts >= HELP_AFTER_ATTEMPTS) {
+      const px = ox + x * scale,
+        py = oy + y * scale;
+      const bx = Math.max(ox + 3, Math.min(ox + width - 103, px - 50)),
+        by = Math.max(2, py - 64);
+      ctx.fillStyle = "#fff";
+      ctx.strokeStyle = "#234444";
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.roundRect(bx, by, 100, 34, 12);
+      ctx.fill();
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(Math.max(bx + 12, Math.min(bx + 88, px)) - 5, by + 34);
+      ctx.lineTo(px, py - 14);
+      ctx.lineTo(Math.max(bx + 12, Math.min(bx + 88, px)) + 5, by + 34);
+      ctx.fill();
+      ctx.stroke();
+      ctx.fillStyle = "#234444";
+      ctx.font = "bold 17px sans-serif";
+      ctx.textAlign = "center";
+      ctx.fillText("Help me!", bx + 50, by + 23);
+    }
   }
   function chooseRegion() {
     if (!data) return;
     stop();
     progress = 0;
+    trap = null;
+    clearAttempts();
     paintMap();
     const candidates = [];
     for (let index = 0; index < data.mask.length; index++)
@@ -155,7 +201,7 @@ if (canvas) {
   }
   function advance(amount) {
     progress = Math.min(route.length - 1, progress + amount);
-    if (progress === route.length - 1) {
+    if (progress === route.length - 1 && !trap) {
       stop();
       status.textContent =
         "Destination reached without crossing the other phase. Now test another point or the other phase.";
@@ -166,8 +212,42 @@ if (canvas) {
     if (!playing) return;
     const dt = Math.min((now - last) / 1000, 0.1);
     last = now;
-    advance(dt * 35);
+    if (trap && progress === route.length - 1) {
+      attemptClock += dt;
+      if (attemptClock >= 0.65) {
+        attemptClock = 0;
+        blockedAttempt();
+      }
+      draw();
+    } else advance(dt * 35);
     if (playing) frame = requestAnimationFrame(tick);
+  }
+  function blockedAttempt() {
+    if (attempts >= HELP_AFTER_ATTEMPTS) return;
+    attempts++;
+    status.textContent =
+      attempts >= HELP_AFTER_ATTEMPTS
+        ? "Help me! Seven blocked attempts. The destination is outside this connected region. Try another region or change the boundary conditions."
+        : `Blocked attempt ${attempts} of ${HELP_AFTER_ATTEMPTS}: the turtle cannot cross into the other phase or through a closed edge.`;
+    if (attempts >= HELP_AFTER_ATTEMPTS) stop();
+    draw();
+  }
+  function setTrap(target) {
+    trap = trapPlan(
+      data.mask,
+      data.size,
+      Number(phase.value),
+      search,
+      target,
+      periodic.checked,
+    );
+    if (!trap) return;
+    route = trap.path;
+    progress = 0;
+    clearAttempts();
+    status.textContent =
+      "The destination is in a disconnected region. Follow the turtle as it reaches the boundary and tries to get out.";
+    draw();
   }
   play.onclick = () => {
     if (!route.length) return;
@@ -175,7 +255,13 @@ if (canvas) {
       stop();
       return;
     }
-    if (progress >= route.length - 1) progress = 0;
+    if (
+      progress >= route.length - 1 &&
+      (!trap || attempts >= HELP_AFTER_ATTEMPTS)
+    ) {
+      progress = 0;
+      clearAttempts();
+    }
     playing = true;
     play.textContent = "Pause turtle";
     status.textContent =
@@ -185,11 +271,13 @@ if (canvas) {
   };
   button("step").onclick = () => {
     stop();
-    if (route.length) advance(1);
+    if (trap && progress === route.length - 1) blockedAttempt();
+    else if (route.length) advance(1);
   };
   button("reset").onclick = () => {
     stop();
     progress = 0;
+    clearAttempts();
     status.textContent =
       "Back at the start. Follow the route or choose another destination.";
     draw();
@@ -197,6 +285,52 @@ if (canvas) {
   button("new").onclick = () => {
     region++;
     chooseRegion();
+  };
+  button("trap").onclick = () => {
+    if (!data) return;
+    stop();
+    const visited = new Set();
+    let smallest = null;
+    for (let candidate = 0; candidate < data.mask.length; candidate++) {
+      if (
+        data.mask[candidate] !== Number(phase.value) ||
+        visited.has(candidate)
+      )
+        continue;
+      const component = explore(
+        data.mask,
+        data.size,
+        Number(phase.value),
+        candidate,
+        periodic.checked,
+      );
+      for (let index = 0; index < component.parent.length; index++)
+        if (component.parent[index] >= 0) visited.add(index);
+      if (
+        component.count >= 20 &&
+        (!smallest || component.count < smallest.count)
+      )
+        smallest = { ...component, start: candidate };
+    }
+    if (!smallest) return;
+    const target = data.mask.findIndex(
+      (value, index) =>
+        value === Number(phase.value) && smallest.parent[index] === -1,
+    );
+    if (target < 0) {
+      status.textContent =
+        "This phase is connected throughout. There is no disconnected region to demonstrate here.";
+      return;
+    }
+    start = smallest.farthest;
+    search = explore(
+      data.mask,
+      data.size,
+      Number(phase.value),
+      start,
+      periodic.checked,
+    );
+    setTrap(target);
   };
   periodic.onchange = phase.onchange = () => {
     region = 0;
@@ -223,12 +357,14 @@ if (canvas) {
     }
     const next = trace(search.parent, target);
     if (!next.length) {
-      status.textContent =
-        "No path from this start: that point belongs to a disconnected region under the selected boundary conditions.";
+      setTrap(target);
       return;
     }
+    trap = null;
+    clearAttempts();
     route = next;
     progress = 0;
+    clearAttempts();
     status.textContent = `A path exists: ${route.length - 1} pixel steps. Follow the turtle.`;
     draw();
   };

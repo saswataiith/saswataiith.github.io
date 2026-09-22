@@ -68,3 +68,25 @@ test("actual field components agree with the existing connectivity report", () =
     );
   }
 });
+
+test("traps require a disconnected destination and stop at a blocked boundary", async () => {
+  const { trapPlan, HELP_AFTER_ATTEMPTS } =
+    await import("../assets/js/turtle-path.mjs");
+  const mask = [1, 1, 0, 1, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0];
+  const search = explore(mask, 4, 1, 0, false);
+  assert.equal(trapPlan(mask, 4, 1, search, 1, false), null);
+  const plan = trapPlan(mask, 4, 1, search, 3, false);
+  assert.ok(plan.path.length > 0);
+  assert.equal(plan.target, 3);
+  const end = plan.path.at(-1),
+    x = end % 4,
+    y = Math.floor(end / 4);
+  for (const [dx, dy] of plan.blocked) {
+    const nx = x + dx,
+      ny = y + dy;
+    assert.ok(
+      nx < 0 || ny < 0 || nx >= 4 || ny >= 4 || mask[ny * 4 + nx] !== 1,
+    );
+  }
+  assert.equal(HELP_AFTER_ATTEMPTS, 7);
+});
