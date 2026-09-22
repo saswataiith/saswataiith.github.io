@@ -1,10 +1,10 @@
 (() => {
   const laboratory = document.querySelector('[data-elastic-laboratory]');
   if (!laboratory || !window.Worker) return;
-  const defaults = { meanComposition: 0.5, eigenstrain: 0.2, shearModulus: 1,
+  const defaults = { meanComposition: 0.5, misfitPercent: 1, scaledShearModulus: 400,
     poissonRatio: 1 / 3, zenerRatio: 3 };
   const limits = {
-    meanComposition: [0.05, 0.95], eigenstrain: [0, 0.5], shearModulus: [0.05, 20],
+    meanComposition: [0.05, 0.95], misfitPercent: [0, 5], scaledShearModulus: [0.01, 1000000],
     poissonRatio: [-0.9, 0.49], zenerRatio: [0.05, 10]
   };
   const canvas = laboratory.querySelector('canvas');
@@ -94,7 +94,7 @@
     runButton.textContent = 'Pause';
     status.textContent = restoredDefaults
       ? 'Input outside the stable teaching range. All controls returned to their defaults.'
-      : 'Running the coherent Cahn–Hilliard equation on a 128 × 128 periodic grid.';
+      : 'Running the coherent Cahn–Hilliard equation on a 256 × 256 periodic grid.';
   }
 
   runButton.addEventListener('click', () => {

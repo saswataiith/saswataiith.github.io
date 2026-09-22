@@ -1,4 +1,5 @@
-const size = 128;
+const size = 256;
+const displaySize = 128;
 const pointCount = size * size;
 const timeStep = 0.2;
 let composition;
@@ -82,7 +83,9 @@ function transform2D(real, imaginary, inverse = false) {
 }
 
 function prepare(parameters) {
-  const { meanComposition, eigenstrain, shearModulus, poissonRatio, zenerRatio } = parameters;
+  const { meanComposition, misfitPercent, scaledShearModulus, poissonRatio, zenerRatio } = parameters;
+  const eigenstrain = misfitPercent / 100;
+  const shearModulus = scaledShearModulus;
   const lame = 2 * shearModulus * poissonRatio / (1 - 2 * poissonRatio);
   const c11 = lame + 2 * shearModulus;
   const c12 = lame;
@@ -160,13 +163,25 @@ function sendState(parameters) {
   let sum = 0;
   let minimum = Infinity;
   let maximum = -Infinity;
-  const display = new Float32Array(pointCount);
+  const display = new Float32Array(displaySize * displaySize);
   for (let index = 0; index < pointCount; index += 1) {
     const value = composition[index];
-    display[index] = value;
     sum += value;
     minimum = Math.min(minimum, value);
     maximum = Math.max(maximum, value);
+  }
+  // Average each 2 x 2 block for the compact browser display. The solver
+  // itself always evolves all 256 x 256 degrees of freedom.
+  for (let row = 0; row < displaySize; row += 1) {
+    for (let column = 0; column < displaySize; column += 1) {
+      const sourceRow = 2 * row;
+      const sourceColumn = 2 * column;
+      display[row * displaySize + column] = 0.25 * (
+        composition[sourceRow * size + sourceColumn]
+        + composition[(sourceRow + 1) * size + sourceColumn]
+        + composition[sourceRow * size + sourceColumn + 1]
+        + composition[(sourceRow + 1) * size + sourceColumn + 1]);
+    }
   }
   postMessage({ type: 'state', field: display, time: currentStep * timeStep,
     mean: sum / pointCount, minimum, maximum, parameters }, [display.buffer]);
