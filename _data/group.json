@@ -5,6 +5,17 @@
       "title": "Current members",
       "people": [
         {
+          "name": "Dr. Suman Sadhu",
+          "initials": "SS",
+          "url": "",
+          "photo_source": "",
+          "remote_image": "",
+          "note": "Postdoctoral fellow, IIT Hyderabad. Previously a PhD student at IISc with Prof. Aloke Paul; external supervisor: Prof. Saswata Bhattacharya.",
+          "image": "/assets/images/group/dr-suman-sadhu.jpg",
+          "photo_credit": "Photo from AI4SE talk, slide 2",
+          "photo_provenance": "AI4SE_talk.pptx, slide 2, ppt/media/image5.jpg; picture description explicitly identifies Suman Sadhu."
+        },
+        {
           "name": "Mr. D. Atchyut Kumar",
           "initials": "AK",
           "url": "https://msme.iith.ac.in/people/students/phd",
@@ -19,7 +30,10 @@
           "url": "https://sites.google.com/view/alokepaul/",
           "photo_source": "",
           "remote_image": "",
-          "note": "With Prof. Aloke Paul, IISc"
+          "note": "PhD student, IISc. Supervisor: Prof. Aloke Paul. External supervisor: Prof. Saswata Bhattacharya.",
+          "image": "/assets/images/group/mr-pushkar-pandit.jpeg",
+          "photo_credit": "Photo from AI4SE talk, slide 2",
+          "photo_provenance": "AI4SE_talk.pptx, slide 2, ppt/media/image6.jpeg; identity confirmed by Saswata Bhattacharya on 22 September 2026."
         },
         {
           "name": "Mr. Deepak Sharma",
@@ -43,10 +57,12 @@
           "name": "Ms. Gaijinliu Gangmei",
           "initials": "GG",
           "url": "https://msme.iith.ac.in/people/students/phd",
-          "photo_source": "https://msme.iith.ac.in/people/students/phd",
-          "remote_image": "https://msme.iith.ac.in/api/media/file/Gaijinliu_Gangmei.png",
+          "photo_source": "",
+          "remote_image": "",
           "note": "",
-          "image": "/assets/images/group/ms-gaijinliu-gangmei.png"
+          "image": "/assets/images/group/ms-gaijinliu-gangmei-slide.png",
+          "photo_credit": "Photo from AI4SE talk, slide 2",
+          "photo_provenance": "AI4SE_talk.pptx, slide 2, ppt/media/image2.png; identity confirmed by Saswata Bhattacharya on 22 September 2026."
         },
         {
           "name": "Mr. Ismail Kamil Worke",
@@ -54,8 +70,38 @@
           "url": "https://materials.iisc.ac.in/students",
           "photo_source": "",
           "remote_image": "",
-          "note": "IISc; with Prof. Aloke Paul",
-          "link_label": "IISc student listing"
+          "note": "PhD student, IISc. Supervisor: Prof. Aloke Paul. External supervisor: Prof. Saswata Bhattacharya.",
+          "link_label": "IISc student listing",
+          "image": "/assets/images/group/mr-ismail-kamil-worke.png",
+          "photo_credit": "Photo from AI4SE talk, slide 2",
+          "photo_provenance": "AI4SE_talk.pptx, slide 2, ppt/media/image8.png; identity confirmed by Saswata Bhattacharya on 22 September 2026."
+        },
+        {
+          "name": "Mr. K. Aravind",
+          "initials": "KA",
+          "url": "https://home.iitk.ac.in/~rajdipm/research-group.php",
+          "note": "PhD student, IIT Kanpur. Supervisor: Prof. Rajdip Mukherjee. External supervisor: Prof. Saswata Bhattacharya.",
+          "link_label": "Research group",
+          "photo_source": "",
+          "remote_image": ""
+        },
+        {
+          "name": "Mr. Saurav Singh Bisht",
+          "initials": "SSB",
+          "url": "",
+          "note": "PhD student, IIT Bombay. Supervisor: Prof. M. P. Gururajan. External supervisor: Prof. Saswata Bhattacharya.",
+          "photo_source": "",
+          "remote_image": ""
+        },
+        {
+          "name": "Ms. Vaishnavi S. M.",
+          "initials": "VSM",
+          "url": "https://people.iith.ac.in/ranjith/people.html",
+          "note": "Joint PhD student, IIT Hyderabad. Supervisors: Prof. Ranjith Ramadurai and Prof. Saswata Bhattacharya.",
+          "link_label": "Research group",
+          "photo_source": "https://people.iith.ac.in/ranjith/people.html",
+          "remote_image": "https://people.iith.ac.in/ranjith/assets/img/team/Ms.Vaishnavi.jpg",
+          "image": "/assets/images/group/ms-vaishnavi-sm.jpg"
         }
       ]
     },
@@ -69,7 +115,8 @@
           "url": "https://www.researchgate.net/profile/Sandeep-Sugathan",
           "photo_source": "",
           "remote_image": "",
-          "note": ""
+          "note": "Now at Kookmin University, South Korea.",
+          "linkedin": "https://kr.linkedin.com/in/sandeepsugathan"
         },
         {
           "name": "Dr. Tushar Jogi",
@@ -77,7 +124,8 @@
           "url": "https://www.mpie.de/person/134427/3079071",
           "photo_source": "",
           "remote_image": "",
-          "note": ""
+          "note": "Now at the Max Planck Institute for Sustainable Materials, Germany.",
+          "linkedin": "https://de.linkedin.com/in/tushar-jogi-phd"
         },
         {
           "name": "Dr. Soumya Bandyopadhyay",
@@ -85,7 +133,7 @@
           "url": "https://tonks.mse.ufl.edu/the-personnel-in-the-tonks-research-group/",
           "photo_source": "https://tonks.mse.ufl.edu/the-personnel-in-the-tonks-research-group/",
           "remote_image": "https://tonks.mse.ufl.edu/wp-content/uploads/sites/559/2024/02/soumya_photo_cropped-300x300.jpg",
-          "note": "",
+          "note": "Now at the University of Florida, USA.",
           "image": "/assets/images/group/dr-soumya-bandyopadhyay.jpg"
         },
         {
@@ -102,15 +150,10 @@
           "url": "https://www.iitbbs.ac.in/index.php/anujdash/",
           "photo_source": "",
           "remote_image": "",
-          "note": "National Postdoctoral Fellow (NPDF)"
-        },
-        {
-          "name": "Dr. Suman Sadhu",
-          "initials": "SS",
-          "url": "",
-          "photo_source": "",
-          "remote_image": "",
-          "note": ""
+          "note": "National Postdoctoral Fellow (NPDF)",
+          "image": "/assets/images/group/dr-anuj-dash.png",
+          "photo_credit": "Photo from AI4SE talk, slide 2",
+          "photo_provenance": "AI4SE_talk.pptx, slide 2, ppt/media/image4.png; picture description explicitly identifies Anuj Dash."
         },
         {
           "name": "Mr. Hemanth Kumar",
@@ -118,7 +161,10 @@
           "url": "",
           "photo_source": "",
           "remote_image": "",
-          "note": ""
+          "note": "",
+          "image": "/assets/images/group/mr-hemanth-kumar.png",
+          "photo_credit": "Photo from AI4SE talk, slide 2",
+          "photo_provenance": "AI4SE_talk.pptx, slide 2, ppt/media/image3.png; identity confirmed by Saswata Bhattacharya on 22 September 2026."
         }
       ]
     },
