@@ -179,6 +179,24 @@
           "remote_image": "https://www.nims.go.jp/rcsm/about/groups/computational-structural-materials-group/a155du0000000ce0-img/l6obuc00000000wg.jpg",
           "note": "National Institute for Materials Science, Japan",
           "image": "/assets/images/group/prof-ryoji-sahara.jpg"
+        },
+        {
+          "name": "Prof. Bernie Rolfe",
+          "initials": "BR",
+          "url": "https://experts.deakin.edu.au/700-bernard-rolfe",
+          "remote_image": "https://experts.deakin.edu.au/700-bernard-rolfe/thumbnail",
+          "note": "Deakin University, Australia",
+          "photo_source": "https://experts.deakin.edu.au/700-bernard-rolfe",
+          "image": "/assets/images/group/prof-bernie-rolfe.jpg"
+        },
+        {
+          "name": "Prof. Sergiy Divinsky",
+          "initials": "SD",
+          "url": "https://www.uni-muenster.de/Physik.MP/Wilde/Mitarbeiter/ProfDivinskyi.shtml",
+          "remote_image": "https://www.uni-muenster.de/imperia/md/images/physik_mp/wilde/mitarbeiter/fittosize_170_128_f5124752ca65cdd06a6918d0cb4514c0_divinskyi2012.jpg",
+          "note": "University of Münster, Germany",
+          "photo_source": "https://www.uni-muenster.de/Physik.MP/Wilde/Mitarbeiter/ProfDivinskyi.shtml",
+          "image": "/assets/images/group/prof-sergiy-divinsky.jpg"
         }
       ]
     }
