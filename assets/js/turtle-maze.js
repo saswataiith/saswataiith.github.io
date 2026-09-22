@@ -1,9 +1,12 @@
 import {
   explore,
+  phaseClearance,
+  centrePoint,
+  exploreCentred,
   trace,
   trapPlan,
   HELP_AFTER_ATTEMPTS,
-} from "./turtle-path.mjs?v=20260922-traps";
+} from "./turtle-path.mjs?v=20260922-centres";
 const canvas = document.getElementById("turtle-canvas");
 if (canvas) {
   const ctx = canvas.getContext("2d");
@@ -42,6 +45,33 @@ if (canvas) {
     frame = 0,
     last = 0,
     region = 0;
+  let clearance;
+  const snapToCentre = (pixel) =>
+    centrePoint(
+      data.mask,
+      data.size,
+      Number(phase.value),
+      pixel,
+      periodic.checked,
+      clearance,
+    );
+  function centredSearch() {
+    clearance = phaseClearance(
+      data.mask,
+      data.size,
+      Number(phase.value),
+      periodic.checked,
+    );
+    start = snapToCentre(start);
+    return exploreCentred(
+      data.mask,
+      data.size,
+      Number(phase.value),
+      start,
+      periodic.checked,
+      clearance,
+    );
+  }
   let trap = null,
     attempts = 0,
     attemptClock = 0;
@@ -79,9 +109,11 @@ if (canvas) {
     const index = Math.floor(progress),
       fraction = progress - index;
     ctx.strokeStyle = "#fff9c4";
-    ctx.lineWidth = 2;
+    ctx.lineWidth = 2.2;
+    ctx.lineCap = "round";
+    ctx.setLineDash([9, 5, 2, 5]);
     ctx.beginPath();
-    for (let iterator = 0; iterator <= index; iterator++) {
+    for (let iterator = 0; iterator < route.length; iterator++) {
       const [x, y] = point(route[iterator]);
       const prev = point(route[Math.max(0, iterator - 1)]);
       if (iterator === 0 || Math.abs(x - prev[0]) + Math.abs(y - prev[1]) > 1)
@@ -89,6 +121,7 @@ if (canvas) {
       else ctx.lineTo(ox + (x + 0.5) * scale, oy + (y + 0.5) * scale);
     }
     ctx.stroke();
+    ctx.setLineDash([]);
     for (const [id, label] of [
       [start, "START"],
       [trap ? trap.target : route[route.length - 1], "END"],
@@ -188,14 +221,8 @@ if (canvas) {
       if (data.mask[index] === Number(phase.value)) candidates.push(index);
     start =
       candidates[Math.floor(candidates.length * ((0.37 + region * 0.237) % 1))];
-    search = explore(
-      data.mask,
-      data.size,
-      Number(phase.value),
-      start,
-      periodic.checked,
-    );
-    route = trace(search.parent, search.farthest);
+    search = centredSearch();
+    route = trace(search.parent, snapToCentre(search.farthest));
     status.textContent = `This starting point reaches ${search.count.toLocaleString()} pixels in the selected phase. Follow the route, or click a destination.`;
     draw();
   }
@@ -323,13 +350,7 @@ if (canvas) {
       return;
     }
     start = smallest.farthest;
-    search = explore(
-      data.mask,
-      data.size,
-      Number(phase.value),
-      start,
-      periodic.checked,
-    );
+    search = centredSearch();
     setTrap(target);
   };
   periodic.onchange = phase.onchange = () => {
@@ -355,7 +376,7 @@ if (canvas) {
         "That point is in the other phase. Change the selected phase to explore it.";
       return;
     }
-    const next = trace(search.parent, target);
+    const next = trace(search.parent, snapToCentre(target));
     if (!next.length) {
       setTrap(target);
       return;

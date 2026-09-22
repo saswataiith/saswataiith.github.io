@@ -90,3 +90,79 @@ test("traps require a disconnected destination and stop at a blocked boundary", 
   }
   assert.equal(HELP_AFTER_ATTEMPTS, 7);
 });
+
+test("centre preference moves a route away from straight channel walls", async () => {
+  const { phaseClearance, centrePoint, exploreCentred } =
+    await import("../assets/js/turtle-path.mjs");
+  const size = 31,
+    mask = Array(size * size).fill(0);
+  for (let y = 10; y <= 20; y++)
+    for (let x = 1; x < 30; x++) mask[y * size + x] = 1;
+  const clearance = phaseClearance(mask, size, 1, false);
+  const start = 15 * size + 7,
+    target = 15 * size + 23;
+  assert.equal(
+    Math.floor(
+      centrePoint(mask, size, 1, 12 * size + 15, false, clearance) / size,
+    ),
+    15,
+  );
+  const path = trace(
+    exploreCentred(mask, size, 1, start, false, clearance).parent,
+    target,
+  );
+  assert.ok(path.every((point) => Math.floor(point / size) === 15));
+});
+test("centred routes preserve real phase connectivity for open and periodic edges", async () => {
+  const { phaseClearance, centrePoint, exploreCentred } =
+    await import("../assets/js/turtle-path.mjs");
+  for (const phase of [0, 1])
+    for (const periodic of [false, true]) {
+      const clearance = phaseClearance(data.mask, data.size, phase, periodic);
+      const start = centrePoint(
+        data.mask,
+        data.size,
+        phase,
+        data.mask.indexOf(phase),
+        periodic,
+        clearance,
+      );
+      const plain = explore(data.mask, data.size, phase, start, periodic);
+      const centred = exploreCentred(
+        data.mask,
+        data.size,
+        phase,
+        start,
+        periodic,
+        clearance,
+      );
+      assert.equal(plain.count, centred.count);
+      const target = centrePoint(
+        data.mask,
+        data.size,
+        phase,
+        plain.farthest,
+        periodic,
+        clearance,
+      );
+      const path = trace(centred.parent, target);
+      for (let index = 1; index < path.length; index++) {
+        assert.equal(data.mask[path[index]], phase);
+        let dx = Math.abs(
+            (path[index] % data.size) - (path[index - 1] % data.size),
+          ),
+          dy = Math.abs(
+            Math.floor(path[index] / data.size) -
+              Math.floor(path[index - 1] / data.size),
+          );
+        if (periodic) {
+          dx = Math.min(dx, data.size - dx);
+          dy = Math.min(dy, data.size - dy);
+        }
+        assert.equal(dx + dy, 1);
+      }
+      const meanGap = (route) =>
+        route.reduce((sum, point) => sum + clearance[point], 0) / route.length;
+      assert.ok(meanGap(path) >= meanGap(trace(plain.parent, target)));
+    }
+});
