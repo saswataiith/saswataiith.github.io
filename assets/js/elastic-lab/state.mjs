@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-import { validate, radians } from "./math.mjs";
+import { validate, radians } from "./math.mjs?v=20260922c";
 export const element = (id) => document.getElementById(id);
 export const value = (id) => Number(element(id).value);
 export function stiffness(prefix) {

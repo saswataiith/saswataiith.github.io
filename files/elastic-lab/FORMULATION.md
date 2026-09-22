@@ -7,7 +7,9 @@ Module I: n(theta) is an arbitrary measurement direction. epsilon_nn/epsilon_eta
 
 A zero tangential strain permits a rank-one displacement-gradient jump in the 2-D small-strain setting: epsilon0=sym(a tensor m), after allowing a rigid rotation. This is the compatibility argument for an ideal infinite thin plate, not an assertion that every zero normal-strain direction has zero total elastic energy. Finite plates and interfaces add constraints and costs.
 
-## Homogeneous kernel
+## Homogeneous kernel: Appendix A
+Primary derivation: Saswata’s Appendix A, Eqs. A.1–A.12, pp. 107–111. The elastic driving force follows Appendix B, Eqs. B.1–B.12, pp. 112–114, with the selected field index kept free. See SOURCE-AUDIT.md for the derivation and notation checks.
+
 sigma0_p=C:epsilon0_p; Q_ik=C_ijkl n_j n_l; a_p=sigma0_p n.
 B_pq=epsilon0_p:C:epsilon0_q-a_p dot Q^-1 a_q.
 Compute each p,q independently. B_pq=B_qp; the matrix is positive semidefinite, but cross entries can be negative. A sign change epsilon0_q -> -epsilon0_q flips B_pq and leaves B_qq unchanged.
@@ -18,6 +20,8 @@ Reference: Sandeep Sugathan thesis, Eqs 3.22 and 3.27-29, Eq 5.1, Tables 5.1-5.2
 Use identical smooth circular Gaussian composition profiles in a periodic square. Evaluate E_int=E(beta+gamma)-E(beta)-E(gamma) via the Fourier bilinear cross term including cos(k dot R). This sum includes shape spectrum and separation; it is not B evaluated at the separation angle. Report box size, radius and distance. Periodic copies remain part of the calculation. Positive E_int is a cost relative to isolated profiles in the same periodic box. Negative E_int is a reduction. No claim of isolated infinite-medium interactions.
 
 ## Inhomogeneous plate solver
+Reference equilibrium: the CICP paper (2012), Eqs. 2.6–2.16; associated phase-field driving force: Tushar Jogi’s thesis, Appendix B. The browser solves these equilibrium equations using PCG, separately checked against a CICP-style spectral fixed-point iteration. SOURCE-AUDIT.md records the Green-tensor wave-number factor, mean-stiffness inverse, and exact indicial contractions.
+
 Prescribe one smooth elliptic plate in a periodic unit square, with a fixed volume fraction and crystal-frame eigenstrain. Interpolate C(x)=(1-h)Cm+hCp and epsilon0(x)=h epsilon_p. Minimize F=mean[epsilon_el:C(x):epsilon_el]/2 over periodic displacement u, at fixed mean total strain zero. This is a clamped macroscopic boundary condition, not zero average stress. Rotate the shape, not the crystal axes or eigenstrain.
 
 Use spectral symmetric gradients and their exact discrete adjoints, then preconditioned conjugate gradients for A u=b, A=D* C(x) D, b=D* C(x) epsilon0. The homogeneous reference modulus acoustic inverse preconditions the solve. The mean displacement is fixed to zero. Real spectral derivatives set Nyquist derivatives to zero on even grids; their null modes are excluded from displacement and retained in unrelaxed eigenstrain energy. Smooth masks and grid convergence control their contribution. Never use a single homogeneous B for nonuniform C.

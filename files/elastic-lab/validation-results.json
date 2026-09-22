@@ -1,5 +1,5 @@
 {
-  "date": "2026-09-22T00:00:07.148Z",
+  "date": "2026-09-22T00:17:40.713Z",
   "boundary": "periodic, fixed mean total strain zero",
   "tests": [
     {
@@ -164,6 +164,79 @@
             62.50000000000001,
             117.50000000000001
           ]
+        }
+      ]
+    },
+    {
+      "name": "Appendix A kernel: full four-index contraction including shear",
+      "passed": true,
+      "details": {
+        "maxAbsoluteError": 8.673617379884035e-19
+      }
+    },
+    {
+      "name": "Mohr strain circle: tensor rotation, radius and zero-extension intersections",
+      "passed": true
+    },
+    {
+      "name": "CICP Fourier Green scaling: displacement decreases as inverse wave number",
+      "passed": true,
+      "details": [
+        {
+          "mode": 1,
+          "maxDisplacementError": 1.0842021724855044e-19
+        },
+        {
+          "mode": 2,
+          "maxDisplacementError": 1.1519648082658485e-19
+        },
+        {
+          "mode": 3,
+          "maxDisplacementError": 8.978549240895584e-20
+        }
+      ]
+    },
+    {
+      "name": "CICP spectral iteration versus PCG, soft/hard anisotropic phases",
+      "passed": true,
+      "details": [
+        {
+          "cp": {
+            "c11": 1.8,
+            "c12": 0.4,
+            "c44": 0.8
+          },
+          "relativeDisplacementError": 8.018174791487893e-12,
+          "referenceIterations": 18,
+          "pcgResidual": 6.854511307616718e-11
+        },
+        {
+          "cp": {
+            "c11": 5,
+            "c12": 1.4,
+            "c44": 2.3
+          },
+          "relativeDisplacementError": 7.332140870956e-12,
+          "referenceIterations": 25,
+          "pcgResidual": 7.474381397275545e-11
+        }
+      ]
+    },
+    {
+      "name": "Appendix B and Tushar driving force: re-equilibrated energy finite difference",
+      "passed": true,
+      "details": [
+        {
+          "homogeneous": true,
+          "predicted": 0.00004008500000000003,
+          "finiteDifference": 0.00004008500000017158,
+          "relativeError": 4.279772109394957e-12
+        },
+        {
+          "homogeneous": false,
+          "predicted": 0.00006142211247640476,
+          "finiteDifference": 0.0000614221125159732,
+          "relativeError": 6.442052313169183e-10
         }
       ]
     }

@@ -11,7 +11,8 @@ nav_active: research
   <h1>Read the physics<br /><em>from the energy.</em></h1>
   <p>
     Eigenstrain → elasticity → kernel and energy → preferred orientation. Four
-    experiments connect the derivation to a visible result.
+    experiments connect my thesis appendices and our research papers to a
+    visible result.
   </p>
   <div class="inline-links">
     <a href="#habit">I · Habit line</a
@@ -80,6 +81,24 @@ nav_active: research
     </div>
     <p id="tensor-readout" class="lab-readout"></p>
     <p id="habit-result" class="lab-readout" aria-live="polite"></p>
+    <h3>Construct Mohr’s circle of strain.</h3>
+    <div class="lab-controls">
+      <label for="mohr-step"
+        >Construction stage<select id="mohr-step">
+          <option value="1">1 · Principal-strain endpoints</option>
+          <option value="2">2 · Centre and radius</option>
+          <option value="3">3 · Rotate through 2θ</option>
+          <option value="4" selected>4 · Zero-extension intersections</option>
+        </select></label
+      >
+    </div>
+    <p id="mohr-readout" class="lab-readout"></p>
+    <p>
+      Axes below are strain divided by \(\epsilon_\eta\). The vertical
+      coordinate is tensor shear \(\epsilon^0_{nq}\), not engineering shear
+      \(\gamma^0_{nq}=2\epsilon^0_{nq}\). Change the measurement angle above to
+      move the point around the circle.
+    </p>
     <div class="lab-grid">
       <div class="lab-plot" id="strain-shape"></div>
       <div class="lab-plot" id="mohr"></div>
@@ -162,9 +181,9 @@ nav_active: research
     <h2>The stiffness is not the energy.</h2>
     <p>
       Keep the eigenstrain from Module I and change the elastic constants. The
-      plots calculate the Fourier kernel B(n), not Young’s modulus. The polar
-      angle here denotes a <strong>modulation normal</strong>, not a plate
-      tangent.
+      plots calculate the elastic energy kernel \(B_{pq}(\mathbf n)\), not
+      Young’s modulus. The polar angle here denotes a
+      <strong>modulation normal</strong>, not a plate tangent.
     </p>
     <div class="lab-controls">
       <fieldset>
@@ -203,22 +222,83 @@ nav_active: research
     </details>
     <details>
       <summary>Mathematics</summary>
+      <p>
+        <strong>From my Appendix A, Eqs. (A.1–A.12), pp. 107–111.</strong> This
+        is the elastic-energy derivation developed using Khachaturyan’s
+        microelasticity framework. Spatial indices \(i,j,k,l\) are summed; phase
+        indices \(p,q\) are summed only where shown. The laboratory uses two
+        spatial dimensions.
+      </p>
+      <h4>1. Separate eigenstrain, mean strain and periodic relaxation.</h4>
       <div class="formula-box">
-        \[A_Z=\frac{2C_{44}}{C_{11}-C_{12}},\quad \sigma^p=C:\epsilon^p,\quad
-        Q_{ik}=C_{ijkl}n_jn_l,\quad
-        a_i^p=\sigma^p_{ij}n_j.\]\[B_{pq}=\epsilon^p:C:\epsilon^q-\mathbf
-        a^p\cdot Q^{-1}\mathbf a^q.\]
+        \[\epsilon^0_{ij}(\mathbf r)=\sum_p\theta_p(\mathbf
+        r)\epsilon^{(p)}_{ij},\qquad
+        e_{ij}=E_{ij}+\tfrac12(u_{i,j}+u_{j,i})-\epsilon^0_{ij}.\]\[F_e=\tfrac12\int_V
+        C_{ijkl}e_{ij}e_{kl}\,dV.\]
       </div>
       <p>
-        The second term is the relaxation correction. Only the nonzero Fourier
-        modes use this directional kernel. A homogeneous macroscopic constraint
-        determines the zero mode separately.
+        For homogeneous stiffness and zero applied mean stress,
+        \(E_{ij}=\langle\epsilon^0_{ij}\rangle\). The mean terms cancel in the
+        six-integral expansion of Appendix A. Only the fluctuations
+        \(\Delta\theta_p=\theta_p-\langle\theta_p\rangle\) remain.
+      </p>
+      <h4>2. Solve equilibrium for each nonzero Fourier mode.</h4>
+      <div class="formula-box">
+        \[\widehat\sigma^{(p)}_{ij}=C_{ijkl}\epsilon^{(p)}_{kl},\quad
+        Q_{ik}(\mathbf
+        n)=C_{ijkl}n_jn_l,\quad\Omega_{ik}=(Q^{-1})_{ik}.\]\[\widetilde
+        u_k=-\frac{\mathrm i}{|\mathbf k|^2}\Omega_{ki}(\mathbf
+        n)k_j\sum_p\widehat\sigma^{(p)}_{ij}\widetilde\theta_p,\qquad\mathbf
+        n=\mathbf k/|\mathbf k|.\]
+      </div>
+      <p>
+        The acoustic contraction leaves \(i,k\) free. It is not the contraction
+        \(C_{ijkl}n_kn_l\), which leaves a different index pair free.
+      </p>
+      <h4>3. Substitute the relaxed displacement into the energy.</h4>
+      <div class="formula-box">
+        \[\boxed{B_{pq}(\mathbf
+        n)=C_{ijkl}\epsilon^{(p)}_{ij}\epsilon^{(q)}_{kl}-n_j\widehat\sigma^{(p)}_{ij}\Omega_{ki}(\mathbf
+        n)\widehat\sigma^{(q)}_{kl}n_l}\]\[F_e=\frac12\sum_{p,q}\int_{\mathbf
+        k\ne0} B_{pq}(\mathbf n)\widetilde\theta_p(\mathbf
+        k)\widetilde\theta_q^*(\mathbf k)\frac{d^d k}{(2\pi)^d}.\]
+      </div>
+      <p>
+        <strong>\(B_{pq}\) is the elastic energy kernel.</strong> Its first term
+        is the unrelaxed eigenstrain contraction; the second is the energy
+        reduction from mechanical relaxation. It becomes a total energy only
+        after weighting by the field spectra and summing or integrating over
+        modes. This is Eq. (A.12), with \(d=2\) here.
+      </p>
+      <h4>4. Differentiate the energy: Appendix B, Eqs. (B.1–B.12).</h4>
+      <div class="formula-box">
+        \[g_a=\frac{\delta F_e}{\delta\theta_a},\qquad \widetilde g_a=\sum_q
+        B_{aq}\widetilde\theta_q.\]
+      </div>
+      <p>
+        Here \(a\) is a fixed field label, not a summed spatial index. The two
+        equal variations of the quadratic form cancel its factor of one half. We
+        use \(B_{aq}=B_{qa}\), renaming dummy indices explicitly. For
+        \(\theta_a=\eta_a^2\), the chain rule gives \(\delta
+        F_e/\delta\eta_a=2\eta_a g_a\) in real space.
       </p>
       <p>
-        We use the in-plane cubic stiffness sub-block: σxx = C11 εxx + C12 εyy,
-        σyy = C12 εxx + C11 εyy and σxy = 2C44 εxy. There is no out-of-plane
-        eigenstrain in this 2-D model. This is not a plane-stress reduction of a
-        3-D dilatational inclusion.
+        <strong>Boundary-condition distinction:</strong> Appendix A uses a
+        relaxed mean strain. The finite-plate module fixes \(E_{ij}=0\) and
+        therefore retains the additional mean energy
+        \(\tfrac{V}{2}(E-\langle\epsilon^0\rangle):C:(E-\langle\epsilon^0\rangle)\).
+        Its zero mode must not be silently dropped.
+      </p>
+      <p>
+        \(A_Z=2C_{44}/(C_{11}-C_{12})\). The 2-D law uses the in-plane cubic
+        sub-block, with tensor shear \(\sigma_{xy}=2C_{44}e_{xy}\), no
+        out-of-plane eigenstrain, and no plane-stress condensation.
+      </p>
+      <p>
+        <a href="/research/formulation/appendices/"
+          >Follow the full Appendix A and B derivations, including Julia and
+          NumPy expressions →</a
+        >
       </p>
     </details>
     <details>
@@ -469,8 +549,12 @@ nav_active: research
       <p>
         Soft and hard refer to the elastic response relative to the matrix. The
         same eigenstrain is accommodated differently when stiffness varies in
-        space. With isotropic phases and dilatational misfit, an infinite medium has no preferred material direction. Small angular differences in this periodic calculation require particular care: the square cell and finite grid also introduce directions. We fix the plate shape to isolate its orientation energy, rather
-        than claim to predict its unconstrained equilibrium morphology.
+        space. With isotropic phases and dilatational misfit, an infinite medium
+        has no preferred material direction. Small angular differences in this
+        periodic calculation require particular care: the square cell and finite
+        grid also introduce directions. We fix the plate shape to isolate its
+        orientation energy, rather than claim to predict its unconstrained
+        equilibrium morphology.
       </p>
       <p>
         <strong>Physical insight:</strong> A minimum is the smallest elastic
@@ -481,27 +565,87 @@ nav_active: research
     </details>
     <details>
       <summary>Mathematics</summary>
+      <p>
+        <strong>Inhomogeneous equilibrium:</strong> Bhattacharyya, Heo, Chang
+        and Chen, <em>Communications in Computational Physics</em> 11 (2012),
+        726–738, Eqs. (2.6–2.16). Tushar Jogi’s thesis, §§3.1.4–3.1.6 and
+        Appendix B, supplies the related phase-field formulation and
+        driving-force derivation. Indices are retained here so each contraction
+        can be checked.
+      </p>
       <div class="formula-box">
-        \[C(\mathbf x)=(1-h)C^\alpha+hC^p,\quad\epsilon^0(\mathbf
-        x)=h\epsilon^p,\quad\epsilon^{el}=\operatorname{sym}\nabla\mathbf
-        u-\epsilon^0.\]\[\min_{\mathbf u\
-        \mathrm{periodic}}\frac12\langle\epsilon^{el}:C(\mathbf
-        x):\epsilon^{el}\rangle,\qquad\langle\epsilon\rangle=0.\]
+        \[C_{ijkl}(\mathbf r)=C^{\rm ref}_{ijkl}+\Delta C_{ijkl}(\mathbf
+        r),\quad
+        e_{ij}=E_{ij}+\tfrac12(u_{i,j}+u_{j,i})-\epsilon^0_{ij}.\]\[\partial_j(C_{ijkl}e_{kl})=0.\]
+      </div>
+      <h4>The spectral iteration, with every index visible.</h4>
+      <div class="formula-box">
+        \[C^{\rm ref}_{ijkl}u_{k,lj}=\partial_j P_{ij},\qquad
+        P_{ij}=C_{ijkl}(\epsilon^0_{kl}-E_{kl})-\Delta
+        C_{ijkl}u_{k,l}.\]\[Q^{\rm ref}_{ik}=C^{\rm
+        ref}_{ijkl}n_jn_l,\qquad\widetilde u_k^{(r+1)}=-\frac{\mathrm
+        i}{|\mathbf k|^2}[(Q^{\rm ref})^{-1}]_{ki}k_j\widetilde
+        P_{ij}^{(r)},\quad\mathbf k\ne0.\]
       </div>
       <p>
-        The macroscopic total strain is fixed at zero. Average stress need not
-        vanish. This is a clamped periodic cell. The homogeneous comparison uses
-        exactly the same mean-strain condition, including its zero-mode energy.
+        The wave-number factor follows directly by transforming two spatial
+        derivatives. If the Green tensor is defined using \(k_jk_l\), its
+        inverse already contains \(|\mathbf k|^{-2}\). If it is defined using
+        the unit direction \(n_jn_l\), that factor must appear explicitly. The
+        zero mode is handled separately.
+      </p>
+      <h4>Mean strain is a boundary condition.</h4>
+      <div class="formula-box">
+        \[\langle C_{ijkl}\rangle E_{kl}=\sigma^a_{ij}+\langle
+        C_{ijkl}\epsilon^0_{kl}\rangle-\langle
+        C_{ijkl}\delta\epsilon_{kl}\rangle.\]
+      </div>
+      <p>
+        For prescribed mean stress, invert \(\langle C\rangle\) on symmetric
+        tensors. In general \(\langle C\rangle^{-1}\ne\langle C^{-1}\rangle\).
+        This is the meaning of the compliance-like quantity defined in CICP Eq.
+        (2.16). The current plate experiment instead prescribes \(E=0\); it does
+        not claim to solve a traction-free macroscopic cell.
+      </p>
+      <h4>
+        Elastic driving force, with the interpolation distinguished from the
+        kernel.
+      </h4>
+      <div class="formula-box">
+        \[\boxed{\frac{\delta F_e}{\delta\phi}=\frac12 e_{ij}\frac{\partial
+        C_{ijkl}}{\partial\phi}e_{kl}-\sigma_{ij}\frac{\partial\epsilon^0_{ij}}{\partial\phi}}\]
+      </div>
+      <p>
+        This is the first-order result of Tushar’s Appendix B, pp. 181–182,
+        written in indicial form. The displacement variation vanishes at
+        mechanical equilibrium under the chosen boundary conditions. For this
+        laboratory, \(C=C^m+h(C^p-C^m)\) and \(\epsilon^0=h\epsilon^p\), so
+        \(g_h=\tfrac12 e:(C^p-C^m):e-\sigma:\epsilon^p\). The scalar
+        interpolation called \(B(\phi)\) in Tushar’s thesis is <em>not</em> the
+        elastic energy kernel \(B_{pq}(\mathbf n)\).
+      </p>
+      <p>
+        <a href="https://doi.org/10.4208/cicp.290610.060411a"
+          >CICP paper, DOI and publication details</a
+        >
+        ·
+        <a href="/files/elastic-lab/SOURCE-AUDIT.md"
+          >Equation-by-equation verification notes</a
+        >
       </p>
     </details>
     <details>
       <summary>Computation</summary>
       <p>
-        A spectral symmetric-gradient operator and its adjoint form A = D* C(x)
-        D. Preconditioned conjugate gradients solve A u = D* C(x) ε⁰. A
-        homogeneous acoustic inverse is only a preconditioner; the residual uses
-        the full heterogeneous stiffness. Failed solves are rejected, not
-        plotted as minima.
+        The production solver uses preconditioned conjugate gradients rather
+        than the paper’s fixed-point iteration. Both solve the same
+        heterogeneous equilibrium equation. An independent CICP-style spectral
+        iteration is included in the validation suite for comparison. A spectral
+        symmetric-gradient operator and its adjoint form A = D* C(x) D.
+        Preconditioned conjugate gradients solve A u = D* C(x) ε⁰. A homogeneous
+        acoustic inverse is only a preconditioner; the residual uses the full
+        heterogeneous stiffness. Failed solves are rejected, not plotted as
+        minima.
       </p>
       <p>
         The unit square contains a smooth ellipse with semiaxes 0.22 and 0.045.
@@ -524,6 +668,11 @@ nav_active: research
   </section>
   <section class="section" id="validation">
     <h2>Show the evidence. Read the code.</h2>
+    <p>
+      <a href="/files/elastic-lab/SOURCE-AUDIT.md"
+        >Read the source-equation audit and notation checks</a
+      >
+    </p>
     <p id="validation-summary">The validation report is available below.</p>
     <p>
       <a href="/files/elastic-lab/validation-results.json"
@@ -566,11 +715,19 @@ nav_active: research
       <em
         >Evolution of Multivariant Microstructures with Anisotropic Misfit: A
         Phase Field Study</em
-      >, Eqs. (3.2), (4.4–4.10); Sandeep Sugathan, <em>A Phase-Field Study of Elastic Stress Effects on Phase Separation in Ternary Alloy Systems</em>, IIT Hyderabad, June 2019, Chapters 3 and 5 as cited in Module III.
+      >, Appendix A, Eqs. (A.1–A.12), pp. 107–111; Appendix B, Eqs. (B.1–B.12),
+      pp. 112–114; and the habit-line discussion in Chapter 4. These derivations
+      follow A. G. Khachaturyan,
+      <em>Theory of Structural Transformations in Solids</em> (Wiley, 1983).
+      Other reference examples: Sandeep Sugathan,
+      <em
+        >A Phase-Field Study of Elastic Stress Effects on Phase Separation in
+        Ternary Alloy Systems</em
+      >, IIT Hyderabad, June 2019, Chapters 3 and 5 as cited in Module III.
       <a href="/research/formulation/appendices/"
         >Read the elastic-kernel and driving-force derivations.</a
       >
     </p>
   </section>
 </div>
-<script type="module" src="/assets/js/elastic-lab/ui.mjs"></script>
+<script type="module" src="/assets/js/elastic-lab/ui.mjs?v=20260922c"></script>

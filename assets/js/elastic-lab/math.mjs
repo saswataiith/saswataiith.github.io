@@ -81,3 +81,16 @@ export function minima(points) {
     hi,
   };
 }
+
+// Mohr coordinates use tensor shear epsilon_nq; engineering shear is twice this.
+export function mohrState(t, angle) {
+  const centre = (1 + t) / 2,
+    radius = Math.abs(1 - t) / 2;
+  return {
+    centre,
+    radius,
+    normal: projection(t, angle),
+    shear: ((t - 1) * Math.sin(2 * angle)) / 2,
+    transverse: Math.sin(angle) ** 2 + t * Math.cos(angle) ** 2,
+  };
+}

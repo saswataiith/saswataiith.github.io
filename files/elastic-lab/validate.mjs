@@ -15,6 +15,7 @@ import {
   homogeneousEnergy,
   pairCurve,
 } from "../../assets/js/elastic-lab/solver.mjs";
+import { referenceChecks } from "./reference-checks.mjs";
 const results = [];
 function close(a, b, tol = 1e-10) {
   assert.ok(
@@ -190,6 +191,7 @@ test("Inhomogeneous plate angular and spatial orientation convergence", () => {
   assert.ok(Math.abs(scans[2].angles[0] - scans[1].angles[0]) <= 5);
   return scans;
 });
+referenceChecks(test, close);
 writeFileSync(
   "files/elastic-lab/validation-results.json",
   JSON.stringify(

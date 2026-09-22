@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-import { derivative, inverseAcoustic, spectrum } from "./fft.mjs";
-import { kernel, contract, stress, validate } from "./math.mjs";
+import { derivative, inverseAcoustic, spectrum } from "./fft.mjs?v=20260922c";
+import { kernel, contract, stress, validate } from "./math.mjs?v=20260922c";
 const dot = (a, b) => a.reduce((sum, value, i) => sum + value * b[i], 0);
 export function plate(n, angle) {
   // Same area at every angle: a smooth ellipse with long/short semiaxes .22/.045.
@@ -79,10 +79,12 @@ export function solvePlate({
   eigen,
   tolerance = 1e-7,
   maxIterations = 300,
+  profile = null,
+  returnFields = false,
 }) {
   validate(cm);
   validate(cp);
-  const h = plate(n, angle),
+  const h = profile ?? plate(n, angle),
     e0 = eigen.map((e) => Float64Array.from(h, (v) => v * e));
   // Equilibrium: (D* C D)u = D* C epsilon0. Never replace C(x) by its mean.
   const b = adjoint(localStress(e0, h, cm, cp), n),
@@ -143,6 +145,7 @@ export function solvePlate({
           2 * e0[2][i] * eigenstress[2][i])) /
       h.length;
   return {
+    ...(returnFields ? { displacement: u, elastic, sigma } : {}),
     unrelaxedEnergy,
     energy,
     residual,

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-import { solvePlate, homogeneousEnergy } from "./solver.mjs";
+import { solvePlate, homogeneousEnergy } from "./solver.mjs?v=20260922c";
 self.onmessage = ({ data }) => {
   try {
     const points = [];

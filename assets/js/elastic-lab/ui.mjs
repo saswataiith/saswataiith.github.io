@@ -2,6 +2,7 @@
 import {
   contract,
   stress,
+  mohrState,
   radians,
   roots,
   projection,
@@ -10,9 +11,16 @@ import {
   minima,
   zener,
   moduli,
-} from "./math.mjs";
-import { pairCurve } from "./solver.mjs";
-import { cartesian, polar, mohr, sketch, strainShape, fmt } from "./plots.mjs";
+} from "./math.mjs?v=20260922c";
+import { pairCurve } from "./solver.mjs?v=20260922c";
+import {
+  cartesian,
+  polar,
+  mohr,
+  sketch,
+  strainShape,
+  fmt,
+} from "./plots.mjs?v=20260922c";
 import {
   element,
   value,
@@ -20,9 +28,25 @@ import {
   setStiffness,
   read,
   plateSettings,
-} from "./state.mjs";
-const set = (id, text) => (element(id).textContent = text);
-const draw = (id, html) => (element(id).innerHTML = html);
+} from "./state.mjs?v=20260922c";
+import {
+  clearMath,
+  renderMath,
+  mathematicalText,
+  texNumber,
+} from "./math-render.mjs?v=20260922c";
+const set = (id, text) => {
+  const target = element(id);
+  clearMath(target);
+  target.textContent = mathematicalText(text);
+  renderMath(target);
+};
+const draw = (id, html) => {
+  const target = element(id);
+  clearMath(target);
+  target.innerHTML = html;
+  renderMath(target);
+};
 const degrees = (a) => ((a * 180) / Math.PI).toFixed(2) + "°";
 const locations = (m) =>
   m.flat
@@ -47,7 +71,12 @@ function renderHabit(s) {
       : "No stress-free compatible habit line of this type.",
   );
   draw("strain-shape", strainShape(s.t));
-  draw("mohr", mohr(s.t, s.theta));
+  draw("mohr", mohr(s.t, s.theta, value("mohr-step")));
+  const circle = mohrState(s.t, s.theta);
+  const readout = element("mohr-readout");
+  clearMath(readout);
+  readout.textContent = String.raw`\(c=(1+t)/2=${fmt(circle.centre)},\quad R=|1-t|/2=${fmt(circle.radius)}.\) At the selected angle: \(\epsilon^0_{nn}/\epsilon_\eta=${texNumber(fmt(circle.normal))},\quad\epsilon^0_{nq}/\epsilon_\eta=${texNumber(fmt(circle.shear))}.\)`;
+  renderMath(readout);
   draw(
     "normal-strain",
     cartesian(
@@ -70,7 +99,10 @@ function renderKernels(s) {
     single = sample((a) => kernel(s.c, e, e, a)),
     m = minima(single),
     series = [{ name: "B(n)", points: single }];
-  draw("kernel-cart", cartesian(series, "Elastic kernel versus normal angle"));
+  draw(
+    "kernel-cart",
+    cartesian(series, "Elastic energy kernel versus normal angle"),
+  );
   draw("kernel-polar", polar(series, "B(n): modulation normal"));
   set(
     "kernel-result",
@@ -90,7 +122,7 @@ function renderKernels(s) {
   ];
   draw(
     "pair-kernels-cart",
-    cartesian(pairSeries, "Independent self and cross kernels"),
+    cartesian(pairSeries, "Self and cross elastic energy kernels"),
   );
   draw("pair-kernels-polar", polar(pairSeries, "Bpq(n): signed radial values"));
   set(
@@ -190,7 +222,7 @@ function scan() {
     draw("plate-cart", "");
     draw("plate-polar", "");
     plateSketch();
-    worker = new Worker(new URL("./worker.mjs", import.meta.url), {
+    worker = new Worker(new URL("./worker.mjs?v=20260922c", import.meta.url), {
       type: "module",
     });
     element("stop-plate").disabled = false;
@@ -279,6 +311,10 @@ for (const input of document.querySelectorAll(
   "#elastic-lab input,#elastic-lab select",
 ))
   input.addEventListener("change", () => {
+    if (input.id === "mohr-step") {
+      renderHabit(read());
+      return;
+    }
     if (input.id === "plate-angle") {
       plateSketch();
       return;
@@ -385,7 +421,7 @@ fetch("/files/elastic-lab/validation-results.json")
   .then((report) =>
     set(
       "validation-summary",
-      `${report.tests.length} validation groups passed. These cover analytical kernels, habit-line limits, Sandeep’s reference, pair interactions, homogeneous recovery and resolution convergence. The full report includes numerical errors.`,
+      `${report.tests.length} validation groups passed. These cover the appendix kernel and driving force, Mohr-circle invariants, Fourier scaling, CICP spectral iteration versus PCG, Sandeep’s reference, homogeneous recovery and resolution convergence. The full report includes numerical errors.`,
     ),
   )
   .catch(() => {});

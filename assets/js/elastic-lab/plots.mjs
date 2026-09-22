@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-import { minima } from "./math.mjs";
+import { minima, mohrState } from "./math.mjs?v=20260922c";
+import { mathLabel } from "./math-render.mjs?v=20260922c";
 export const colors = ["#226d9b", "#bd4d25", "#796411"];
 export const fmt = (x) =>
   Math.abs(x) < 1e-12
@@ -10,8 +11,23 @@ export const fmt = (x) =>
 export function svg(title, body) {
   return `<svg viewBox="0 0 440 340" role="img" aria-label="${title}"><title>${title}</title>${body}</svg>`;
 }
+const plotTex = {
+  "B(n)": String.raw`B(\mathbf n)`,
+  Bββ: String.raw`B_{\beta\beta}`,
+  Bγγ: String.raw`B_{\gamma\gamma}`,
+  Bβγ: String.raw`B_{\beta\gamma}`,
+  Eint: String.raw`E_{\rm int}`,
+  Eel: String.raw`E_{\rm el}`,
+  "εnn / εη": String.raw`\epsilon^0_{nn}/\epsilon_\eta`,
+  "[10]": "[10]",
+  "[01]": "[01]",
+  "[11]": "[11]",
+  "[1̄1]": String.raw`[\bar1 1]`,
+};
 const text = (x, y, s, more = "") =>
-  `<text x="${x}" y="${y}" ${more}>${s}</text>`;
+  plotTex[s]
+    ? mathLabel(x, y, plotTex[s], s, more.replace("fill=", "color="))
+    : `<text x="${x}" y="${y}" ${more}>${s}</text>`;
 const line = (x1, y1, x2, y2, more = "") =>
   `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" ${more}/>`;
 export function cartesian(series, title, selected = null) {
@@ -91,40 +107,109 @@ export function polar(series, title) {
   b += text(20, 334, "Offset radial scale; labels give signed values.");
   return svg(title, b);
 }
-export function mohr(t, angle) {
-  const cx = 225,
-    cy = 165,
-    scale = 105,
-    mid = (1 + t) / 2,
-    r = (1 - t) / 2,
-    x = mid + r * Math.cos(2 * angle),
-    shear = -r * Math.sin(2 * angle);
+export function mohr(t, angle, stage = 4) {
+  const { centre, radius, normal, shear } = mohrState(t, angle);
+  const cx = 220,
+    cy = 164,
+    scale = 102,
+    X = (v) => cx + scale * v,
+    Y = (v) => cy - scale * v;
+  const point = (x, y, color, size = 4) =>
+    `<circle cx="${X(x)}" cy="${Y(y)}" r="${size}" fill="${color}"/>`;
   let b =
-    text(15, 22, "Mohr circle: ε / εη") +
-    line(65, cy, 410, cy) +
-    line(cx, 45, cx, 290) +
-    text(320, 185, "εnn / εη") +
-    text(235, 48, "εnq / εη");
-  b += `<circle cx="${cx + scale * mid}" cy="${cy}" r="${scale * r}" fill="none" stroke="#226d9b" stroke-width="3"/>`;
+    text(14, 22, "Mohr’s circle of eigenstrain") +
+    line(85, cy, 398, cy) +
+    line(cx, 47, cx, 283);
   b +=
-    line(
-      cx + scale * mid,
-      cy,
-      cx + scale * x,
-      cy - scale * shear,
-      'stroke="#bd4d25"',
+    mathLabel(
+      325,
+      188,
+      String.raw`\epsilon^0_{nn}/\epsilon_\eta`,
+      "normal strain",
     ) +
-    `<circle cx="${cx + scale * x}" cy="${cy - scale * shear}" r="6" fill="#bd4d25"/>`;
-  for (const v of [-1, 0, 1]) b += text(cx + scale * v - 4, cy + 18, String(v));
-  if (t <= 0)
-    for (const s of [1, -1])
-      b += `<circle cx="${cx}" cy="${cy + s * scale * Math.sqrt(-t)}" r="4" fill="#267c70"/>`;
-  b += text(
-    25,
-    318,
-    `θ = ${((angle * 180) / Math.PI).toFixed(1)}°; circle rotation = 2θ`,
+    mathLabel(
+      230,
+      48,
+      String.raw`\epsilon^0_{nq}/\epsilon_\eta`,
+      "tensor shear",
+    );
+  for (const value of [-1, 0, 1])
+    b += text(X(value) - 8, cy + 19, String(value));
+  b += line(X(t), cy, X(1), cy, 'stroke="#226d9b" stroke-width="3"');
+  b += point(t, 0, "#226d9b") + point(1, 0, "#226d9b");
+  b += mathLabel(
+    X(t) - 17,
+    cy - 10,
+    String.raw`\epsilon_2/\epsilon_\eta`,
+    "second principal strain",
   );
-  return svg("Mohr circle of eigenstrain", b);
+  if (t !== 1)
+    b += mathLabel(
+      X(1) - 14,
+      cy - 10,
+      String.raw`\epsilon_1/\epsilon_\eta`,
+      "first principal strain",
+    );
+  if (stage >= 2) {
+    b += `<circle cx="${X(centre)}" cy="${cy}" r="${scale * radius}" fill="none" stroke="#226d9b" stroke-width="2.5"/>`;
+    b +=
+      point(centre, 0, "#183b40", 3) +
+      mathLabel(X(centre) - 6, cy + 36, "c", "centre");
+    b +=
+      line(X(centre), cy, X(centre), Y(radius), 'stroke-dasharray="4 3"') +
+      mathLabel(X(centre) + 7, Y(radius / 2), "R", "radius");
+  }
+  if (stage >= 3) {
+    b += line(
+      X(centre),
+      cy,
+      X(normal),
+      Y(shear),
+      'stroke="#bd4d25" stroke-width="2"',
+    );
+    b +=
+      line(X(normal), Y(shear), X(normal), cy, 'stroke-dasharray="3 3"') +
+      point(normal, shear, "#bd4d25", 6);
+    b += mathLabel(
+      X(normal) + 8,
+      Y(shear) + (Math.abs(shear) < 0.12 ? 42 : -7),
+      "P(\\theta)",
+      "rotated strain point",
+    );
+    // Physical +theta maps to -2theta in the (normal strain, tensor shear) plane.
+    const samples = Array.from({ length: 31 }, (value, iterator) => {
+      const phi = (-2 * angle * iterator) / 30;
+      return `${X(centre) + 23 * Math.cos(phi)},${cy - 23 * Math.sin(phi)}`;
+    });
+    b += `<polyline points="${samples.join(" ")}" fill="none" stroke="#bd4d25"/>`;
+  }
+  if (stage >= 4 && t <= 0) {
+    const rootShear = Math.sqrt(-t);
+    b += point(0, rootShear, "#267c70", 5);
+    if (t < 0) b += point(0, -rootShear, "#267c70", 5);
+  }
+  b += text(
+    15,
+    305,
+    stage === 1
+      ? "1. Principal strains define the diameter."
+      : stage === 2
+        ? "2. The midpoint and half-difference give c and R."
+        : stage === 3
+          ? "3. Rotate the radius by −2θ to locate P."
+          : t > 0
+            ? "4. No intersection with zero normal strain."
+            : t === 0
+              ? "4. Tangency: the y direction has zero extension."
+              : "4. Green intersections give zero-extension directions.",
+  );
+  b += mathLabel(
+    15,
+    332,
+    `c=${centre.toFixed(3)},\\quad R=${radius.toFixed(3)},\\quad \\theta=${((angle * 180) / Math.PI).toFixed(1)}^\\circ`,
+    "centre, radius and angle",
+  );
+  return svg("Construct Mohr circle of strain", b);
 }
 export function sketch(
   angle,
