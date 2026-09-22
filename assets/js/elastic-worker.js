@@ -85,11 +85,12 @@ function transform2D(real, imaginary, inverse = false) {
 function prepare(parameters) {
   const { meanComposition, misfitPercent, scaledShearModulus, poissonRatio, zenerRatio } = parameters;
   const eigenstrain = misfitPercent / 100;
-  const shearModulus = scaledShearModulus;
-  const lame = 2 * shearModulus * poissonRatio / (1 - 2 * poissonRatio);
-  const c11 = lame + 2 * shearModulus;
-  const c12 = lame;
-  const c44 = zenerRatio * shearModulus;
+  const elasticScale = scaledShearModulus;
+  // Parameterization used in PhaseField_Examples_Spectral.ipynb.
+  const poissonCorrection = (1 - 4 * poissonRatio) / (1 - 2 * poissonRatio);
+  const c44 = elasticScale * 2 * zenerRatio / (1 + zenerRatio);
+  const c11 = elasticScale * (2 * (2 + zenerRatio) / (1 + zenerRatio) - poissonCorrection);
+  const c12 = elasticScale * (2 * zenerRatio / (1 + zenerRatio) - poissonCorrection);
   const stress = (c11 + c12) * eigenstrain;
   waveNumberSquared = new Float64Array(pointCount);
   const elasticKernel = new Float64Array(pointCount);
@@ -189,9 +190,9 @@ function sendState(parameters) {
 
 function iterate(parameters) {
   if (!running) return;
-  for (let iteration = 0; iteration < 3 && currentStep < 2000; iteration += 1) advance();
+  for (let iteration = 0; iteration < 3 && currentStep < 5000; iteration += 1) advance();
   sendState(parameters);
-  if (currentStep >= 2000) {
+  if (currentStep >= 5000) {
     running = false;
     postMessage({ type: 'complete' });
     return;

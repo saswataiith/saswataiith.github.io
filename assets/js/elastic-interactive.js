@@ -62,12 +62,12 @@
 
   function createWorker() {
     if (worker) worker.terminate();
-    worker = new Worker('/assets/js/elastic-worker.js?v=2');
+    worker = new Worker('/assets/js/elastic-worker.js?v=3');
     worker.onmessage = event => {
       if (event.data.type === 'complete') {
         isRunning = false;
         runButton.textContent = 'Restart';
-        status.textContent = 'Reached t = 400. Change a parameter or restart the experiment.';
+        status.textContent = 'Reached t = 1000. Change a parameter or restart the experiment.';
         worker.terminate();
         worker = null;
         return;
