@@ -1,21 +1,21 @@
 ---
 layout: scholar
-title: "Group"
+title: "Computational Microstructures Group"
 permalink: /group/
 nav_active: group
 description: "Current and former group members, and collaborators in computational materials science at IIT Hyderabad."
 ---
 <section class="page-heading group-heading">
   <span class="eyebrow">PEOPLE · COMPUTATIONAL MATERIALS SCIENCE</span>
-  <h1>Science grows<br><em>through people.</em></h1>
-  <p>Our work brings together phase-field modeling, microstructure evolution, elastic stress effects and inverse methods for materials research. These are the students and collaborators who help shape it.</p>
+  <h1>Computational<br><em>Microstructures Group</em></h1>
+  <p>Our work brings together phase-field modeling, microstructure evolution, elastic stress effects and inverse methods for materials research. Led by Prof. Saswata Bhattacharya at IIT Hyderabad, we connect physical mechanisms with computational models, in collaboration with experimental researchers.</p>
   <div class="inline-links"><a href="#current">Current members ↓</a><a href="#former">Former members ↓</a><a href="#collaborators">Collaborators ↓</a></div>
 </section>
 {% for section in site.data.group.sections %}
 <section class="section group-section" id="{{ section.id }}">
   <span class="eyebrow">{% if section.id == 'current' %}OUR GROUP TODAY{% elsif section.id == 'former' %}PART OF OUR JOURNEY{% else %}WORKING TOGETHER{% endif %}</span>
   <h2>{{ section.title }}</h2>
-  <div class="people-grid">
+  <div class="people-grid{% if section.id == 'collaborators' %} collaborator-list{% else %} member-list{% endif %}">
     {% for person in section.people %}
     <article class="person">
       {% if person.image %}
@@ -26,9 +26,11 @@ description: "Current and former group members, and collaborators in computation
       <div class="person-details">
         <h3>{{ person.name }}</h3>
         {% if person.note != '' %}<p>{{ person.note }}</p>{% endif %}
+        {% if person.research %}<p class="person-research">{{ person.research }}</p>{% endif %}
+        {% if person.works %}<ul class="person-works">{% for work in person.works %}<li><span>{{ work.kind }}</span><a href="{{ work.url }}">{{ work.title }} ↗</a></li>{% endfor %}</ul>{% endif %}
         {% if person.url != '' %}<a class="person-link" href="{{ person.url }}">{% if person.link_label %}{{ person.link_label }}{% elsif person.url contains 'msme.iith.ac.in/people/students' %}IITH profile{% else %}Research profile{% endif %} ↗</a>{% endif %}
         {% if person.linkedin %}<a class="person-link" href="{{ person.linkedin }}">LinkedIn ↗</a>{% endif %}
-        {% if person.image %}{% if person.photo_source != '' %}<a class="photo-credit" href="{{ person.photo_source }}">Photo source ↗</a>{% elsif person.photo_credit %}<span class="photo-credit">{{ person.photo_credit }}</span>{% endif %}{% endif %}
+
       </div>
     </article>
     {% endfor %}

@@ -13,7 +13,15 @@
           "note": "Postdoctoral fellow, IIT Hyderabad. Previously a PhD student at IISc with Prof. Aloke Paul; external supervisor: Prof. Saswata Bhattacharya.",
           "image": "/assets/images/group/dr-suman-sadhu.jpg",
           "photo_credit": "Photo from AI4SE talk, slide 2",
-          "photo_provenance": "AI4SE_talk.pptx, slide 2, ppt/media/image5.jpg; picture description explicitly identifies Suman Sadhu."
+          "photo_provenance": "AI4SE_talk.pptx, slide 2, ppt/media/image5.jpg; picture description explicitly identifies Suman Sadhu.",
+          "research": "Inverse diffusion modeling: connecting experimental diffusion profiles with composition-dependent transport coefficients through PINNs.",
+          "works": [
+            {
+              "title": "Composition-dependent diffusion coefficients in NiCoFeCrMn",
+              "url": "https://doi.org/10.1016/j.actamat.2025.121649",
+              "kind": "Paper · 2026"
+            }
+          ]
         },
         {
           "name": "Mr. D. Atchyut Kumar",
@@ -21,19 +29,22 @@
           "url": "https://msme.iith.ac.in/people/students/phd",
           "photo_source": "https://msme.iith.ac.in/people/students/phd",
           "remote_image": "https://msme.iith.ac.in/api/media/file/Atchyut.jpg",
-          "note": "",
-          "image": "/assets/images/group/mr-d-atchyut-kumar.jpg"
+          "note": "PhD student, IIT Hyderabad. Supervisor: Prof. Saswata Bhattacharya.",
+          "image": "/assets/images/group/mr-d-atchyut-kumar.jpg",
+          "research": "Elasto-viscoplastic chemomechanical phase-field modeling of rafting in CMSX-4 class single-crystal nickel-base superalloys.",
+          "link_label": "IITH student listing"
         },
         {
           "name": "Mr. Pushkar A. Pandit",
           "initials": "PP",
-          "url": "https://sites.google.com/view/alokepaul/",
+          "url": "https://materials.iisc.ac.in/students#2023",
           "photo_source": "",
           "remote_image": "",
           "note": "PhD student, IISc. Supervisor: Prof. Aloke Paul. External supervisor: Prof. Saswata Bhattacharya.",
           "image": "/assets/images/group/mr-pushkar-pandit.jpeg",
           "photo_credit": "Photo from AI4SE talk, slide 2",
-          "photo_provenance": "AI4SE_talk.pptx, slide 2, ppt/media/image6.jpeg; identity confirmed by Saswata Bhattacharya on 22 September 2026."
+          "photo_provenance": "AI4SE_talk.pptx, slide 2, ppt/media/image6.jpeg; identity confirmed by Saswata Bhattacharya on 22 September 2026.",
+          "link_label": "IISc student listing"
         },
         {
           "name": "Mr. Deepak Sharma",
@@ -41,8 +52,10 @@
           "url": "https://msme.iith.ac.in/people/students/phd",
           "photo_source": "https://msme.iith.ac.in/people/students/phd",
           "remote_image": "https://msme.iith.ac.in/api/media/file/Deepak_Sharma.webp",
-          "note": "",
-          "image": "/assets/images/group/mr-deepak-sharma.webp"
+          "note": "PhD student, IIT Hyderabad. Supervisor: Prof. Saswata Bhattacharya.",
+          "image": "/assets/images/group/mr-deepak-sharma.webp",
+          "research": "Mechanism-guided phase-field design of post-processing heat treatments for additively manufactured Ti–6Al–4V.",
+          "link_label": "IITH student listing"
         },
         {
           "name": "Ms. Falak Beig",
@@ -50,8 +63,10 @@
           "url": "https://msme.iith.ac.in/people/students/phd",
           "photo_source": "https://msme.iith.ac.in/people/students/phd",
           "remote_image": "https://msme.iith.ac.in/api/media/file/Falak.jpg",
-          "note": "",
-          "image": "/assets/images/group/ms-falak-beig.jpg"
+          "note": "PhD student, IIT Hyderabad. Supervisors: Prof. Saswata Bhattacharya and Prof. Ranjith Ramadurai.",
+          "image": "/assets/images/group/ms-falak-beig.jpg",
+          "research": "Chemomechanical phase-field modeling and experiments on hafnia–zirconia ferroelectrics for non-volatile and neuromorphic memory devices.",
+          "link_label": "IITH student listing"
         },
         {
           "name": "Ms. Gaijinliu Gangmei",
@@ -59,10 +74,19 @@
           "url": "https://msme.iith.ac.in/people/students/phd",
           "photo_source": "",
           "remote_image": "",
-          "note": "",
+          "note": "Joint doctoral programme, IIT Hyderabad and Deakin University. Supervisors: Prof. Kishalay Mitra, Prof. Saswata Bhattacharya, Prof. Bernie Rolfe and Prof. Santu Rana.",
           "image": "/assets/images/group/ms-gaijinliu-gangmei-slide.png",
           "photo_credit": "Photo from AI4SE talk, slide 2",
-          "photo_provenance": "AI4SE_talk.pptx, slide 2, ppt/media/image2.png; identity confirmed by Saswata Bhattacharya on 22 September 2026."
+          "photo_provenance": "AI4SE_talk.pptx, slide 2, ppt/media/image2.png; identity confirmed by Saswata Bhattacharya on 22 September 2026.",
+          "research": "Multiscale surrogate models of process–structure linkages from phase-field simulations, including physics-informed neural operators.",
+          "works": [
+            {
+              "title": "Learning coupled Allen–Cahn and Cahn–Hilliard equations using PINO",
+              "url": "https://arxiv.org/abs/2507.18731",
+              "kind": "Preprint · 2025"
+            }
+          ],
+          "link_label": "IITH student listing"
         },
         {
           "name": "Mr. Ismail Kamil Worke",
@@ -74,7 +98,15 @@
           "link_label": "IISc student listing",
           "image": "/assets/images/group/mr-ismail-kamil-worke.png",
           "photo_credit": "Photo from AI4SE talk, slide 2",
-          "photo_provenance": "AI4SE_talk.pptx, slide 2, ppt/media/image8.png; identity confirmed by Saswata Bhattacharya on 22 September 2026."
+          "photo_provenance": "AI4SE_talk.pptx, slide 2, ppt/media/image8.png; identity confirmed by Saswata Bhattacharya on 22 September 2026.",
+          "research": "Tracer diffusivity across alloy composition space, combining diffusion-couple experiments and PINN inversion.",
+          "works": [
+            {
+              "title": "Mapping tracer diffusivities in NiAlTi and NiCoFeAlTi",
+              "url": "https://arxiv.org/abs/2509.09486",
+              "kind": "Preprint · 2025"
+            }
+          ]
         },
         {
           "name": "Mr. K. Aravind",
@@ -83,7 +115,8 @@
           "note": "PhD student, IIT Kanpur. Supervisor: Prof. Rajdip Mukherjee. External supervisor: Prof. Saswata Bhattacharya.",
           "link_label": "Research group",
           "photo_source": "",
-          "remote_image": ""
+          "remote_image": "",
+          "linkedin": "https://www.linkedin.com/in/aravind-k-a1081b136/"
         },
         {
           "name": "Mr. Saurav Singh Bisht",
@@ -91,7 +124,15 @@
           "url": "",
           "note": "PhD student, IIT Bombay. Supervisor: Prof. M. P. Gururajan. External supervisor: Prof. Saswata Bhattacharya.",
           "photo_source": "",
-          "remote_image": ""
+          "remote_image": "",
+          "research": "Phase-field modeling of ferroelectric domain evolution using GPU computation.",
+          "works": [
+            {
+              "title": "Domain evolution in BZCT using CUDA",
+              "url": "https://raicgc25.com/abstracts.pdf",
+              "kind": "Conference abstract · 2025"
+            }
+          ]
         },
         {
           "name": "Ms. Vaishnavi S. M.",
@@ -101,7 +142,15 @@
           "link_label": "Research group",
           "photo_source": "https://people.iith.ac.in/ranjith/people.html",
           "remote_image": "https://people.iith.ac.in/ranjith/assets/img/team/Ms.Vaishnavi.jpg",
-          "image": "/assets/images/group/ms-vaishnavi-sm.jpg"
+          "image": "/assets/images/group/ms-vaishnavi-sm.jpg",
+          "research": "Ferroelectric domain switching and electromechanical coupling near the morphotropic phase region.",
+          "works": [
+            {
+              "title": "Electrostriction and domain switching near the morphotropic phase region",
+              "url": "https://doi.org/10.1103/PhysRevB.108.134116",
+              "kind": "Paper · 2023"
+            }
+          ]
         }
       ]
     },
@@ -115,8 +164,16 @@
           "url": "https://www.researchgate.net/profile/Sandeep-Sugathan",
           "photo_source": "",
           "remote_image": "",
-          "note": "Now at Kookmin University, South Korea.",
-          "linkedin": "https://kr.linkedin.com/in/sandeepsugathan"
+          "note": "Research Professor, Kookmin University, South Korea.",
+          "linkedin": "https://kr.linkedin.com/in/sandeepsugathan",
+          "research": "PhD, 2019: elastic stress effects on phase separation in ternary alloys. His work connects misfit, elastic anisotropy and interactions between precipitates to microstructure evolution.",
+          "works": [
+            {
+              "title": "Elastic stress effects on phase separation in ternary alloys",
+              "url": "https://doi.org/10.1016/j.commatsci.2019.109284",
+              "kind": "Paper · 2020"
+            }
+          ]
         },
         {
           "name": "Dr. Tushar Jogi",
@@ -124,8 +181,16 @@
           "url": "https://www.mpie.de/person/134427/3079071",
           "photo_source": "",
           "remote_image": "",
-          "note": "Now at the Max Planck Institute for Sustainable Materials, Germany.",
-          "linkedin": "https://de.linkedin.com/in/tushar-jogi-phd"
+          "note": "Postdoctoral researcher, Max Planck Institute for Sustainable Materials, Germany.",
+          "linkedin": "https://de.linkedin.com/in/tushar-jogi-phd",
+          "research": "PhD, 2021: process–microstructure–property relations in model nickel-base superalloys, including interfacial dislocation networks and elastic effects.",
+          "works": [
+            {
+              "title": "Electrostriction and domain switching near the morphotropic phase region",
+              "url": "https://doi.org/10.1103/PhysRevB.108.134116",
+              "kind": "Paper · 2023"
+            }
+          ]
         },
         {
           "name": "Dr. Soumya Bandyopadhyay",
@@ -133,8 +198,21 @@
           "url": "https://tonks.mse.ufl.edu/the-personnel-in-the-tonks-research-group/",
           "photo_source": "https://tonks.mse.ufl.edu/the-personnel-in-the-tonks-research-group/",
           "remote_image": "https://tonks.mse.ufl.edu/wp-content/uploads/sites/559/2024/02/soumya_photo_cropped-300x300.jpg",
-          "note": "Now at the University of Florida, USA.",
-          "image": "/assets/images/group/dr-soumya-bandyopadhyay.jpg"
+          "note": "Postdoctoral Research Associate, University of Florida, USA.",
+          "image": "/assets/images/group/dr-soumya-bandyopadhyay.jpg",
+          "research": "PhD, 2021: electromechanical effects on domain evolution and polarization switching in bulk, thin-film and multilayer ferroelectric perovskite oxides.",
+          "works": [
+            {
+              "title": "Electrostriction and domain switching near the morphotropic phase region",
+              "url": "https://doi.org/10.1103/PhysRevB.108.134116",
+              "kind": "Paper · 2023"
+            },
+            {
+              "title": "Thermomigration of precipitates in a temperature gradient",
+              "url": "https://arxiv.org/abs/2406.00649",
+              "kind": "Manuscript"
+            }
+          ]
         },
         {
           "name": "Dr. Pankaj",
@@ -142,7 +220,20 @@
           "url": "",
           "photo_source": "",
           "remote_image": "",
-          "note": ""
+          "note": "Postdoctoral researcher, Kookmin University, South Korea. PhD jointly supervised with Prof. Subhradeep Chatterjee.",
+          "research": "PhD, 2023: morphology development in bimetallic nanoparticles, including competition between core-shell and Janus structures.",
+          "works": [
+            {
+              "title": "Core-shell and Janus morphology in alloy nanoparticles",
+              "url": "https://arxiv.org/abs/2105.09531",
+              "kind": "Manuscript"
+            },
+            {
+              "title": "Surface-directed and bulk spinodal decomposition",
+              "url": "https://arxiv.org/abs/2206.08274",
+              "kind": "Manuscript"
+            }
+          ]
         },
         {
           "name": "Dr. Anuj Dash",
@@ -150,21 +241,38 @@
           "url": "https://www.iitbbs.ac.in/index.php/anujdash/",
           "photo_source": "",
           "remote_image": "",
-          "note": "National Postdoctoral Fellow (NPDF)",
+          "note": "Assistant Professor, IIT Bhubaneswar. Former National Postdoctoral Fellow in the group.",
           "image": "/assets/images/group/dr-anuj-dash.png",
           "photo_credit": "Photo from AI4SE talk, slide 2",
-          "photo_provenance": "AI4SE_talk.pptx, slide 2, ppt/media/image4.png; picture description explicitly identifies Anuj Dash."
+          "photo_provenance": "AI4SE_talk.pptx, slide 2, ppt/media/image4.png; picture description explicitly identifies Anuj Dash.",
+          "research": "Diffusion in multicomponent alloys and inverse estimation of diffusion coefficients using physics-informed methods.",
+          "works": [
+            {
+              "title": "Diffusion coefficients from pseudo-binary diffusion couples using PINNs",
+              "url": "https://doi.org/10.1080/14786435.2023.2237900",
+              "kind": "Paper · 2023"
+            }
+          ]
         },
         {
           "name": "Mr. Hemanth Kumar",
           "initials": "HK",
-          "url": "",
+          "url": "https://edcelerateminds.com/",
           "photo_source": "",
           "remote_image": "",
-          "note": "",
+          "note": "CEO, Metlattice Technologies.",
           "image": "/assets/images/group/mr-hemanth-kumar.png",
           "photo_credit": "Photo from AI4SE talk, slide 2",
-          "photo_provenance": "AI4SE_talk.pptx, slide 2, ppt/media/image3.png; identity confirmed by Saswata Bhattacharya on 22 September 2026."
+          "photo_provenance": "AI4SE_talk.pptx, slide 2, ppt/media/image3.png; identity confirmed by Saswata Bhattacharya on 22 September 2026.",
+          "link_label": "Professional biography",
+          "research": "PINN-based inverse diffusion methods and optimization of diffusion coefficients from experimental profiles.",
+          "works": [
+            {
+              "title": "Diffusion coefficients from pseudo-binary diffusion couples using PINNs",
+              "url": "https://doi.org/10.1080/14786435.2023.2237900",
+              "kind": "Paper · 2023"
+            }
+          ]
         }
       ]
     },
