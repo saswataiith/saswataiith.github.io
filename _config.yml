@@ -8,10 +8,10 @@
 
 # Basic Site Settings
 locale                   : "en-US"
-title                    : "Saswata Bhattacharya | Computational Materials Science"
+title                    : "Saswata Bhattacharyya | Computational Materials Science"
 title_separator          : "-"
-name                     : &name "Saswata Bhattacharya"
-description              : &description "Phase-field modeling, elastic stress effects, micromechanics, physics-informed neural networks (PINNs) and mesoscale microstructure modeling resources from Saswata Bhattacharya, IIT Hyderabad."
+name                     : &name "Saswata Bhattacharyya"
+description              : &description "Phase-field modeling, elastic stress effects, micromechanics, physics-informed neural networks (PINNs) and mesoscale microstructure modeling resources from Saswata Bhattacharyya, IIT Hyderabad."
 url                      : https://saswataiith.github.io # the base hostname & protocol for your site e.g. "https://[your GitHub username].github.io"
 baseurl                  : "" # the subpath of your site, e.g. "/blog"
 repository               : "saswataiith/saswataiith.github.io"
@@ -22,7 +22,7 @@ repository               : "saswataiith/saswataiith.github.io"
 author:
   # Biographic information
   avatar           : "profile.png"
-  name             : "Saswata Bhattacharya"
+  name             : "Saswata Bhattacharyya"
   pronouns         : # example: "she/her"  
   bio              : "Professor of Materials Science and Metallurgical Engineering"
   location         : "IIT Hyderabad, India"

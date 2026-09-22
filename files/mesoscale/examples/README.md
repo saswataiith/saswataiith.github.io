@@ -1,6 +1,6 @@
 # MS5033 worked examples — Julia and NumPy
 
-Teaching adaptations of Saswata Bhattacharya's course material. All quantities are dimensionless. These are simplified educational models, not calibrated materials predictions.
+Teaching adaptations of Saswata Bhattacharyya's course material. All quantities are dimensionless. These are simplified educational models, not calibrated materials predictions.
 
 ## Run
 

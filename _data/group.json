@@ -10,7 +10,7 @@
           "url": "",
           "photo_source": "",
           "remote_image": "",
-          "note": "Postdoctoral fellow, IIT Hyderabad. Previously a PhD student at IISc with Prof. Aloke Paul; external supervisor: Prof. Saswata Bhattacharya.",
+          "note": "Postdoctoral fellow, IIT Hyderabad. Previously a PhD student at IISc with Prof. Aloke Paul; external supervisor: Prof. Saswata Bhattacharyya.",
           "image": "/assets/images/group/dr-suman-sadhu.jpg",
           "photo_credit": "Photo from AI4SE talk, slide 2",
           "photo_provenance": "AI4SE_talk.pptx, slide 2, ppt/media/image5.jpg; picture description explicitly identifies Suman Sadhu.",
@@ -29,7 +29,7 @@
           "url": "https://msme.iith.ac.in/people/students/phd",
           "photo_source": "https://msme.iith.ac.in/people/students/phd",
           "remote_image": "https://msme.iith.ac.in/api/media/file/Atchyut.jpg",
-          "note": "PhD student, IIT Hyderabad. Supervisor: Prof. Saswata Bhattacharya.",
+          "note": "PhD student, IIT Hyderabad. Supervisor: Prof. Saswata Bhattacharyya.",
           "image": "/assets/images/group/mr-d-atchyut-kumar.jpg",
           "research": "Elasto-viscoplastic chemomechanical phase-field modeling of rafting in CMSX-4 class single-crystal nickel-base superalloys.",
           "link_label": "IITH student listing"
@@ -40,10 +40,10 @@
           "url": "https://materials.iisc.ac.in/students#2023",
           "photo_source": "",
           "remote_image": "",
-          "note": "PhD student, IISc. Supervisor: Prof. Aloke Paul. External supervisor: Prof. Saswata Bhattacharya.",
+          "note": "PhD student, IISc. Supervisor: Prof. Aloke Paul. External supervisor: Prof. Saswata Bhattacharyya.",
           "image": "/assets/images/group/mr-pushkar-pandit.jpeg",
           "photo_credit": "Photo from AI4SE talk, slide 2",
-          "photo_provenance": "AI4SE_talk.pptx, slide 2, ppt/media/image6.jpeg; identity confirmed by Saswata Bhattacharya on 22 September 2026.",
+          "photo_provenance": "AI4SE_talk.pptx, slide 2, ppt/media/image6.jpeg; identity confirmed by Saswata Bhattacharyya on 22 September 2026.",
           "link_label": "IISc student listing"
         },
         {
@@ -52,7 +52,7 @@
           "url": "https://msme.iith.ac.in/people/students/phd",
           "photo_source": "https://msme.iith.ac.in/people/students/phd",
           "remote_image": "https://msme.iith.ac.in/api/media/file/Deepak_Sharma.webp",
-          "note": "PhD student, IIT Hyderabad. Supervisor: Prof. Saswata Bhattacharya.",
+          "note": "PhD student, IIT Hyderabad. Supervisor: Prof. Saswata Bhattacharyya.",
           "image": "/assets/images/group/mr-deepak-sharma.webp",
           "research": "Mechanism-guided phase-field design of post-processing heat treatments for additively manufactured Ti–6Al–4V.",
           "link_label": "IITH student listing"
@@ -63,7 +63,7 @@
           "url": "https://msme.iith.ac.in/people/students/phd",
           "photo_source": "https://msme.iith.ac.in/people/students/phd",
           "remote_image": "https://msme.iith.ac.in/api/media/file/Falak.jpg",
-          "note": "PhD student, IIT Hyderabad. Supervisors: Prof. Saswata Bhattacharya and Prof. Ranjith Ramadurai.",
+          "note": "PhD student, IIT Hyderabad. Supervisors: Prof. Saswata Bhattacharyya and Prof. Ranjith Ramadurai.",
           "image": "/assets/images/group/ms-falak-beig.jpg",
           "research": "Chemomechanical phase-field modeling and experiments on hafnia–zirconia ferroelectrics for non-volatile and neuromorphic memory devices.",
           "link_label": "IITH student listing"
@@ -74,10 +74,10 @@
           "url": "https://msme.iith.ac.in/people/students/phd",
           "photo_source": "",
           "remote_image": "",
-          "note": "Joint doctoral programme, IIT Hyderabad and Deakin University. Supervisors: Prof. Kishalay Mitra, Prof. Saswata Bhattacharya, Prof. Bernie Rolfe and Prof. Santu Rana.",
+          "note": "Joint doctoral programme, IIT Hyderabad and Deakin University. Supervisors: Prof. Kishalay Mitra, Prof. Saswata Bhattacharyya, Prof. Bernie Rolfe and Prof. Santu Rana.",
           "image": "/assets/images/group/ms-gaijinliu-gangmei-slide.png",
           "photo_credit": "Photo from AI4SE talk, slide 2",
-          "photo_provenance": "AI4SE_talk.pptx, slide 2, ppt/media/image2.png; identity confirmed by Saswata Bhattacharya on 22 September 2026.",
+          "photo_provenance": "AI4SE_talk.pptx, slide 2, ppt/media/image2.png; identity confirmed by Saswata Bhattacharyya on 22 September 2026.",
           "research": "Multiscale surrogate models of process–structure linkages from phase-field simulations, including physics-informed neural operators.",
           "works": [
             {
@@ -94,11 +94,11 @@
           "url": "https://materials.iisc.ac.in/students",
           "photo_source": "",
           "remote_image": "",
-          "note": "PhD student, IISc. Supervisor: Prof. Aloke Paul. External supervisor: Prof. Saswata Bhattacharya.",
+          "note": "PhD student, IISc. Supervisor: Prof. Aloke Paul. External supervisor: Prof. Saswata Bhattacharyya.",
           "link_label": "IISc student listing",
           "image": "/assets/images/group/mr-ismail-kamil-worke.png",
           "photo_credit": "Photo from AI4SE talk, slide 2",
-          "photo_provenance": "AI4SE_talk.pptx, slide 2, ppt/media/image8.png; identity confirmed by Saswata Bhattacharya on 22 September 2026.",
+          "photo_provenance": "AI4SE_talk.pptx, slide 2, ppt/media/image8.png; identity confirmed by Saswata Bhattacharyya on 22 September 2026.",
           "research": "Tracer diffusivity across alloy composition space, combining diffusion-couple experiments and PINN inversion.",
           "works": [
             {
@@ -112,7 +112,7 @@
           "name": "Mr. K. Aravind",
           "initials": "KA",
           "url": "https://home.iitk.ac.in/~rajdipm/research-group.php",
-          "note": "PhD student, IIT Kanpur. Supervisor: Prof. Rajdip Mukherjee. External supervisor: Prof. Saswata Bhattacharya.",
+          "note": "PhD student, IIT Kanpur. Supervisor: Prof. Rajdip Mukherjee. External supervisor: Prof. Saswata Bhattacharyya.",
           "link_label": "Research group",
           "photo_source": "",
           "remote_image": "",
@@ -122,7 +122,7 @@
           "name": "Mr. Saurav Singh Bisht",
           "initials": "SSB",
           "url": "",
-          "note": "PhD student, IIT Bombay. Supervisor: Prof. M. P. Gururajan. External supervisor: Prof. Saswata Bhattacharya.",
+          "note": "PhD student, IIT Bombay. Supervisor: Prof. M. P. Gururajan. External supervisor: Prof. Saswata Bhattacharyya.",
           "photo_source": "",
           "remote_image": "",
           "research": "Phase-field modeling of ferroelectric domain evolution using GPU computation.",
@@ -138,7 +138,7 @@
           "name": "Ms. Vaishnavi S. M.",
           "initials": "VSM",
           "url": "https://people.iith.ac.in/ranjith/people.html",
-          "note": "Joint PhD student, IIT Hyderabad. Supervisors: Prof. Ranjith Ramadurai and Prof. Saswata Bhattacharya.",
+          "note": "Joint PhD student, IIT Hyderabad. Supervisors: Prof. Ranjith Ramadurai and Prof. Saswata Bhattacharyya.",
           "link_label": "Research group",
           "photo_source": "https://people.iith.ac.in/ranjith/people.html",
           "remote_image": "https://people.iith.ac.in/ranjith/assets/img/team/Ms.Vaishnavi.jpg",
@@ -175,7 +175,7 @@
             }
           ],
           "image": "/assets/images/group/dr-sandeep-sugathan.png",
-          "photo_provenance": "LinkedIn portrait supplied and identified by Saswata Bhattacharya on 22 September 2026."
+          "photo_provenance": "LinkedIn portrait supplied and identified by Saswata Bhattacharyya on 22 September 2026."
         },
         {
           "name": "Dr. Tushar Jogi",
@@ -194,7 +194,7 @@
             }
           ],
           "image": "/assets/images/group/dr-tushar-jogi.png",
-          "photo_provenance": "LinkedIn portrait supplied and identified by Saswata Bhattacharya on 22 September 2026."
+          "photo_provenance": "LinkedIn portrait supplied and identified by Saswata Bhattacharyya on 22 September 2026."
         },
         {
           "name": "Dr. Soumya Bandyopadhyay",
@@ -267,7 +267,7 @@
           "note": "CEO, Metlattice Technologies.",
           "image": "/assets/images/group/mr-hemanth-kumar.png",
           "photo_credit": "Photo from AI4SE talk, slide 2",
-          "photo_provenance": "AI4SE_talk.pptx, slide 2, ppt/media/image3.png; identity confirmed by Saswata Bhattacharya on 22 September 2026.",
+          "photo_provenance": "AI4SE_talk.pptx, slide 2, ppt/media/image3.png; identity confirmed by Saswata Bhattacharyya on 22 September 2026.",
           "link_label": "Professional biography",
           "research": "PINN-based inverse diffusion methods and optimization of diffusion coefficients from experimental profiles.",
           "works": [

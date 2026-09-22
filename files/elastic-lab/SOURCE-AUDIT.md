@@ -4,7 +4,7 @@ This is a teaching adaptation, not a verbatim transcription. The equations were 
 
 ## Homogeneous elastic energy: Saswata's appendices
 
-Saswata Bhattacharya, *Evolution of Multivariant Microstructures with Anisotropic Misfit: A Phase Field Study*, Appendix A, pp. 107–111, Eqs. A.1–A.12; Appendix B, pp. 112–114, Eqs. B.1–B.12. The underlying book is A. G. Khachaturyan, *Theory of Structural Transformations in Solids*, Wiley, 1983 (thesis reference 4).
+Saswata Bhattacharyya, *Evolution of Multivariant Microstructures with Anisotropic Misfit: A Phase Field Study*, Appendix A, pp. 107–111, Eqs. A.1–A.12; Appendix B, pp. 112–114, Eqs. B.1–B.12. The underlying book is A. G. Khachaturyan, *Theory of Structural Transformations in Solids*, Wiley, 1983 (thesis reference 4).
 
 Appendix A starts from one half of the integral of elastic stress times elastic strain, separates homogeneous and periodic strain, and evaluates the six energy terms. At zero applied mean stress with homogeneous stiffness, the mean strain equals the mean eigenstrain. The mean energy cancels. Substitution of mechanical equilibrium gives Eq. A.12:
 
