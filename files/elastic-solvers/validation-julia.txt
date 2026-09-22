@@ -1,0 +1,11 @@
+Julia 1.12.6, FFTW, 33 x 33 periodic grid
+
+contrast 0.2: energy 1.3632297729e-06, direct residual 7.46e-09, equivalent residual 8.52e-09
+contrast 0.5: energy 2.2238382441e-06, direct residual 8.15e-09, equivalent residual 5.61e-09
+contrast 1.0: energy 3.1685843787e-06, direct residual 4.10e-09, equivalent residual 1.23e-14
+contrast 2.0: energy 4.3430881255e-06, direct residual 5.00e-09, equivalent residual 9.89e-09
+contrast 5.0: energy 6.1393361526e-06, direct residual 8.45e-09, equivalent residual 7.29e-09
+
+25 of 25 checks passed. Each case checks the physical equilibrium residual,
+the equivalent-eigenstrain constitutive mismatch, agreement between the two
+Julia algorithms, and agreement with the recorded NumPy reference energy.

@@ -1,11 +1,20 @@
 # Two ways to solve inhomogeneous elasticity
 
-Teaching examples for mesoscale microstructure modeling. New code is GPL-3.0-or-later. Download the complete ZIP, unzip it, and open one of the self-contained notebooks in Jupyter or Google Colab. Each notebook contains its numerical routines; no local helper files are needed for notebooks. The scripts share `elasticity_common.py` and must stay in the same folder.
+Teaching examples for mesoscale microstructure modeling. New code is GPL-3.0-or-later. The same two algorithms are supplied in Julia and NumPy so that students can compare the equations line by line. Download the complete ZIP and keep each language's shared helper file beside its solver files. The Jupyter notebooks are self-contained.
 
 Install: `python -m pip install numpy matplotlib jupyter`
 
 Run scripts: `python direct_iteration.py` or `python equivalent_eigenstrain.py`.
 Run checks: `python validate.py`. The solvers themselves require only NumPy. Matplotlib is for plots.
+
+Julia needs the FFTW package; LinearAlgebra, Statistics, Printf and Test come with Julia.
+
+    julia -e 'import Pkg; Pkg.add("FFTW")'
+    julia DirectIteration.jl
+    julia EquivalentEigenstrain.jl
+    julia ValidateJulia.jl
+
+`ElasticityCommon.jl` contains tensor construction, Fourier differentiation, the acoustic-tensor solve and diagnostics. `DirectIteration.jl` and `EquivalentEigenstrain.jl` contain the two visible iteration loops. `ValidateJulia.jl` checks the Julia results against both algorithms and the independently recorded NumPy energies at five stiffness ratios.
 
 ## The problem before the algorithm
 
@@ -88,4 +97,4 @@ The course notebook introduced stiffness, acoustic tensors, eigenstrains and Bpq
 
 ## Validation
 
-See validation.json: dense equilibrium minimization, an exact layered solution at imposed mean strain, analytic Fourier displacement, homogeneous energy including the clamped mean term, field agreement across contrasts, independent phase anisotropies and shear, spatial convergence, and explicit rejection of unconverged runs. All claims are limited to the stated cases.
+See validation.json: dense equilibrium minimization, an exact layered solution at imposed mean strain, analytic Fourier displacement, homogeneous energy including the clamped mean term, field agreement across contrasts, independent phase anisotropies and shear, spatial convergence, and explicit rejection of unconverged runs. The Julia suite adds 25 checks of equilibrium, constitutive matching, solver agreement and agreement with NumPy for stiffness ratios 0.2, 0.5, 1, 2 and 5. All claims are limited to the stated cases.
