@@ -6,6 +6,28 @@ nav_active: resources
 ---
 <section class="page-heading"><span class="eyebrow">MS5033 · WORKED EXAMPLE · JULIA + NUMPY</span><h1>Elasticity reshapes phase separation.</h1><p>Connect your classroom kernel to a working solver.</p></section>
 <section class="section"><h2>The physical idea.</h2><p class="wide-copy">This is coherent spinodal decomposition. A composition fluctuation produces the dilatational eigenstrain \(\boldsymbol\epsilon^0(c)=\epsilon_c(c-\bar c)\mathbf I\). Under homogeneous linear elasticity, mechanical equilibrium can be solved in Fourier space. Eliminating the displacement field gives the elastic-energy kernel \(B(\mathbf n)\), which adds an elastic penalty to the chemical and interfacial terms in the Cahn–Hilliard equation.</p><div class="formula-box">\[\widehat c^{\,n+1}=\frac{\widehat c^{\,n}-\Delta t\,M k^2\mathcal F[f^{\prime}(c^n)]}{1+\Delta t\,M k^2\!\left(\kappa k^2+B(\mathbf n)\right)}\]</div><p class="small muted">Teaching adaptation of the elastochemical example in PhaseField_Examples_Spectral.ipynb. The example isolates the numerical idea so that the coupling between composition and elastic energy remains visible.</p>
+<div class="elastic-laboratory" data-elastic-laboratory>
+  <div class="elastic-laboratory__controls">
+    <span class="eyebrow">LIVE 128 × 128 EXPERIMENT</span>
+    <h2>Change the physics.</h2>
+    <p>Changing a value restarts the calculation from the same deterministic fluctuation. This makes comparisons meaningful.</p>
+    <div class="elastic-control-grid">
+      <label>Mean composition, \(\bar c\)<input data-parameter="meanComposition" type="number" min="0.05" max="0.95" step="0.05"></label>
+      <label>Dilatational misfit, \(\epsilon_c\)<input data-parameter="eigenstrain" type="number" min="0" max="0.5" step="0.02"></label>
+      <label>Shear modulus, \(\mu\)<input data-parameter="shearModulus" type="number" min="0.05" max="20" step="0.1"></label>
+      <label>Poisson ratio, \(\nu\)<input data-parameter="poissonRatio" type="number" min="-0.9" max="0.49" step="0.01"></label>
+      <label>Zener ratio, \(A_Z\)<input data-parameter="zenerRatio" type="number" min="0.05" max="10" step="0.1"></label>
+    </div>
+    <div class="elastic-laboratory__buttons"><button class="button primary" type="button" data-run>Pause</button><button class="button secondary" type="button" data-reset>Restore defaults</button></div>
+    <p class="small" data-status aria-live="polite"></p>
+    <details><summary>How the elastic constants are constructed</summary><div class="formula-box">\[\lambda=\frac{2\mu\nu}{1-2\nu},\qquad C_{11}=\lambda+2\mu,\qquad C_{12}=\lambda,\qquad C_{44}=A_Z\mu.\]</div><p class="small">Thus \(A_Z=1\) is the isotropic elastic limit. The controls use a dimensionless 2D constitutive teaching model. Values outside the displayed stable range restore all defaults.</p></details>
+  </div>
+  <div class="elastic-laboratory__result">
+    <canvas width="128" height="128" aria-label="Interactive coherent spinodal decomposition field"></canvas>
+    <div class="elastic-readout"><span>Time <b data-time-live>0.0</b></span><span>Mean \(c\) <b data-mean-live>0.50000</b></span><span>Range <b data-range-live>0.490 to 0.510</b></span></div>
+    <p class="small muted">Blue: \(c=0\). Green: \(c=0.5\). Red: \(c=1\). The domain is periodic.</p>
+  </div>
+</div>
 <div class="lesson-viewer" data-lesson="elastic"><div class="lesson-screen"><canvas width="700" height="540" aria-label="Computed simulation result"></canvas></div><div class="lesson-controls"><button class="button secondary" type="button" data-play>Play</button><label>Time / step <output data-time>0</output><input type="range" min="0" max="80" value="0" step="1" aria-label="Simulation frame"></label></div><p data-caption aria-live="polite"></p><noscript><p>Enable JavaScript for the result viewer. The downloadable scripts and diagnostics remain available.</p></noscript></div>
 <p><a class="button secondary" href="/assets/examples/elastic/elastic-256.mp4" download>Download high-resolution movie (MP4) ↓</a></p><details><summary>Watch the high-resolution movie</summary><video controls preload="none" poster="/assets/examples/elastic/frame-80.png" style="width:100%;max-width:900px" aria-label="Coherent spinodal decomposition with elastic stress on a 256 by 256 grid"><source src="/assets/examples/elastic/elastic-256.mp4" type="video/mp4"></video></details><p class="small muted">The 256 × 256 run uses a larger domain at unchanged grid spacing; it is not a fixed-domain convergence study. The movie contains 401 calculated states spaced by one time unit. The browser viewer uses 81 saved states spaced by five time units for responsive scrubbing. Horizontal axis: x. Vertical axis: y. Fixed color scale: \(c=0\) (blue), \(0.25\) (cyan), \(0.5\) (green), \(0.75\) (yellow), \(1\) (red). Coordinates are grid indices.</p>
 <a href="/assets/examples/elastic/diagnostics.csv" download>Download measured diagnostics (CSV) ↗</a></section>
@@ -129,4 +151,4 @@ if abspath(PROGRAM_FILE) == @__FILE__
     run(ARGS...)
 end
 </code></pre></details></div></div></section>
-<section class="resource-note"><h2>Make the result explainable.</h2><p>Keep the parameters, boundary conditions and diagnostics with every plot. These examples teach numerical methods; they are not calibrated material predictions.</p><a href="{{ '/resources/#worked-examples' | relative_url }}">← All worked examples</a></section><script src="{{ '/assets/js/lessons.js' | relative_url }}" defer></script>
+<section class="resource-note"><h2>Make the result explainable.</h2><p>Keep the parameters, boundary conditions and diagnostics with every plot. These examples teach numerical methods; they are not calibrated material predictions.</p><a href="{{ '/resources/#worked-examples' | relative_url }}">← All worked examples</a></section><script src="{{ '/assets/js/lessons.js' | relative_url }}" defer></script><script src="{{ '/assets/js/elastic-interactive.js' | relative_url }}" defer></script>
