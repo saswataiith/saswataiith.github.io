@@ -26,7 +26,7 @@ description: "Current and former group members, and collaborators in computation
       <div class="person-details">
         <h3>{{ person.name }}</h3>
         {% if person.note != '' %}<p>{{ person.note }}</p>{% endif %}
-        {% if person.url != '' %}<a class="person-link" href="{{ person.url }}">{% if section.id == 'current' and person.initials != 'PP' %}IITH profile{% else %}Research profile{% endif %} ↗</a>{% endif %}
+        {% if person.url != '' %}<a class="person-link" href="{{ person.url }}">{% if person.link_label %}{{ person.link_label }}{% elsif section.id == 'current' and person.initials != 'PP' %}IITH profile{% else %}Research profile{% endif %} ↗</a>{% endif %}
         {% if person.image %}<a class="photo-credit" href="{{ person.photo_source }}">Photo source ↗</a>{% endif %}
       </div>
     </article>

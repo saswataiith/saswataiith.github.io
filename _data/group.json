@@ -47,6 +47,15 @@
           "remote_image": "https://msme.iith.ac.in/api/media/file/Gaijinliu_Gangmei.png",
           "note": "",
           "image": "/assets/images/group/ms-gaijinliu-gangmei.png"
+        },
+        {
+          "name": "Mr. Ismail Kamil Worke",
+          "initials": "IK",
+          "url": "https://materials.iisc.ac.in/students",
+          "photo_source": "",
+          "remote_image": "",
+          "note": "IISc; with Prof. Aloke Paul",
+          "link_label": "IISc student listing"
         }
       ]
     },
