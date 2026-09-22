@@ -1,3 +1,24 @@
+# Saswata Bhattacharyya's academic website
+
+Source for [saswataiith.github.io](https://saswataiith.github.io/), a Jekyll website hosted with GitHub Pages.
+
+**Start here:** [Owner's guide to editing, previewing and publishing the website](OWNER-GUIDE.md).
+
+Additional implementation history and scientific provenance are recorded in [EDITING.md](EDITING.md).
+
+## Quick local preview
+
+```bash
+bundle install
+bundle exec jekyll serve --livereload
+```
+
+Open `http://127.0.0.1:4000/`. Do not edit the generated `_site/` folder.
+
+## Original template
+
+The site began from the Academic Pages GitHub Pages template. Its original setup notes and licensing information follow.
+
 # Academic Pages
 **Academic Pages is a Github Pages template for academic websites.**
 
