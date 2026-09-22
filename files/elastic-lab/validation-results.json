@@ -1,0 +1,171 @@
+{
+  "date": "2026-09-22T00:00:07.148Z",
+  "boundary": "periodic, fixed mean total strain zero",
+  "tests": [
+    {
+      "name": "Isotropic dilatation kernel equals 8/3 for unit misfit",
+      "passed": true
+    },
+    {
+      "name": "Habit roots at t=-1, t=0 and absence for positive t",
+      "passed": true
+    },
+    {
+      "name": "Sandeep Fig5.18 X2 reference values and minima",
+      "passed": true,
+      "details": {
+        "c": {
+          "c11": 6999.999999999999,
+          "c12": 4999.999999999999,
+          "c44": 3000
+        },
+        "selfAxes": 0.34285714285714286,
+        "selfDiagonals": 0.8,
+        "crossAxes": -0.34285714285714286,
+        "crossDiagonals": -0.8
+      }
+    },
+    {
+      "name": "X1 and X3, sign reversal, cross symmetry and cubic symmetry",
+      "passed": true
+    },
+    {
+      "name": "Homogeneous plate PCG versus independent Fourier energy",
+      "passed": true,
+      "details": {
+        "worstRelativeError": 7.882477011127188e-15
+      }
+    },
+    {
+      "name": "Soft and hard plate convergence, contrast tending to unity",
+      "passed": true,
+      "details": [
+        {
+          "ratio": 0.5,
+          "energies": [
+            9.192896923531804e-7,
+            9.179064103854236e-7,
+            9.180101040811217e-7
+          ],
+          "change64to128": 0.00011295485228005452,
+          "iterations": [
+            10,
+            10,
+            11
+          ]
+        },
+        {
+          "ratio": 1,
+          "energies": [
+            0.000001284234382297462,
+            0.0000012829257250797035,
+            0.0000012830444288544308
+          ],
+          "change64to128": 0.00009251727536295779,
+          "iterations": [
+            1,
+            1,
+            1
+          ]
+        },
+        {
+          "ratio": 2,
+          "energies": [
+            0.0000017634461133717767,
+            0.0000017714457033952738,
+            0.000001771933599630896
+          ],
+          "change64to128": 0.000275346793877443,
+          "iterations": [
+            10,
+            10,
+            11
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Angular convergence of finite plate at fixed spatial resolution",
+      "passed": true,
+      "details": [
+        {
+          "step": 5,
+          "minimum": 6.786370097451069e-7,
+          "angles": [
+            59.99999999999999,
+            119.99999999999999
+          ]
+        },
+        {
+          "step": 2.5,
+          "minimum": 6.786370097451069e-7,
+          "angles": [
+            59.99999999999999,
+            119.99999999999999
+          ]
+        },
+        {
+          "step": 1.25,
+          "minimum": 6.786370097451069e-7,
+          "angles": [
+            59.99999999999999,
+            119.99999999999999
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Pair sign reversal, resolution convergence and cubic symmetry",
+      "passed": true,
+      "details": {
+        "maxRelative32to64": 7.472254571474739e-10,
+        "pairMinima": [
+          45,
+          135
+        ]
+      }
+    },
+    {
+      "name": "Inhomogeneous plate angular and spatial orientation convergence",
+      "passed": true,
+      "details": [
+        {
+          "n": 32,
+          "count": 36,
+          "minimum": 5.801086111725617e-7,
+          "angles": [
+            59.99999999999999,
+            119.99999999999999
+          ]
+        },
+        {
+          "n": 64,
+          "count": 36,
+          "minimum": 5.705469742629242e-7,
+          "angles": [
+            65,
+            114.99999999999999
+          ]
+        },
+        {
+          "n": 128,
+          "count": 36,
+          "minimum": 5.704992604448102e-7,
+          "angles": [
+            65,
+            114.99999999999999
+          ]
+        },
+        {
+          "n": 64,
+          "count": 72,
+          "minimum": 5.69065028941379e-7,
+          "angles": [
+            62.50000000000001,
+            117.50000000000001
+          ]
+        }
+      ]
+    }
+  ]
+}

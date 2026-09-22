@@ -1,0 +1,576 @@
+---
+layout: scholar
+title: "Elastic Stress Effects Laboratory"
+permalink: /research/elastic-lab/
+nav_active: research
+---
+
+<link rel="stylesheet" href="/assets/js/elastic-lab/lab.css" />
+<section class="page-heading">
+  <span class="eyebrow">AN OPEN COMPUTATIONAL LABORATORY</span>
+  <h1>Read the physics<br /><em>from the energy.</em></h1>
+  <p>
+    Eigenstrain → elasticity → kernel and energy → preferred orientation. Four
+    experiments connect the derivation to a visible result.
+  </p>
+  <div class="inline-links">
+    <a href="#habit">I · Habit line</a
+    ><a href="#kernel">II · Elastic anisotropy</a
+    ><a href="#pairs">III · Two phases</a
+    ><a href="#contrast">IV · Soft and hard plates</a
+    ><a href="#validation">Validation &amp; source</a>
+  </div>
+</section>
+<div class="lab" id="elastic-lab">
+  <p class="lab-assumptions">
+    Two-dimensional small-strain elasticity. Crystal axes: x = [10], y = [01].
+    Shape and eigenstrain are prescribed; these experiments calculate energies
+    and orientations, not a complete evolving microstructure. All numerical
+    inputs use consistent dimensionless units.
+  </p>
+  <p id="lab-error" role="alert"></p>
+  <section class="section" id="habit">
+    <span class="eyebrow">MODULE I</span>
+    <h2>Misfit and the habit line.</h2>
+    <p>
+      Eigenstrain is the deformation a phase would adopt if unconstrained.
+      Elastic strain is the part left after subtracting that eigenstrain from
+      the compatible total strain.
+    </p>
+    <div class="lab-controls">
+      <label for="t"
+        >Misfit ratio t<input
+          id="t"
+          type="number"
+          value="-0.5"
+          step="0.05"
+          min="-1"
+          max="1" /></label
+      ><label for="t-slider"
+        >Explore t continuously<input
+          id="t-slider"
+          type="range"
+          value="-0.5"
+          step="0.01"
+          min="-1"
+          max="1" /></label
+      ><label for="epsilon"
+        >Eigenstrain scale εη<input
+          id="epsilon"
+          type="number"
+          value="0.01"
+          step="0.001"
+          min="0.001"
+          max="0.05" /></label
+      ><label for="theta"
+        >Measurement / line angle θ (degrees)<input
+          id="theta"
+          type="number"
+          value="54.7356103"
+          step="0.5"
+          min="0"
+          max="180"
+      /></label>
+    </div>
+    <div class="lab-buttons">
+      <button data-preset="minus">t = −1</button
+      ><button data-preset="zero">t = 0 limiting case</button
+      ><button data-preset="positive">t &gt; 0</button
+      ><button id="find-habit">Rotate to zero-extension line</button>
+    </div>
+    <p id="tensor-readout" class="lab-readout"></p>
+    <p id="habit-result" class="lab-readout" aria-live="polite"></p>
+    <div class="lab-grid">
+      <div class="lab-plot" id="strain-shape"></div>
+      <div class="lab-plot" id="mohr"></div>
+      <div class="lab-plot" id="normal-strain"></div>
+      <div class="lab-plot" id="habit-sketch"></div>
+    </div>
+    <details class="lab-insight">
+      <summary>Why did this happen?</summary>
+      <p id="habit-why"></p>
+    </details>
+    <details>
+      <summary>Physics</summary>
+      <p>
+        For t &lt; 0 one principal direction expands and the other contracts. An
+        intermediate direction can have zero extension. At t = −1 the magnitudes
+        are equal, so the zero-extension lines lie at 45° and 135°. At t = 0,
+        the y-axis is already unextended.
+      </p>
+      <p>
+        A zero projection is only the first step. If it is the
+        <em>tangent</em> to an ideal coherent interface, the 2-D small-strain
+        compatibility condition allows a strain plus rigid rotation to fit a
+        thin plate to the matrix. That ideal limit can have zero elastic penalty
+        for nonzero modes. Finite plate ends, interfacial energy and macroscopic
+        constraints generally retain energy.
+      </p>
+    </details>
+    <details>
+      <summary>Mathematics</summary>
+      <div class="formula-box">
+        \[\epsilon^0=\epsilon_\eta\begin{pmatrix}1&0\\0&t\end{pmatrix},\quad
+        \mathbf n(\theta)=(\cos\theta,\sin\theta),\quad
+        \epsilon^0_{nn}=\epsilon_\eta(\cos^2\theta+t\sin^2\theta).\]
+      </div>
+      <p>
+        Here n is the measurement direction. At a root, it becomes the
+        habit-line tangent s. The interface normal m is perpendicular to s. We
+        do not call both directions “the habit angle.”
+      </p>
+      <div class="formula-box">
+        \[\epsilon^0_{ss}=0\Rightarrow\tan^2\theta=-1/t,\quad\theta=\tan^{-1}(1/\sqrt{-t})\quad(t<0).\]\[\alpha=90^\circ-\theta=\tan^{-1}\sqrt{-t}.\]
+      </div>
+      <p>
+        α is the acute interface-normal angle. For t = −0.5: θ = 54.74°, α =
+        35.26°. The other equivalent line is at 180° − θ.
+      </p>
+      <p>
+        Mohr’s circle has centre (1+t)/2 and radius |1−t|/2 in units of εη. Its
+        vertical coordinate is tensor shear εnq, half the engineering shear; q =
+        (−sinθ, cosθ). The selected point rotates by −2θ.
+      </p>
+      <div class="formula-box">
+        \[\epsilon^0=\operatorname{sym}(\mathbf a\otimes\mathbf m),\qquad
+        \mathbf s\cdot\mathbf m=0\]
+      </div>
+      <p>
+        This rank-one displacement-gradient compatibility argument requires εss
+        = 0 in 2-D and a suitable rigid rotation. It is stronger than merely
+        spotting a zero normal component for an arbitrary direction.
+      </p>
+    </details>
+    <details>
+      <summary>Computation</summary>
+      <p>
+        Evaluate the projection directly and solve its zero condition. A
+        positive t returns no roots. The t = 0 limit is handled explicitly. No
+        remembered angle is inserted into the plot. The sketch rotates a
+        prescribed plate; it is not a kinetic simulation.
+      </p>
+      <p>
+        Convention note: Saswata’s thesis Eq. (3.2), p. 20, uses diag(1,t). Eq.
+        (4.10), p. 48, gives atan√(−t) as a line angle from x. Direct projection
+        under Eq. (3.2) gives its complement for the line. This laboratory
+        labels the line and normal separately and exposes the discrepancy.
+      </p>
+    </details>
+  </section>
+  <section class="section" id="kernel">
+    <span class="eyebrow">MODULE II</span>
+    <h2>The stiffness is not the energy.</h2>
+    <p>
+      Keep the eigenstrain from Module I and change the elastic constants. The
+      plots calculate the Fourier kernel B(n), not Young’s modulus. The polar
+      angle here denotes a <strong>modulation normal</strong>, not a plate
+      tangent.
+    </p>
+    <div class="lab-controls">
+      <fieldset>
+        <legend>Homogeneous stiffness</legend>
+        <label for="cc11"
+          >C11<input id="cc11" type="number" value="3" step="0.1" /></label
+        ><label for="cc12"
+          >C12<input id="cc12" type="number" value="1" step="0.1" /></label
+        ><label for="cc44"
+          >C44<input id="cc44" type="number" value="1" step="0.1"
+        /></label>
+      </fieldset>
+    </div>
+    <div class="lab-buttons">
+      <button data-preset="isotropic">Isotropic elasticity</button
+      ><button data-preset="anisotropic">A<sub>Z</sub> &gt; 1 example</button>
+    </div>
+    <p id="kernel-result" class="lab-readout"></p>
+    <div class="lab-grid">
+      <div class="lab-plot" id="kernel-cart"></div>
+      <div class="lab-plot" id="kernel-polar"></div>
+    </div>
+    <details class="lab-insight">
+      <summary>Why did this happen?</summary>
+      <p id="kernel-why"></p>
+    </details>
+    <details>
+      <summary>Physics</summary>
+      <p>
+        Eigenstrain specifies what the phase wants to do. Stiffness specifies
+        the cost of preventing it. Mechanical relaxation reduces that cost.
+        Their combination gives B(n). A minimum identifies a low-penalty
+        modulation normal; the corresponding ideal plate is perpendicular to it.
+        Several equal minima are symmetry-related choices.
+      </p>
+    </details>
+    <details>
+      <summary>Mathematics</summary>
+      <div class="formula-box">
+        \[A_Z=\frac{2C_{44}}{C_{11}-C_{12}},\quad \sigma^p=C:\epsilon^p,\quad
+        Q_{ik}=C_{ijkl}n_jn_l,\quad
+        a_i^p=\sigma^p_{ij}n_j.\]\[B_{pq}=\epsilon^p:C:\epsilon^q-\mathbf
+        a^p\cdot Q^{-1}\mathbf a^q.\]
+      </div>
+      <p>
+        The second term is the relaxation correction. Only the nonzero Fourier
+        modes use this directional kernel. A homogeneous macroscopic constraint
+        determines the zero mode separately.
+      </p>
+      <p>
+        We use the in-plane cubic stiffness sub-block: σxx = C11 εxx + C12 εyy,
+        σyy = C12 εxx + C11 εyy and σxy = 2C44 εxy. There is no out-of-plane
+        eigenstrain in this 2-D model. This is not a plane-stress reduction of a
+        3-D dilatational inclusion.
+      </p>
+    </details>
+    <details>
+      <summary>Computation</summary>
+      <p>
+        For every sampled direction, form the 2 × 2 acoustic tensor Q, invert it
+        and contract the stress vectors. Stability checks reject invalid
+        constants. All minima come from evaluated curves. Flat curves are
+        reported as directionally degenerate. Signed polar plots use an
+        explicitly labelled offset radial scale; negative cross terms are never
+        folded onto positive radii.
+      </p>
+    </details>
+  </section>
+  <section class="section" id="pairs">
+    <span class="eyebrow">MODULE III</span>
+    <h2>Two phases, three kernel terms.</h2>
+    <p>
+      β and γ sit in an α matrix with the homogeneous stiffness from Module II.
+      Each phase can have a different eigenstrain. Compare the self terms and
+      cross term before looking at a particle pair.
+    </p>
+    <div class="lab-controls">
+      <label for="beta"
+        >β misfit εβ<input
+          id="beta"
+          type="number"
+          value="0.01"
+          step="0.001"
+          min="-0.05"
+          max="0.05" /></label
+      ><label for="gamma"
+        >γ misfit εγ<input
+          id="gamma"
+          type="number"
+          value="-0.01"
+          step="0.001"
+          min="-0.05"
+          max="0.05" /></label
+      ><label for="tbeta"
+        >β eigenstrain ratio tβ<input
+          id="tbeta"
+          type="number"
+          value="1"
+          step="0.1"
+          min="-1"
+          max="1" /></label
+      ><label for="tgamma"
+        >γ eigenstrain ratio tγ<input
+          id="tgamma"
+          type="number"
+          value="1"
+          step="0.1"
+          min="-1"
+          max="1"
+      /></label>
+    </div>
+    <div class="lab-buttons">
+      <button data-preset="opposite">Opposite β/γ misfit</button
+      ><button data-preset="sandeep">Sandeep thesis example</button>
+    </div>
+    <p id="pair-kernels-result" class="lab-readout"></p>
+    <div class="lab-grid">
+      <div class="lab-plot" id="pair-kernels-cart"></div>
+      <div class="lab-plot" id="pair-kernels-polar"></div>
+    </div>
+    <details class="lab-insight">
+      <summary>Why did this happen?</summary>
+      <p id="pair-kernels-why"></p>
+    </details>
+    <h3>Now calculate a particle-pair energy.</h3>
+    <div class="lab-controls">
+      <label for="pair-type"
+        >Pair<select id="pair-type">
+          <option value="bg">β–γ</option>
+          <option value="bb">β–β</option>
+          <option value="gg">γ–γ</option>
+        </select></label
+      ><label for="separation"
+        >Separation / box width<input
+          id="separation"
+          type="number"
+          value="0.32"
+          step="0.01"
+          min="0.22"
+          max="0.42" /></label
+      ><label for="pair-angle"
+        >Separation angle (degrees)<input
+          id="pair-angle"
+          type="number"
+          value="45"
+          step="1"
+          min="0"
+          max="180"
+      /></label>
+    </div>
+    <div class="lab-grid">
+      <div class="lab-plot" id="pair-energy"></div>
+      <div class="lab-plot" id="pair-sketch"></div>
+    </div>
+    <p id="pair-result" class="lab-readout"></p>
+    <details class="lab-insight">
+      <summary>Why did this happen?</summary>
+      <p id="pair-why"></p>
+    </details>
+    <details>
+      <summary>Physics</summary>
+      <p>
+        Changing one misfit sign reverses the cross coupling because it is
+        bilinear in the two eigenstrains. Both self terms remain nonnegative.
+        However, Bβγ(n) is a reciprocal-space coefficient. To obtain real-space
+        interaction energy at separation R, we must also include particle shape
+        spectra and Fourier phases. Single-particle energy and pair-interaction
+        energy are different quantities.
+      </p>
+    </details>
+    <details>
+      <summary>Mathematics</summary>
+      <div class="formula-box">
+        \[E_{\rm int}(\mathbf
+        R)=E_{\beta+\gamma}-E_\beta-E_\gamma\]\[=\frac1{N^4}\sum_{\mathbf
+        k}B_{\beta\gamma}(\hat{\mathbf k})|\hat h(\mathbf k)|^2\cos(\mathbf
+        k\cdot\mathbf R).\]
+      </div>
+      <p>
+        The k = 0 coefficient in this clamped periodic calculation is εβ:C:εγ.
+        The square contains identical circular Gaussian profiles h, with width
+        0.045 of the box. Each Fourier mode contributes; the kernel is not
+        simply evaluated at the separation angle.
+      </p>
+    </details>
+    <details>
+      <summary>Computation</summary>
+      <p>
+        Use a 64 × 64 periodic square and exact Fourier translations of the
+        sampled Gaussian. Evaluate a 1° separation-angle sweep. Periodic copies
+        are included. The profiles have diffuse tails. The on-screen circles
+        indicate their positions, not sharp boundaries.
+      </p>
+      <p>
+        <strong>Thesis reference:</strong> Sandeep Sugathan, Chapter 5, Tables
+        5.1–5.2 (p. 116), Eq. (5.1) and Fig. 5.18 (p. 133), discussion p. 132.
+        The X₂ example has G = 2000, ν = 1/3, A<sub>Z</sub> = 3 and misfits
+        ±0.01. Eqs. (3.27–3.29) give C11 = 7000, C12 = 5000, C44 = 3000. The
+        validated self values are 0.342857 on [10]/[01] and 0.8 on diagonals;
+        cross values are −0.342857 and −0.8. The separate two-Gaussian
+        experiment is a teaching calculation, not a reproduction of the thesis’s
+        full phase-field microstructure.
+      </p>
+    </details>
+  </section>
+  <section class="section" id="contrast">
+    <span class="eyebrow">MODULE IV</span>
+    <h2>Soft or hard: rotate a fixed plate.</h2>
+    <p>
+      For this prescribed thin plate, what orientation minimises the elastic
+      energy? The crystal axes and eigenstrain stay fixed while the plate shape
+      rotates. Choose β or γ; each retains its own stiffness and eigenstrain
+      settings. This module contains one plate at a time.
+    </p>
+    <div class="lab-controls">
+      <fieldset>
+        <legend>α matrix</legend>
+        <label for="mc11"
+          >C11<input id="mc11" type="number" value="3" step="0.1" /></label
+        ><label for="mc12"
+          >C12<input id="mc12" type="number" value="1" step="0.1" /></label
+        ><label for="mc44"
+          >C44<input id="mc44" type="number" value="1" step="0.1"
+        /></label>
+      </fieldset>
+      <fieldset>
+        <legend>β plate</legend>
+        <label for="bc11"
+          >C11<input id="bc11" type="number" value="1.5" step="0.1" /></label
+        ><label for="bc12"
+          >C12<input id="bc12" type="number" value="0.5" step="0.1" /></label
+        ><label for="bc44"
+          >C44<input id="bc44" type="number" value="0.5" step="0.1"
+        /></label>
+      </fieldset>
+      <fieldset>
+        <legend>γ plate</legend>
+        <label for="gc11"
+          >C11<input id="gc11" type="number" value="6" step="0.1" /></label
+        ><label for="gc12"
+          >C12<input id="gc12" type="number" value="2" step="0.1" /></label
+        ><label for="gc44"
+          >C44<input id="gc44" type="number" value="2" step="0.1"
+        /></label>
+      </fieldset>
+    </div>
+    <div class="lab-controls">
+      <label for="plate-phase"
+        >Plate phase<select id="plate-phase">
+          <option value="beta">β</option>
+          <option value="gamma">γ</option>
+        </select></label
+      ><label for="grid-size"
+        >Spatial grid<select id="grid-size">
+          <option>32</option>
+          <option selected>64</option>
+          <option>128</option>
+        </select></label
+      ><label for="angle-count"
+        >Angular step<select id="angle-count">
+          <option value="36" selected>5°</option>
+          <option value="72">2.5°</option>
+          <option value="144">1.25°</option>
+        </select></label
+      ><label for="plate-angle"
+        >Plate angle (degrees)<input
+          id="plate-angle"
+          type="number"
+          value="60"
+          step="1"
+          min="0"
+          max="180"
+      /></label>
+    </div>
+    <p>
+      The selected phase uses its ε and t from Module III. Its constants here
+      are independent of Module II.
+    </p>
+    <div class="lab-buttons">
+      <button data-preset="soft">Soft precipitate</button
+      ><button data-preset="hard">Hard precipitate</button
+      ><button data-preset="homogeneous">Homogeneous limit</button
+      ><button id="scan-plate">Calculate orientation sweep</button
+      ><button id="stop-plate" disabled>Stop</button
+      ><button id="download-plate" disabled>Download results</button>
+    </div>
+    <p id="plate-progress" role="status">
+      Choose parameters and calculate a sweep.
+    </p>
+    <div class="lab-grid">
+      <div class="lab-plot" id="plate-cart"></div>
+      <div class="lab-plot" id="plate-polar"></div>
+      <div class="lab-plot" id="plate-sketch"></div>
+    </div>
+    <p id="plate-result" class="lab-readout"></p>
+    <details class="lab-insight">
+      <summary>Why did this happen?</summary>
+      <p id="plate-why"></p>
+    </details>
+    <details>
+      <summary>Physics</summary>
+      <p>
+        Soft and hard refer to the elastic response relative to the matrix. The
+        same eigenstrain is accommodated differently when stiffness varies in
+        space. We fix the plate shape to isolate its orientation energy, rather
+        than claim to predict its unconstrained equilibrium morphology.
+      </p>
+      <p>
+        <strong>Physical insight:</strong> A minimum is the smallest elastic
+        penalty among the sampled orientations of this prescribed plate, under
+        the stated boundary condition. It is not automatically a habit plane or
+        a stress-free state.
+      </p>
+    </details>
+    <details>
+      <summary>Mathematics</summary>
+      <div class="formula-box">
+        \[C(\mathbf x)=(1-h)C^\alpha+hC^p,\quad\epsilon^0(\mathbf
+        x)=h\epsilon^p,\quad\epsilon^{el}=\operatorname{sym}\nabla\mathbf
+        u-\epsilon^0.\]\[\min_{\mathbf u\
+        \mathrm{periodic}}\frac12\langle\epsilon^{el}:C(\mathbf
+        x):\epsilon^{el}\rangle,\qquad\langle\epsilon\rangle=0.\]
+      </div>
+      <p>
+        The macroscopic total strain is fixed at zero. Average stress need not
+        vanish. This is a clamped periodic cell. The homogeneous comparison uses
+        exactly the same mean-strain condition, including its zero-mode energy.
+      </p>
+    </details>
+    <details>
+      <summary>Computation</summary>
+      <p>
+        A spectral symmetric-gradient operator and its adjoint form A = D* C(x)
+        D. Preconditioned conjugate gradients solve A u = D* C(x) ε⁰. A
+        homogeneous acoustic inverse is only a preconditioner; the residual uses
+        the full heterogeneous stiffness. Failed solves are rejected, not
+        plotted as minima.
+      </p>
+      <p>
+        The unit square contains a smooth ellipse with semiaxes 0.22 and 0.045.
+        Its diffuse area is held at π × 0.22 × 0.045 for every orientation. The
+        tanh transition width is 0.18 in elliptic-radius units. Fourier
+        derivatives on even grids set Nyquist derivatives to zero, consistently
+        in both the solver and reference. These modes retain their unrelaxed
+        energy. Refine the grid to check their influence and resolve the
+        interface.
+      </p>
+      <p>
+        Circles on the plots mark sampled local minima; larger circles mark
+        sampled global minima. Recalculate at 64² or 128² and a smaller angular
+        step to assess convergence. The solver reports its residual and
+        iterations. The “Homogeneous limit” copies matrix constants to the
+        selected plate and compares against an independent Fourier-energy
+        evaluation.
+      </p>
+    </details>
+  </section>
+  <section class="section" id="validation">
+    <h2>Show the evidence. Read the code.</h2>
+    <p id="validation-summary">The validation report is available below.</p>
+    <p>
+      <a href="/files/elastic-lab/validation-results.json"
+        >Numerical validation report</a
+      >
+      ·
+      <a href="/files/elastic-lab/FORMULATION.md"
+        >Assumptions and formulation</a
+      >
+      ·
+      <a href="/files/elastic-lab/README.md">Run and extend the laboratory</a> ·
+      <a href="/files/elastic-lab/elastic-lab-source.zip" download
+        >Download source and tests</a
+      >
+    </p>
+    <p>
+      New laboratory code is licensed GPL-3.0-or-later. It is a standalone
+      educational foundation suitable for extension alongside microSIM; it is
+      not currently a microSIM solver integration. The existing website template
+      retains its MIT licence.
+    </p>
+    <h3>From my thesis: a growing precipitate tilts.</h3>
+    <figure class="lab-thesis">
+      <img
+        src="/assets/images/anisotropy/thesis-figure-4-4.png"
+        width="1092"
+        height="1094"
+        alt="Precipitate contours from Saswata’s thesis showing growth and tilting at t=-0.5"
+        loading="lazy"
+      />
+      <figcaption>
+        Saswata Bhattacharya, Fig. 4.4, p. 47: t = −0.5, G = 750, c∞ = 0.2.
+        Contours at times 20, 260, 500, 760 and 980 in a 140 × 140 domain.
+        Interfacial energy and growth affect the finite shape; the
+        invariant-line construction supplies a limiting compatibility argument.
+      </figcaption>
+    </figure>
+    <p>
+      Sources: Saswata Bhattacharya,
+      <em
+        >Evolution of Multivariant Microstructures with Anisotropic Misfit: A
+        Phase Field Study</em
+      >, Eqs. (3.2), (4.4–4.10); Sandeep Sugathan, <em>A Phase-Field Study of Elastic Stress Effects on Phase Separation in Ternary Alloy Systems</em>, IIT Hyderabad, June 2019, Chapters 3 and 5 as cited in Module III.
+      <a href="/research/formulation/appendices/"
+        >Read the elastic-kernel and driving-force derivations.</a
+      >
+    </p>
+  </section>
+</div>
+<script type="module" src="/assets/js/elastic-lab/ui.mjs"></script>
