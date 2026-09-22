@@ -11,6 +11,11 @@
       "key": "research"
     },
     {
+      "title": "Group",
+      "url": "/group/",
+      "key": "group"
+    },
+    {
       "title": "Publications",
       "url": "/publications/",
       "key": "publications"

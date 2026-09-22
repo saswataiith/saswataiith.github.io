@@ -1,0 +1,186 @@
+{
+  "sections": [
+    {
+      "id": "current",
+      "title": "Current members",
+      "people": [
+        {
+          "name": "Mr. D. Atchyut Kumar",
+          "initials": "AK",
+          "url": "https://msme.iith.ac.in/people/students/phd",
+          "photo_source": "https://msme.iith.ac.in/people/students/phd",
+          "remote_image": "https://msme.iith.ac.in/api/media/file/Atchyut.jpg",
+          "note": "",
+          "image": "/assets/images/group/mr-d-atchyut-kumar.jpg"
+        },
+        {
+          "name": "Mr. Pushkar A. Pandit",
+          "initials": "PP",
+          "url": "https://sites.google.com/view/alokepaul/",
+          "photo_source": "",
+          "remote_image": "",
+          "note": "With Prof. Aloke Paul, IISc"
+        },
+        {
+          "name": "Mr. Deepak Sharma",
+          "initials": "DS",
+          "url": "https://msme.iith.ac.in/people/students/phd",
+          "photo_source": "https://msme.iith.ac.in/people/students/phd",
+          "remote_image": "https://msme.iith.ac.in/api/media/file/Deepak_Sharma.webp",
+          "note": "",
+          "image": "/assets/images/group/mr-deepak-sharma.webp"
+        },
+        {
+          "name": "Ms. Falak Beig",
+          "initials": "FB",
+          "url": "https://msme.iith.ac.in/people/students/phd",
+          "photo_source": "https://msme.iith.ac.in/people/students/phd",
+          "remote_image": "https://msme.iith.ac.in/api/media/file/Falak.jpg",
+          "note": "",
+          "image": "/assets/images/group/ms-falak-beig.jpg"
+        },
+        {
+          "name": "Ms. Gaijinliu Gangmei",
+          "initials": "GG",
+          "url": "https://msme.iith.ac.in/people/students/phd",
+          "photo_source": "https://msme.iith.ac.in/people/students/phd",
+          "remote_image": "https://msme.iith.ac.in/api/media/file/Gaijinliu_Gangmei.png",
+          "note": "",
+          "image": "/assets/images/group/ms-gaijinliu-gangmei.png"
+        }
+      ]
+    },
+    {
+      "id": "former",
+      "title": "Former members",
+      "people": [
+        {
+          "name": "Dr. Sandeep Sugathan",
+          "initials": "SS",
+          "url": "https://www.researchgate.net/profile/Sandeep-Sugathan",
+          "photo_source": "",
+          "remote_image": "",
+          "note": ""
+        },
+        {
+          "name": "Dr. Tushar Jogi",
+          "initials": "TJ",
+          "url": "https://www.mpie.de/person/134427/3079071",
+          "photo_source": "",
+          "remote_image": "",
+          "note": ""
+        },
+        {
+          "name": "Dr. Soumya Bandyopadhyay",
+          "initials": "SB",
+          "url": "https://tonks.mse.ufl.edu/the-personnel-in-the-tonks-research-group/",
+          "photo_source": "https://tonks.mse.ufl.edu/the-personnel-in-the-tonks-research-group/",
+          "remote_image": "https://tonks.mse.ufl.edu/wp-content/uploads/sites/559/2024/02/soumya_photo_cropped-300x300.jpg",
+          "note": "",
+          "image": "/assets/images/group/dr-soumya-bandyopadhyay.jpg"
+        },
+        {
+          "name": "Dr. Pankaj",
+          "initials": "P",
+          "url": "",
+          "photo_source": "",
+          "remote_image": "",
+          "note": ""
+        },
+        {
+          "name": "Dr. Anuj Dash",
+          "initials": "AD",
+          "url": "https://www.iitbbs.ac.in/index.php/anujdash/",
+          "photo_source": "",
+          "remote_image": "",
+          "note": "National Postdoctoral Fellow (NPDF)"
+        },
+        {
+          "name": "Dr. Suman Sadhu",
+          "initials": "SS",
+          "url": "",
+          "photo_source": "",
+          "remote_image": "",
+          "note": ""
+        },
+        {
+          "name": "Mr. Hemanth Kumar",
+          "initials": "HK",
+          "url": "",
+          "photo_source": "",
+          "remote_image": "",
+          "note": ""
+        }
+      ]
+    },
+    {
+      "id": "collaborators",
+      "title": "Collaborators",
+      "people": [
+        {
+          "name": "Prof. Aloke Paul",
+          "initials": "AP",
+          "url": "https://sites.google.com/view/alokepaul/",
+          "photo_source": "https://materials.iisc.ac.in/faculty-list",
+          "remote_image": "https://materials.iisc.ac.in/assets/images/faculty/aloke.jpg",
+          "note": "Indian Institute of Science, Bengaluru",
+          "image": "/assets/images/group/prof-aloke-paul.jpg"
+        },
+        {
+          "name": "Prof. Rajdip Mukherjee",
+          "initials": "RM",
+          "url": "https://iitk.ac.in/rajdip-mukherjee",
+          "photo_source": "https://iitk.ac.in/rajdip-mukherjee",
+          "remote_image": "https://iitk.ac.in/data/media/faculty/rajdip-mukherjee.jpg",
+          "note": "IIT Kanpur",
+          "image": "/assets/images/group/prof-rajdip-mukherjee.jpg"
+        },
+        {
+          "name": "Prof. Akinori Yamanaka",
+          "initials": "AY",
+          "url": "https://en.tuat-global.jp/researcher/e-4581-2012/",
+          "photo_source": "https://en.tuat-global.jp/researcher/e-4581-2012/",
+          "remote_image": "https://en.tuat-global.jp/wp-content/uploads/2021/03/6802a70c3ef13b39c2a76037e0955234.png",
+          "note": "Tokyo University of Agriculture and Technology",
+          "image": "/assets/images/group/prof-akinori-yamanaka.png"
+        },
+        {
+          "name": "Prof. Ranjith Ramadurai",
+          "initials": "RR",
+          "url": "https://msme.iith.ac.in/people/faculty/9",
+          "photo_source": "https://msme.iith.ac.in/people/faculty/9",
+          "remote_image": "https://msme.iith.ac.in/api/media/file/rr.jpg",
+          "note": "IIT Hyderabad",
+          "image": "/assets/images/group/prof-ranjith-ramadurai.jpg"
+        },
+        {
+          "name": "Prof. Subhradeep Chatterjee",
+          "initials": "SC",
+          "url": "https://msme.iith.ac.in/people/faculty/5",
+          "photo_source": "https://msme.iith.ac.in/people/faculty/5",
+          "remote_image": "https://msme.iith.ac.in/api/media/file/sc.jpg",
+          "note": "IIT Hyderabad",
+          "image": "/assets/images/group/prof-subhradeep-chatterjee.jpg"
+        },
+        {
+          "name": "Prof. M. P. Gururajan",
+          "initials": "MPG",
+          "url": "https://www.coeoge.iitb.ac.in/faculty/prof-m-p-gururajan",
+          "photo_source": "https://www.iitb.ac.in/mems/en/prof-mp-gururajan",
+          "remote_image": "https://www.iitb.ac.in/mems/sites/www.mems.iitb.ac.in/files/article/images/mpg.jpg",
+          "note": "IIT Bombay",
+          "image": "/assets/images/group/prof-m-p-gururajan.jpg"
+        },
+        {
+          "name": "Prof. Ryoji Sahara",
+          "initials": "RS",
+          "url": "https://samurai.nims.go.jp/profiles/sahara_ryoji?locale=en",
+          "photo_source": "https://www.nims.go.jp/rcsm/about/groups/computational-structural-materials-group/01.html",
+          "remote_image": "https://www.nims.go.jp/rcsm/about/groups/computational-structural-materials-group/a155du0000000ce0-img/l6obuc00000000wg.jpg",
+          "note": "National Institute for Materials Science, Japan",
+          "image": "/assets/images/group/prof-ryoji-sahara.jpg"
+        }
+      ]
+    }
+  ]
+}
