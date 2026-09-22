@@ -197,6 +197,24 @@
           "note": "University of Münster, Germany",
           "photo_source": "https://www.uni-muenster.de/Physik.MP/Wilde/Mitarbeiter/ProfDivinskyi.shtml",
           "image": "/assets/images/group/prof-sergiy-divinsky.jpg"
+        },
+        {
+          "name": "Prof. Kishalay Mitra",
+          "initials": "KM",
+          "url": "https://www.iith.ac.in/che/kishalay/",
+          "remote_image": "https://www.iith.ac.in/assets/images/profiles/Kishalay_Mitra.jpg",
+          "note": "IIT Hyderabad",
+          "photo_source": "https://www.iith.ac.in/che/kishalay/",
+          "image": "/assets/images/group/prof-kishalay-mitra.jpg"
+        },
+        {
+          "name": "Prof. Santu Rana",
+          "initials": "SR",
+          "url": "https://experts.deakin.edu.au/2644-santu-rana",
+          "remote_image": "https://experts.deakin.edu.au/2644-santu-rana/thumbnail",
+          "note": "Deakin University, Australia",
+          "photo_source": "https://experts.deakin.edu.au/2644-santu-rana",
+          "image": "/assets/images/group/prof-santu-rana.jpg"
         }
       ]
     }
