@@ -62,7 +62,7 @@
 
   function createWorker() {
     if (worker) worker.terminate();
-    worker = new Worker('/assets/js/elastic-worker.js');
+    worker = new Worker('/assets/js/elastic-worker.js?v=2');
     worker.onmessage = event => {
       if (event.data.type === 'complete') {
         isRunning = false;
