@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-import { derivative, inverseAcoustic, spectrum } from "./fft.mjs?v=20260922c";
-import { kernel, contract, stress, validate } from "./math.mjs?v=20260922c";
+import { derivative, inverseAcoustic, spectrum } from "./fft.mjs?v=20260924a";
+import { kernel, contract, stress, validate } from "./math.mjs?v=20260924a";
 const dot = (a, b) => a.reduce((sum, value, i) => sum + value * b[i], 0);
 export function plate(n, angle) {
   // Same area at every angle: a smooth ellipse with long/short semiaxes .22/.045.
