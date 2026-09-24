@@ -30,6 +30,9 @@
 .lab .lab-error-inline:empty{display:none}
 .lab .lab-error-inline{padding:12px;color:#8f250b;background:#fff0e9}
 .lab output{font-weight:600}
-.lab .sd-check{margin:18px 0;padding:14px 18px;background:#fff;border:1px solid #b5c7be;border-left:4px solid #267c70;border-radius:6px;overflow-x:auto}
+.lab .sd-check{margin:18px 0;padding:14px 18px;background:#fff;border:1px solid #b5c7be;border-left:4px solid #267c70;border-radius:6px}
+.lab .sd-check .sd-scroll{overflow-x:auto}
+.lab .sd-check .lab-table th{text-align:center}
+@media (max-width:600px){.lab .sd-check{padding:12px 12px}.lab .sd-check .lab-table th,.lab .sd-check .lab-table td{padding:4px 6px;font-size:13px}}
 .lab .sd-check .sd-title,.lab .sd-check .sd-note{margin:6px 0;max-width:980px;font-size:14px;line-height:1.6}
 .lab .sd-check td:last-child{color:#267c70;font-weight:600}
