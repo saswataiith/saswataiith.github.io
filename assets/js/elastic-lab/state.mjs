@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-import { validate, radians } from "./math.mjs?v=20260922c";
+import { validate, radians, roots } from "./math.mjs?v=20260924a";
 export const element = (id) => document.getElementById(id);
 export const value = (id) => Number(element(id).value);
 export function stiffness(prefix) {
@@ -18,7 +18,9 @@ export const eigen = (phase) => [
   0,
 ];
 export function read() {
-  for (const input of document.querySelectorAll("#elastic-lab input"))
+  for (const input of document.querySelectorAll(
+    "#elastic-lab input:not([type=checkbox])",
+  ))
     if (
       input.value.trim() === "" ||
       input.validity.badInput ||
@@ -30,7 +32,11 @@ export function read() {
   return {
     t: value("t"),
     epsilon: value("epsilon"),
-    theta: radians(value("theta")),
+    // The field shows θ to 4 decimals; while following, compute on the exact root.
+    theta:
+      element("follow-habit")?.checked && roots(value("t")).length
+        ? roots(value("t"))[0]
+        : radians(value("theta")),
     c: stiffness("c"),
     beta: eigen("beta"),
     gamma: eigen("gamma"),
