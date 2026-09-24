@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-import { validate, radians, roots } from "./math.mjs?v=20260924a";
+import { validate, radians, roots } from "./math.mjs?v=20260924c";
 export const element = (id) => document.getElementById(id);
 export const value = (id) => Number(element(id).value);
 export function stiffness(prefix) {
@@ -19,7 +19,7 @@ export const eigen = (phase) => [
 ];
 export function read() {
   for (const input of document.querySelectorAll(
-    "#elastic-lab input:not([type=checkbox])",
+    "#elastic-lab input:not([type=checkbox]):not([id^=es-])",
   ))
     if (
       input.value.trim() === "" ||
