@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-import { minima, mohrState } from "./math.mjs?v=20260924a";
-import { mathLabel } from "./math-render.mjs?v=20260924a";
+import { minima, mohrState } from "./math.mjs?v=20260924c";
+import { mathLabel } from "./math-render.mjs?v=20260924c";
 export const colors = ["#226d9b", "#bd4d25", "#796411"];
 export const fmt = (x) =>
   Math.abs(x) < 1e-12
@@ -30,6 +30,26 @@ const text = (x, y, s, more = "") =>
     : `<text x="${x}" y="${y}" ${more}>${s}</text>`;
 const line = (x1, y1, x2, y2, more = "") =>
   `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" ${more}/>`;
+// A series identical to an earlier one is drawn dashed, so both stay visible.
+function coincident(series) {
+  return series.map((s, i) =>
+    series.slice(0, i).findIndex((earlier) => {
+      const a = earlier.points,
+        b = s.points,
+        scale = Math.max(1e-30, ...a.map((p) => Math.abs(p.value)));
+      return (
+        a.length === b.length &&
+        a.every((p, j) => Math.abs(p.value - b[j].value) <= 1e-9 * scale)
+      );
+    }),
+  );
+}
+const dashFor = (same, i) => (same[i] >= 0 ? ' stroke-dasharray="9 7"' : "");
+const sameNote = (series, same) =>
+  same
+    .map((j, i) => (j >= 0 ? `${series[i].name} (dashed) lies on ${series[j].name}` : ""))
+    .filter(Boolean)
+    .join("; ");
 export function cartesian(series, title, selected = null) {
   const vals = series.flatMap((s) => s.points.map((p) => p.value)),
     lo = Math.min(...vals),
@@ -39,8 +59,11 @@ export function cartesian(series, title, selected = null) {
     ymax = hi + pad;
   const X = (a) => 58 + (a / Math.PI) * 340,
     Y = (v) => 270 - ((v - ymin) / (ymax - ymin)) * 215;
+  const same = coincident(series),
+    note = sameNote(series, same);
   let body =
     text(20, 24, title) + line(58, 55, 58, 270) + line(58, 270, 400, 270);
+  if (note) body += `<text x="20" y="44" font-size="11" fill="#60717a">${note}</text>`;
   for (let tick = 0; tick <= 4; tick++)
     body += text(X((tick * Math.PI) / 4) - 9, 290, String(tick * 45));
   // Round-number value ticks: 1, 2 or 5 times a power of ten.
@@ -56,7 +79,7 @@ export function cartesian(series, title, selected = null) {
   if (ymin <= 0 && ymax >= 0)
     body += line(58, Y(0), 400, Y(0), 'class="zero-line"');
   series.forEach((s, i) => {
-    body += `<polyline fill="none" stroke="${colors[i]}" stroke-width="2.5" points="${s.points.map((p) => `${X(p.angle)},${Y(p.value)}`).join(" ")}"/>`;
+    body += `<polyline fill="none" stroke="${colors[i]}" stroke-width="2.5"${dashFor(same, i)} points="${s.points.map((p) => `${X(p.angle)},${Y(p.value)}`).join(" ")}"/>`;
     const m = minima(s.points);
     for (const p of m.local)
       body += `<circle cx="${X(p.angle)}" cy="${Y(p.value)}" r="${m.global.includes(p) ? 5 : 3}" fill="${colors[i]}"/>`;
@@ -74,8 +97,11 @@ export function polar(series, title) {
     span = Math.max(hi - lo, 1e-12),
     R = (v) => 20 + (100 * (v - lo)) / span,
     cx = 220,
-    cy = 165;
+    cy = 165,
+    same = coincident(series),
+    note = sameNote(series, same);
   let b = text(14, 22, title);
+  if (note) b += `<text x="14" y="40" font-size="11" fill="#60717a">${note}</text>`;
   for (const [a, label] of [
     [0, "[10]"],
     [Math.PI / 2, "[01]"],
@@ -91,10 +117,12 @@ export function polar(series, title) {
     );
     b += text(cx + 132 * Math.cos(a) - 14, cy - 132 * Math.sin(a), label);
   }
+  // Ring values sit on the lower-right ray, away from the axis labels.
+  const ray = -Math.PI / 5;
   for (const v of [lo, (lo + hi) / 2, hi])
     b +=
       `<circle cx="${cx}" cy="${cy}" r="${R(v)}" fill="none" class="gridline"/>` +
-      text(cx + 4, cy - R(v), fmt(v));
+      `<text x="${cx + R(v) * Math.cos(ray) + 3}" y="${cy - R(v) * Math.sin(ray) + 12}" font-size="11" fill="#60717a" stroke="#fff" stroke-width="3" paint-order="stroke">${fmt(v)}</text>`;
   if (lo < 0)
     b += `<circle cx="${cx}" cy="${cy}" r="${R(0)}" fill="none" class="zero-line"/>`;
   series.forEach((s, i) => {
@@ -103,7 +131,7 @@ export function polar(series, title) {
       ...s.points.map((p) => ({ angle: p.angle + Math.PI, value: p.value })),
       s.points[0],
     ];
-    b += `<polyline fill="none" stroke="${colors[i]}" stroke-width="2.5" points="${pts.map((p) => `${cx + R(p.value) * Math.cos(p.angle)},${cy - R(p.value) * Math.sin(p.angle)}`).join(" ")}"/>`;
+    b += `<polyline fill="none" stroke="${colors[i]}" stroke-width="2.5"${dashFor(same, i)} points="${pts.map((p) => `${cx + R(p.value) * Math.cos(p.angle)},${cy - R(p.value) * Math.sin(p.angle)}`).join(" ")}"/>`;
     for (const p of minima(s.points).local)
       b += `<circle cx="${cx + R(p.value) * Math.cos(p.angle)}" cy="${cy - R(p.value) * Math.sin(p.angle)}" r="${minima(s.points).global.includes(p) ? 5 : 3}" fill="${colors[i]}"/>`;
     b += text(40 + i * 130, 310, s.name, `fill="${colors[i]}"`);
