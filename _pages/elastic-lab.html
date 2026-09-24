@@ -5,20 +5,21 @@ permalink: /research/elastic-lab/
 nav_active: research
 ---
 
-<link rel="stylesheet" href="/assets/js/elastic-lab/lab.css?v=20260924b" />
+<link rel="stylesheet" href="/assets/js/elastic-lab/lab.css?v=20260924c" />
 <section class="page-heading">
   <span class="eyebrow">AN OPEN COMPUTATIONAL LABORATORY</span>
   <h1>Read the physics<br /><em>from the energy.</em></h1>
   <p>
-    Eigenstrain → elasticity → kernel and energy → preferred orientation. Four
+    Eigenstrain → elasticity → kernel and energy → preferred orientation. Five
     experiments connect my thesis appendices and our research papers to a
     visible result.
   </p>
   <div class="inline-links">
     <a href="#habit">I · Habit line</a
-    ><a href="#kernel">II · Elastic anisotropy</a
-    ><a href="#pairs">III · Two phases</a
-    ><a href="#contrast">IV · Soft and hard plates</a
+    ><a href="#eshelby">II · Eshelby inclusion</a
+    ><a href="#kernel">III · Elastic anisotropy</a
+    ><a href="#pairs">IV · Two phases</a
+    ><a href="#contrast">V · Soft and hard plates</a
     ><a href="#validation">Validation &amp; source</a>
   </div>
 </section>
@@ -315,14 +316,16 @@ nav_active: research
         interface, a uniform transformation strain, linear small-strain
         elasticity and a homogeneous stiffness. Real plates have ends, finite
         thickness, interfacial energy and diffuse interfaces, and plasticity can
-        destroy coherency. In this laboratory, Module II adds elastic
-        anisotropy, Module III two phases with different eigenstrains, and
-        Module IV plates stiffer or softer than the matrix.
+        destroy coherency. In this laboratory, Module II replaces the ideal
+        plate by a finite elliptical inclusion with Eshelby’s full solution,
+        Module III adds elastic anisotropy, Module IV two phases with different
+        eigenstrains, and Module V plates stiffer or softer than the matrix.
       </p>
       <p>
         <strong>Planned extensions.</strong> Future modules will relax the
-        remaining assumptions: finite aspect ratios through the full Eshelby
-        tensor, interfacial energy and phase-field gradients for diffuse
+        remaining assumptions: inclusions stiffer or softer than the matrix
+        through Eshelby’s equivalent-inclusion method, interfacial energy and
+        phase-field gradients for diffuse
         interfaces and evolving shapes, dislocation arrays for the loss of
         coherency, and the 3-D invariant-plane analysis of the phenomenological
         theory of martensite crystallography.
@@ -459,7 +462,7 @@ nav_active: research
         The first term is the cost of forcing the plate fully back (Eshelby’s
         step 2). The second is what it recovers by relaxing across its
         thickness (step 4). Their difference is the elastic energy kernel
-        \(B(\mathbf m)\) of Module II and of Appendix A. In Eshelby’s language
+        \(B(\mathbf m)\) of Module III and of Appendix A. In Eshelby’s language
         this is the thin-plate limit, with
         \(S:\epsilon^0=\operatorname{sym}(\mathbf b\otimes\mathbf m)\).
       </p>
@@ -514,8 +517,71 @@ nav_active: research
         \(E_s=(C_{11}^2-C_{12}^2)/C_{11}=8/3\) in every direction, so
         \(B=\tfrac83(0.005)^2=6.67\times10^{-5}\) for a plate along [01] and
         \(\tfrac83(0.01)^2=2.67\times10^{-4}\) along [10], matching Step 7 and
-        the Module II curve. In an anisotropic crystal \(E_s\) depends on the
-        direction, which is how elastic anisotropy enters in Module II.
+        the Module III curve. In an anisotropic crystal \(E_s\) depends on the
+        direction, which is how elastic anisotropy enters in Module III.
+      </p>
+      <p>
+        <strong>(g) Any coherent interface: the complete set of jump
+        conditions.</strong> Steps (a)–(f) used a thin plate, but nothing in the
+        jump conditions depends on the plate. They hold at every point of any
+        perfectly bonded interface between an inclusion with uniform eigenstrain
+        \(\epsilon^0_{ij}\) (often written \(\epsilon^*_{ij}\)) and a matrix with
+        the same stiffness \(C_{ijkl}\). Let \(n_i\) be the outward unit normal
+        of the inclusion and \([\![A]\!]=A^{\rm in}-A^{\rm out}\), the convention
+        used on this page.
+      </p>
+      <p><em>1. Displacement gradient.</em> \(u_i\) is continuous, so only the
+        derivative across the interface can jump (Hadamard):</p>
+      <div class="formula-box">
+        \[[\![u_{i,j}]\!]=g_i\,n_j .\]
+      </div>
+      <p><em>2. Strain.</em> The total strain is the symmetric part of the
+        gradient, and the eigenstrain jumps by its full value:</p>
+      <div class="formula-box">
+        \[[\![\epsilon_{ij}]\!]=\tfrac12\left(g_i n_j+g_j n_i\right),\qquad
+        [\![\epsilon^0_{ij}]\!]=\epsilon^0_{ij},\qquad
+        [\![e_{ij}]\!]=\tfrac12\left(g_i n_j+g_j n_i\right)-\epsilon^0_{ij}.\]
+      </div>
+      <p><em>3. Stress.</em> With the same \(C_{ijkl}\) on both sides and its
+        minor symmetry,</p>
+      <div class="formula-box">
+        \[[\![\sigma_{ij}]\!]=C_{ijkl}[\![e_{kl}]\!]=C_{ijkl}\left(g_k n_l-\epsilon^0_{kl}\right),\qquad
+        [\![\sigma_{ij}]\!]\,n_j=0\ \ \text{(Newton’s third law)}.\]
+      </div>
+      <p><em>4. Solve for the amplitude.</em> Substitute the stress jump into
+        traction continuity and use the acoustic (Christoffel) tensor
+        \(K_{ik}=C_{ijkl}n_jn_l\):</p>
+      <div class="formula-box">
+        \[C_{ijkl}\,n_j n_l\,g_k=C_{ijkl}\,\epsilon^0_{kl}\,n_j
+        \quad\Longrightarrow\quad
+        g_i=K^{-1}_{ik}\,C_{kjml}\,\epsilon^0_{ml}\,n_j=\big[Q(\mathbf n)^{-1}\sigma^0\mathbf n\big]_i .\]
+      </div>
+      <p>
+        So the jumps are fixed locally by the normal, the stiffness and the
+        eigenstrain alone, whatever the shape of the inclusion. The shape only
+        decides the field on one side (Module II computes it for an ellipse).
+        Texts that define the jump as outside minus inside write
+        \(\lambda_i=-g_i\), and every jump below changes sign.
+      </p>
+      <table class="lab-table">
+        <thead><tr><th>field</th><th>across a coherent interface</th><th>jump \([\![A]\!]=A^{\rm in}-A^{\rm out}\)</th></tr></thead>
+        <tbody>
+          <tr><td>displacement</td><td>continuous</td><td>\([\![u_i]\!]=0\)</td></tr>
+          <tr><td>traction</td><td>continuous</td><td>\([\![\sigma_{ij}]\!]n_j=0\)</td></tr>
+          <tr><td>displacement gradient</td><td>jumps</td><td>\([\![u_{i,j}]\!]=g_in_j\)</td></tr>
+          <tr><td>total strain</td><td>jumps (in-plane part continuous)</td><td>\([\![\epsilon_{ij}]\!]=\tfrac12(g_in_j+g_jn_i)\)</td></tr>
+          <tr><td>eigenstrain</td><td>jumps (prescribed)</td><td>\([\![\epsilon^0_{ij}]\!]=\epsilon^0_{ij}\)</td></tr>
+          <tr><td>elastic strain</td><td>jumps</td><td>\([\![e_{ij}]\!]=\tfrac12(g_in_j+g_jn_i)-\epsilon^0_{ij}\)</td></tr>
+          <tr><td>stress</td><td>jumps (in-plane part only)</td><td>\([\![\sigma_{ij}]\!]=C_{ijkl}(g_kn_l-\epsilon^0_{kl})\)</td></tr>
+          <tr><td>amplitude</td><td>solved from traction</td><td>\(g_i=K^{-1}_{ik}C_{kjml}\epsilon^0_{ml}n_j\)</td></tr>
+        </tbody>
+      </table>
+      <p>
+        These are Hill’s discontinuity relations for a coherent interface (R.
+        Hill, “Discontinuity relations in mechanics of solids”, <em>Progress in
+        Solid Mechanics</em> 2, 247–276, 1961; see also Mura, 1987). For the thin
+        plate, the matrix side is unstrained, so the plate’s own field equals
+        the jump and \(\mathbf b=\mathbf g\).
       </p>
       <h4>Step 3. \(B(\mathbf m)=0\iff\epsilon^0_{ss}=0\).</h4>
       <p>
@@ -617,7 +683,7 @@ nav_active: research
       </div>
       <p>
         Route B is the form you meet when the energy is written in terms of
-        the normal, as in Module II and in the thesis. The same bookkeeping,
+        the normal, as in Module III and in the thesis. The same bookkeeping,
         line versus normal, carries over to habit planes in 3-D, a planned
         extension of this laboratory. The line and the
         normal pair up as follows (angles from [10]; a direction and its
@@ -632,7 +698,7 @@ nav_active: research
       </table>
       <p>
         For t = −0.5: lines at 54.74° and 125.26°; normals at 144.74° and
-        35.26°. Module II lists its zero minima of \(B(\mathbf n)\) at these two
+        35.26°. Module III lists its zero minima of \(B(\mathbf n)\) at these two
         normal directions (sampled at 1°, so near 145° and 35°).
       </p>
       <h4>Step 6. Mohr’s circle.</h4>
@@ -663,7 +729,7 @@ nav_active: research
       <h4>Step 7. One case solved completely.</h4>
       <p>
         Take the page defaults: \(t=-0.5\), \(\epsilon_\eta=0.01\), and the
-        isotropic stiffness of Module II, \(C_{11}=3\), \(C_{12}=1\),
+        isotropic stiffness of Module III, \(C_{11}=3\), \(C_{12}=1\),
         \(C_{44}=1\) (dimensionless). We find the habit line, then compute the
         plate energy twice: at the habit normal and at a poor orientation.
       </p>
@@ -759,7 +825,7 @@ nav_active: research
         particle wanted to shrink by 0.005 but the matrix holds its length,
         so it is stretched elastically and carries tension 0.0133. The energy
         density is \(\tfrac12 e:\sigma=\tfrac12(0.005)(0.013333)=3.33\times10^{-5}
-        =\tfrac12B\). Module II’s curve gives \(B=6.67\times10^{-5}\) at normal
+        =\tfrac12B\). Module III’s curve gives \(B=6.67\times10^{-5}\) at normal
         0° and \(2.67\times10^{-4}\) at 90°, and zero at the habit normals.
       </p>
       <p>
@@ -789,7 +855,7 @@ nav_active: research
           watch P travel round the circle at twice the rate of the plate.
         </li>
         <li>
-          Set t = −0.5, then open Module II and compare its minimum normal with
+          Set t = −0.5, then open Module III and compare its minimum normal with
           α = 35.26° from Step 5.
         </li>
       </ol>
@@ -813,8 +879,260 @@ nav_active: research
       </p>
     </details>
   </section>
-  <section class="section" id="kernel">
+  <section class="section" id="eshelby">
     <span class="eyebrow">MODULE II</span>
+    <h2>Eshelby’s inclusion: what jumps at the interface.</h2>
+    <p>
+      Put the eigenstrain of Module I into an elliptical inclusion inside a
+      homogeneous matrix. Eshelby’s solution gives the uniform strain inside.
+      Pick any point on the interface to see which strain and stress components
+      are continuous there, which jump, and by how much. Then flatten the
+      ellipse into a thin plate and rotate it.
+    </p>
+    <div class="lab-controls">
+      <label for="es-eps"
+        >Eigenstrain scale εη<input id="es-eps" type="number" value="0.01" step="0.001" min="-0.05" max="0.05"
+      /></label>
+      <label for="es-t"
+        >Misfit ratio t<input id="es-t" type="number" value="-0.5" step="0.05" min="-1" max="1"
+      /></label>
+      <fieldset>
+        <legend>Homogeneous stiffness</legend>
+        <label for="es-c11">C11<input id="es-c11" type="number" value="3" step="0.1" /></label>
+        <label for="es-c12">C12<input id="es-c12" type="number" value="1" step="0.1" /></label>
+        <label for="es-c44">C44<input id="es-c44" type="number" value="1" step="0.1" /></label>
+      </fieldset>
+    </div>
+    <div class="lab-controls">
+      <label for="es-ratio"
+        >Aspect ratio b/a = <output id="es-ratio-out">0.5</output
+        ><input id="es-ratio" type="range" min="-2" max="0" step="0.01" value="-0.30"
+      /></label>
+      <label for="es-phi"
+        >Long-axis angle φ (degrees)<input id="es-phi" type="range" min="0" max="180" step="0.5" value="30"
+      /></label>
+      <label for="es-psi"
+        >Interface point (degrees round the ellipse)<input id="es-psi" type="range" min="0" max="360" step="1" value="90"
+      /></label>
+    </div>
+    <div class="lab-buttons">
+      <button data-es="circle">Circle</button
+      ><button data-es="plate">Thin plate (b/a = 0.01)</button
+      ><button data-es="habit">Align with habit line</button
+      ><button data-es="worst">Worst orientation</button
+      ><button data-es="copy">Copy εη and t from Module I</button
+      ><button data-es="iso">Isotropic stiffness</button
+      ><button data-es="aniso">A<sub>Z</sub> = 3 stiffness</button>
+    </div>
+    <p id="es-error" role="alert" class="lab-error-inline"></p>
+    <p id="es-summary" class="lab-readout" aria-live="polite"></p>
+    <div class="lab-grid">
+      <div class="lab-plot es-click" id="es-shape"></div>
+      <div class="es-tablewrap">
+        <p class="es-caption"><strong>Jump conditions at the chosen point</strong>, (s, m) frame.
+          Green rows are continuous; orange rows jump.</p>
+        <div id="es-jumps"></div>
+      </div>
+    </div>
+    <div class="lab-grid">
+      <div class="lab-plot" id="es-aspect"></div>
+      <div class="lab-plot" id="es-orient"></div>
+    </div>
+    <h3>See the whole field.</h3>
+    <div class="lab-controls">
+      <label for="es-comp"
+        >Map component<select id="es-comp">
+          <option value="sxx">σ_xx</option>
+          <option value="syy">σ_yy</option>
+          <option value="sxy" selected>σ_xy</option>
+          <option value="exx">ε_xx (total)</option>
+          <option value="eyy">ε_yy (total)</option>
+          <option value="exy">ε_xy (total)</option>
+        </select></label>
+    </div>
+    <p id="es-field-note" role="status"></p>
+    <div class="lab-grid">
+      <div class="lab-plot es-mapwrap">
+        <canvas id="es-map" width="440" height="440" aria-label="Colour map of the selected field component"></canvas>
+        <p id="es-map-legend" class="es-caption"></p>
+      </div>
+      <div>
+        <div class="lab-plot" id="es-profile-strain"></div>
+        <div class="lab-plot es-gap" id="es-profile-stress"></div>
+      </div>
+    </div>
+    <details class="lab-insight">
+      <summary>Why did this happen?</summary>
+      <p id="es-why"></p>
+    </details>
+    <details>
+      <summary>Physics: the inclusion, its interface and its limits</summary>
+      <h4>Eshelby’s uniform interior</h4>
+      <p>
+        Module I described Eshelby’s cut, force back, weld and release
+        experiment. Its remarkable result is that for an ellipse (an ellipsoid
+        in 3-D) in a homogeneous infinite matrix, the constrained strain inside
+        is <em>uniform</em>, whatever the aspect ratio and orientation. The
+        inclusion also turns rigidly by a small angle ω. The panel on the left
+        shows three outlines: the hole, the shape the inclusion would take if it
+        were free, and the shape it actually takes.
+      </p>
+      <h4>The interface is local</h4>
+      <p>
+        At every point of the interface the two jump conditions of Module I
+        hold, with the local normal \(\mathbf m\) and tangent \(\mathbf s\):
+        welding keeps the displacement continuous, so \(\epsilon_{ss}\) is
+        continuous; force balance keeps the traction \(\sigma\mathbf m\)
+        continuous, so \(\sigma_{sm}\) and \(\sigma_{mm}\) are continuous. The
+        other components, \(\epsilon_{sm}\), \(\epsilon_{mm}\) and
+        \(\sigma_{ss}\), jump. The size of the jump depends only on
+        \(\mathbf m\), the eigenstrain and the stiffness. It does not depend on
+        the inclusion’s shape. The shape only sets the uniform field inside;
+        the field just outside is that interior field minus the jump.
+      </p>
+      <h4>From circle to thin plate</h4>
+      <p>
+        For a circle the matrix pushes back from every direction, and the
+        interior keeps a mix of all components. As the ellipse flattens, its
+        long faces dominate. The matrix beside those faces becomes unstrained,
+        so the interior field becomes exactly the jump across the faces: the
+        thin plate of Module I. Its energy per unit area approaches
+        \(\tfrac12B(\mathbf m)\). If the plate lies along a habit line, that
+        limit is zero; otherwise a remnant stress \(\sigma_{ss}\) stays trapped
+        along the plate.
+      </p>
+      <h4>Orientation</h4>
+      <p>
+        Rotating the ellipse changes which direction carries the long
+        interface. For a thin plate the energy follows \(\tfrac12B(\mathbf m)\)
+        and is lowest at the habit orientation. A rounder inclusion averages
+        over many normals, so its energy depends less on orientation.
+      </p>
+    </details>
+    <details>
+      <summary>Mathematics: interior field, jumps and limits</summary>
+      <h4>Step 1. The interior displacement gradient.</h4>
+      <p>
+        Let the ellipse have semi-axes a (along the angle φ) and b. For a
+        direction n write \(Q(\mathbf n)_{ik}=C_{ijkl}n_jn_l\),
+        \(\sigma^0=C:\epsilon^0\) and
+      </p>
+      <div class="formula-box">
+        \[\mathbf g(\mathbf n)=Q(\mathbf n)^{-1}\,\sigma^0\mathbf n .\]
+      </div>
+      <p>
+        The Fourier solution of equilibrium gives the total strain of any
+        inclusion as \(\hat\epsilon(\mathbf k)=\operatorname{sym}\big(\mathbf g(\hat{\mathbf k})\otimes\hat{\mathbf k}\big)\,\hat\theta(\mathbf k)\),
+        where \(\theta\) is 1 inside and 0 outside. For an ellipse the
+        transform of θ depends on \(\mathbf k\) only through one elliptic
+        radius, and the inverse transform at any interior point reduces to an
+        average over directions (Mura, §11):
+      </p>
+      <div class="formula-box">
+        \[D=\nabla\mathbf u^{\rm in}=\frac1{2\pi}\int_0^{2\pi}\mathbf g(\mathbf n)\otimes\mathbf n\,d\vartheta,\qquad
+        \mathbf n\parallel R(\varphi)\begin{pmatrix}\cos\vartheta/a\\ \sin\vartheta/b\end{pmatrix}.\]
+      </div>
+      <p>From D follow the interior strain, rotation, stress and energy:</p>
+      <div class="formula-box">
+        \[\epsilon^c=\operatorname{sym}D=S:\epsilon^0,\qquad
+        \omega=\tfrac12(D_{yx}-D_{xy}),\qquad
+        \sigma^{\rm in}=C:(\epsilon^c-\epsilon^0),\qquad
+        w=-\tfrac12\,\sigma^{\rm in}:\epsilon^0 .\]
+      </div>
+      <p>
+        w is Eshelby’s elastic energy per unit inclusion area (matrix energy
+        included). The integral reproduces Mura’s closed-form isotropic
+        Eshelby tensor to machine precision, and it works unchanged for the
+        anisotropic cubic law.
+      </p>
+      <h4>Step 2. The jump at a boundary point.</h4>
+      <p>
+        At a point with outward normal \(\mathbf m\), Hadamard’s condition gives
+        \([\![\epsilon]\!]=\operatorname{sym}(\mathbf g\otimes\mathbf m)\) for
+        some \(\mathbf g\), and traction continuity
+        \([\![\sigma]\!]\mathbf m=\mathbf 0\) with
+        \([\![\sigma]\!]=C:([\![\epsilon]\!]-\epsilon^0)\) gives
+        \(Q(\mathbf m)\mathbf g=\sigma^0\mathbf m\). So
+      </p>
+      <div class="formula-box">
+        \[\epsilon^{\rm out}=\epsilon^c-\operatorname{sym}\big(\mathbf g(\mathbf m)\otimes\mathbf m\big),\qquad
+        \sigma^{\rm out}=C:\epsilon^{\rm out},\qquad
+        [\![\sigma]\!]=C:\big(\operatorname{sym}(\mathbf g\otimes\mathbf m)-\epsilon^0\big).\]
+      </div>
+      <p>
+        The jump is the thin-plate field of Module I for the normal
+        \(\mathbf m\): it is fixed locally, independent of shape. The table
+        rotates each tensor into the \((\mathbf s,\mathbf m)\) frame with the
+        sandwich rule of Module I, Step 1.
+      </p>
+      <h4>Step 3. The two limits.</h4>
+      <p>
+        <strong>Thin plate</strong> (\(b/a\to0\)): \(\mathbf n\) points along
+        \(\pm\mathbf m_0\), the normal of the long faces, for almost every
+        \(\vartheta\). Then \(D\to\mathbf g(\mathbf m_0)\otimes\mathbf m_0\), the
+        field outside the faces vanishes, and \(w\to\tfrac12B(\mathbf m_0)\).
+        <strong>Circle</strong> (\(b=a\)): \(\mathbf n\) is spread evenly; for
+        isotropic stiffness and a dilatation \(\epsilon^0=\epsilon\,I\) (plane
+        strain) the interior strain is \(\epsilon^c=\epsilon\,I/[2(1-\nu)]\).
+      </p>
+      <h4>Step 4. The field maps.</h4>
+      <p>
+        The maps solve the same equation on a periodic 256 × 256 cell:
+        \(\hat\epsilon(\mathbf k)=\operatorname{sym}(\mathbf g(\hat{\mathbf k})\otimes\hat{\mathbf k})\hat\theta(\mathbf k)\)
+        for \(\mathbf k\ne0\), mean total strain zero, and
+        \(\sigma=C:(\epsilon-\theta\epsilon^0)\). The profiles plot this
+        numerical field along \(\mathbf m\) through the chosen point, with the
+        exact inside and outside values of Step 2 dotted.
+      </p>
+    </details>
+    <details>
+      <summary>Try it yourself</summary>
+      <ol>
+        <li>
+          Press “Circle”, set t = 1 (pure dilatation) and click round the
+          boundary. The jump table changes with m, but the interior summary does
+          not: the interior is uniform.
+        </li>
+        <li>
+          Set t = −0.5, press “Thin plate” and “Align with habit line”. The
+          energy drops to nearly zero and \(\sigma_{ss}\) on the long face
+          vanishes. Now press “Worst orientation”.
+        </li>
+        <li>
+          Drag the aspect-ratio slider from 1 to 0.01 and watch w approach the
+          dashed thin-plate limit.
+        </li>
+        <li>
+          Choose the map component \(\sigma_{xy}\) and move the interface point.
+          In the profiles, the green curves pass straight through the interface
+          while the orange ones step.
+        </li>
+        <li>
+          Press “A<sub>Z</sub> = 3 stiffness”. The jump rule is unchanged, but the
+          energy-orientation curve changes shape.
+        </li>
+      </ol>
+    </details>
+    <details>
+      <summary>Computation</summary>
+      <p>
+        The interior field is the angular integral of Step 1 with 4096 midpoint
+        samples (2048 for the sweeps), which resolves aspect ratios down to
+        0.01. Jumps use Step 2 exactly. The energy sweeps recompute Step 1 for
+        41 aspect ratios and 91 orientations.
+      </p>
+      <p>
+        The field maps use an FFT on a periodic unit cell with an inclusion of
+        semi-axis a = 0.16, a 4 × 4 supersampled indicator, and zero mean total
+        strain. Periodic images and the finite area fraction shift the interior
+        values by a few per cent relative to the infinite-matrix solution, and
+        the sharp interface shows small Gibbs ripples. The maps use b/a ≥ 0.08,
+        the thinnest plate the grid resolves.
+      </p>
+    </details>
+  </section>
+  <section class="section" id="kernel">
+    <span class="eyebrow">MODULE III</span>
     <h2>The stiffness is not the energy.</h2>
     <p>
       Keep the eigenstrain from Module I and change the elastic constants. The
@@ -951,10 +1269,10 @@ nav_active: research
     </details>
   </section>
   <section class="section" id="pairs">
-    <span class="eyebrow">MODULE III</span>
+    <span class="eyebrow">MODULE IV</span>
     <h2>Two phases, three kernel terms.</h2>
     <p>
-      β and γ sit in an α matrix with the homogeneous stiffness from Module II.
+      β and γ sit in an α matrix with the homogeneous stiffness from Module III.
       Each phase can have a different eigenstrain. Compare the self terms and
       cross term before looking at a particle pair.
     </p>
@@ -998,6 +1316,7 @@ nav_active: research
       ><button data-preset="sandeep">Sandeep thesis example</button>
     </div>
     <p id="pair-kernels-result" class="lab-readout"></p>
+    <div id="sandeep-check" class="sd-check" hidden></div>
     <div class="lab-grid">
       <div class="lab-plot" id="pair-kernels-cart"></div>
       <div class="lab-plot" id="pair-kernels-polar"></div>
@@ -1046,7 +1365,7 @@ nav_active: research
       <p>
         Changing one misfit sign reverses the cross coupling because it is
         bilinear in the two eigenstrains. Both self terms remain nonnegative.
-        However, Bβγ(n) is a reciprocal-space coefficient. To obtain real-space
+        However, \(B_{\beta\gamma}(\mathbf n)\) is a reciprocal-space coefficient. To obtain real-space
         interaction energy at separation R, we must also include particle shape
         spectra and Fourier phases. Single-particle energy and pair-interaction
         energy are different quantities.
@@ -1061,7 +1380,7 @@ nav_active: research
         k\cdot\mathbf R).\]
       </div>
       <p>
-        The k = 0 coefficient in this clamped periodic calculation is εβ:C:εγ.
+        The \(\mathbf k=0\) coefficient in this clamped periodic calculation is \(\epsilon^\beta:C:\epsilon^\gamma\).
         The square contains identical circular Gaussian profiles h, with width
         0.045 of the box. Each Fourier mode contributes; the kernel is not
         simply evaluated at the separation angle.
@@ -1078,17 +1397,18 @@ nav_active: research
       <p>
         <strong>Thesis reference:</strong> Sandeep Sugathan, Chapter 5, Tables
         5.1–5.2 (p. 116), Eq. (5.1) and Fig. 5.18 (p. 133), discussion p. 132.
-        The X₂ example has G = 2000, ν = 1/3, A<sub>Z</sub> = 3 and misfits
-        ±0.01. Eqs. (3.27–3.29) give C11 = 7000, C12 = 5000, C44 = 3000. The
-        validated self values are 0.342857 on [10]/[01] and 0.8 on diagonals;
-        cross values are −0.342857 and −0.8. The separate two-Gaussian
+        The X<sub>2</sub> example has G = 2000, ν = 1/3, A<sub>Z</sub> = 3 and
+        misfits ±0.01. Eqs. (3.27–3.29) give \(C_{11}=7000\), \(C_{12}=5000\),
+        \(C_{44}=3000\). Press “Sandeep thesis example” to see the comparison
+        table: the self terms are 0.342857 along ⟨10⟩ and 0.8 along ⟨11⟩, and
+        the cross term is their negative. The separate two-Gaussian
         experiment is a teaching calculation, not a reproduction of the thesis’s
         full phase-field microstructure.
       </p>
     </details>
   </section>
   <section class="section" id="contrast">
-    <span class="eyebrow">MODULE IV</span>
+    <span class="eyebrow">MODULE V</span>
     <h2>Soft or hard: rotate a fixed plate.</h2>
     <p>
       For this prescribed thin plate, what orientation minimises the elastic
@@ -1157,8 +1477,8 @@ nav_active: research
       /></label>
     </div>
     <p>
-      The selected phase uses its ε and t from Module III. Its constants here
-      are independent of Module II.
+      The selected phase uses its ε and t from Module IV. Its constants here
+      are independent of Module III.
     </p>
     <div class="lab-buttons">
       <button data-preset="soft">Soft precipitate</button
@@ -1370,11 +1690,12 @@ nav_active: research
       <em
         >A Phase-Field Study of Elastic Stress Effects on Phase Separation in
         Ternary Alloy Systems</em
-      >, IIT Hyderabad, June 2019, Chapters 3 and 5 as cited in Module III.
+      >, IIT Hyderabad, June 2019, Chapters 3 and 5 as cited in Module IV.
       <a href="/research/formulation/appendices/"
         >Read the elastic-kernel and driving-force derivations.</a
       >
     </p>
   </section>
 </div>
-<script type="module" src="/assets/js/elastic-lab/ui.mjs?v=20260924a"></script>
+<script type="module" src="/assets/js/elastic-lab/ui.mjs?v=20260924c"></script>
+<script type="module" src="/assets/js/elastic-lab/eshelby-ui.mjs?v=20260924c"></script>
