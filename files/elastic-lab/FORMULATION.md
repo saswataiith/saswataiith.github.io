@@ -7,6 +7,13 @@ Module I: n(theta) is an arbitrary measurement direction. epsilon_nn/epsilon_eta
 
 A zero tangential strain permits a rank-one displacement-gradient jump in the 2-D small-strain setting: epsilon0=sym(a tensor m), after allowing a rigid rotation. This is the compatibility argument for an ideal infinite thin plate, not an assertion that every zero normal-strain direction has zero total elastic energy. Finite plates and interfaces add constraints and costs.
 
+## Module II: Eshelby's elliptical inclusion and jump conditions
+Homogeneous stiffness C (in-plane cubic law, plane strain), eigenstrain epsilon0 uniform inside an ellipse with semi-axes a (long axis at angle phi from [10]) and b. With Q_ik(n)=C_ijkl n_j n_l, sigma0=C:epsilon0 and g(n)=Q(n)^-1 sigma0 n, the interior displacement gradient is D=(1/2pi) int_0^2pi g(n) (x) n dtheta with n parallel to R(phi)(cos theta/a, sin theta/b) (Mura, Micromechanics of Defects in Solids, section 11). Interior strain eps_c=sym D (=S:epsilon0), rotation omega=(D_yx-D_xy)/2, stress sigma_in=C:(eps_c-epsilon0), energy per unit inclusion area w=-sigma_in:epsilon0/2. Midpoint rule, 4096 samples (2048 in sweeps); b/a >= 0.01.
+
+At a boundary point with outward normal m: eps_out=eps_c-sym(g(m) (x) m), sigma_out=C:eps_out. Hence [[eps_ss]]=0 and [[sigma]]m=0 exactly; eps_sm, eps_mm and sigma_ss jump, and the jump depends only on m, epsilon0 and C. Thin-plate limit b/a->0: D->g(m0) (x) m0 and w->B(m0)/2. Checks: the integral reproduces Mura's isotropic plane-strain elliptic-cylinder Eshelby tensor to machine precision; thin plate at b/a=0.002 matches B/2; interface conditions hold to 1e-17.
+
+Field maps: periodic unit cell, 256^2, a=0.16, 4x4 supersampled indicator theta, eps_hat(k)=sym(g(k^) (x) k^) theta_hat(k) for k!=0 (Nyquist modes dropped), mean total strain zero, sigma=C:(eps-theta epsilon0). Periodic images and the area fraction shift interior values by a few per cent from the infinite-matrix values; b/a is clamped to >= 0.08 for the maps.
+
 ## Homogeneous kernel: Appendix A
 Primary derivation: Saswata’s Appendix A, Eqs. A.1–A.12, pp. 107–111. The elastic driving force follows Appendix B, Eqs. B.1–B.12, pp. 112–114, with the selected field index kept free. See SOURCE-AUDIT.md for the derivation and notation checks.
 
