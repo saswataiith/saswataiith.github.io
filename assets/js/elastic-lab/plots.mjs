@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-import { minima, mohrState } from "./math.mjs?v=20260922c";
-import { mathLabel } from "./math-render.mjs?v=20260922c";
+import { minima, mohrState } from "./math.mjs?v=20260924a";
+import { mathLabel } from "./math-render.mjs?v=20260924a";
 export const colors = ["#226d9b", "#bd4d25", "#796411"];
 export const fmt = (x) =>
   Math.abs(x) < 1e-12
@@ -41,13 +41,17 @@ export function cartesian(series, title, selected = null) {
     Y = (v) => 270 - ((v - ymin) / (ymax - ymin)) * 215;
   let body =
     text(20, 24, title) + line(58, 55, 58, 270) + line(58, 270, 400, 270);
-  for (let tick = 0; tick <= 4; tick++) {
-    const a = (tick * Math.PI) / 4,
-      v = ymin + ((ymax - ymin) * tick) / 4;
+  for (let tick = 0; tick <= 4; tick++)
+    body += text(X((tick * Math.PI) / 4) - 9, 290, String(tick * 45));
+  // Round-number value ticks: 1, 2 or 5 times a power of ten.
+  const raw = (ymax - ymin) / 4,
+    power = 10 ** Math.floor(Math.log10(raw)),
+    step = [1, 2, 5, 10].map((m) => m * power).find((m) => m >= raw);
+  for (let v = Math.ceil(ymin / step) * step; v <= ymax; v += step) {
+    const clean = Math.abs(v) < step * 1e-9 ? 0 : Number(v.toPrecision(12));
     body +=
-      text(X(a) - 9, 290, String(tick * 45)) +
-      text(4, Y(v) + 4, fmt(v)) +
-      line(58, Y(v), 400, Y(v), 'class="gridline"');
+      text(4, Y(clean) + 4, fmt(clean)) +
+      line(58, Y(clean), 400, Y(clean), 'class="gridline"');
   }
   if (ymin <= 0 && ymax >= 0)
     body += line(58, Y(0), 400, Y(0), 'class="zero-line"');
@@ -122,8 +126,8 @@ export function mohr(t, angle, stage = 4) {
     line(cx, 47, cx, 283);
   b +=
     mathLabel(
-      325,
-      188,
+      350,
+      cy + 40,
       String.raw`\epsilon^0_{nn}/\epsilon_\eta`,
       "normal strain",
     ) +
@@ -138,26 +142,28 @@ export function mohr(t, angle, stage = 4) {
   b += line(X(t), cy, X(1), cy, 'stroke="#226d9b" stroke-width="3"');
   b += point(t, 0, "#226d9b") + point(1, 0, "#226d9b");
   b += mathLabel(
-    X(t) - 17,
-    cy - 10,
+    X(t) - 42,
+    cy - 9,
     String.raw`\epsilon_2/\epsilon_\eta`,
     "second principal strain",
   );
   if (t !== 1)
     b += mathLabel(
-      X(1) - 14,
-      cy - 10,
+      X(1) + 6,
+      cy - 9,
       String.raw`\epsilon_1/\epsilon_\eta`,
       "first principal strain",
     );
   if (stage >= 2) {
     b += `<circle cx="${X(centre)}" cy="${cy}" r="${scale * radius}" fill="none" stroke="#226d9b" stroke-width="2.5"/>`;
+    // Small circles leave no room for c and R; the caption below gives both.
+    const roomy = scale * radius > 45;
     b +=
       point(centre, 0, "#183b40", 3) +
-      mathLabel(X(centre) - 6, cy + 36, "c", "centre");
+      (roomy ? mathLabel(X(centre) - 16, cy - 8, "c", "centre") : "");
     b +=
       line(X(centre), cy, X(centre), Y(radius), 'stroke-dasharray="4 3"') +
-      mathLabel(X(centre) + 7, Y(radius / 2), "R", "radius");
+      (roomy ? mathLabel(X(centre) + 7, Y(radius / 2), "R", "radius") : "");
   }
   if (stage >= 3) {
     b += line(
@@ -247,12 +253,12 @@ export function sketch(
     b +=
       text(212 - dx, 175 - dy, phase[0]) + text(212 + dx, 175 + dy, phase[1]);
   } else {
-    b += `<g transform="translate(220 170) rotate(${(-angle * 180) / Math.PI})"><ellipse rx="125" ry="22" fill="#b4e2cf" stroke="#267c70" stroke-width="2"/><line x1="-140" y1="0" x2="140" y2="0" stroke="#267c70"/><line x1="0" y1="0" x2="0" y2="-95" stroke="#bd4d25" stroke-width="3"/><path d="M -5 -84 L 0 -95 L 5 -84" fill="none" stroke="#bd4d25"/></g>`;
-    b += text(20, 294, "Green: line tangent s. Orange: normal m.");
+    b += `<g transform="translate(220 170) rotate(${(-angle * 180) / Math.PI})"><ellipse rx="100" ry="18" fill="#b4e2cf" stroke="#267c70" stroke-width="2"/><line x1="-112" y1="0" x2="112" y2="0" stroke="#267c70" stroke-width="2"/><line x1="0" y1="0" x2="0" y2="-80" stroke="#bd4d25" stroke-width="3"/><path d="M -5 -69 L 0 -80 L 5 -69" fill="none" stroke="#bd4d25" stroke-width="2"/></g>`;
+    b += text(20, 304, "Green: line tangent s. Orange: normal m.");
   }
   b += text(
     20,
-    320,
+    326,
     `Angle from [10]: ${((angle * 180) / Math.PI).toFixed(1)}°`,
   );
   return svg(pair ? "Two-particle orientation" : "Thin plate orientation", b);
