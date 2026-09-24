@@ -9,3 +9,11 @@
 .lab .lab-check input{width:auto;padding:0;margin:0}
 .lab .formula-box{max-width:100%;overflow-x:auto;overflow-y:hidden}
 .lab .formula-box mjx-container[display=true]{margin:.6em 0}
+
+.lab .lab-table{border-collapse:collapse;margin:16px 0;font-variant-numeric:tabular-nums}
+.lab .lab-table th,.lab .lab-table td{border:1px solid #dce4e1;padding:6px 12px;text-align:left}
+.lab .lab-table th{background:#edf3ef}
+.lab details{overflow-x:auto}
+.lab .lab-fig{margin:20px 0;padding:10px;background:#fff;border:1px solid #dce4e1;border-radius:8px}
+.lab .lab-fig>svg{display:block;width:100%;height:auto}
+.lab .lab-fig figcaption{font-size:13.5px;line-height:1.6;margin-top:8px;max-width:980px}
