@@ -10,6 +10,8 @@ Numerical and UI modules are in `assets/js/elastic-lab/`:
 - `fft.mjs`: radix-2 FFT, derivatives and acoustic preconditioner.
 - `solver.mjs`: real-space heterogeneous equilibrium solve, independent homogeneous Fourier energy and finite-profile pair energy.
 - `worker.mjs`: cancellable plate sweeps off the main thread.
+- `eshelby.mjs`: Module II Eshelby interior field, interface jumps, thin-plate limit and periodic FFT field maps.
+- `eshelby-ui.mjs`: Module II controls, jump table, energy sweeps, field maps and profiles.
 - `plots.mjs`: accessible SVG diagrams and signed-axis plotting.
 - `state.mjs`: parameters and input validation.
 - `ui.mjs`: interactions, explanations and downloads.
