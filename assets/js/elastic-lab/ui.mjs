@@ -11,8 +11,8 @@ import {
   minima,
   zener,
   moduli,
-} from "./math.mjs?v=20260922c";
-import { pairCurve } from "./solver.mjs?v=20260922c";
+} from "./math.mjs?v=20260924a";
+import { pairCurve } from "./solver.mjs?v=20260924a";
 import {
   cartesian,
   polar,
@@ -20,7 +20,7 @@ import {
   sketch,
   strainShape,
   fmt,
-} from "./plots.mjs?v=20260922c";
+} from "./plots.mjs?v=20260924a";
 import {
   element,
   value,
@@ -28,13 +28,13 @@ import {
   setStiffness,
   read,
   plateSettings,
-} from "./state.mjs?v=20260922c";
+} from "./state.mjs?v=20260924a";
 import {
   clearMath,
   renderMath,
   mathematicalText,
   texNumber,
-} from "./math-render.mjs?v=20260922c";
+} from "./math-render.mjs?v=20260924a";
 const set = (id, text) => {
   const target = element(id);
   clearMath(target);
@@ -52,6 +52,12 @@ const locations = (m) =>
   m.flat
     ? "all directions (flat curve)"
     : m.global.map((p) => degrees(p.angle)).join(", ");
+// While following, θ sits on the first zero-extension root of the current t.
+function followHabit() {
+  if (!element("follow-habit").checked) return;
+  const r = roots(value("t"));
+  if (r.length) element("theta").value = ((r[0] * 180) / Math.PI).toFixed(4);
+}
 let worker = null,
   scanTimer = null,
   plateData = null,
@@ -75,7 +81,8 @@ function renderHabit(s) {
   const circle = mohrState(s.t, s.theta);
   const readout = element("mohr-readout");
   clearMath(readout);
-  readout.textContent = String.raw`\(c=(1+t)/2=${fmt(circle.centre)},\quad R=|1-t|/2=${fmt(circle.radius)}.\) At the selected angle: \(\epsilon^0_{nn}/\epsilon_\eta=${texNumber(fmt(circle.normal))},\quad\epsilon^0_{nq}/\epsilon_\eta=${texNumber(fmt(circle.shear))}.\)`;
+  // Separate inline pieces so the readout can wrap on narrow screens.
+  readout.textContent = String.raw`Centre \(c=(1+t)/2=${fmt(circle.centre)}\), radius \(R=|1-t|/2=${fmt(circle.radius)}\). At the selected angle: \(\epsilon^0_{nn}/\epsilon_\eta=${texNumber(fmt(circle.normal))}\), \(\epsilon^0_{nq}/\epsilon_\eta=${texNumber(fmt(circle.shear))}\).`;
   renderMath(readout);
   draw(
     "normal-strain",
@@ -222,7 +229,7 @@ function scan() {
     draw("plate-cart", "");
     draw("plate-polar", "");
     plateSketch();
-    worker = new Worker(new URL("./worker.mjs?v=20260922c", import.meta.url), {
+    worker = new Worker(new URL("./worker.mjs?v=20260924a", import.meta.url), {
       type: "module",
     });
     element("stop-plate").disabled = false;
@@ -290,12 +297,21 @@ function queueScan() {
 }
 element("t-slider").addEventListener("input", () => {
   element("t").value = value("t-slider");
-  renderHabit(read());
-  renderKernels(read());
+  followHabit();
+  try {
+    const s = read();
+    renderHabit(s);
+    renderKernels(s);
+    set("lab-error", "");
+  } catch (error) {
+    set("lab-error", error.message + " Plots retain the last valid calculation.");
+  }
 });
 for (const id of ["t", "epsilon", "theta"])
   element(id).addEventListener("input", () => {
     try {
+      if (id === "theta") element("follow-habit").checked = false;
+      if (id === "t") followHabit();
       const s = read();
       renderHabit(s);
       renderKernels(s);
@@ -311,6 +327,11 @@ for (const input of document.querySelectorAll(
   "#elastic-lab input,#elastic-lab select",
 ))
   input.addEventListener("change", () => {
+    if (input.id === "follow-habit") {
+      followHabit();
+      render();
+      return;
+    }
     if (input.id === "mohr-step") {
       renderHabit(read());
       return;
@@ -340,8 +361,7 @@ for (const button of document.querySelectorAll("[data-preset]"))
       const preset = button.dataset.preset;
       if (["minus", "zero", "positive"].includes(preset)) {
         element("t").value = { minus: -1, zero: 0, positive: 0.5 }[preset];
-        const r = roots(value("t"));
-        if (r.length) element("theta").value = (r[0] * 180) / Math.PI;
+        followHabit();
       }
       if (preset === "isotropic") {
         const c = stiffness("c");
@@ -377,13 +397,15 @@ for (const button of document.querySelectorAll("[data-preset]"))
 element("find-habit").addEventListener("click", () => {
   const target = roots(value("t"))[0];
   if (target === undefined) return;
+  element("follow-habit").checked = false;
   const start = value("theta"),
     end = (target * 180) / Math.PI,
     time = performance.now(),
     duration = matchMedia("(prefers-reduced-motion: reduce)").matches ? 0 : 650;
   function frame(now) {
     const f = duration ? Math.min(1, (now - time) / duration) : 1;
-    element("theta").value = start + (end - start) * f;
+    element("theta").value = (start + (end - start) * f).toFixed(4);
+    if (f >= 1) element("follow-habit").checked = true;
     renderHabit(read());
     if (f < 1) requestAnimationFrame(frame);
   }
@@ -425,6 +447,7 @@ fetch("/files/elastic-lab/validation-results.json")
     ),
   )
   .catch(() => {});
+followHabit();
 render();
 plateSketch();
 scan();
