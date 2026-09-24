@@ -17,3 +17,19 @@
 .lab .lab-fig{margin:20px 0;padding:10px;background:#fff;border:1px solid #dce4e1;border-radius:8px}
 .lab .lab-fig>svg{display:block;width:100%;height:auto}
 .lab .lab-fig figcaption{font-size:13.5px;line-height:1.6;margin-top:8px;max-width:980px}
+.lab .es-tablewrap{padding:10px 14px;overflow-x:auto;background:#fff;border:1px solid #dce4e1;border-radius:8px;min-width:0}
+.lab .es-table{width:100%;font-size:13.5px}
+.lab .es-table tr.es-cont td{background:#e8f4ee}
+.lab .es-table tr.es-jump td{background:#fbeee6}
+.lab .es-caption{font-size:13px;line-height:1.55;margin:6px 4px}
+.lab .es-mapwrap{padding:8px}
+.lab .es-mapwrap canvas{display:block;width:100%;height:auto;aspect-ratio:1/1;border-radius:4px}
+.lab .es-gap{margin-top:22px}
+.lab .es-click svg{cursor:crosshair}
+.lab .es-bar{display:inline-block;width:70px;height:10px;vertical-align:middle;border-radius:2px;background:linear-gradient(90deg,#226d9b,#fff,#bd4d25)}
+.lab .lab-error-inline:empty{display:none}
+.lab .lab-error-inline{padding:12px;color:#8f250b;background:#fff0e9}
+.lab output{font-weight:600}
+.lab .sd-check{margin:18px 0;padding:14px 18px;background:#fff;border:1px solid #b5c7be;border-left:4px solid #267c70;border-radius:6px;overflow-x:auto}
+.lab .sd-check .sd-title,.lab .sd-check .sd-note{margin:6px 0;max-width:980px;font-size:14px;line-height:1.6}
+.lab .sd-check td:last-child{color:#267c70;font-weight:600}
