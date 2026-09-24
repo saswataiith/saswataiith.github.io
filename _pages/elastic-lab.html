@@ -115,69 +115,701 @@ nav_active: research
       <p id="habit-why"></p>
     </details>
     <details>
-      <summary>Physics</summary>
+      <summary>Physics: eigenstrain, Eshelby’s inclusion and the habit line</summary>
+      <h4>Eigenstrain</h4>
       <p>
-        For t &lt; 0 one principal direction expands and the other contracts. An
-        intermediate direction can have zero extension. At t = −1 the magnitudes
-        are equal, so the zero-extension lines lie at 45° and 135°. At t = 0,
-        the y-axis is already unextended.
+        Eigenstrain is the stress-free transformation strain \(\epsilon^0\).
+        When a region transforms with no external constraint, its stress stays
+        zero:
+      </p>
+      <div class="formula-box">
+        \[\sigma=C:(\epsilon-\epsilon^0)=0,\]
+      </div>
+      <p>
+        where \(C\) is the elastic stiffness tensor and \(\epsilon\) the total
+        strain. In the free region the total strain equals the transformation
+        strain, \(\epsilon=\epsilon^0\). Examples are the lattice-misfit
+        dilatation of a precipitate, \(\epsilon^0_{ij}=\delta_{ij}(a_p-a_m)/a_m\),
+        thermal expansion, and the spontaneous distortion of a lattice during a
+        phase change. In this module
+        \(\epsilon^0=\epsilon_\eta\,\mathrm{diag}(1,t)\) in the crystal axes:
+        principal strains \(\epsilon_1=\epsilon_\eta\) along [10] and
+        \(\epsilon_2=t\,\epsilon_\eta\) along [01].
+      </p>
+      <h4>Eshelby’s four steps</h4>
+      <p>
+        To find the stress when the transforming region is constrained by a
+        surrounding elastic matrix, Eshelby (1957) used a thought experiment:
+      </p>
+      <ol>
+        <li>
+          <strong>Cut</strong> the region Ω (the inclusion) out of the matrix
+          and let it undergo its stress-free transformation \(\epsilon^0\).
+        </li>
+        <li>
+          Apply surface tractions to <strong>force</strong> it back into its
+          original hole. This imposes elastic strain \(-\epsilon^0\), i.e. stress
+          \(-C:\epsilon^0\).
+        </li>
+        <li><strong>Weld</strong> the interface back together.</li>
+        <li>
+          <strong>Release</strong> the tractions. The inclusion and the matrix
+          relax together to mechanical equilibrium.
+        </li>
+      </ol>
+      <p>
+        The relaxation leaves a constrained total strain \(\epsilon^c\) inside
+        the inclusion. The elastic strain is the difference between the
+        constrained and the stress-free geometry, and only it stores energy:
+      </p>
+      <div class="formula-box">
+        \[e=\epsilon^c-\epsilon^0,\qquad \sigma=C:e,\qquad
+        w=\tfrac12\,e:C:e\ \ \text{(energy per unit volume)} .\]
+      </div>
+      <p>
+        For an ellipsoidal inclusion (an ellipse in 2-D) in a homogeneous
+        infinite matrix, Eshelby proved that \(\epsilon^c\) is uniform and linear
+        in the eigenstrain, \(\epsilon^c=S:\epsilon^0\). The Eshelby tensor S
+        depends on the inclusion’s shape and orientation and on the elastic
+        constants. This is where orientation dependence comes from: the same
+        \(\epsilon^0\) costs different energy in differently oriented
+        inclusions.
+      </p>
+      <figure class="lab-fig">
+        <svg viewBox="0 0 880 215" role="img" aria-label="Eshelby's four steps: cut and transform, force back, weld, release" style="font-family:'DM Sans',system-ui,sans-serif"><defs><marker id="f1o" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#bd4d25"/></marker><marker id="f1g" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#267c70"/></marker><marker id="f1k" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#60717a"/></marker><marker id="f1b" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#226d9b"/></marker></defs><rect x="10" y="18" width="207" height="164" rx="8" fill="#fbfcfb" stroke="#dce4e1"/><text x="20" y="38" font-size="13.5" fill="#17313a" text-anchor="start" font-weight="bold">1. Cut and transform</text><rect x="227" y="18" width="207" height="164" rx="8" fill="#fbfcfb" stroke="#dce4e1"/><text x="237" y="38" font-size="13.5" fill="#17313a" text-anchor="start" font-weight="bold">2. Force it back</text><rect x="444" y="18" width="207" height="164" rx="8" fill="#fbfcfb" stroke="#dce4e1"/><text x="454" y="38" font-size="13.5" fill="#17313a" text-anchor="start" font-weight="bold">3. Weld</text><rect x="661" y="18" width="207" height="164" rx="8" fill="#fbfcfb" stroke="#dce4e1"/><text x="671" y="38" font-size="13.5" fill="#17313a" text-anchor="start" font-weight="bold">4. Release</text><rect x="20" y="50" width="92" height="104" fill="#e4ebe7" stroke="#b5c7be"/><circle cx="66" cy="102" r="30" fill="#fbfcfb" stroke="#60717a" stroke-dasharray="4 3"/><text x="66" y="106" font-size="11" fill="#60717a" text-anchor="middle" font-weight="normal">hole</text><ellipse cx="165" cy="110" rx="40" ry="22" fill="#b4e2cf" stroke="#267c70" stroke-width="2"/><text x="165" y="115" font-size="14" fill="#17313a" text-anchor="middle" font-weight="normal" font-style="italic">ε⁰</text><line x1="122" y1="78" x2="146" y2="90" stroke="#60717a" stroke-width="1.6" marker-end="url(#f1k)"/><text x="113.5" y="178" font-size="12" fill="#17313a" text-anchor="middle" font-weight="normal">free: ε = ε⁰, σ = 0</text><ellipse cx="330.5" cy="110" rx="40" ry="22" fill="none" stroke="#60717a" stroke-dasharray="4 3"/><circle cx="330.5" cy="110" r="30" fill="#b4e2cf" stroke="#267c70" stroke-width="2"/><line x1="260.5" y1="110" x2="296.5" y2="110" stroke="#bd4d25" stroke-width="2.2" marker-end="url(#f1o)"/><line x1="400.5" y1="110" x2="364.5" y2="110" stroke="#bd4d25" stroke-width="2.2" marker-end="url(#f1o)"/><line x1="330.5" y1="82" x2="330.5" y2="60" stroke="#bd4d25" stroke-width="2.2" marker-end="url(#f1o)"/><line x1="330.5" y1="138" x2="330.5" y2="160" stroke="#bd4d25" stroke-width="2.2" marker-end="url(#f1o)"/><text x="330.5" y="178" font-size="12" fill="#17313a" text-anchor="middle" font-weight="normal">tractions impose −ε⁰</text><rect x="454" y="50" width="187" height="104" fill="#e4ebe7" stroke="#b5c7be"/><circle cx="547.5" cy="110" r="30" fill="#b4e2cf" stroke="#267c70" stroke-width="2.4"/><line x1="489.5" y1="110" x2="513.5" y2="110" stroke="#bd4d25" stroke-width="1.8" marker-end="url(#f1o)"/><line x1="605.5" y1="110" x2="581.5" y2="110" stroke="#bd4d25" stroke-width="1.8" marker-end="url(#f1o)"/><line x1="547.5" y1="80" x2="547.5" y2="64" stroke="#bd4d25" stroke-width="1.8" marker-end="url(#f1o)"/><line x1="547.5" y1="140" x2="547.5" y2="156" stroke="#bd4d25" stroke-width="1.8" marker-end="url(#f1o)"/><text x="547.5" y="178" font-size="12" fill="#17313a" text-anchor="middle" font-weight="normal">welded; tractions still held</text><rect x="671" y="50" width="187" height="104" fill="#e4ebe7" stroke="#b5c7be"/><circle cx="764.5" cy="110" r="30" fill="none" stroke="#60717a" stroke-dasharray="4 3"/><ellipse cx="764.5" cy="110" rx="35" ry="26" fill="#b4e2cf" stroke="#267c70" stroke-width="2"/><text x="764.5" y="115" font-size="14" fill="#17313a" text-anchor="middle" font-weight="normal" font-style="italic">εᶜ</text><line x1="806.5" y1="110" x2="824.5" y2="110" stroke="#60717a" stroke-width="1.5" marker-end="url(#f1k)"/><line x1="722.5" y1="110" x2="704.5" y2="110" stroke="#60717a" stroke-width="1.5" marker-end="url(#f1k)"/><line x1="764.5" y1="76" x2="764.5" y2="86" stroke="#60717a" stroke-width="1.5" marker-end="url(#f1k)"/><line x1="764.5" y1="144" x2="764.5" y2="134" stroke="#60717a" stroke-width="1.5" marker-end="url(#f1k)"/><text x="764.5" y="178" font-size="12" fill="#17313a" text-anchor="middle" font-weight="normal">relaxed: εᶜ = S:ε⁰</text><text x="440" y="205" font-size="12.5" fill="#17313a" text-anchor="middle" font-weight="normal">Only the mismatch e = εᶜ − ε⁰ stores energy: E = ½ ∫ e:C:e dV.  Dashed outlines: shape before the step.</text></svg>
+        <figcaption><strong>Figure 1.</strong> Eshelby’s thought experiment for an inclusion with \(t&lt;0\): it wants to stretch along x and shrink along y. After step 4 the inclusion sits between its free shape and its hole.</figcaption>
+      </figure>
+      <h4>Thin-plate limit: a negotiation at the interface</h4>
+      <p>
+        Eshelby’s theory is a negotiation of space. The transformed region
+        wants a new shape; the surrounding matrix resists. The theory decides
+        who yields, and where stress is left trapped. For a very thin plate
+        (a martensite lath, a plate-shaped precipitate) the whole negotiation
+        happens at the flat interface. The plate is long compared with its
+        thickness, so the matrix, which extends far beyond the plate and is
+        unstrained away from its ends, dictates what happens along the plate.
+        Across its thickness, the plate is free to relax.
+      </p>
+      <h4>Why jump conditions appear at an inclusion</h4>
+      <p>
+        The eigenstrain switches on abruptly at the interface: it is zero in
+        the matrix and \(\epsilon^0\) in the plate. Suppose every strain and
+        stress component were continuous across the interface. Hooke’s law,
+        \(\epsilon^0=\epsilon-C^{-1}:\sigma\), would then make the eigenstrain
+        continuous as well. It is not. So some components of strain or stress
+        <em>must</em> jump. Two physical laws decide which ones:
+      </p>
+      <ul>
+        <li>
+          <strong>No tearing, no overlapping.</strong> The interface is welded,
+          so the displacement is continuous. This constrains the strain.
+        </li>
+        <li>
+          <strong>Newton’s third law.</strong> The force that the plate exerts on
+          the matrix across the interface equals and opposes the force the
+          matrix exerts on the plate. This constrains the stress.
+        </li>
+      </ul>
+      <h4>The interface handshake</h4>
+      <p>
+        <strong>1. The matrix rules the length (Hadamard kinematics).</strong>
+        Plate and matrix cannot separate, so their displacements match
+        everywhere along the interface direction \(\mathbf s\). Their
+        derivatives along \(\mathbf s\) then match too, and the plate’s total
+        strain along the interface equals the matrix value:
+        \(\epsilon_{ss}=0\). The plate is still free to thicken, thin or shear
+        across its thickness (direction \(\mathbf m\)). That freedom is a jump
+        in the displacement gradient of the form \(\mathbf b\otimes\mathbf m\),
+        where \(\mathbf b\) is not yet known.
       </p>
       <p>
-        A zero projection is only the first step. If it is the
-        <em>tangent</em> to an ideal coherent interface, the 2-D small-strain
-        compatibility condition allows a strain plus rigid rotation to fit a
-        thin plate to the matrix. That ideal limit can have zero elastic penalty
-        for nonzero modes. Finite plate ends, interfacial energy and macroscopic
-        constraints generally retain energy.
+        <strong>2. The forces rule the thickness (traction continuity).</strong>
+        The forces pushing, pulling and sliding across the interface must
+        balance. So the traction vector \(\sigma\mathbf m\), which contains the
+        normal stress \(\sigma_{mm}\) and the shear stress \(\sigma_{sm}\), is
+        continuous. No balance law acts on the stress that stretches the plate
+        along its length, \(\sigma_{ss}\): it may differ completely from the
+        matrix value.
+      </p>
+      <p>
+        Across the welded interface, each component is fixed by exactly one law.
+        When the strain component is fixed, the matching stress component may
+        jump, and the other way round:
+      </p>
+      <table class="lab-table">
+        <thead><tr><th>component</th><th>strain \(\epsilon\)</th><th>stress \(\sigma\)</th></tr></thead>
+        <tbody>
+          <tr><td>ss (along the plate)</td><td>continuous: Hadamard (matches the matrix)</td><td>free to jump: remnant stress</td></tr>
+          <tr><td>sm (shear)</td><td>free to jump: set by \(\mathbf b\)</td><td>continuous: traction</td></tr>
+          <tr><td>mm (across the plate)</td><td>free to jump: set by \(\mathbf b\)</td><td>continuous: traction</td></tr>
+        </tbody>
+      </table>
+      <p>
+        <strong>Counting.</strong> In 2-D a symmetric strain has 3 components.
+        Hadamard fixes 1 of them (\(\epsilon_{ss}\)); the other 2 are carried
+        by the 2 unknown components of \(\mathbf b\). Traction continuity
+        supplies 2 equations (\(\sigma_{sm},\sigma_{mm}\)), exactly enough to
+        find \(\mathbf b\). In 3-D: 6 strain components, 3 fixed in-plane by
+        Hadamard, 3 carried by \(\mathbf b\), and 3 traction equations to find
+        them.
+      </p>
+      <figure class="lab-fig">
+        <svg viewBox="0 0 880 282" role="img" aria-label="Interface handshake: kinematic and static jump conditions for a thin plate" style="font-family:'DM Sans',system-ui,sans-serif"><defs><marker id="f2o" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#bd4d25"/></marker><marker id="f2g" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#267c70"/></marker><marker id="f2k" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#60717a"/></marker><marker id="f2b" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#226d9b"/></marker></defs><rect x="10" y="10" width="274" height="262" rx="8" fill="#fbfcfb" stroke="#dce4e1"/><text x="22" y="32" font-size="13" fill="#17313a" text-anchor="start" font-weight="bold">A. Kinematics: length is fixed</text><rect x="303" y="10" width="274" height="262" rx="8" fill="#fbfcfb" stroke="#dce4e1"/><text x="315" y="32" font-size="13" fill="#17313a" text-anchor="start" font-weight="bold">B. Statics: forces balance</text><rect x="596" y="10" width="274" height="262" rx="8" fill="#fbfcfb" stroke="#dce4e1"/><text x="608" y="32" font-size="13" fill="#17313a" text-anchor="start" font-weight="bold">C. What is left: stress along s</text><rect x="20" y="48" width="254" height="52" fill="#e4ebe7" stroke="none"/><rect x="20" y="150" width="254" height="60" fill="#e4ebe7" stroke="none"/><rect x="20" y="100" width="254" height="50" fill="#b4e2cf" stroke="none"/><line x1="20" y1="100" x2="274" y2="100" stroke="#267c70" stroke-width="2"/><line x1="20" y1="150" x2="274" y2="150" stroke="#267c70" stroke-width="2"/><text x="28" y="64" font-size="11" fill="#60717a" text-anchor="start" font-weight="normal">matrix</text><text x="28" y="202" font-size="11" fill="#60717a" text-anchor="start" font-weight="normal">matrix</text><text x="28" y="116" font-size="11" fill="#267c70" text-anchor="start" font-weight="normal">plate</text><line x1="224" y1="196" x2="256" y2="196" stroke="#60717a" stroke-width="1.4" marker-end="url(#f2k)"/><line x1="224" y1="196" x2="224" y2="170" stroke="#60717a" stroke-width="1.4" marker-end="url(#f2k)"/><text x="260" y="200" font-size="12" fill="#17313a" text-anchor="start" font-weight="normal" font-style="italic">s</text><text x="220" y="166" font-size="12" fill="#17313a" text-anchor="start" font-weight="normal" font-style="italic">m</text><polygon points="105,150 165,150 165,100 105,100" fill="none" stroke="#60717a" stroke-dasharray="4 3"/><polygon points="105,150 165,150 181,90 121,90" fill="#bd4d25" fill-opacity="0.18" stroke="#bd4d25" stroke-width="2"/><line x1="105" y1="100" x2="121" y2="90" stroke="#226d9b" stroke-width="2" marker-end="url(#f2b)"/><text x="99" y="88" font-size="14" fill="#226d9b" text-anchor="end" font-weight="bold" font-style="italic">b</text><line x1="105" y1="160" x2="165" y2="160" stroke="#17313a" stroke-width="1"/><line x1="105" y1="156" x2="105" y2="164" stroke="#17313a"/><line x1="165" y1="156" x2="165" y2="164" stroke="#17313a"/><text x="135.0" y="176" font-size="11" fill="#17313a" text-anchor="middle" font-weight="normal">same length</text><text x="147.0" y="232" font-size="12" fill="#17313a" text-anchor="middle" font-weight="normal">∇u = b⊗m: shear and thicken only.</text><text x="147.0" y="250" font-size="12" fill="#267c70" text-anchor="middle" font-weight="bold">ε<tspan baseline-shift="sub" font-size="75%">ss</tspan> continuous (Hadamard).</text><rect x="313" y="48" width="254" height="52" fill="#e4ebe7" stroke="none"/><rect x="313" y="150" width="254" height="60" fill="#e4ebe7" stroke="none"/><rect x="313" y="100" width="254" height="50" fill="#b4e2cf" stroke="none"/><line x1="313" y1="100" x2="567" y2="100" stroke="#267c70" stroke-width="2"/><line x1="313" y1="150" x2="567" y2="150" stroke="#267c70" stroke-width="2"/><text x="321" y="64" font-size="11" fill="#60717a" text-anchor="start" font-weight="normal">matrix</text><text x="321" y="202" font-size="11" fill="#60717a" text-anchor="start" font-weight="normal">matrix</text><text x="321" y="116" font-size="11" fill="#267c70" text-anchor="start" font-weight="normal">plate</text><line x1="517" y1="196" x2="549" y2="196" stroke="#60717a" stroke-width="1.4" marker-end="url(#f2k)"/><line x1="517" y1="196" x2="517" y2="170" stroke="#60717a" stroke-width="1.4" marker-end="url(#f2k)"/><text x="553" y="200" font-size="12" fill="#17313a" text-anchor="start" font-weight="normal" font-style="italic">s</text><text x="513" y="166" font-size="12" fill="#17313a" text-anchor="start" font-weight="normal" font-style="italic">m</text><rect x="406.0" y="86" width="68" height="28" fill="none" stroke="#17313a" stroke-dasharray="3 3"/><text x="480.0" y="84" font-size="11" fill="#17313a" text-anchor="start" font-weight="normal">pillbox</text><line x1="440.0" y1="86" x2="440.0" y2="62" stroke="#267c70" stroke-width="2.2" marker-end="url(#f2g)"/><line x1="440.0" y1="114" x2="440.0" y2="138" stroke="#267c70" stroke-width="2.2" marker-end="url(#f2g)"/><text x="448.0" y="68" font-size="11" fill="#267c70" text-anchor="start" font-weight="normal">σm (matrix side)</text><text x="448.0" y="136" font-size="11" fill="#267c70" text-anchor="start" font-weight="normal">σm (plate side)</text><line x1="343" y1="128" x2="319" y2="128" stroke="#bd4d25" stroke-width="2.6" marker-end="url(#f2o)"/><line x1="537" y1="128" x2="561" y2="128" stroke="#bd4d25" stroke-width="2.6" marker-end="url(#f2o)"/><text x="351" y="132" font-size="12" fill="#bd4d25" text-anchor="start" font-weight="bold">σ<tspan baseline-shift="sub" font-size="75%">ss</tspan></text><text x="440.0" y="232" font-size="12" fill="#267c70" text-anchor="middle" font-weight="bold">⟦σ⟧m = 0: σ<tspan baseline-shift="sub" font-size="75%">mm</tspan>, σ<tspan baseline-shift="sub" font-size="75%">sm</tspan> continuous.</text><text x="440.0" y="250" font-size="12" fill="#bd4d25" text-anchor="middle" font-weight="bold">σ<tspan baseline-shift="sub" font-size="75%">ss</tspan> is free to jump.</text><rect x="606" y="48" width="254" height="60" fill="#e4ebe7" stroke="none"/><rect x="606" y="142" width="254" height="68" fill="#e4ebe7" stroke="none"/><rect x="606" y="108" width="254" height="34" fill="#b4e2cf" stroke="none"/><line x1="606" y1="108" x2="860" y2="108" stroke="#267c70" stroke-width="2"/><line x1="606" y1="142" x2="860" y2="142" stroke="#267c70" stroke-width="2"/><text x="614" y="64" font-size="11" fill="#60717a" text-anchor="start" font-weight="normal">matrix</text><text x="614" y="202" font-size="11" fill="#60717a" text-anchor="start" font-weight="normal">matrix</text><line x1="810" y1="196" x2="842" y2="196" stroke="#60717a" stroke-width="1.4" marker-end="url(#f2k)"/><line x1="810" y1="196" x2="810" y2="170" stroke="#60717a" stroke-width="1.4" marker-end="url(#f2k)"/><text x="846" y="200" font-size="12" fill="#17313a" text-anchor="start" font-weight="normal" font-style="italic">s</text><text x="806" y="166" font-size="12" fill="#17313a" text-anchor="start" font-weight="normal" font-style="italic">m</text><line x1="783.0" y1="125" x2="854" y2="125" stroke="#bd4d25" stroke-width="3" marker-end="url(#f2o)"/><line x1="683.0" y1="125" x2="612" y2="125" stroke="#bd4d25" stroke-width="3" marker-end="url(#f2o)"/><text x="733.0" y="130" font-size="13" fill="#bd4d25" text-anchor="middle" font-weight="bold">σ<tspan baseline-shift="sub" font-size="75%">ss</tspan></text><text x="733.0" y="100" font-size="11" fill="#267c70" text-anchor="middle" font-weight="normal">σm = 0 on the face</text><text x="733.0" y="160" font-size="11" fill="#267c70" text-anchor="middle" font-weight="normal">σm = 0 on the face</text><text x="733.0" y="232" font-size="12" fill="#bd4d25" text-anchor="middle" font-weight="bold">Remnant stress: σ<tspan baseline-shift="sub" font-size="75%">ss</tspan> = −E<tspan baseline-shift="sub" font-size="75%">s</tspan> ε⁰<tspan baseline-shift="sub" font-size="75%">ss</tspan></text><text x="733.0" y="250" font-size="12" fill="#17313a" text-anchor="middle" font-weight="normal">Zero only on the habit line (ε⁰<tspan baseline-shift="sub" font-size="75%">ss</tspan> = 0).</text></svg>
+        <figcaption><strong>Figure 2.</strong> The interface handshake. (A) A material element of the plate may shear and thicken, \(\nabla\mathbf u=\mathbf b\otimes\mathbf m\), but keeps its length along \(\mathbf s\). (B) A thin pillbox straddling the interface: the traction on its two faces must balance, while the stress along \(\mathbf s\) may differ on the two sides. (C) After relaxation the faces are traction-free, and only \(\sigma_{ss}\) remains.</figcaption>
+      </figure>
+      <h4>Duality and the remnant stress</h4>
+      <p>
+        The unknown deformation \(\mathbf b\) and the interface traction
+        \(\sigma\mathbf m\) are work conjugates: a movement and the force that
+        resists it. Changing \(\mathbf b\) by \(\delta\mathbf b\) changes the
+        plate’s energy density by \(\delta w=(\sigma\mathbf m)\cdot\delta\mathbf b\).
+        So when the plate chooses \(\mathbf b\) to minimise its energy, the
+        traction on its faces is driven to zero: \(\sigma_{mm}=\sigma_{sm}=0\).
+        The plate relaxes completely across its thickness.
+      </p>
+      <p>
+        What is left is the stress along the plate. The plate is still held to
+        zero length change along \(\mathbf s\), although it wanted to change by
+        \(\epsilon^0_{ss}\). It carries the elastic strain \(e_{ss}=-\epsilon^0_{ss}\)
+        and, because its faces are free, a single uniaxial stress
+      </p>
+      <div class="formula-box">
+        \[\sigma_{ss}=-E_s\,\epsilon^0_{ss},\qquad
+        w=\tfrac12E_s\left(\epsilon^0_{ss}\right)^2=\tfrac12B(\mathbf m),\]
+      </div>
+      <p>
+        where \(E_s\) is the (plane-strain) stiffness of the crystal along
+        \(\mathbf s\). This is the whole elastic penalty of a thin plate: the
+        remnant stress it pays for staying compatible with the matrix. It
+        vanishes only when \(\epsilon^0_{ss}=0\), on the habit line. In the
+        worked case of Step 7(vii) the plate wanted to shrink by 0.005 along
+        \(\mathbf s\), was held at its original length, and carries a tension
+        of 0.0133. Figure 3 shows every component across that interface.
+      </p>
+      <figure class="lab-fig">
+        <svg viewBox="0 0 880 366" role="img" aria-label="Profiles of eigenstrain, total strain and stress across the interface for the worked case" style="font-family:'DM Sans',system-ui,sans-serif"><defs><marker id="f3o" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#bd4d25"/></marker><marker id="f3g" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#267c70"/></marker><marker id="f3k" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#60717a"/></marker><marker id="f3b" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#226d9b"/></marker></defs><text x="300.0" y="24" font-size="13" fill="#17313a" text-anchor="middle" font-weight="bold">mm: across the interface</text><text x="680.0" y="24" font-size="13" fill="#17313a" text-anchor="middle" font-weight="bold">ss: along the interface</text><text x="10" y="84.0" font-size="13" fill="#17313a" text-anchor="start" font-weight="bold">eigenstrain ε⁰</text><rect x="150" y="44" width="150.0" height="72" fill="#e4ebe7"/><rect x="300.0" y="44" width="150.0" height="72" fill="#b4e2cf" fill-opacity="0.55"/><line x1="150" y1="80.0" x2="450" y2="80.0" stroke="#60717a" stroke-width="0.8" stroke-dasharray="2 3"/><line x1="300.0" y1="40" x2="300.0" y2="120" stroke="#17313a" stroke-width="1.2" stroke-dasharray="5 3"/><polyline points="154,80.0 300.0,80.0 300.0,52.0 446,52.0" fill="none" stroke="#226d9b" stroke-width="2.6"/><text x="225.0" y="74.0" font-size="11" fill="#17313a" text-anchor="middle" font-weight="normal">0</text><text x="375.0" y="46.0" font-size="11" fill="#17313a" text-anchor="middle" font-weight="normal">0.01</text><text x="225.0" y="112" font-size="10.5" fill="#60717a" text-anchor="middle" font-weight="normal">matrix</text><text x="375.0" y="112" font-size="10.5" fill="#267c70" text-anchor="middle" font-weight="normal">plate</text><rect x="530" y="44" width="150.0" height="72" fill="#e4ebe7"/><rect x="680.0" y="44" width="150.0" height="72" fill="#b4e2cf" fill-opacity="0.55"/><line x1="530" y1="80.0" x2="830" y2="80.0" stroke="#60717a" stroke-width="0.8" stroke-dasharray="2 3"/><line x1="680.0" y1="40" x2="680.0" y2="120" stroke="#17313a" stroke-width="1.2" stroke-dasharray="5 3"/><polyline points="534,80.0 680.0,80.0 680.0,94.0 826,94.0" fill="none" stroke="#226d9b" stroke-width="2.6"/><text x="605.0" y="74.0" font-size="11" fill="#17313a" text-anchor="middle" font-weight="normal">0</text><text x="755.0" y="108.0" font-size="11" fill="#17313a" text-anchor="middle" font-weight="normal">−0.005</text><text x="10" y="190.0" font-size="13" fill="#17313a" text-anchor="start" font-weight="bold">total strain ε</text><rect x="150" y="150" width="150.0" height="72" fill="#e4ebe7"/><rect x="300.0" y="150" width="150.0" height="72" fill="#b4e2cf" fill-opacity="0.55"/><line x1="150" y1="186.0" x2="450" y2="186.0" stroke="#60717a" stroke-width="0.8" stroke-dasharray="2 3"/><line x1="300.0" y1="146" x2="300.0" y2="226" stroke="#17313a" stroke-width="1.2" stroke-dasharray="5 3"/><polyline points="154,186.0 300.0,186.0 300.0,162.6676 446,162.6676" fill="none" stroke="#bd4d25" stroke-width="2.6"/><text x="225.0" y="180.0" font-size="11" fill="#17313a" text-anchor="middle" font-weight="normal">0</text><text x="375.0" y="156.6676" font-size="11" fill="#17313a" text-anchor="middle" font-weight="normal">0.0083</text><text x="458" y="190.0" font-size="1" fill="#17313a" text-anchor="start" font-weight="normal"></text><text x="300.0" y="240" font-size="11.5" fill="#bd4d25" text-anchor="middle" font-weight="bold">jumps (carried by b)</text><rect x="530" y="150" width="150.0" height="72" fill="#e4ebe7"/><rect x="680.0" y="150" width="150.0" height="72" fill="#b4e2cf" fill-opacity="0.55"/><line x1="530" y1="186.0" x2="830" y2="186.0" stroke="#60717a" stroke-width="0.8" stroke-dasharray="2 3"/><line x1="680.0" y1="146" x2="680.0" y2="226" stroke="#17313a" stroke-width="1.2" stroke-dasharray="5 3"/><polyline points="534,186.0 680.0,186.0 680.0,186.0 826,186.0" fill="none" stroke="#267c70" stroke-width="2.6"/><text x="605.0" y="180.0" font-size="11" fill="#17313a" text-anchor="middle" font-weight="normal">0</text><text x="755.0" y="180.0" font-size="11" fill="#17313a" text-anchor="middle" font-weight="normal">0</text><text x="838" y="190.0" font-size="1" fill="#17313a" text-anchor="start" font-weight="normal"></text><text x="680.0" y="240" font-size="11.5" fill="#267c70" text-anchor="middle" font-weight="bold">continuous (Hadamard)</text><text x="10" y="296.0" font-size="13" fill="#17313a" text-anchor="start" font-weight="bold">stress σ</text><rect x="150" y="256" width="150.0" height="72" fill="#e4ebe7"/><rect x="300.0" y="256" width="150.0" height="72" fill="#b4e2cf" fill-opacity="0.55"/><line x1="150" y1="292.0" x2="450" y2="292.0" stroke="#60717a" stroke-width="0.8" stroke-dasharray="2 3"/><line x1="300.0" y1="252" x2="300.0" y2="332" stroke="#17313a" stroke-width="1.2" stroke-dasharray="5 3"/><polyline points="154,292.0 300.0,292.0 300.0,292.0 446,292.0" fill="none" stroke="#267c70" stroke-width="2.6"/><text x="225.0" y="286.0" font-size="11" fill="#17313a" text-anchor="middle" font-weight="normal">0</text><text x="375.0" y="286.0" font-size="11" fill="#17313a" text-anchor="middle" font-weight="normal">0</text><text x="458" y="296.0" font-size="1" fill="#17313a" text-anchor="start" font-weight="normal"></text><text x="300.0" y="346" font-size="11.5" fill="#267c70" text-anchor="middle" font-weight="bold">continuous (traction)</text><rect x="530" y="256" width="150.0" height="72" fill="#e4ebe7"/><rect x="680.0" y="256" width="150.0" height="72" fill="#b4e2cf" fill-opacity="0.55"/><line x1="530" y1="292.0" x2="830" y2="292.0" stroke="#60717a" stroke-width="0.8" stroke-dasharray="2 3"/><line x1="680.0" y1="252" x2="680.0" y2="332" stroke="#17313a" stroke-width="1.2" stroke-dasharray="5 3"/><polyline points="534,292.0 680.0,292.0 680.0,264.14 826,264.14" fill="none" stroke="#bd4d25" stroke-width="2.6"/><text x="605.0" y="286.0" font-size="11" fill="#17313a" text-anchor="middle" font-weight="normal">0</text><text x="755.0" y="258.14" font-size="11" fill="#17313a" text-anchor="middle" font-weight="normal">0.0133</text><text x="838" y="296.0" font-size="1" fill="#17313a" text-anchor="start" font-weight="normal"></text><text x="680.0" y="346" font-size="11.5" fill="#bd4d25" text-anchor="middle" font-weight="bold">jumps: remnant stress</text></svg>
+        <figcaption><strong>Figure 3.</strong> Profiles across the interface for the worked case (Step 7(vii): isotropic C, plate along [01]). The eigenstrain jumps in both components. Kinematics keeps the total strain along the interface continuous; statics keeps the traction continuous. The remaining components jump: the strain across the plate (through \(\mathbf b\)) and the stress along it (the remnant stress).</figcaption>
+      </figure>
+      <h4>Names</h4>
+      <ul>
+        <li>
+          \(\mathbf n,\ \mathbf q\): an arbitrary pair of orthogonal unit vectors
+          defining a rotated frame; \(\mathbf n\) is at angle θ from [10].
+        </li>
+        <li>
+          \(\mathbf s\): the invariant (habit) line direction, the value of
+          \(\mathbf n\) where \(\epsilon^0_{nn}=0\). Green line on the plot.
+        </li>
+        <li>
+          \(\mathbf m\): the habit normal, orthogonal to \(\mathbf s\); the value
+          of \(\mathbf q\) at that θ. Orange arrow on the plot.
+        </li>
+      </ul>
+      <p>
+        “Habit angle” is used in the literature for both the line and the
+        normal, which differ by 90°. This page always says which.
+      </p>
+      <h4>Limits</h4>
+      <p>
+        The ideal plate theory assumes an infinitely long plate, a sharp
+        interface, a uniform transformation strain, linear small-strain
+        elasticity and a homogeneous stiffness. Real plates have ends, finite
+        thickness, interfacial energy and diffuse interfaces, and plasticity can
+        destroy coherency. In this laboratory, Module II adds elastic
+        anisotropy, Module III two phases with different eigenstrains, and
+        Module IV plates stiffer or softer than the matrix.
+      </p>
+      <p>
+        <strong>Planned extensions.</strong> Future modules will relax the
+        remaining assumptions: finite aspect ratios through the full Eshelby
+        tensor, interfacial energy and phase-field gradients for diffuse
+        interfaces and evolving shapes, dislocation arrays for the loss of
+        coherency, and the 3-D invariant-plane analysis of the phenomenological
+        theory of martensite crystallography.
       </p>
     </details>
     <details>
-      <summary>Mathematics</summary>
-      <div class="formula-box">
-        \[\epsilon^0=\epsilon_\eta\begin{pmatrix}1&0\\0&t\end{pmatrix},\quad
-        \mathbf n(\theta)=(\cos\theta,\sin\theta),\quad
-        \epsilon^0_{nn}=\epsilon_\eta(\cos^2\theta+t\sin^2\theta).\]
-      </div>
+      <summary>Mathematics: derivation, step by step</summary>
       <p>
-        Here n is the measurement direction. At a root, it becomes the
-        habit-line tangent s. The interface normal m is perpendicular to s. We
-        do not call both directions “the habit angle.”
+        Small strain; crystal axes x = [10], y = [01]; repeated indices summed.
+        Vectors are columns.
+      </p>
+      <h4>Step 1. Rotate \(\epsilon^0\) into the \((\mathbf n,\mathbf q)\) frame.</h4>
+      <p>
+        In its principal frame the eigenstrain is diagonal,
+        \(\epsilon^0=\begin{pmatrix}\epsilon_1&0\\0&\epsilon_2\end{pmatrix}\).
+        A frame at angle θ has basis vectors and rotation matrix (rows =
+        new basis vectors)
       </p>
       <div class="formula-box">
-        \[\epsilon^0_{ss}=0\Rightarrow\tan^2\theta=-1/t,\quad\theta=\tan^{-1}(1/\sqrt{-t})\quad(t<0).\]\[\alpha=90^\circ-\theta=\tan^{-1}\sqrt{-t}.\]
+        \[\mathbf n=\begin{pmatrix}\cos\theta\\ \sin\theta\end{pmatrix},\qquad
+        \mathbf q=\begin{pmatrix}-\sin\theta\\ \cos\theta\end{pmatrix},\qquad
+        R=\begin{pmatrix}\cos\theta&\sin\theta\\-\sin\theta&\cos\theta\end{pmatrix}.\]
       </div>
       <p>
-        α is the acute interface-normal angle. For t = −0.5: θ = 54.74°, α =
-        35.26°. The other equivalent line is at 180° − θ.
-      </p>
-      <p>
-        Mohr’s circle has centre (1+t)/2 and radius |1−t|/2 in units of εη. Its
-        vertical coordinate is tensor shear εnq, half the engineering shear; q =
-        (−sinθ, cosθ). The selected point rotates by −2θ.
+        Each new component is the tensor sandwiched between two basis vectors,
+        e.g. \(\epsilon^0_{nq}=\mathbf n^{\mathsf T}\epsilon^0\,\mathbf q=n_i\,\epsilon^0_{ij}\,q_j\).
+        All four at once are \(\epsilon'=R\,\epsilon^0R^{\mathsf T}\). Multiply in
+        full:
       </p>
       <div class="formula-box">
-        \[\epsilon^0=\operatorname{sym}(\mathbf a\otimes\mathbf m),\qquad
-        \mathbf s\cdot\mathbf m=0\]
+        \[R\,\epsilon^0=\begin{pmatrix}\epsilon_1\cos\theta&\epsilon_2\sin\theta\\-\epsilon_1\sin\theta&\epsilon_2\cos\theta\end{pmatrix},\]
+        \[R\,\epsilon^0R^{\mathsf T}
+        =\begin{pmatrix}\epsilon_1\cos\theta&\epsilon_2\sin\theta\\-\epsilon_1\sin\theta&\epsilon_2\cos\theta\end{pmatrix}
+        \begin{pmatrix}\cos\theta&-\sin\theta\\ \sin\theta&\cos\theta\end{pmatrix}
+        =\begin{pmatrix}\epsilon_1\cos^2\theta+\epsilon_2\sin^2\theta&(\epsilon_2-\epsilon_1)\sin\theta\cos\theta\\
+        (\epsilon_2-\epsilon_1)\sin\theta\cos\theta&\epsilon_1\sin^2\theta+\epsilon_2\cos^2\theta\end{pmatrix}.\]
+      </div>
+      <p>So the entries are</p>
+      <div class="formula-box">
+        \[\epsilon^0_{nn}=\epsilon_1\cos^2\theta+\epsilon_2\sin^2\theta,\qquad
+        \epsilon^0_{qq}=\epsilon_1\sin^2\theta+\epsilon_2\cos^2\theta,\qquad
+        \epsilon^0_{nq}=(\epsilon_2-\epsilon_1)\sin\theta\cos\theta .\]
       </div>
       <p>
-        This rank-one displacement-gradient compatibility argument requires εss
-        = 0 in 2-D and a suitable rigid rotation. It is stronger than merely
-        spotting a zero normal component for an arbitrary direction.
+        Check: the trace \(\epsilon^0_{nn}+\epsilon^0_{qq}=\epsilon_1+\epsilon_2\)
+        and the determinant
+        \(\epsilon^0_{nn}\epsilon^0_{qq}-(\epsilon^0_{nq})^2=\epsilon_1\epsilon_2\) do
+        not change with θ. For this module put \(\epsilon_1=\epsilon_\eta\),
+        \(\epsilon_2=t\,\epsilon_\eta\):
+        \(\epsilon^0_{nn}=\epsilon_\eta(\cos^2\theta+t\sin^2\theta)\), the curve
+        in the “Normal eigenstrain along n(θ)” plot. At a habit root,
+        \(\mathbf n\) becomes \(\mathbf s\) and \(\mathbf q\) becomes \(\mathbf m\).
       </p>
+      <h4>Step 2. Eshelby’s thin plate.</h4>
+      <p>
+        <strong>(a) Hadamard compatibility.</strong> Let the interface be the
+        plane with normal \(\mathbf m\). The displacement \(\mathbf u\) is
+        continuous across it, so its derivative along any direction
+        \(\mathbf s\) lying in the interface (\(\mathbf s\cdot\mathbf m=0\)) is the
+        same on both sides. The jump in the gradient therefore kills every
+        in-plane vector:
+      </p>
+      <div class="formula-box">
+        \[[\![\nabla\mathbf u]\!]\,\mathbf s=\mathbf 0\quad\text{for all }\mathbf s\perp\mathbf m
+        \qquad\Longrightarrow\qquad
+        [\![\nabla\mathbf u]\!]=\mathbf b\otimes\mathbf m,\qquad \mathbf b=[\![\nabla\mathbf u]\!]\,\mathbf m .\]
+      </div>
+      <p>
+        The matrix far from the plate ends is unstrained, so inside the plate
+        \(\nabla\mathbf u=\mathbf b\otimes\mathbf m\). Here \(\mathbf b\) is an
+        unknown vector (a displacement per unit distance across the plate). In
+        index notation,
+      </p>
+      <div class="formula-box">
+        \[\frac{\partial u_i}{\partial x_j}=b_i\,m_j ,\]
+      </div>
+      <p>
+        where i labels the displacement component and j the direction of the
+        derivative. In 3-D, with
+        \(\mathbf u=(u_1,u_2,u_3)^{\mathsf T}\),
+        \(\mathbf b=(b_1,b_2,b_3)^{\mathsf T}\) and
+        \(\mathbf m=(m_1,m_2,m_3)^{\mathsf T}\), the outer product is the column
+        \(\mathbf b\) times the row \(\mathbf m^{\mathsf T}\):
+      </p>
+      <div class="formula-box">
+        \[\nabla\mathbf u=
+        \begin{pmatrix}
+        \dfrac{\partial u_1}{\partial x_1}&\dfrac{\partial u_1}{\partial x_2}&\dfrac{\partial u_1}{\partial x_3}\\[8pt]
+        \dfrac{\partial u_2}{\partial x_1}&\dfrac{\partial u_2}{\partial x_2}&\dfrac{\partial u_2}{\partial x_3}\\[8pt]
+        \dfrac{\partial u_3}{\partial x_1}&\dfrac{\partial u_3}{\partial x_2}&\dfrac{\partial u_3}{\partial x_3}
+        \end{pmatrix}
+        =\begin{pmatrix}b_1\\b_2\\b_3\end{pmatrix}\begin{pmatrix}m_1&m_2&m_3\end{pmatrix}
+        =\begin{pmatrix}
+        b_1m_1&b_1m_2&b_1m_3\\
+        b_2m_1&b_2m_2&b_2m_3\\
+        b_3m_1&b_3m_2&b_3m_3
+        \end{pmatrix}.\]
+      </div>
+      <p>
+        Every entry of the gradient is fixed by one component of \(\mathbf b\)
+        and one of \(\mathbf m\); for example the shear gradient
+        \(\partial u_1/\partial x_2=b_1m_2\). The matrix has rank one: every row
+        is a multiple of \(\mathbf m^{\mathsf T}\), so
+        \(\nabla\mathbf u\,\mathbf s=\mathbf b\,(\mathbf m\cdot\mathbf s)=\mathbf 0\)
+        for any in-plane \(\mathbf s\). Nothing changes along the interface. In
+        this 2-D laboratory \(m_3=b_3=0\) and the upper-left block remains:
+      </p>
+      <div class="formula-box">
+        \[\nabla\mathbf u=\begin{pmatrix}b_1m_1&b_1m_2\\b_2m_1&b_2m_2\end{pmatrix},\qquad
+        \epsilon^c=\operatorname{sym}(\mathbf b\otimes\mathbf m)=\tfrac12(\mathbf b\otimes\mathbf m+\mathbf m\otimes\mathbf b)
+        =\begin{pmatrix}b_1m_1&\tfrac12(b_1m_2+b_2m_1)\\\tfrac12(b_1m_2+b_2m_1)&b_2m_2\end{pmatrix}.\]
+      </div>
+      <p>
+        <strong>(b) Energy.</strong> The elastic strain is
+        \(e=\operatorname{sym}(\mathbf b\otimes\mathbf m)-\epsilon^0\). With
+        \(\sigma^0=C:\epsilon^0\) and the acoustic tensor
+        \(Q_{ik}(\mathbf m)=C_{ijkl}m_jm_l\), and using the symmetries of C,
+      </p>
+      <div class="formula-box">
+        \[w(\mathbf b)=\tfrac12\,e:C:e
+        =\tfrac12\Big[\epsilon^0:C:\epsilon^0-2\,\mathbf b\cdot(\sigma^0\mathbf m)+\mathbf b\cdot Q(\mathbf m)\,\mathbf b\Big].\]
+      </div>
+      <p>
+        <strong>(c) Traction balance.</strong> Minimising over \(\mathbf b\),
+        \(\partial w/\partial\mathbf b=Q(\mathbf m)\mathbf b-\sigma^0\mathbf m=\mathbf 0\).
+        This is exactly zero traction on the faces,
+        \(\sigma\mathbf m=(C:e)\,\mathbf m=\mathbf 0\). Substituting
+        \(\mathbf b=Q(\mathbf m)^{-1}\sigma^0\mathbf m\) back:
+      </p>
+      <div class="formula-box">
+        \[\boxed{\,w=\tfrac12\Big[\epsilon^0:C:\epsilon^0-(\sigma^0\mathbf m)\cdot Q(\mathbf m)^{-1}(\sigma^0\mathbf m)\Big]=\tfrac12\,B(\mathbf m)\,}\]
+      </div>
+      <p>
+        The first term is the cost of forcing the plate fully back (Eshelby’s
+        step 2). The second is what it recovers by relaxing across its
+        thickness (step 4). Their difference is the elastic energy kernel
+        \(B(\mathbf m)\) of Module II and of Appendix A. In Eshelby’s language
+        this is the thin-plate limit, with
+        \(S:\epsilon^0=\operatorname{sym}(\mathbf b\otimes\mathbf m)\).
+      </p>
+      <p>
+        <strong>(d) The two jump conditions, derived.</strong> Let
+        \([\![f]\!]=f^{\rm plate}-f^{\rm matrix}\) denote a jump across the
+        interface. <em>Kinematic:</em> \(\mathbf u\) is continuous, so for any
+        in-plane \(\mathbf s\) the directional derivative is continuous,
+        \([\![\nabla\mathbf u]\!]\mathbf s=\mathbf 0\), which gives
+        \([\![\nabla\mathbf u]\!]=\mathbf b\otimes\mathbf m\) as in (a).
+        <em>Static:</em> apply \(\int_{\partial P}\sigma\,\mathbf n\,dA=\mathbf 0\)
+        to a pillbox P of face area A straddling the interface. As its height
+        goes to zero the side faces vanish and only the two flat faces remain:
+      </p>
+      <div class="formula-box">
+        \[(\sigma^{\rm plate}-\sigma^{\rm matrix})\,\mathbf m\,A=\mathbf 0
+        \quad\Longrightarrow\quad [\![\sigma]\!]\,\mathbf m=\mathbf 0 .\]
+      </div>
+      <p>
+        With a homogeneous C,
+        \([\![\sigma]\!]=C:\big(\operatorname{sym}(\mathbf b\otimes\mathbf m)-[\![\epsilon^0]\!]\big)\),
+        so the static condition reads \(Q(\mathbf m)\,\mathbf b=(C:[\![\epsilon^0]\!])\,\mathbf m\).
+        These hold at every point of every coherent interface. For the thin
+        plate the matrix side is unstrained and \([\![\epsilon^0]\!]=\epsilon^0\),
+        which returns \(Q(\mathbf m)\mathbf b=\sigma^0\mathbf m\) of (c): the
+        thin-plate solution <em>is</em> the pair of jump conditions.
+      </p>
+      <p>
+        <strong>(e) Duality.</strong> Vary \(\mathbf b\):
+        \(\delta w=\sigma:\delta e=\sigma:\operatorname{sym}(\delta\mathbf b\otimes\mathbf m)
+        =\delta b_i\,\sigma_{ij}m_j=(\sigma\mathbf m)\cdot\delta\mathbf b\).
+        The traction is the work conjugate of \(\mathbf b\), so
+        \(\partial w/\partial\mathbf b=\mathbf 0\) and \(\sigma\mathbf m=\mathbf 0\)
+        are the same statement.
+      </p>
+      <p>
+        <strong>(f) The remnant stress and a one-line energy.</strong> With
+        \(\sigma\mathbf m=\mathbf 0\), the only stress left in the
+        \((\mathbf s,\mathbf m)\) frame is \(\sigma_{ss}\):
+        \(\sigma=\sigma_{ss}\,\mathbf s\otimes\mathbf s\). Hadamard fixes
+        \(\epsilon_{ss}=0\), so \(e_{ss}=-\epsilon^0_{ss}\). Using the compliance
+        \(S=C^{-1}\) (plane strain), \(e_{ss}=S_{ssss}\,\sigma_{ss}\), hence
+      </p>
+      <div class="formula-box">
+        \[\sigma_{ss}=-\frac{\epsilon^0_{ss}}{S_{ssss}}=-E_s\,\epsilon^0_{ss},\qquad
+        w=\tfrac12\,\sigma_{ss}\,e_{ss}=\tfrac12\,E_s\left(\epsilon^0_{ss}\right)^2,\qquad
+        \boxed{\,B(\mathbf m)=E_s\left(\epsilon^0_{ss}\right)^2\,}.\]
+      </div>
+      <p>
+        This is exact for any homogeneous stiffness, isotropic or anisotropic,
+        and it makes Step 3 immediate. For the isotropic law of this page
+        \(E_s=(C_{11}^2-C_{12}^2)/C_{11}=8/3\) in every direction, so
+        \(B=\tfrac83(0.005)^2=6.67\times10^{-5}\) for a plate along [01] and
+        \(\tfrac83(0.01)^2=2.67\times10^{-4}\) along [10], matching Step 7 and
+        the Module II curve. In an anisotropic crystal \(E_s\) depends on the
+        direction, which is how elastic anisotropy enters in Module II.
+      </p>
+      <h4>Step 3. \(B(\mathbf m)=0\iff\epsilon^0_{ss}=0\).</h4>
+      <p>
+        <strong>(⇒)</strong> If \(B(\mathbf m)=0\) then \(w=0\), and because C is
+        positive definite, \(e=0\): the total strain equals the transformation
+        strain, \(\operatorname{sym}(\mathbf b\otimes\mathbf m)=\epsilon^0\). Project
+        along the interface direction \(\mathbf s\) (\(\mathbf s\cdot\mathbf m=0\)):
+      </p>
+      <div class="formula-box">
+        \[\epsilon^0_{ss}=\mathbf s\cdot\Big[\tfrac12(\mathbf b\otimes\mathbf m+\mathbf m\otimes\mathbf b)\Big]\mathbf s
+        =\tfrac12\big[(\mathbf s\cdot\mathbf b)(\mathbf m\cdot\mathbf s)+(\mathbf s\cdot\mathbf m)(\mathbf b\cdot\mathbf s)\big]=0 .\]
+      </div>
+      <p>
+        <strong>(⇐)</strong> If \(\epsilon^0_{ss}=0\), write both sides in the
+        \((\mathbf s,\mathbf m)\) frame, where \(\mathbf m=(0,1)^{\mathsf T}\):
+      </p>
+      <div class="formula-box">
+        \[\epsilon'=\begin{pmatrix}0&\epsilon^0_{sm}\\\epsilon^0_{sm}&\epsilon^0_{mm}\end{pmatrix},\qquad
+        \operatorname{sym}(\mathbf a\otimes\mathbf m)=\begin{pmatrix}0&\tfrac12a_s\\\tfrac12a_s&a_m\end{pmatrix}.\]
+      </div>
+      <p>
+        They match with \(a_s=2\epsilon^0_{sm}\), \(a_m=\epsilon^0_{mm}\). Then
+        \(\mathbf b=\mathbf a\) gives \(e=0\) and \(B(\mathbf m)=0\). The condition
+        is kinematic: it holds for every stiffness C. The elastic constants only
+        decide how costly the other orientations are.
+      </p>
+      <h4>Step 4. Solve for θ and the plate kinematics.</h4>
+      <p>With \(\epsilon_1=\epsilon_\eta\), \(\epsilon_2=t\,\epsilon_\eta\) and \(\cos\theta\ne0\):</p>
+      <div class="formula-box">
+        \[\epsilon^0_{ss}=\epsilon_\eta\left(\cos^2\theta+t\sin^2\theta\right)=0
+        \iff\tan^2\theta=-\frac1t
+        \iff\theta_1=\tan^{-1}\frac{1}{\sqrt{-t}},\quad\theta_2=180^\circ-\theta_1 .\]
+      </div>
+      <p>
+        A real root requires \(t\le0\) (\(t=0\) is the limit θ = 90°). On the
+        root \(\cos^2\theta=-t/(1-t)\), \(\sin^2\theta=1/(1-t)\) and
+        \(\sin\theta\cos\theta=\pm\sqrt{-t}/(1-t)\). Substituting into Step 1:
+      </p>
+      <div class="formula-box">
+        \[\epsilon^0_{mm}=\epsilon_\eta(1+t)\ \ \text{(trace invariance, since }\epsilon^0_{ss}=0),\qquad
+        \epsilon^0_{sm}=(t-1)\,\epsilon_\eta\sin\theta\cos\theta=\mp\,\epsilon_\eta\sqrt{-t},\]
+        \[\gamma=2\epsilon^0_{sm}=\mp\,2\epsilon_\eta\sqrt{-t}\ \ \text{(engineering shear)},\qquad
+        \omega=\epsilon^0_{sm}\ \ \text{(rigid lattice rotation, radians)}.\]
+      </div>
+      <p>
+        The upper sign is for \(\theta_1\), the lower for \(\theta_2\). The
+        rotation is the antisymmetric part of \(\mathbf a\otimes\mathbf m\):
+        \(\mathbf a\otimes\mathbf m=\epsilon^0+\epsilon^0_{sm}(\mathbf s\otimes\mathbf m-\mathbf m\otimes\mathbf s)\).
+        In units of \(\epsilon_\eta\):
+      </p>
+      <table class="lab-table">
+        <thead>
+          <tr>
+            <th>\(t=\epsilon_2/\epsilon_1\)</th><th>line θ₁ (θ₂)</th><th>thickening \(\epsilon^0_{mm}\)</th>
+            <th>shear \(2\epsilon^0_{sm}\)</th><th>rotation ω</th><th>ω for \(\epsilon_\eta=0.01\)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>−1</td><td>45° (135°)</td><td>0</td><td>∓2.00</td><td>∓1.00</td><td>0.57°</td></tr>
+          <tr><td>−0.5</td><td>54.74° (125.26°)</td><td>0.50</td><td>∓1.41</td><td>∓0.71</td><td>0.41°</td></tr>
+          <tr><td>−0.25</td><td>63.43° (116.57°)</td><td>0.75</td><td>∓1.00</td><td>∓0.50</td><td>0.29°</td></tr>
+          <tr><td>0</td><td>90°</td><td>1.00</td><td>0</td><td>0</td><td>0</td></tr>
+        </tbody>
+      </table>
+      <h4>Step 5. Where \(\alpha=\tan^{-1}\sqrt{-t}\) comes from.</h4>
+      <p>
+        The habit condition can be written for the <em>line</em> or for the
+        <em>normal</em>. Both routes give the same plate.
+      </p>
+      <p><strong>Route A: start from the line.</strong> Step 4 gave the line
+        angle through \(\tan\theta_1=1/\sqrt{-t}\). The normal is the line turned
+        by 90°:</p>
+      <div class="formula-box">
+        \[\mathbf s=(\cos\theta_1,\ \sin\theta_1),\qquad
+        \mathbf m=(-\sin\theta_1,\ \cos\theta_1).\]
+      </div>
+      <p>
+        The acute angle α between the normal and [10] satisfies
+        \(\tan\alpha=|m_y/m_x|=\cos\theta_1/\sin\theta_1=1/\tan\theta_1\). So
+      </p>
+      <div class="formula-box">
+        \[\tan\alpha=\frac{1}{\tan\theta_1}=\frac{1}{1/\sqrt{-t}}=\sqrt{-t}
+        \quad\Longrightarrow\quad \alpha=\tan^{-1}\sqrt{-t}=90^\circ-\theta_1 .\]
+      </div>
+      <p><strong>Route B: start from the normal.</strong> Call the normal
+        angle α, so \(\mathbf m=(\cos\alpha,\sin\alpha)\). The tangent is
+        \(\mathbf s=(-\sin\alpha,\cos\alpha)\). Put \(\mathbf s\) into the
+        stretch formula of Step 1 (the same sandwich \(\mathbf s\cdot\epsilon^0\mathbf s\)):</p>
+      <div class="formula-box">
+        \[\epsilon^0_{ss}=\begin{pmatrix}-\sin\alpha&\cos\alpha\end{pmatrix}
+        \epsilon_\eta\begin{pmatrix}1&0\\0&t\end{pmatrix}
+        \begin{pmatrix}-\sin\alpha\\ \cos\alpha\end{pmatrix}
+        =\epsilon_\eta\left(\sin^2\alpha+t\cos^2\alpha\right).\]
+      </div>
+      <p>Set it to zero and divide by \(\cos^2\alpha\):</p>
+      <div class="formula-box">
+        \[\sin^2\alpha+t\cos^2\alpha=0\iff\tan^2\alpha=-t\iff
+        \alpha=\pm\tan^{-1}\sqrt{-t}.\]
+      </div>
+      <p>
+        Route B is the form you meet when the energy is written in terms of
+        the normal, as in Module II and in the thesis. The same bookkeeping,
+        line versus normal, carries over to habit planes in 3-D, a planned
+        extension of this laboratory. The line and the
+        normal pair up as follows (angles from [10]; a direction and its
+        opposite are the same line):
+      </p>
+      <table class="lab-table">
+        <thead><tr><th>line θ</th><th>normal (direction)</th><th>acute normal angle α</th></tr></thead>
+        <tbody>
+          <tr><td>\(\theta_1=\tan^{-1}(1/\sqrt{-t})\)</td><td>\(\theta_1+90^\circ\equiv-\alpha\)</td><td>\(\tan^{-1}\sqrt{-t}\)</td></tr>
+          <tr><td>\(\theta_2=180^\circ-\theta_1\)</td><td>\(\theta_2-90^\circ=+\alpha\)</td><td>\(\tan^{-1}\sqrt{-t}\)</td></tr>
+        </tbody>
+      </table>
+      <p>
+        For t = −0.5: lines at 54.74° and 125.26°; normals at 144.74° and
+        35.26°. Module II lists its zero minima of \(B(\mathbf n)\) at these two
+        normal directions (sampled at 1°, so near 145° and 35°).
+      </p>
+      <h4>Step 6. Mohr’s circle.</h4>
+      <p>
+        Apply \(\cos^2\theta=\tfrac12(1+\cos2\theta)\),
+        \(\sin^2\theta=\tfrac12(1-\cos2\theta)\) and
+        \(2\sin\theta\cos\theta=\sin2\theta\) to the Step 1 entries:
+      </p>
+      <div class="formula-box">
+        \[\epsilon^0_{nn}=\bar c+R\cos2\theta,\qquad
+        \epsilon^0_{nq}=-R\sin2\theta,\qquad
+        \bar c=\epsilon_\eta\frac{1+t}{2},\quad R=\epsilon_\eta\frac{1-t}{2}.\]
+      </div>
+      <p>
+        As θ grows, \((\epsilon^0_{nn},\epsilon^0_{nq})\) moves round a circle
+        with centre \(\bar c\) and radius R, turning by −2θ. The vertical axis
+        is tensor shear; engineering shear is twice it. The circle meets
+        \(\epsilon^0_{nn}=0\) only if \(R\ge\bar c\), i.e. \(t\le0\), at
+      </p>
+      <div class="formula-box">
+        \[\epsilon^0_{nq}=\pm\sqrt{R^2-\bar c^2}=\pm\,\epsilon_\eta\sqrt{-t},\]
+      </div>
+      <p>
+        the green dots: the same shear \(\epsilon^0_{sm}\) as in Step 4. (The
+        plot labels the centre c; it is \(\bar c\) here to avoid clashing with
+        \(\cos\theta\).)
+      </p>
+      <h4>Step 7. One case solved completely.</h4>
+      <p>
+        Take the page defaults: \(t=-0.5\), \(\epsilon_\eta=0.01\), and the
+        isotropic stiffness of Module II, \(C_{11}=3\), \(C_{12}=1\),
+        \(C_{44}=1\) (dimensionless). We find the habit line, then compute the
+        plate energy twice: at the habit normal and at a poor orientation.
+      </p>
+      <p><strong>(i) Eigenstrain.</strong></p>
+      <div class="formula-box">
+        \[\epsilon^0=\begin{pmatrix}0.01&0\\0&-0.005\end{pmatrix}.\]
+      </div>
+      <p><strong>(ii) Habit line.</strong>
+        \(\tan^2\theta=-1/t=2\), so \(\tan\theta_1=\sqrt2\),
+        \(\theta_1=54.7356^\circ\). Then \(\cos^2\theta_1=1/3\),
+        \(\sin^2\theta_1=2/3\):</p>
+      <div class="formula-box">
+        \[\cos\theta_1=0.57735,\qquad\sin\theta_1=0.81650,\qquad
+        R=\begin{pmatrix}0.57735&0.81650\\-0.81650&0.57735\end{pmatrix}.\]
+      </div>
+      <p><strong>(iii) Rotate the eigenstrain (Step 1 with numbers).</strong></p>
+      <div class="formula-box">
+        \[R\,\epsilon^0=\begin{pmatrix}0.0057735&-0.0040825\\-0.0081650&-0.0028868\end{pmatrix},\qquad
+        \epsilon'=R\,\epsilon^0R^{\mathsf T}=\begin{pmatrix}0&-0.0070711\\-0.0070711&0.005\end{pmatrix}.\]
+      </div>
+      <p>
+        Entry by entry: \(\epsilon^0_{ss}=0.01\cdot\tfrac13-0.005\cdot\tfrac23=0\);
+        \(\epsilon^0_{mm}=0.01\cdot\tfrac23-0.005\cdot\tfrac13=0.005\);
+        \(\epsilon^0_{sm}=-0.015\times0.57735\times0.81650=-0.0070711\).
+        Trace 0.005 and determinant \(-5\times10^{-5}\) agree with the
+        original diagonal matrix. The Mohr readout shows the last entry as
+        \(-0.7071\,\epsilon_\eta\).
+      </p>
+      <p><strong>(iv) The frame vectors and the compatible vector a.</strong></p>
+      <div class="formula-box">
+        \[\mathbf s=\begin{pmatrix}0.57735\\0.81650\end{pmatrix},\qquad
+        \mathbf m=\begin{pmatrix}-0.81650\\0.57735\end{pmatrix},\qquad
+        \mathbf a=2\epsilon^0_{sm}\mathbf s+\epsilon^0_{mm}\mathbf m
+        =\begin{pmatrix}-0.012247\\-0.0086603\end{pmatrix}.\]
+      </div>
+      <p>Check that it reproduces the eigenstrain in crystal axes:</p>
+      <div class="formula-box">
+        \[\mathbf a\otimes\mathbf m=\begin{pmatrix}a_xm_x&a_xm_y\\a_ym_x&a_ym_y\end{pmatrix}
+        =\begin{pmatrix}0.01&-0.0070711\\0.0070711&-0.005\end{pmatrix},\]
+        \[\operatorname{sym}(\mathbf a\otimes\mathbf m)=\begin{pmatrix}0.01&0\\0&-0.005\end{pmatrix}=\epsilon^0,\qquad
+        \operatorname{skew}(\mathbf a\otimes\mathbf m)=\begin{pmatrix}0&-0.0070711\\0.0070711&0\end{pmatrix}.\]
+      </div>
+      <p>
+        The skew part is a rotation by 0.0070711 rad (0.41°). The eigenstrain
+        is exactly a compatible plate deformation plus this rigid rotation.
+      </p>
+      <p><strong>(v) Stiffness in matrix form.</strong> For the in-plane cubic
+        law with tensor shear, \(\sigma_{xx}=C_{11}\epsilon_{xx}+C_{12}\epsilon_{yy}\),
+        \(\sigma_{yy}=C_{12}\epsilon_{xx}+C_{11}\epsilon_{yy}\),
+        \(\sigma_{xy}=2C_{44}\epsilon_{xy}\). The eigenstress is</p>
+      <div class="formula-box">
+        \[\sigma^0=C:\epsilon^0=\begin{pmatrix}3(0.01)+1(-0.005)&0\\0&1(0.01)+3(-0.005)\end{pmatrix}
+        =\begin{pmatrix}0.025&0\\0&-0.005\end{pmatrix},\qquad
+        \epsilon^0:C:\epsilon^0=\sigma^0:\epsilon^0=2.75\times10^{-4}.\]
+      </div>
+      <p>
+        The acoustic tensor \(Q_{ik}(\mathbf m)=C_{ijkl}m_jm_l\) for this law is
+      </p>
+      <div class="formula-box">
+        \[Q(\mathbf m)=\begin{pmatrix}C_{11}m_x^2+C_{44}m_y^2&(C_{12}+C_{44})m_xm_y\\
+        (C_{12}+C_{44})m_xm_y&C_{44}m_x^2+C_{11}m_y^2\end{pmatrix}.\]
+      </div>
+      <p><strong>(vi) Energy at the habit normal.</strong> With
+        \(m_x^2=2/3\), \(m_y^2=1/3\), \(m_xm_y=-0.47140\):</p>
+      <div class="formula-box">
+        \[Q(\mathbf m)=\begin{pmatrix}2.3333&-0.94281\\-0.94281&1.6667\end{pmatrix},\quad
+        \det Q=3,\quad
+        Q^{-1}=\frac13\begin{pmatrix}1.6667&0.94281\\0.94281&2.3333\end{pmatrix},\]
+        \[\sigma^0\mathbf m=\begin{pmatrix}0.025(-0.81650)\\-0.005(0.57735)\end{pmatrix}
+        =\begin{pmatrix}-0.020412\\-0.0028868\end{pmatrix},\qquad
+        \mathbf b=Q^{-1}\sigma^0\mathbf m=\begin{pmatrix}-0.012247\\-0.0086603\end{pmatrix}=\mathbf a .\]
+        \[(\sigma^0\mathbf m)\cdot\mathbf b=2.50\times10^{-4}+0.25\times10^{-4}=2.75\times10^{-4}
+        \quad\Longrightarrow\quad B(\mathbf m)=2.75\times10^{-4}-2.75\times10^{-4}=0 .\]
+      </div>
+      <p>
+        The plate relaxes all of its eigenstrain: \(\mathbf b=\mathbf a\),
+        \(e=0\), no stress, no energy.
+      </p>
+      <p><strong>(vii) Energy at a poor orientation.</strong> Put the plate
+        along [01], so \(\mathbf m=(1,0)\):</p>
+      <div class="formula-box">
+        \[Q=\begin{pmatrix}3&0\\0&1\end{pmatrix},\quad
+        \sigma^0\mathbf m=\begin{pmatrix}0.025\\0\end{pmatrix},\quad
+        \mathbf b=\begin{pmatrix}0.0083333\\0\end{pmatrix},\quad
+        B=2.75\times10^{-4}-0.025\times0.0083333=6.67\times10^{-5}.\]
+        \[e=\operatorname{sym}(\mathbf b\otimes\mathbf m)-\epsilon^0
+        =\begin{pmatrix}-0.0016667&0\\0&0.005\end{pmatrix},\qquad
+        \sigma=C:e=\begin{pmatrix}0&0\\0&0.013333\end{pmatrix}.\]
+      </div>
+      <p>
+        Read this physically. \(\sigma_{xx}=0\): the faces (normal x) carry no
+        traction, as Step 2 demands. \(e_{yy}=0.005\): along the plate the
+        particle wanted to shrink by 0.005 but the matrix holds its length,
+        so it is stretched elastically and carries tension 0.0133. The energy
+        density is \(\tfrac12 e:\sigma=\tfrac12(0.005)(0.013333)=3.33\times10^{-5}
+        =\tfrac12B\). Module II’s curve gives \(B=6.67\times10^{-5}\) at normal
+        0° and \(2.67\times10^{-4}\) at 90°, and zero at the habit normals.
+      </p>
+      <p>
+        <strong>References.</strong> J. D. Eshelby, Proc. R. Soc. Lond. A 241,
+        376–396 (1957). T. Mura, <em>Micromechanics of Defects in Solids</em>,
+        2nd ed., Kluwer (1987). A. G. Khachaturyan, <em>Theory of Structural
+        Transformations in Solids</em>, Wiley (1983).
+      </p>
+    </details>
+    <details>
+      <summary>Try it yourself</summary>
+      <ol>
+        <li>
+          Press “t = −1”. Check that the lines are at 45° and 135°, and that
+          the Mohr circle is centred on the origin.
+        </li>
+        <li>
+          Drag the t slider slowly from −1 toward 0. Watch θ follow the line
+          and turn toward [01], and the green dots move together.
+        </li>
+        <li>
+          Push t above 0. The circle leaves the vertical axis and the habit line
+          disappears.
+        </li>
+        <li>
+          Type your own θ (for example 30°). The angle is now free. Move it and
+          watch P travel round the circle at twice the rate of the plate.
+        </li>
+        <li>
+          Set t = −0.5, then open Module II and compare its minimum normal with
+          α = 35.26° from Step 5.
+        </li>
+      </ol>
     </details>
     <details>
       <summary>Computation</summary>
       <p>
-        Evaluate the projection directly and solve its zero condition. A
-        positive t returns no roots. The t = 0 limit is handled explicitly. No
-        remembered angle is inserted into the plot. The sketch rotates a
-        prescribed plate; it is not a kinetic simulation.
+        The page evaluates \(\epsilon^0_{nn}(\theta)\) directly and solves its
+        zero condition analytically; no remembered angle is inserted. Positive
+        t returns no roots and t = 0 is handled as the limit θ = 90°. When θ
+        follows t, the calculation uses the exact root, and the input box shows
+        it rounded to four decimals. The plate sketch rotates a prescribed
+        shape; it is not a kinetic simulation.
       </p>
       <p>
-        Convention note: Saswata’s thesis Eq. (3.2), p. 20, uses diag(1,t). Eq.
-        (4.10), p. 48, gives atan√(−t) as a line angle from x. Direct projection
-        under Eq. (3.2) gives its complement for the line. This laboratory
-        labels the line and normal separately and exposes the discrepancy.
+        Convention note: Saswata’s thesis Eq. (3.2), p. 20, uses
+        diag(1, t). Eq. (4.10), p. 48, gives \(\tan^{-1}\sqrt{-t}\) as a line
+        angle from x. Direct projection under Eq. (3.2) gives that value for
+        the interface <em>normal</em>, and its complement for the line. This
+        laboratory labels the line and the normal separately.
       </p>
     </details>
   </section>
