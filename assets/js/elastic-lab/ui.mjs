@@ -11,8 +11,8 @@ import {
   minima,
   zener,
   moduli,
-} from "./math.mjs?v=20260924a";
-import { pairCurve } from "./solver.mjs?v=20260924a";
+} from "./math.mjs?v=20260924c";
+import { pairCurve } from "./solver.mjs?v=20260924c";
 import {
   cartesian,
   polar,
@@ -20,7 +20,7 @@ import {
   sketch,
   strainShape,
   fmt,
-} from "./plots.mjs?v=20260924a";
+} from "./plots.mjs?v=20260924c";
 import {
   element,
   value,
@@ -28,13 +28,13 @@ import {
   setStiffness,
   read,
   plateSettings,
-} from "./state.mjs?v=20260924a";
+} from "./state.mjs?v=20260924c";
 import {
   clearMath,
   renderMath,
   mathematicalText,
   texNumber,
-} from "./math-render.mjs?v=20260924a";
+} from "./math-render.mjs?v=20260924c";
 const set = (id, text) => {
   const target = element(id);
   clearMath(target);
@@ -141,10 +141,47 @@ function renderKernels(s) {
       )
       .join(" | "),
   );
+  sandeepCheck(s);
   set(
     "pair-kernels-why",
     `All three curves use the same C and Q⁻¹, but separate eigenstrain pairs. Self terms are quadratic; the cross term is bilinear. β = (${fmt(s.beta[0])}, ${fmt(s.beta[1])}), γ = (${fmt(s.gamma[0])}, ${fmt(s.gamma[1])}). Reversing every component of γ reverses Bβγ without changing Bγγ. The curve minima above are calculated from these contractions, not assigned from AZ.`,
   );
+}
+// Reference case: Sandeep Sugathan, IIT Hyderabad thesis (2019), Chapter 5,
+// alloy X2, Fig. 5.18: G = 2000, nu = 1/3, AZ = 3, misfits +0.01 and -0.01.
+function sandeepCheck(s) {
+  const box = element("sandeep-check"),
+    ref = moduli(2000, 1 / 3, 3),
+    near = (a, b) => Math.abs(a - b) <= 1e-9 * Math.max(1, Math.abs(b)),
+    isCase =
+      near(s.c.c11, ref.c11) &&
+      near(s.c.c12, ref.c12) &&
+      near(s.c.c44, ref.c44) &&
+      near(s.beta[0], 0.01) &&
+      near(s.beta[1], 0.01) &&
+      near(s.gamma[0], -0.01) &&
+      near(s.gamma[1], -0.01);
+  box.hidden = !isCase;
+  if (!isCase) return;
+  const rows = [
+    ["B_{\\beta\\beta}", s.beta, s.beta, 0.342857, 0.8],
+    ["B_{\\gamma\\gamma}", s.gamma, s.gamma, 0.342857, 0.8],
+    ["B_{\\beta\\gamma}", s.beta, s.gamma, -0.342857, -0.8],
+  ];
+  let html =
+    '<p class="sd-title"><strong>Reference check: Sandeep Sugathan’s thesis, alloy X<sub>2</sub> (Chapter 5, Fig. 5.18).</strong> ' +
+    "G = 2000, ν = 1/3 and A<sub>Z</sub> = 3 give C11 = 7000, C12 = 5000, C44 = 3000 (Eqs. 3.27–3.29); β and γ carry dilatational misfits +0.01 and −0.01 (Tables 5.1–5.2).</p>" +
+    '<table class="lab-table"><thead><tr><th>kernel</th><th>along ⟨10⟩: this page</th><th>thesis</th><th>along ⟨11⟩: this page</th><th>thesis</th><th></th></tr></thead><tbody>';
+  for (const [name, p, q, t10, t11] of rows) {
+    const v10 = kernel(s.c, p, q, 0),
+      v11 = kernel(s.c, p, q, Math.PI / 4),
+      ok = Math.abs(v10 - t10) < 5e-6 && Math.abs(v11 - t11) < 5e-6;
+    html += `<tr><td>\\(${name}\\)</td><td>${v10.toFixed(6)}</td><td>${t10.toFixed(6)}</td><td>${v11.toFixed(6)}</td><td>${t11.toFixed(6)}</td><td>${ok ? "✓ agrees" : "differs"}</td></tr>`;
+  }
+  html +=
+    "</tbody></table>" +
+    '<p class="sd-note">Why these shapes: with A<sub>Z</sub> = 3 the crystal is elastically soft along ⟨10⟩, so each self term is lowest along ⟨10⟩ and highest along ⟨11⟩. The two misfits are equal and opposite, so B<sub>ββ</sub> and B<sub>γγ</sub> are identical (the dashed curve lies on the solid one) and B<sub>βγ</sub> is their mirror image. The most negative cross term is along ⟨11⟩, which favours β–γ neighbours along the diagonals; the pair calculation below shows the same preference.</p>';
+  draw("sandeep-check", html);
 }
 function renderPair(s) {
   const type = element("pair-type").value,
@@ -229,7 +266,7 @@ function scan() {
     draw("plate-cart", "");
     draw("plate-polar", "");
     plateSketch();
-    worker = new Worker(new URL("./worker.mjs?v=20260924a", import.meta.url), {
+    worker = new Worker(new URL("./worker.mjs?v=20260924c", import.meta.url), {
       type: "module",
     });
     element("stop-plate").disabled = false;
@@ -323,8 +360,9 @@ for (const id of ["t", "epsilon", "theta"])
       );
     }
   });
+// Module II (ids es-*) has its own controller.
 for (const input of document.querySelectorAll(
-  "#elastic-lab input,#elastic-lab select",
+  "#elastic-lab input:not([id^=es-]),#elastic-lab select:not([id^=es-])",
 ))
   input.addEventListener("change", () => {
     if (input.id === "follow-habit") {
@@ -443,7 +481,7 @@ fetch("/files/elastic-lab/validation-results.json")
   .then((report) =>
     set(
       "validation-summary",
-      `${report.tests.length} validation groups passed. These cover the appendix kernel and driving force, Mohr-circle invariants, Fourier scaling, CICP spectral iteration versus PCG, Sandeep’s reference, homogeneous recovery and resolution convergence. The full report includes numerical errors.`,
+      `${report.tests.length} validation groups passed. These cover the appendix kernel and driving force, Mohr-circle invariants, Eshelby’s ellipse against Mura’s closed form and its interface jump conditions, Fourier scaling, CICP spectral iteration versus PCG, Sandeep’s reference, homogeneous recovery and resolution convergence. The full report includes numerical errors.`,
     ),
   )
   .catch(() => {});
