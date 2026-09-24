@@ -51,10 +51,8 @@ export function renderMath(element) {
         for (const group of element.querySelectorAll("[data-tex]")) {
           const tex = group.dataset.tex;
           if (!labelCache.has(tex)) {
-            const container = window.MathJax.tex2svg(tex, {
-              display: false,
-              fontCache: "none",
-            });
+            // fontCache is an output-jax setting, not a conversion option.
+            const container = window.MathJax.tex2svg(tex, { display: false });
             const svg = container.querySelector("svg");
             const box = svg.getAttribute("viewBox").split(/\s+/).map(Number);
             // MathJax's viewBox is in 1000 units/em. Keep the original text baseline.
