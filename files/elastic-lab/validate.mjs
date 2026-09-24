@@ -16,6 +16,7 @@ import {
   pairCurve,
 } from "../../assets/js/elastic-lab/solver.mjs";
 import { referenceChecks } from "./reference-checks.mjs";
+import { eshelbyChecks } from "./eshelby-checks.mjs";
 const results = [];
 function close(a, b, tol = 1e-10) {
   assert.ok(
@@ -192,6 +193,7 @@ test("Inhomogeneous plate angular and spatial orientation convergence", () => {
   return scans;
 });
 referenceChecks(test, close);
+eshelbyChecks(test, close);
 writeFileSync(
   "files/elastic-lab/validation-results.json",
   JSON.stringify(
