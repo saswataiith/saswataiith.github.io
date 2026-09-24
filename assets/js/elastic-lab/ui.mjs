@@ -171,7 +171,7 @@ function sandeepCheck(s) {
   let html =
     '<p class="sd-title"><strong>Reference check: Sandeep Sugathan’s thesis, alloy X<sub>2</sub> (Chapter 5, Fig. 5.18).</strong> ' +
     "G = 2000, ν = 1/3 and A<sub>Z</sub> = 3 give C11 = 7000, C12 = 5000, C44 = 3000 (Eqs. 3.27–3.29); β and γ carry dilatational misfits +0.01 and −0.01 (Tables 5.1–5.2).</p>" +
-    '<table class="lab-table"><thead><tr><th>kernel</th><th>along ⟨10⟩: this page</th><th>thesis</th><th>along ⟨11⟩: this page</th><th>thesis</th><th></th></tr></thead><tbody>';
+    '<div class="sd-scroll"><table class="lab-table"><thead><tr><th rowspan="2">kernel</th><th colspan="2">along ⟨10⟩</th><th colspan="2">along ⟨11⟩</th><th rowspan="2"></th></tr><tr><th>this page</th><th>thesis</th><th>this page</th><th>thesis</th></tr></thead><tbody>';
   for (const [name, p, q, t10, t11] of rows) {
     const v10 = kernel(s.c, p, q, 0),
       v11 = kernel(s.c, p, q, Math.PI / 4),
@@ -179,7 +179,7 @@ function sandeepCheck(s) {
     html += `<tr><td>\\(${name}\\)</td><td>${v10.toFixed(6)}</td><td>${t10.toFixed(6)}</td><td>${v11.toFixed(6)}</td><td>${t11.toFixed(6)}</td><td>${ok ? "✓ agrees" : "differs"}</td></tr>`;
   }
   html +=
-    "</tbody></table>" +
+    "</tbody></table></div>" +
     '<p class="sd-note">Why these shapes: with A<sub>Z</sub> = 3 the crystal is elastically soft along ⟨10⟩, so each self term is lowest along ⟨10⟩ and highest along ⟨11⟩. The two misfits are equal and opposite, so B<sub>ββ</sub> and B<sub>γγ</sub> are identical (the dashed curve lies on the solid one) and B<sub>βγ</sub> is their mirror image. The most negative cross term is along ⟨11⟩, which favours β–γ neighbours along the diagonals; the pair calculation below shows the same preference.</p>';
   draw("sandeep-check", html);
 }
