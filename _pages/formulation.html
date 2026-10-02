@@ -26,6 +26,12 @@ nav_active: research
       how stiffness and eigenstrain vary, and finally specify the macroscopic
       mechanical loading.
     </p>
+    <div class="inline-links formulation-links">
+      <a href="#applied-strain">Applied strain</a>
+      <a href="#applied-stress">Applied stress</a>
+      <a href="#mixed-control">Mixed control</a>
+      <a href="#film-vacuum">Film, substrate &amp; vacuum</a>
+    </div>
 
     <h3>1. Begin with Mura's sharp coherent inclusion.</h3>
     <p>
@@ -191,19 +197,42 @@ nav_active: research
       <li>Inhomogeneous \(C(\mathbf r)\): solve the homogeneous and fluctuating strains together; generally \(\bar\epsilon\ne\langle\epsilon^0\rangle\).</li>
     </ul>
 
-    <h3>6. What is periodic, and how is load applied?</h3>
+    <h3 id="macroscopic-loading">6. What is periodic, and how is load applied?</h3>
     <div class="formula-box">
       \[\boxed{u_i(\mathbf x)=\bar\epsilon_{ij}x_j+\widetilde u_i(\mathbf x)},
       \qquad
       \widetilde{\mathbf u}(\mathbf x+\mathbf L)=\widetilde{\mathbf u}(\mathbf x).\]
     </div>
+    <p>The displacement fluctuation is periodic. The affine part need not be.</p>
+
+    <h4 id="applied-strain">Case A: applied homogeneous strain</h4>
     <p>
-      The displacement fluctuation is periodic. The affine part need not be.
-      Under strain control, prescribe \(\bar\epsilon\), equilibrate the
-      nonzero modes and read \(\Sigma=\langle\sigma\rangle\). Under stress
-      control, prescribe the average stress, not the same local stress at every
-      grid point. The unknown is the homogeneous strain.
+      Prescribe the zero-mode strain \(\bar\epsilon=E^{\rm applied}\) and hold
+      it fixed. At every grid point,
+      \(\epsilon(\mathbf x)=E^{\rm applied}+\widetilde\epsilon(\mathbf x)\).
+      Equilibrate the nonzero modes and calculate the resulting macroscopic
+      stress:
     </p>
+    <div class="formula-box">
+      \[\bar\epsilon=E^{\rm applied}\quad\hbox{given},\qquad
+      \Sigma=\langle\sigma\rangle\quad\hbox{calculated}.\]
+    </div>
+    <p>
+      The homogeneous strain is applied everywhere, but the total local strain
+      and stress are generally nonuniform because the periodic fluctuation
+      responds to eigenstrain and elastic contrast.
+    </p>
+
+    <h4 id="applied-stress">Case B: applied macroscopic stress</h4>
+    <p>
+      Prescribe only the average stress. Do not assign the same stress to every
+      grid point. The homogeneous strain is now unknown and must be adjusted
+      until the equilibrated local field has the required average:
+    </p>
+    <div class="formula-box">
+      \[\Sigma^{\rm target}=\langle\sigma\rangle\quad\hbox{given},\qquad
+      \bar\epsilon\quad\hbox{calculated}.\]
+    </div>
     <div class="lab-flow" aria-label="Numerical stress control algorithm">
       <div><strong>1</strong><span>Guess \(\bar\epsilon\)</span></div>
       <div><strong>2</strong><span>Equilibrate periodic fluctuations</span></div>
@@ -247,7 +276,17 @@ check divergence of the local stress</code></pre>
       </p>
     </details>
 
-    <h3>7. Thin film, substrate and vacuum.</h3>
+    <h4 id="mixed-control">Case C: mixed stress and strain control</h4>
+    <p>
+      Hold selected components of \(\bar\epsilon\) fixed and solve the other
+      zero-mode components from prescribed components of \(\Sigma\). For
+      example, epitaxial in-plane strain can be combined with zero average
+      normal and transverse shear stresses. The controlled components must be
+      stated explicitly; “periodic boundary conditions” alone do not specify
+      this macroscopic loading.
+    </p>
+
+    <h3 id="film-vacuum">7. Thin film, substrate and vacuum.</h3>
     <figure class="lab-fig lab-film">
       <svg viewBox="0 0 900 330" role="img" aria-label="Periodic thin film and substrate cell separated by vacuum">
         <defs><marker id="film-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#17313a"/></marker></defs>
