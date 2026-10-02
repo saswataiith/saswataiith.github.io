@@ -36,3 +36,13 @@
 @media (max-width:600px){.lab .sd-check{padding:12px 12px}.lab .sd-check .lab-table th,.lab .sd-check .lab-table td{padding:4px 6px;font-size:13px}}
 .lab .sd-check .sd-title,.lab .sd-check .sd-note{margin:6px 0;max-width:980px;font-size:14px;line-height:1.6}
 .lab .sd-check td:last-child{color:#267c70;font-weight:600}
+.lab .lab-grid-one{grid-template-columns:minmax(0,760px)}
+.lab .lab-control-note{align-self:center;margin:0;padding:10px 14px;background:#fff;border:1px solid #dce4e1;border-radius:5px}
+.lab .lab-flow{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin:24px 0;max-width:1100px}
+.lab .lab-flow div{position:relative;display:flex;align-items:center;gap:10px;min-height:74px;padding:14px;background:#edf3ef;border:1px solid #b5c7be;border-radius:7px}
+.lab .lab-flow div:not(:last-child)::after{content:"→";position:absolute;right:-14px;z-index:2;color:#267c70;font-size:20px;font-weight:700}
+.lab .lab-flow strong{display:grid;place-items:center;flex:0 0 30px;height:30px;border-radius:50%;background:#267c70;color:#fff}
+.lab .lab-flow span{font-size:14px;line-height:1.4}
+.lab .lab-film{max-width:1000px}
+@media(max-width:850px){.lab .lab-flow{grid-template-columns:1fr 1fr}.lab .lab-flow div::after{display:none}}
+@media(max-width:520px){.lab .lab-flow{grid-template-columns:1fr}}

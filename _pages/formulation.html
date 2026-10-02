@@ -4,6 +4,7 @@ title: "Elastic stress effects: formulation and computation"
 permalink: /research/formulation/
 nav_active: research
 ---
+<link rel="stylesheet" href="/assets/js/elastic-lab/lab.css?v=20261002a" />
 <div class="elastic-formulation-page">
 <section class="page-heading"><span class="eyebrow">ELASTIC STRESS EFFECTS · FORMULATION</span><h1>From transformation strain<br><em>to microstructural evolution.</em></h1><p>A reusable route from eigenstrain and mechanical equilibrium to elastic energy, variational driving forces and computational solvers.</p></section>
 
@@ -13,6 +14,306 @@ nav_active: research
 
 <section class="section"><h2>Many fields can define one eigenstrain tensor.</h2><p class="wide-copy">A microstructure may require several independent composition fields \(c_1,\ldots,c_{N_c}\), several structural order parameters \(\eta_1,\ldots,\eta_{N_\eta}\), or additional fields such as polarization, orientation and plastic strain. The eigenstrain is a constitutive map from all these local fields to a symmetric second-rank tensor:</p><div class="formula-box">\[\begin{aligned}\boldsymbol c&=(c_1,\ldots,c_{N_c}),\qquad \boldsymbol\eta=(\eta_1,\ldots,\eta_{N_\eta}),\\ \epsilon^0_{ij}(\mathbf r)&=\mathcal E_{ij}\!\left(\boldsymbol c(\mathbf r),\boldsymbol\eta(\mathbf r),\ldots\right)\\ &=\sum_{p=1}^{P}\theta_p\!\left(\boldsymbol c,\boldsymbol\eta,\ldots\right)\epsilon^{0(p)}_{ij}.\end{aligned}\]</div><p class="wide-copy">The interpolation functions \(\theta_p\) may depend linearly or nonlinearly on several fields. They encode phase fractions, variants or other local structural states; the tensors \(\epsilon^{0(p)}_{ij}\) encode their stress-free distortions. Cross-couplings are allowed, so a contribution may depend on more than one composition or order parameter.</p><details><summary>A four-field specialization</summary><div class="formula-box">\[\epsilon^0_{ij}=c\,\epsilon^{0(c)}_{ij}+\sum_{a=1}^{3}\eta_a^2\epsilon^{0(a)}_{ij}.\]</div><p>This is one multivariant example, not the general definition. The square makes a variant’s strain contribution invariant under \(\eta_a\rightarrow-\eta_a\).</p></details></section>
 
+<div class="lab formulation-lab">
+  <section class="section" id="interfaces-loading">
+    <span class="eyebrow">SHARP INTERFACES · DIFFUSE FIELDS · LOADING</span>
+    <h2>From a sharp inclusion to a loaded periodic cell.</h2>
+    <p>
+      This formulation joins Mura's general eigenstrain method, the periodic
+      Green-operator viewpoint of Michel, Moulinec and Suquet, and our CICP
+      reference-medium formulation. Follow the assumptions in order: first
+      define the inclusion, then regularize its interface if needed, then choose
+      how stiffness and eigenstrain vary, and finally specify the macroscopic
+      mechanical loading.
+    </p>
+
+    <h3>1. Begin with Mura's sharp coherent inclusion.</h3>
+    <p>
+      Let \(\chi_\Omega\) be one inside an inclusion and zero in the matrix.
+      For a homogeneous medium,
+    </p>
+    <div class="formula-box">
+      \[\epsilon^0_{ij}(\mathbf x)=\chi_\Omega(\mathbf x)\epsilon^T_{ij},\qquad
+      \sigma_{ij}=C_{ijkl}(\epsilon_{kl}-\epsilon^0_{kl}),\qquad
+      \sigma_{ij,j}=0.\]
+    </div>
+    <p>
+      Mura's Green-function solution treats the gradient of eigenstrain as the
+      source of the elastic field. At a perfectly bonded sharp interface,
+    </p>
+    <div class="formula-box">
+      \[\boxed{[\![u_i]\!]=0},\qquad
+      \boxed{[\![\sigma_{ij}]\!]n_j=0},\qquad
+      [\![u_{i,j}]\!]=a_i n_j.\]
+    </div>
+    <p>
+      Displacement and traction are continuous. Total strain and individual
+      stress components need not be. For tangent \(\mathbf s\) and normal
+      \(\mathbf n\), \([\![\epsilon_{ss}]\!]=0\) and the traction components
+      \(\sigma_{nn}\) and \(\sigma_{sn}\) are continuous. This is the sharp
+      benchmark that a diffuse calculation should approach.
+    </p>
+
+    <h3>2. Replace the indicator by a resolved diffuse profile.</h3>
+    <div class="lab-controls">
+      <label for="interface-width">Tanh width, w
+        <input id="interface-width" type="range" min="0.03" max="0.45" step="0.01" value="0.16" />
+      </label>
+      <p class="lab-control-note">Current width: <output id="interface-width-value">0.16</output></p>
+    </div>
+    <div class="lab-grid lab-grid-one">
+      <div class="lab-plot" id="interface-profile-plot"></div>
+    </div>
+    <div class="formula-box">
+      \[\chi_\Omega(\mathbf x)\longrightarrow
+      h(d)=\frac12\left[1-\tanh\!\left(\frac{d(\mathbf x)}{w}\right)\right].\]
+    </div>
+    <p>
+      Here \(d\) is a signed-distance-like coordinate and \(w\) controls the
+      transition width. This tanh profile prescribes a smooth geometry. It is
+      not the same decision as selecting a constitutive interpolation
+      \(h(\eta)\) for an evolving order parameter.
+    </p>
+    <p class="lab-readout">
+      At finite width there is no mathematical jump surface. Displacement,
+      strain and stress vary through a layer while \(\nabla\!\cdot\!\sigma=0\).
+      Integrating equilibrium across a shrinking layer recovers
+      \([\![\sigma]\!]\mathbf n=0\) as \(w\to0\), provided that there is no
+      sliding, surface elasticity or singular interfacial force.
+    </p>
+
+    <h3>3. Choose the interpolation according to what the field means.</h3>
+    <div class="lab-controls">
+      <label for="interface-kind">Highlighted interpolation
+        <select id="interface-kind">
+          <option value="linear">Linear</option>
+          <option value="cubic" selected>Cubic smoothstep</option>
+          <option value="quintic">Quintic smootherstep</option>
+          <option value="tanh">Normalized tanh</option>
+        </select>
+      </label>
+      <label for="interface-eta">Inspect η
+        <input id="interface-eta" type="range" min="0" max="1" step="0.01" value="0.35" />
+      </label>
+      <label id="interface-beta-wrap" for="interface-beta" hidden>Tanh sharpness, β
+        <input id="interface-beta" type="range" min="1" max="16" step="0.5" value="6" />
+      </label>
+    </div>
+    <div class="lab-grid">
+      <div class="lab-plot" id="interface-h-plot"></div>
+      <div class="lab-plot" id="interface-dh-plot"></div>
+    </div>
+    <p id="interface-readout" class="lab-readout"></p>
+    <div class="formula-box">
+      \[h_1=\eta,\qquad h_3=\eta^2(3-2\eta),\qquad
+      h_5=\eta^3(10-15\eta+6\eta^2).\]
+    </div>
+    <table class="lab-table">
+      <thead><tr><th>Field and physical meaning</th><th>First choice</th><th>Reason</th></tr></thead>
+      <tbody>
+        <tr><td>Composition or a true phase fraction</td><td>Linear</td><td>Vegard or mixture interpretation</td></tr>
+        <tr><td>Evolving phase field, \(0\leq\eta\leq1\)</td><td>Cubic</td><td>Correct endpoints and zero endpoint slopes</td></tr>
+        <tr><td>Extra-flat pure-phase response</td><td>Quintic comparison</td><td>First and second derivatives vanish at both endpoints</td></tr>
+        <tr><td>Prescribed diffuse geometry</td><td>Spatial tanh</td><td>The width has a direct geometric meaning</td></tr>
+        <tr><td>Signed amplitude with equivalent \(+\eta\) and \(-\eta\)</td><td>\(\eta^2\)</td><td>Preserves the required sign symmetry</td></tr>
+      </tbody>
+    </table>
+    <p>
+      For an evolving phase field, a useful starting model is
+    </p>
+    <div class="formula-box">
+      \[C(\eta)=[1-h_C(\eta)]C^m+h_C(\eta)C^p,\qquad
+      \epsilon^0(\eta)=\epsilon^{0,m}+h_\epsilon(\eta)
+      (\epsilon^{0,p}-\epsilon^{0,m}).\]
+      \[\frac{\partial f_{\rm el}}{\partial\eta}
+      =\frac12\epsilon^e:\frac{\partial C}{\partial\eta}:\epsilon^e
+      -\sigma:\frac{\partial\epsilon^0}{\partial\eta}.\]
+    </div>
+    <p>
+      The modulus term and the eigenstrain term must both be retained. For
+      several phases, the weights must form a deliberate partition or a
+      deliberately softer grain-boundary state. Independently overlapping
+      interpolation functions can otherwise double-count stiffness and
+      eigenstrain.
+    </p>
+
+    <h3>4. General inhomogeneous formulation from our CICP paper.</h3>
+    <p>
+      In Eqs. (2.1)–(2.16), the paper writes
+      \(C(\mathbf r)=C^0+C'(\mathbf r)\), permits an arbitrary
+      eigenstrain distribution and solves equilibrium iteratively with the
+      Green tensor of the homogeneous reference medium. In polarization form,
+    </p>
+    <div class="formula-box">
+      \[\tau=(C-C^0):\epsilon-C:\epsilon^0,\qquad
+      \sigma=C^0:\epsilon+\tau,\qquad
+      \nabla\cdot\sigma=0.\]
+      \[\widehat{\widetilde\epsilon}(\mathbf k)
+      =-\Gamma^0(\mathbf k):\widehat\tau(\mathbf k),
+      \qquad \mathbf k\ne\mathbf0.\]
+    </div>
+    <p>
+      This is the appropriate extension when stiffness varies in space. A
+      single homogeneous elastic-energy kernel \(B(\mathbf n)\) must not be
+      used as though it solved a modulus-contrast problem. The CICP
+      polycrystal example uses rotated contributions weighted by
+      \(\eta_g^2\), and explicitly compares sharp and diffuse grain-boundary
+      descriptions. When \(\sum_g\eta_g^2&lt;1\) in a boundary, that choice can
+      create a physically distinct softer boundary region whose width affects
+      the effective properties.
+    </p>
+    <p><a href="https://doi.org/10.4208/cicp.290610.060411a">Read the CICP paper and publication details →</a></p>
+    <p class="small muted">Primary references for this section: T. Mura, <i>Micromechanics of Defects in Solids</i>, 2nd ed., Chapter 1, especially §§1, 3 and 6; H. Moulinec and P. Suquet's periodic FFT cell formulation and its later mixed-control extensions; S. Bhattacharyya, S. Heo, K. Chang and L.-Q. Chen, <i>Communications in Computational Physics</i> 11 (2012), 726–738.</p>
+
+    <h3>5. The zero mode is the homogeneous strain.</h3>
+    <div class="formula-box">
+      \[\epsilon(\mathbf r)=\bar\epsilon+\widetilde\epsilon(\mathbf r),
+      \qquad\langle\widetilde\epsilon\rangle=0,\qquad
+      \widehat\epsilon(\mathbf0)=V\bar\epsilon.\]
+    </div>
+    <p>
+      The Green operator determines the nonzero modes. The macroscopic
+      mechanical boundary condition determines the zero mode. For homogeneous
+      stiffness,
+    </p>
+    <div class="formula-box">
+      \[F_{\rm el}=\frac V2
+      (\bar\epsilon-\langle\epsilon^0\rangle):C:
+      (\bar\epsilon-\langle\epsilon^0\rangle)
+      +\frac12\sum_{pq}\int_{\mathbf k\ne0}
+      B_{pq}(\mathbf n)\widetilde\theta_p\widetilde\theta_q^*
+      \frac{d^d k}{(2\pi)^d}.\]
+    </div>
+    <ul>
+      <li>Prescribed mean strain: supply \(\bar\epsilon\) and retain its energy.</li>
+      <li>Zero applied mean stress with homogeneous \(C\): \(\bar\epsilon=\langle\epsilon^0\rangle\).</li>
+      <li>Clamped periodic cell: commonly \(\bar\epsilon=0\).</li>
+      <li>Inhomogeneous \(C(\mathbf r)\): solve the homogeneous and fluctuating strains together; generally \(\bar\epsilon\ne\langle\epsilon^0\rangle\).</li>
+    </ul>
+
+    <h3>6. What is periodic, and how is load applied?</h3>
+    <div class="formula-box">
+      \[\boxed{u_i(\mathbf x)=\bar\epsilon_{ij}x_j+\widetilde u_i(\mathbf x)},
+      \qquad
+      \widetilde{\mathbf u}(\mathbf x+\mathbf L)=\widetilde{\mathbf u}(\mathbf x).\]
+    </div>
+    <p>
+      The displacement fluctuation is periodic. The affine part need not be.
+      Under strain control, prescribe \(\bar\epsilon\), equilibrate the
+      nonzero modes and read \(\Sigma=\langle\sigma\rangle\). Under stress
+      control, prescribe the average stress, not the same local stress at every
+      grid point. The unknown is the homogeneous strain.
+    </p>
+    <div class="lab-flow" aria-label="Numerical stress control algorithm">
+      <div><strong>1</strong><span>Guess \(\bar\epsilon\)</span></div>
+      <div><strong>2</strong><span>Equilibrate periodic fluctuations</span></div>
+      <div><strong>3</strong><span>Calculate \(\langle\sigma\rangle\)</span></div>
+      <div><strong>4</strong><span>Correct the zero-mode strain</span></div>
+    </div>
+    <div class="formula-box">
+      \[R=\Sigma^{\rm target}-\langle\sigma\rangle,\qquad
+      \bar\epsilon^{m+1}=\bar\epsilon^m+S^{\rm eff}:R.\]
+    </div>
+    <p>
+      For fixed linear elasticity, calculate the response to independent unit
+      homogeneous strains once. These response columns give \(C^{\rm eff}\).
+      If \(\Sigma^0\) is the residual average stress at
+      \(\bar\epsilon=0\), then
+    </p>
+    <div class="formula-box">
+      \[\boxed{\bar\epsilon=(C^{\rm eff})^{-1}:
+      (\Sigma^{\rm target}-\Sigma^0)}.\]
+    </div>
+    <details>
+      <summary>Numerical stress-control recipe</summary>
+      <pre class="appendix-code"><code>residualStress = equilibrate(meanStrain = zero).averageStress
+
+for each independent strain component J:
+    unitStrain[J] = 1
+    response = equilibrate(meanStrain = unitStrain).averageStress
+    effectiveStiffness[:, J] = response - residualStress
+
+meanStrain = inverse(effectiveStiffness)
+             * (targetStress - residualStress)
+solution = equilibrate(meanStrain)
+
+check solution.averageStress against targetStress
+check divergence of the local stress</code></pre>
+      <p>
+        With nonlinear constitutive behavior, update the homogeneous strain
+        with the current consistent effective tangent and repeat. Mixed control
+        fixes selected strain components while solving the remaining zero-mode
+        components from their target average stresses.
+      </p>
+    </details>
+
+    <h3>7. Thin film, substrate and vacuum.</h3>
+    <figure class="lab-fig lab-film">
+      <svg viewBox="0 0 900 330" role="img" aria-label="Periodic thin film and substrate cell separated by vacuum">
+        <defs><marker id="film-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#17313a"/></marker></defs>
+        <rect x="80" y="35" width="740" height="255" rx="8" fill="#fff" stroke="#60717a" stroke-dasharray="7 5"/>
+        <rect x="80" y="35" width="740" height="58" fill="#f8fbff"/><rect x="80" y="93" width="740" height="72" fill="#b4e2cf"/><rect x="80" y="165" width="740" height="67" fill="#b9cfe0"/><rect x="80" y="232" width="740" height="58" fill="#f8fbff"/>
+        <text x="450" y="70" text-anchor="middle">soft vacuum: Cᵛ ≈ 0</text><text x="450" y="135" text-anchor="middle" font-weight="600">film</text><text x="450" y="205" text-anchor="middle" font-weight="600">substrate</text><text x="450" y="267" text-anchor="middle">soft vacuum: Cᵛ ≈ 0</text>
+        <line x1="100" y1="129" x2="190" y2="129" stroke="#17313a" stroke-width="2" marker-start="url(#film-arrow)" marker-end="url(#film-arrow)"/><line x1="710" y1="129" x2="800" y2="129" stroke="#17313a" stroke-width="2" marker-start="url(#film-arrow)" marker-end="url(#film-arrow)"/>
+        <text x="145" y="118" text-anchor="middle">in-plane load</text><text x="755" y="118" text-anchor="middle">in-plane load</text>
+        <line x1="450" y1="95" x2="450" y2="55" stroke="#267c70" stroke-width="3" marker-end="url(#film-arrow)"/><text x="465" y="83">traction → 0</text>
+        <text x="450" y="317" text-anchor="middle">The dashed box repeats periodically; vacuum separates successive solid slabs.</text>
+      </svg>
+      <figcaption>
+        A soft vacuum makes the solid-vacuum traction approximately zero after
+        mechanical equilibrium. It does not impose a nonzero pressure or a
+        point load.
+      </figcaption>
+    </figure>
+    <p>
+      For an epitaxial film, prescribe the in-plane homogeneous strains and
+      use mixed control for the normal components:
+    </p>
+    <div class="formula-box">
+      \[\bar\epsilon_{xx},\bar\epsilon_{yy},\bar\epsilon_{xy}
+      \ \text{prescribed},\qquad
+      \Sigma_{zz}=\Sigma_{xz}=\Sigma_{yz}=0.\]
+    </div>
+    <p>
+      A very soft vacuum gives \(\sigma\mathbf n\approx0\) at the exposed
+      surface. Exactly zero vacuum stiffness makes the displacement in the
+      vacuum undetermined and can make a displacement-based solver singular.
+      Validate the result against vacuum stiffness, vacuum thickness and grid
+      resolution. For in-plane stress control, do not let arbitrary vacuum
+      thickness dilute the reported load. Use a solid-volume average or the
+      membrane resultant \(N_{\alpha\beta}=\int_{\rm solid}
+      \sigma_{\alpha\beta}\,dz\).
+    </p>
+    <p class="lab-readout">
+      Vacuum supplies an approximately traction-free surface. It does not
+      represent pressure, bottom-plane clamping, bending tractions, surface
+      elasticity or a nonperiodic lateral edge. Those require an explicit
+      surface load or a solver with the corresponding boundary conditions.
+    </p>
+
+    <h3>8. Validation before interpretation.</h3>
+    <ul>
+      <li>Refine the grid at fixed physical interface width.</li>
+      <li>Then reduce the width while retaining enough points across it.</li>
+      <li>Match integrated phase fraction when comparing interpolation functions.</li>
+      <li>Verify positive-definite interpolated stiffness.</li>
+      <li>Check equilibrium and the prescribed macroscopic stress separately.</li>
+      <li>Recover displacement and traction continuity in the sharp limit.</li>
+      <li>For vacuum, vary both residual stiffness and layer thickness.</li>
+      <li>State whether averages use the full cell, the solid volume or a film resultant.</li>
+    </ul>
+    <details class="lab-insight">
+      <summary>Physical insight</summary>
+      <p>
+        A smooth picture is not automatically a diffuse-interface model. The
+        field definition, interpolation law, interface width, macroscopic
+        boundary condition and averaging measure all change the physical
+        problem. The calculation becomes interpretable only when each choice is
+        stated and independently tested.
+      </p>
+    </details>
+  </section>
+</div>
 <section class="resource-note" id="variant-explorer"><span class="eyebrow">ELASTIC STRESS EFFECTS LABORATORY</span><h2>See the strain. Calculate the orientation.</h2><p>Explore eigenstrain shapes, Mohr’s circle, habit lines, Fourier elastic-energy kernels, two-phase interactions and soft or hard precipitates with diagrams and independently tested calculations.</p><a class="button secondary" href="/research/elastic-lab/">Open the interactive elasticity laboratory →</a></section>
 
 <section class="section"><h2>Constraint turns transformation strain into stress.</h2><p class="wide-copy">A coherent microstructure cannot generally realize every local eigenstrain independently. Elastic strain is the difference between compatible total strain and eigenstrain. The constitutive law gives stress, and mechanical equilibrium determines the displacement field.</p><div class="formula-box">\[\begin{aligned}\epsilon^{\mathrm{el}}_{ij}&=\epsilon_{ij}-\epsilon^0_{ij}\\\sigma^{\mathrm{el}}_{ij}&=C_{ijkl}\epsilon^{\mathrm{el}}_{kl}\\\frac{\partial\sigma^{\mathrm{el}}_{ij}}{\partial r_j}&=0\\F_e&=\frac12\int_V\sigma^{\mathrm{el}}_{ij}\epsilon^{\mathrm{el}}_{ij}\,dV.\end{aligned}\]</div><p class="small muted">Repeated spatial indices are summed. Eigenstrain and elastic strain are distinct: eigenstrain describes the local stress-free transformation, while elastic strain is the constrained response that produces stress.</p><h3>The assumptions define the solver.</h3><p>The closed-form Fourier kernel introduced in the linked derivation assumes linear elasticity, homogeneous stiffness, coherent interfaces, periodic fields and zero applied mean stress. It is a foundation, not a universal restriction. Our broader formulations treat elastic anisotropy, spatially varying stiffness, polycrystals, applied loading and coupling with plastic deformation. Direct iterative and equivalent-eigenstrain solvers are used when elastic inhomogeneity makes the homogeneous kernel insufficient.</p><p><a class="text-link dark" href="/resources/elastic-solvers/">Explore the inhomogeneous elasticity solvers →</a></p></section>
@@ -23,3 +324,4 @@ nav_active: research
 
 <section class="section"><h2>Elasticity feeds back into evolution.</h2><p class="wide-copy">The total free energy combines chemical, interfacial and elastic contributions. Elastic energy therefore enters the variational driving forces for conserved composition fields and nonconserved structural fields. Mechanical equilibrium is solved at each required stage so that the evolving microstructure and mechanical fields remain coupled.</p><div class="formula-box">\[F=F_{\mathrm{chem}}+F_{\mathrm{grad}}+F_{\mathrm{el}}+\cdots\]</div><p>This chain connects transformation strains with morphology, orientation, interactions, coarsening, splitting, rafting and variant selection. It also makes clear where model assumptions enter and which solver is valid for a given material system.</p><p class="small muted">This teaching presentation follows a connected micromechanical lineage. Eshelby’s inclusion construction and Mura’s eigenstrain method establish the physical problem. Khachaturyan’s Chapter 7 extends it to arbitrary coherent multiphase microstructures, homogeneous-modulus elastic energy and inclusion interactions. Our <i>Communications in Computational Physics</i> paper develops a spectral iterative perturbation method for spatially varying stiffness and effective properties. My thesis appendices provide one detailed multivariant derivation; the wider research programme includes both homogeneous and inhomogeneous formulations.</p><a class="text-link dark" href="{{ '/research/#elastic-stress' | relative_url }}">← Elastic stress effects research</a></section>
 </div>
+<script type="module" src="/assets/js/elastic-lab/interfaces-ui.mjs?v=20261002a"></script>

@@ -16,6 +16,8 @@ Numerical and UI modules are in `assets/js/elastic-lab/`:
 - `state.mjs`: parameters and input validation.
 - `ui.mjs`: interactions, explanations and downloads.
 - `math-render.mjs`: local MathJax TeX typography for equations and SVG symbols.
+- `interfaces.mjs`: independently testable linear, cubic, quintic and normalized-tanh interpolation functions.
+- `interfaces-ui.mjs`: sharp-to-diffuse profiles, interpolation plots and loading explanations in Module VI.
 - `lab.css`: responsive layout, scoped to the laboratory.
 
 The standalone source archive preserves these paths. To run the tests from its root, use a modern Node.js:
@@ -30,6 +32,8 @@ The plate scan uses 32, 64 or 128 square grids, and 5°, 2.5° or 1.25° steps. 
 A completed sweep can be downloaded as JSON with parameters, boundary conditions and energies. Plate angles are line/tangent angles, kernel angles are Fourier normal angles, and pair angles are centre-to-centre separation angles. Never interchange them.
 
 Read FORMULATION.md for the boundary condition and reduction. The inhomogeneous module fixes mean total strain to zero; it does not enforce zero mean stress. It models one smooth plate of the selected phase in the matrix. Independent beta and gamma settings are retained, but it does not solve simultaneous inhomogeneous three-phase microstructures. That is a future extension.
+
+The linked formulation page distinguishes this fixed-strain plate calculation from general macroscopic loading. In a periodic cell the displacement fluctuation is periodic, while the total displacement contains an affine homogeneous-strain part. Prescribed average stress is enforced by solving for that homogeneous strain. The formulation also distinguishes a spatial tanh regularization from a constitutive interpolation of an evolving order parameter.
 
 ## Source verification
 Read SOURCE-AUDIT.md for the appendix derivations, the CICP reference and the checks on compact notation in Tushar’s thesis. `reference-checks.mjs` supplements the original tests with explicit four-index contractions, Mohr-circle invariants, wave-number scaling, an independent spectral fixed-point iteration, and re-equilibrated energy derivatives. The production solver remains PCG.

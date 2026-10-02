@@ -35,5 +35,17 @@ Use spectral symmetric gradients and their exact discrete adjoints, then precond
 
 Reference energy for homogeneous C is evaluated independently in Fourier space by eliminating displacement mode by mode, including the k=0 clamped term. Validate the real-space solver against this reference. Report relative residual, iteration limit, energy and convergence; reject failed solves in orientation scans. A finite sampled minimum is not a proof of a global continuum optimum. Compare 32/64/128 grids and 5/2.5 degree angle steps; expose this limitation.
 
+## Sharp interfaces, diffuse profiles and interpolation
+For a sharp coherent inclusion, epsilon0=chi_Omega epsilonT and C=Cm+chi_Omega(Cp-Cm). Mura's interface conditions are continuity of displacement and traction, [u]=0 and [sigma]n=0, with the displacement-gradient jump in Hadamard form [grad u]=a tensor n. A spatial tanh profile h(d)=[1-tanh(d/w)]/2 regularizes the indicator over a prescribed width; it is not itself a choice of phase-field interpolation h(eta).
+
+For a physical composition or phase fraction, begin with linear interpolation. For an evolving 0-to-1 structural phase field, the teaching default is the cubic smoothstep h=eta^2(3-2 eta), whose first derivative vanishes in both pure phases. The quintic h=eta^3(10-15 eta+6 eta^2) is provided as a comparison whose first and second derivatives vanish at the endpoints. eta^2 is retained only when positive and negative order-parameter amplitudes represent the same eigenstrain contribution. If C and epsilon0 depend on eta, the elastic derivative contains both 1/2 epsilon_el:C_,eta:epsilon_el and -sigma:epsilon0_,eta.
+
+## Homogeneous strain and macroscopic loading
+Write u=Ebar x+u_tilde, where u_tilde is periodic. Then epsilon=Ebar+epsilon_tilde, mean(epsilon_tilde)=0, and the k=0 strain is V Ebar under the stated transform convention. The Green operator solves the nonzero modes. The macroscopic boundary condition fixes the zero mode.
+
+Under strain control, prescribe Ebar, equilibrate the fluctuations and calculate Sigma=mean(sigma). Under stress control, prescribe Sigma and solve for Ebar; never impose the same stress at every voxel. For fixed linear elasticity, Sigma=Ceff:Ebar+Sigma0, so Ebar=inv(Ceff):(Sigma_target-Sigma0). Mixed control partitions the zero-mode components into prescribed strains and prescribed average stresses.
+
+For a film-substrate slab separated from its periodic images by soft vacuum, equilibrium and negligible vacuum stress make the exposed solid traction approximately zero. Exact zero vacuum stiffness leaves vacuum displacement modes undetermined. Check vacuum stiffness, vacuum thickness and spatial resolution. In-plane stress should be reported as a solid-volume average or membrane resultant, not diluted by arbitrary vacuum volume. Nonzero surface pressure requires an explicit traction or an equivalent loading method.
+
 ## Sources and licensing
 Saswata Bhattacharyya thesis: Chapter3 Eq3.2 and Chapter4 Eq4.10, Fig4.4. Sandeep Sugathan: A Phase-Field Study of Elastic Stress Effects on Phase Separation in Ternary Alloy Systems, IIT Hyderabad, June 2019, Chapters 3 and 5 above. Existing website elastic appendix supplies the homogeneous derivation. New laboratory code: GPL-3.0-or-later. Existing website template remains MIT; thesis figures retain their authors' rights. Do not redistribute full theses.

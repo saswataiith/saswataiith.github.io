@@ -17,6 +17,12 @@ import {
 } from "../../assets/js/elastic-lab/solver.mjs";
 import { referenceChecks } from "./reference-checks.mjs";
 import { eshelbyChecks } from "./eshelby-checks.mjs";
+import {
+  interpolation,
+  derivative,
+  secondDerivative,
+  spatialProfile,
+} from "../../assets/js/elastic-lab/interfaces.mjs";
 const results = [];
 function close(a, b, tol = 1e-10) {
   assert.ok(
@@ -30,6 +36,31 @@ function test(name, fn) {
   console.log("PASS", name);
 }
 const iso = { c11: 3, c12: 1, c44: 1 };
+test("Interpolation endpoints, derivatives and diffuse-profile symmetry", () => {
+  for (const kind of ["linear", "cubic", "quintic", "tanh"]) {
+    close(interpolation(kind, 0), 0);
+    close(interpolation(kind, 1), 1);
+    for (let iterator = 1; iterator <= 100; iterator++)
+      assert.ok(
+        interpolation(kind, iterator / 100) >=
+          interpolation(kind, (iterator - 1) / 100),
+      );
+  }
+  for (const kind of ["cubic", "quintic"]) {
+    close(derivative(kind, 0), 0);
+    close(derivative(kind, 1), 0);
+  }
+  close(secondDerivative("quintic", 0), 0);
+  close(secondDerivative("quintic", 1), 0);
+  close(spatialProfile(0, 0.2), 0.5);
+  for (const distance of [0.1, 0.4, 1])
+    close(spatialProfile(-distance, 0.2) + spatialProfile(distance, 0.2), 1);
+  return {
+    cubicMidpoint: interpolation("cubic", 0.5),
+    quinticMidpoint: interpolation("quintic", 0.5),
+    normalizedTanhMidpoint: interpolation("tanh", 0.5),
+  };
+});
 test("Isotropic dilatation kernel equals 8/3 for unit misfit", () => {
   for (const p of sample((a) => kernel(iso, [1, 1, 0], [1, 1, 0], a)))
     close(p.value, 8 / 3);
