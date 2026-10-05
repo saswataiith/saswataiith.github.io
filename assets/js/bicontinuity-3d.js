@@ -1,102 +1,75 @@
-/* VPython's GlowScript JavaScript API. Coordinates are voxel centres.
-   A periodic step is interpolated in the lifted domain, then reduced mod n.
-   Thus it reaches a face and resumes at its partner, never across the box. */
-(async function () {
-  const el = id => document.getElementById(id), status = el('status');
-  try {
-    const base = new URL('../../../assets/examples/bicontinuity-3d/', location.href);
-    const fetchJSON = async name => { const r = await fetch(new URL(name+'?v=isosurface-trail-20261005', base)); if (!r.ok) throw Error(`${name}: ${r.status}`); return r.json(); };
-    const [data, report] = await Promise.all([fetchJSON('viewer.json'), fetchJSON('report.json')]);
-    window.__context = {glowscript_container: $('#glowscript')};
-    const n = data.n, scene = canvas({width:Math.min(760,innerWidth-40),height:480,background:vec(0.98,0.98,0.96),center:vec(n/2,n/2,n/2),range:n*.8});
-    scene.forward = vec(-1,-.7,-1);
-    scene.lights=[];scene.ambient=vec(.22,.22,.22);
-    distant_light({direction:vec(-.6,.8,-1),color:vec(.45,.45,.45)});
-    distant_light({direction:vec(1,-.2,.4),color:vec(.18,.18,.18)});
-    distant_light({direction:vec(.3,.7,1),color:vec(.12,.12,.12)});
-    const colors = {red:vec(.85,.14,.12),blue:vec(.12,.38,.85)}, phases = {};
-    for (const phase of ['red','blue']) {
-      // A display-only surface extracted from the 256^3 simulation offline.
-      // No PDE, voxel downsampling or connectivity calculation runs here.
-      phases[phase]=[];const mesh=data.meshes[phase];
-      for(let start=0;start<mesh.triangles.length;start+=1500){
-        const triangles=mesh.triangles.slice(start,start+1500),vertices=new Map();
-        const point=i=>{if(!vertices.has(i))vertices.set(i,vertex({pos:vec(...mesh.vertices[i]),normal:vec(...mesh.normals[i]),color:colors[phase]}));return vertices.get(i);};
-        const faces=triangles.map(t=>triangle({v0:point(t[0]),v1:point(t[1]),v2:point(t[2])}));
-        const surface=compound(faces);surface.opacity=.1;surface.shininess=.25;surface.visible=false;phases[phase].push(surface);
-        status.textContent=`Loading saved 256³ surface: ${phase}, ${Math.min(start+1500,mesh.triangles.length)} / ${mesh.triangles.length} triangles…`;
-        // Yield between meshes so the page stays responsive while loading.
-        await new Promise(resolve=>setTimeout(resolve,0));
-      }
+/* Static percolation witnesses on a fixed 256^3 field. No simulation or turtle.
+   Every graph edge is a verified face-sharing step. Periodic edges are split at
+   paired box faces; collinear rendering compression preserves the graph paths. */
+(async function(){
+ const el=id=>document.getElementById(id),status=el('status');
+ try{
+  const base=new URL('../../../assets/examples/bicontinuity-3d/',location.href);
+  const get=async name=>{const r=await fetch(new URL(name+'?v=percolation-20261005',base));if(!r.ok)throw Error(name+': '+r.status);return r.json();};
+  const [data,report]=await Promise.all([get('viewer.json'),get('report.json')]);
+  window.__context={glowscript_container:$('#glowscript')};
+  const n=data.n,scene=canvas({width:Math.min(820,innerWidth-40),height:540,background:vec(.98,.98,.96),center:vec(n/2,n/2,n/2),range:n*.75});
+  scene.forward=vec(-1,-.7,-1);scene.lights=[];scene.ambient=vec(.22,.22,.22);
+  distant_light({direction:vec(-.6,.8,-1),color:vec(.45,.45,.45)});
+  distant_light({direction:vec(1,-.2,.4),color:vec(.18,.18,.18)});
+  distant_light({direction:vec(.3,.7,1),color:vec(.12,.12,.12)});
+  const surfaces=[],lines={red:[],blue:[]},loops={red:[],blue:[]},colors={red:vec(.8,.08,.06),blue:vec(.03,.28,.85)};
+  const mesh=data.meshes.red; // One shared c=0.5 interface, neutral in both-phase view.
+  for(let start=0;start<mesh.triangles.length;start+=1500){
+   const vertices=new Map(),point=i=>{if(!vertices.has(i))vertices.set(i,vertex({pos:vec(...mesh.vertices[i]),normal:vec(...mesh.normals[i]),color:vec(.5,.55,.58)}));return vertices.get(i);};
+   const faces=mesh.triangles.slice(start,start+1500).map(t=>triangle({v0:point(t[0]),v1:point(t[1]),v2:point(t[2])}));
+   const surface=compound(faces);surface.opacity=.04;surface.shininess=.25;surfaces.push(surface);
+   status.textContent='Loading c = 0.5 interface…';await new Promise(resolve=>setTimeout(resolve,0));
+  }
+  function drawPath(path,color,radius,out){
+   let points=[path[0].map(x=>x+.5)];
+   function flush(){if(points.length<2)return;
+    // Remove only straight-line intermediate points; never smooth corners.
+    const simple=[points[0]];
+    for(let i=1;i<points.length-1;i++){
+     const a=points[i-1],b=points[i],c=points[i+1];const d1=b.map((x,j)=>x-a[j]),d2=c.map((x,j)=>x-b[j]);
+     if(d1.some((x,j)=>Math.abs(x*d2[(j+1)%3]-d1[(j+1)%3]*d2[j])>1e-8))simple.push(b);
     }
-    for(let axis=0;axis<3;axis++)for(const u of [0,n])for(const v of [0,n]){
-      const p=[0,0,0],q=[0,0,0],others=[0,1,2].filter(a=>a!==axis);p[others[0]]=q[others[0]]=u;p[others[1]]=q[others[1]]=v;q[axis]=n;
-      curve({pos:[vec(...p),vec(...q)],radius:n/1000,color:vec(.5,.5,.5)});
+    simple.push(points.at(-1));out.push(curve({pos:simple.map(p=>vec(...p)),radius,color,emissive:true}));
+   }
+   for(let i=0;i<path.length-1;i++){
+    const a=path[i].map(x=>x+.5),b=path[i+1].map(x=>x+.5),axis=b.findIndex((x,j)=>Math.abs(x-a[j])>n/2);
+    if(axis>=0){const face=[...a];face[axis]=b[axis]<a[axis]?n:0;points.push(face);flush();const partner=[...face];partner[axis]=face[axis]===n?0:n;points=[partner,b];}
+    else points.push(b);
+   }
+   flush();
+  }
+  for(const phase of ['red','blue']){
+   const net=data.networks[phase],adj=net.nodes.map(()=>[]),seen=new Set();
+   for(const [u,v] of net.edges){adj[u].push(v);adj[v].push(u);}
+   const key=(u,v)=>u<v?u+','+v:v+','+u;
+   // Trace maximal chains between junctions, preserving all branch edges.
+   for(let root=0;root<adj.length;root++)if(adj[root].length!==2)for(const first of adj[root]){
+    if(seen.has(key(root,first)))continue;let prev=root,current=first;const path=[net.nodes[root]];
+    seen.add(key(prev,current));
+    while(true){path.push(net.nodes[current]);if(adj[current].length!==2)break;
+     const next=adj[current].find(v=>v!==prev);if(seen.has(key(current,next)))break;seen.add(key(current,next));prev=current;current=next;
     }
-    for (let a=0;a<3;a++) {
-      const start=[0,0,0], end=[0,0,0];end[a]=n;
-      arrow({pos:vec(...start),axis:vec(...end),shaftwidth:n/200,color:vec(.2,.2,.2)});
-      label({pos:vec(...end),text:'xyz'[a],box:false,height:16,color:vec(0,0,0)});
-    }
-    const marker=n/32;
-    const turtle = [ellipsoid({size:vec(.85*marker,.65*marker,1.1*marker),color:vec(.2,.65,.22)}),sphere({radius:.23*marker,color:vec(.35,.8,.3)})];
-    const offsets=[[0,0,0],[0,0,.65]];
-    for(const x of [-.38,.38]) for(const z of [-.32,.32]){turtle.push(sphere({radius:.16*marker,color:vec(.35,.8,.3)}));offsets.push([x,-.18,z]);}
-    let lines=[],trails=[],currentTrail,executed=0;
-    let route, progress=0, running=false, last=performance.now(), crossings=0;
-    const updateVisibility = () => {for(const phase of ['red','blue']){for(const mesh of phases[phase]){mesh.visible=phase===el('phase').value && el('other').checked; mesh.opacity=Number(el('opacity').value);}}};
-    function drawRoute(){
-      for(const line of lines)line.visible=false;lines=[];
-      let points=[route[0].map(x=>x+.5)];
-      function flush(){if(points.length>1)lines.push(curve({pos:points.map(p=>vec(...p)),radius:n/1100,color:vec(.55,.55,.55),visible:el('planned').checked}));}
-      for(let i=0;i<route.length-1;i++){
-        const a=route[i].map(x=>x+.5),b=route[i+1].map(x=>x+.5);
-        const axis=b.findIndex((x,j)=>Math.abs(x-a[j])>1);
-        if(axis>=0){const sign=b[axis]<a[axis]?1:-1,face=[...a];face[axis]=sign>0?n:0;points.push(face);flush();const partner=[...face];partner[axis]=sign>0?0:n;points=[partner,b];}
-        else points.push(b);
-      }
-      flush();
-    }
-    function positionAt(q){
-      const i=Math.min(Math.floor(q),route.length-2),t=q>=route.length-1?1:q-i;
-      const a=route[i],b=route[i+1],d=b.map((x,j)=>((x-a[j]+n+n/2)%n)-n/2);
-      return a.map((x,j)=>((x+.5+d[j]*t)%n+n)%n);
-    }
-    function beginTrail(point){
-      currentTrail=curve({pos:[vec(...point)],radius:n/350,color:vec(.68,.02,.42),emissive:true});trails.push(currentTrail);
-    }
-    function extendTrail(to){
-      let q=executed;
-      while(q<to-1e-9){
-        const i=Math.min(Math.floor(q+1e-9),route.length-2),end=Math.min(to,i+1);
-        const a=route[i],b=route[i+1],axis=b.findIndex((x,j)=>Math.abs(x-a[j])>n/2);
-        if(axis>=0 && q<i+.5-1e-9 && end>=i+.5){
-          const face=a.map(x=>x+.5);face[axis]=b[axis]<a[axis]?n:0;
-          currentTrail.push(vec(...face));const partner=[...face];partner[axis]=face[axis]===n?0:n;beginTrail(partner);
-          q=i+.5;crossings++;
-        }else{currentTrail.push(vec(...positionAt(end)));q=end;}
-      }
-      executed=to;
-    }
-    function reset(){
-      running=false;progress=0;crossings=0;executed=0;route=data.routes[el('phase').value][el('direction').value];
-      for(const trail of trails){trail.clear();trail.visible=false;}trails=[];
-      updateVisibility();drawRoute();beginTrail(positionAt(0));draw();
-    }
-    function draw(){
-      const p=positionAt(progress);
-      for(let j=0;j<turtle.length;j++) turtle[j].pos=vec(...p.map((x,k)=>x+marker*offsets[j][k]));
-      status.textContent=`${el('phase').value} · ${el('direction').value} loop · step ${Math.floor(progress)} / ${route.length-1} · ${crossings} periodic face crossings · ${progress>=route.length-1?'Complete: winding +1 in '+el('direction').value:running?'Running':'Paused'}`;
-      window.bicontinuityState={phase:el('phase').value,direction:el('direction').value,progress,running,crossings,position:p,executedProgress:executed,trailSegments:trails.length};
-    }
-    el('start').onclick=()=>{if(progress>=route.length-1) reset();running=true;last=performance.now();};
-    el('pause').onclick=()=>{running=false;draw();};el('reset').onclick=reset;
-    el('phase').onchange=reset;el('direction').onchange=reset;el('opacity').oninput=updateVisibility;el('other').onchange=updateVisibility;el('planned').onchange=()=>{for(const line of lines)line.visible=el('planned').checked;};
-    let html='<h2>Measured periodic connectivity</h2><table><tr><th>Threshold</th><th>Phase</th><th>Fraction</th><th>Components</th><th>Largest / phase</th><th>Winding rank</th></tr>';
-    for(const [threshold,ph] of Object.entries(report.thresholds)) for(const [name,r] of Object.entries(ph))html+=`<tr><td>${threshold}</td><td>${name}</td><td>${(100*r.phase_fraction).toFixed(2)}%</td><td>${r.components}</td><td>${(100*r.largest_fraction_of_phase).toFixed(0)}%</td><td>${r.winding_rank} (x,y,z)</td></tr>`;
-    el('measurements').innerHTML=html+'</table><p>Six face-sharing neighbours with periodic indexing. Winding is obtained from closed loops in a lifted graph; opposite-face contact alone is insufficient. Maximum mass drift: '+report.max_mass_drift.toExponential(2)+'. Energy: '+report.energy_initial.toFixed(3)+' → '+report.energy_final.toFixed(3)+'. Fixed 256³ field: the viewer does not evolve the simulation.</p>';
-    reset();
-    function frame(now){const dt=Math.min((now-last)/1000,.1);last=now;if(running){progress=Math.min(route.length-1,progress+dt*Number(el('speed').value));extendTrail(progress);if(progress>=route.length-1)running=false;draw();}requestAnimationFrame(frame);}
-    requestAnimationFrame(frame);
-  } catch(error){status.textContent='Viewer could not load: '+error.message+'. Use the source downloads or try a browser with WebGL enabled.';console.error(error);}
+    drawPath(path,colors[phase],n/650,lines[phase]);
+   }
+   if(seen.size!==net.edges.length)throw Error('Unrendered network edges: '+phase);
+   for(const route of Object.values(data.routes[phase]))drawPath(route,colors[phase],n/330,loops[phase]);
+  }
+  for(let axis=0;axis<3;axis++)for(const u of [0,n])for(const v of [0,n]){
+   const p=[0,0,0],q=[0,0,0],others=[0,1,2].filter(a=>a!==axis);p[others[0]]=q[others[0]]=u;p[others[1]]=q[others[1]]=v;q[axis]=n;
+   curve({pos:[vec(...p),vec(...q)],radius:n/1500,color:vec(.65,.65,.65)});
+  }
+  function update(){
+   for(const surface of surfaces){surface.visible=el('interface').checked;surface.opacity=Number(el('opacity').value);}
+   for(const phase of ['red','blue']){const visible=el('phase').value==='both'||el('phase').value===phase;for(const line of lines[phase])line.visible=visible;for(const line of loops[phase])line.visible=visible&&el('loops').checked;}
+   status.textContent='Verified connected red and blue witness networks. Thicker curves mark three independent wrapping loops per phase. Periodic links stop at one face and resume at its paired face.';
+   window.percolationState={phase:el('phase').value,interfaceVisible:el('interface').checked,loopsVisible:el('loops').checked,networks:{red:data.networks.red.proof,blue:data.networks.blue.proof}};
+  }
+  for(const id of ['phase','interface','loops'])el(id).onchange=update;el('opacity').oninput=update;
+  el('camera-reset').onclick=()=>{scene.center=vec(n/2,n/2,n/2);scene.range=n*.75;scene.forward=vec(-1,-.7,-1);};
+  let html='<h2>Measured on every saved voxel</h2><table><tr><th>Threshold</th><th>Phase</th><th>Fraction</th><th>Components</th><th>Largest / phase</th><th>Independent winding directions</th></tr>';
+  for(const [t,phases] of Object.entries(report.thresholds))for(const [name,r] of Object.entries(phases))html+=`<tr><td>${t}</td><td>${name}</td><td>${(100*r.phase_fraction).toFixed(2)}%</td><td>${r.components}</td><td>${(100*r.largest_fraction_of_phase).toFixed(0)}%</td><td>${r.winding_rank}</td></tr>`;
+  el('measurements').innerHTML=html+'</table><p>At every threshold, each entire phase is one connected component. Both contain three independent noncontractible wrapping loops. This establishes bicontinuity for the saved discrete field under six-neighbour periodic connectivity.</p>';
+  update();
+ }catch(error){status.textContent='Could not load percolation viewer: '+error.message;console.error(error);}
 })();

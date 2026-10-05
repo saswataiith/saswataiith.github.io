@@ -324,5 +324,27 @@
       "isovalue": 0.5,
       "box_caps": false
     }
+  },
+  "displayed_networks": {
+    "red": {
+      "nodes": 13709,
+      "edges": 13718,
+      "components": 1,
+      "winding_rank": 3,
+      "distributed_targets": 125,
+      "rooted_core_voxels_reached": 6265714,
+      "phase_membership_and_six_neighbour_edges_valid": true,
+      "scope": "displayed connected witness subgraph, not every voxel or a longest path"
+    },
+    "blue": {
+      "nodes": 13413,
+      "edges": 13418,
+      "components": 1,
+      "winding_rank": 3,
+      "distributed_targets": 125,
+      "rooted_core_voxels_reached": 6271342,
+      "phase_membership_and_six_neighbour_edges_valid": true,
+      "scope": "displayed connected witness subgraph, not every voxel or a longest path"
+    }
   }
 }

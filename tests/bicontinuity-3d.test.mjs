@@ -58,31 +58,39 @@ test('red and blue share one c=0.5 interface with opposite normals',()=>{
  for(let i=0;i<red.normals.length;i++)for(let j=0;j<3;j++)assert(Math.abs(red.normals[i][j]+blue.normals[i][j])<1e-8);
  for(let i=0;i<red.triangles.length;i++)assert.deepEqual(blue.triangles[i],[red.triangles[i][0],red.triangles[i][2],red.triangles[i][1]]);
 });
-test('browser control and animation logic completes all six loops (mock graphics, not WebGL)',async()=>{
- const ids=['phase','direction','speed','opacity','other','planned','start','pause','reset','status','measurements'];
- const els=Object.fromEntries(ids.map(id=>[id,{value:({phase:'red',direction:'x',speed:200,opacity:.1})[id],checked:id==='other'}]));
- let callback, now=0;const object=opts=>({...opts});const curves=[];
- const curve=opts=>{const c={...opts,points:[...(opts.pos||[])],push(p){this.points.push(p);},clear(){this.points=[];}};curves.push(c);return c;};
- const context={document:{getElementById:id=>els[id]},location:{href:'https://example.com/files/mesoscale/examples/bicontinuity-3d.html'},innerWidth:800,window:{},URL,console,
-  $:()=>({}),setTimeout,performance:{now:()=>now},requestAnimationFrame:fn=>callback=fn,
-  fetch:async url=>({ok:true,json:async()=>url.pathname.endsWith('viewer.json')?data:report}),
-  distant_light:object,vertex:object,triangle:object,curve,vec:(...a)=>a,canvas:object,box:object,compound:object,arrow:object,label:object,ellipsoid:object,sphere:object};
- vm.runInNewContext(readFileSync('assets/js/bicontinuity-3d.js','utf8'),context);
- for(let i=0;i<1000&&!callback;i++)await new Promise(resolve=>setTimeout(resolve,5));
- assert(callback,els.status.textContent);
- for(const phase of ['red','blue'])for(const axis of 'xyz'){
-  els.phase.value=phase;els.direction.value=axis;els.phase.onchange();
-  assert.equal(context.window.bicontinuityState.executedProgress,0);
-  assert.equal(curves.filter(c=>c.emissive&&c.visible!==false).reduce((s,c)=>s+c.points.length,0),1);
-  els.start.onclick();
-  for(let i=0;i<300&&context.window.bicontinuityState.progress<data.routes[phase][axis].length-1;i++){now+=100;callback(now);}
-  const state=context.window.bicontinuityState;assert.equal(state.progress,data.routes[phase][axis].length-1);assert.equal(state.running,false);assert(state.crossings>0);assert.equal(state.executedProgress,state.progress);assert.equal(state.trailSegments,state.crossings+1);
-  const active=curves.filter(c=>c.emissive&&c.visible!==false);
-  assert.equal(active.length,state.trailSegments);
-  for(const curve of active)for(let i=1;i<curve.points.length;i++){
-   const a=curve.points[i-1],b=curve.points[i];assert(a.every((x,j)=>Math.abs(x-b[j])<=1.00001),'trail bridged a periodic face or skipped a voxel');
+test('each branched percolation witness is connected, phase-valid and has winding rank three',()=>{
+ for(const phase of ['red','blue']){
+  const net=data.networks[phase],adj=net.nodes.map(()=>[]);assert.equal(net.targets.length,125);
+  for(const p of net.nodes)assert(phase==='red'?value(p)>=.75:value(p)<=.25);
+  for(const [u,v] of net.edges){const a=net.nodes[u],b=net.nodes[v],delta=b.map((x,j)=>((x-a[j]+384)%256)-128);assert.equal(delta.reduce((s,x)=>s+Math.abs(x),0),1);adj[u].push(v);adj[v].push(u);}
+  const lift=new Map([[0,[0,0,0]]]),queue=[0],vectors=[];
+  for(let head=0;head<queue.length;head++){
+   const u=queue[head];for(const v of adj[u]){
+    const step=net.nodes[v].map((x,j)=>((x-net.nodes[u][j]+384)%256)-128),proposed=lift.get(u).map((x,j)=>x+step[j]);
+    if(!lift.has(v)){lift.set(v,proposed);queue.push(v);}else{
+     const winding=proposed.map((x,j)=>(x-lift.get(v)[j])/256);assert(winding.every(Number.isInteger));
+     if(winding.some(x=>x!==0)&&!vectors.some(v=>v.every((x,j)=>x===winding[j])))vectors.push(winding);
+    }
+   }
   }
-  els.reset.onclick();assert.equal(context.window.bicontinuityState.progress,0);assert.equal(context.window.bicontinuityState.executedProgress,0);
-  els.start.onclick();now+=100;callback(now);els.pause.onclick();const paused=context.window.bicontinuityState.progress;now+=100;callback(now);assert.equal(context.window.bicontinuityState.progress,paused);
+  assert.equal(lift.size,net.nodes.length);
+  let rank3=false;for(const a of vectors)for(const b of vectors)for(const c of vectors){
+   const det=a[0]*(b[1]*c[2]-b[2]*c[1])-a[1]*(b[0]*c[2]-b[2]*c[0])+a[2]*(b[0]*c[1]-b[1]*c[0]);if(det!==0)rank3=true;
+  }
+  assert(rank3);assert(adj.some(a=>a.length>=3));
  }
+});
+test('static percolation viewer renders all branch edges and supports both/single-phase views (mock graphics)',async()=>{
+ const ids=['phase','opacity','interface','loops','camera-reset','status','measurements'];
+ const els=Object.fromEntries(ids.map(id=>[id,{value:id==='phase'?'both':.04,checked:true}]));
+ const objects=[],object=opts=>{const o={...opts};objects.push(o);return o;};
+ const ctx={document:{getElementById:id=>els[id]},location:{href:'https://example.com/files/mesoscale/examples/bicontinuity-3d.html'},innerWidth:900,window:{},URL,console,$:()=>({}),setTimeout,
+ fetch:async url=>({ok:true,json:async()=>url.pathname.endsWith('viewer.json')?data:report}),vec:(...p)=>p,canvas:object,vertex:object,triangle:object,compound:object,curve:object,distant_light:object};
+ vm.runInNewContext(readFileSync('assets/js/bicontinuity-3d.js','utf8'),ctx);
+ for(let i=0;i<1000&&!ctx.window.percolationState;i++)await new Promise(resolve=>setTimeout(resolve,5));
+ assert(ctx.window.percolationState,els.status.textContent);assert.equal(ctx.window.percolationState.phase,'both');
+ for(const phase of ['red','blue','both']){els.phase.value=phase;els.phase.onchange();assert.equal(ctx.window.percolationState.phase,phase);}
+ els.interface.checked=false;els.interface.onchange();assert.equal(ctx.window.percolationState.interfaceVisible,false);
+ els.loops.checked=false;els.loops.onchange();assert.equal(ctx.window.percolationState.loopsVisible,false);
+ els['camera-reset'].onclick();assert(!objects.some(o=>'make_trail' in o));
 });

@@ -163,6 +163,81 @@ def interior_routes(c,phase):
         print('Interior route',phase,name,check,flush=True)
     return routes,checks
 
+@njit(cache=True)
+def core_tree(core,root):
+    n=core.shape[0];size=n**3;mask=core.ravel()
+    parents=np.full(size,-1,np.int32);queue=np.empty(size,np.int32)
+    s=(root[0]*n+root[1])*n+root[2];parents[s]=s;queue[0]=s;head=0;tail=1
+    strides=np.array([n*n,n,1])
+    while head<tail:
+        u=queue[head];head+=1;coords=np.array([u//(n*n),(u//n)%n,u%n])
+        for axis in range(3):
+            for sign in (-1,1):
+                v=u+sign*strides[axis]
+                if coords[axis]==0 and sign==-1:v+=n*strides[axis]
+                if coords[axis]==n-1 and sign==1:v-=n*strides[axis]
+                if mask[v] and parents[v]==-1:parents[v]=u;queue[tail]=v;tail+=1
+    return parents,tail
+
+def percolation_network(c,phase,routes):
+    """A connected witness subgraph: branches to 125 distributed sites plus
+    all three independent wrapping loops. Not a longest path or full skeleton.
+    Every edge uses six-neighbour periodic indexing in the saved phase core.
+    """
+    from scipy.ndimage import binary_erosion,generate_binary_structure
+    from itertools import product
+    from collections import deque
+    n=c.shape[0];mask=c>=.5 if phase=='red' else c<.5
+    safe=binary_erosion(np.pad(mask,2,mode='wrap'),structure=generate_binary_structure(3,1),iterations=2)[2:-2,2:-2,2:-2]
+    safe &= (c>=.75) if phase=='red' else (c<=.25)
+    root=np.array(routes['x'][0],dtype=np.int32);parent,reached=core_tree(safe,root)
+    edges=set();targets=[]
+    def index(p):return (int(p[0])*n+int(p[1]))*n+int(p[2])
+    def connect(u):
+        assert parent[u]!=-1,'Target outside rooted core component'
+        while parent[u]!=u:
+            v=int(parent[u]);edge=tuple(sorted((u,v)))
+            if edge in edges:break
+            edges.add(edge);u=v
+    for site in product((32,80,128,176,224),repeat=3):
+        for radius in (8,16,24,40):
+            lo=np.maximum(0,np.array(site)-radius);hi=np.minimum(n,np.array(site)+radius+1)
+            candidates=np.argwhere(safe[lo[0]:hi[0],lo[1]:hi[1],lo[2]:hi[2]])+lo
+            if not len(candidates):continue
+            ids=(candidates[:,0]*n+candidates[:,1])*n+candidates[:,2]
+            candidates=candidates[parent[ids]!=-1]
+            if len(candidates):
+                p=candidates[np.argmin(np.sum((candidates-np.array(site))**2,axis=1))]
+                connect(index(p));targets.append(p.tolist());break
+        else:raise AssertionError('No reached core voxel near distributed site')
+    for route in routes.values():
+        connect(index(route[0]))
+        for a,b in zip(route,route[1:]):edges.add(tuple(sorted((index(a),index(b)))))
+    ids=sorted(set(u for edge in edges for u in edge));lookup={u:i for i,u in enumerate(ids)}
+    nodes=[[u//(n*n),(u//n)%n,u%n] for u in ids];pairs=[[lookup[u],lookup[v]] for u,v in sorted(edges)]
+    # Independently verify connectivity and winding of the displayed subgraph.
+    adjacency=[[] for _ in nodes]
+    for u,v in pairs:adjacency[u].append(v);adjacency[v].append(u)
+    lifts={0:np.zeros(3,dtype=int)};q=deque([0]);windings=[]
+    while q:
+        u=q.popleft()
+        for v in adjacency[u]:
+            d=(np.array(nodes[v])-nodes[u]+n//2)%n-n//2
+            assert np.abs(d).sum()==1
+            proposed=lifts[u]+d
+            if v not in lifts:lifts[v]=proposed;q.append(v)
+            elif np.any(proposed-lifts[v]):
+                assert np.all((proposed-lifts[v])%n==0);windings.append((proposed-lifts[v])//n)
+    assert len(lifts)==len(nodes)
+    rank=int(np.linalg.matrix_rank(np.array(windings,dtype=float)));assert rank==3
+    points=np.array(nodes);assert safe[tuple(points.T)].all()
+    proof={'nodes':len(nodes),'edges':len(pairs),'components':1,'winding_rank':rank,
+           'distributed_targets':len(targets),'rooted_core_voxels_reached':int(reached),
+           'phase_membership_and_six_neighbour_edges_valid':True,
+           'scope':'displayed connected witness subgraph, not every voxel or a longest path'}
+    print('Percolation network',phase,proof,flush=True)
+    return {'nodes':nodes,'edges':pairs,'root':root.tolist(),'targets':targets,'proof':proof}
+
 def export_viewer(c,out,routes):
     """Extract the c=0.5 interface itself, without any artificial box-face caps.
     Both phases share this interface; normals point in opposite directions.
@@ -183,7 +258,7 @@ def export_viewer(c,out,routes):
                        'normals':np.round(normal if phase=='red' else -normal,5).tolist(),
                        'triangles':(faces if phase=='red' else faces[:,[0,2,1]]).tolist(),
                        'full_resolution_triangles':original,'isovalue':.5,'box_caps':False}
-    viewer={'n':N,'threshold':.5,'routes':routes,'meshes':meshes,
+    viewer={'n':N,'threshold':.5,'routes':routes,'meshes':meshes,'networks':{phase:percolation_network(c,phase,routes[phase]) for phase in ('red','blue')},
             'display':'c=0.5 isosurface extracted at full resolution, no box-face caps, simplified to 60000 triangles; connectivity and routes use every saved voxel'}
     (out/'viewer.json').write_text(json.dumps(viewer,separators=(',',':')))
     print('Isosurface display triangles',len(faces),'from',original,flush=True)
@@ -232,6 +307,7 @@ def run(output):
             print(json.dumps(results[phase]),flush=True)
         report['thresholds'][str(threshold)]=results
     report['display_mesh']=export_viewer(saved,out,allroutes)
+    report['displayed_networks']={p:net['proof'] for p,net in json.loads((out/'viewer.json').read_text())['networks'].items()}
     (out/'report.json').write_text(json.dumps(report,indent=2))
     print('Finished in',round(time.perf_counter()-start),'seconds',flush=True)
 if __name__=='__main__':run(sys.argv[1] if len(sys.argv)>1 else 'bicontinuity-3d-output')
