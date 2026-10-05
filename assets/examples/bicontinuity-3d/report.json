@@ -1,0 +1,193 @@
+{
+  "model": {
+    "f": "A*c^2*(1-c)^2",
+    "A": 1.0,
+    "M": 1.0,
+    "kappa": 1.0,
+    "grid": [
+      24,
+      24,
+      24
+    ],
+    "dx": 1.0,
+    "dt": 0.1,
+    "steps": 1200,
+    "time": 120.0,
+    "seed": 20261005,
+    "initial": "0.5 + zero-mean Gaussian noise, standard deviation 0.01",
+    "numpy_version": "2.3.5",
+    "units": "dimensionless",
+    "method": "semi-implicit Fourier: nonlinear f derivative explicit, gradient term implicit; no dealiasing"
+  },
+  "mean": 0.49999999999990086,
+  "max_mass_drift": 9.914291609902648e-14,
+  "min": 0.008275552589317484,
+  "max": 0.9921569373695824,
+  "energy_initial": 870.0380533091735,
+  "energy_final": 520.7245515305474,
+  "maximum_energy_step_increase": -0.00043868483851383644,
+  "thresholds": {
+    "0.45": {
+      "red": {
+        "phase_fraction": 0.5275607638888888,
+        "components": 1,
+        "largest_fraction_of_phase": 1.0,
+        "component_details": [
+          {
+            "voxels": 7293,
+            "winding_rank": 3,
+            "wrap_xyz": [
+              true,
+              true,
+              true
+            ]
+          }
+        ]
+      },
+      "blue": {
+        "phase_fraction": 0.4724392361111111,
+        "components": 1,
+        "largest_fraction_of_phase": 1.0,
+        "component_details": [
+          {
+            "voxels": 6531,
+            "winding_rank": 3,
+            "wrap_xyz": [
+              true,
+              true,
+              true
+            ]
+          }
+        ]
+      }
+    },
+    "0.5": {
+      "red": {
+        "phase_fraction": 0.5020254629629629,
+        "components": 1,
+        "largest_fraction_of_phase": 1.0,
+        "component_details": [
+          {
+            "voxels": 6940,
+            "winding_rank": 3,
+            "wrap_xyz": [
+              true,
+              true,
+              true
+            ]
+          }
+        ]
+      },
+      "blue": {
+        "phase_fraction": 0.49797453703703703,
+        "components": 1,
+        "largest_fraction_of_phase": 1.0,
+        "component_details": [
+          {
+            "voxels": 6884,
+            "winding_rank": 3,
+            "wrap_xyz": [
+              true,
+              true,
+              true
+            ]
+          }
+        ]
+      }
+    },
+    "0.55": {
+      "red": {
+        "phase_fraction": 0.4759837962962963,
+        "components": 1,
+        "largest_fraction_of_phase": 1.0,
+        "component_details": [
+          {
+            "voxels": 6580,
+            "winding_rank": 3,
+            "wrap_xyz": [
+              true,
+              true,
+              true
+            ]
+          }
+        ]
+      },
+      "blue": {
+        "phase_fraction": 0.5240162037037037,
+        "components": 1,
+        "largest_fraction_of_phase": 1.0,
+        "component_details": [
+          {
+            "voxels": 7244,
+            "winding_rank": 3,
+            "wrap_xyz": [
+              true,
+              true,
+              true
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "routes": {
+    "red": {
+      "y": {
+        "steps": 28,
+        "winding": [
+          0,
+          1,
+          0
+        ],
+        "valid": true
+      },
+      "x": {
+        "steps": 32,
+        "winding": [
+          1,
+          0,
+          0
+        ],
+        "valid": true
+      },
+      "z": {
+        "steps": 32,
+        "winding": [
+          0,
+          0,
+          1
+        ],
+        "valid": true
+      }
+    },
+    "blue": {
+      "y": {
+        "steps": 24,
+        "winding": [
+          0,
+          1,
+          0
+        ],
+        "valid": true
+      },
+      "x": {
+        "steps": 30,
+        "winding": [
+          1,
+          0,
+          0
+        ],
+        "valid": true
+      },
+      "z": {
+        "steps": 36,
+        "winding": [
+          0,
+          0,
+          1
+        ],
+        "valid": true
+      }
+    }
+  }
+}
