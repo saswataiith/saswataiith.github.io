@@ -1,0 +1,22 @@
+import {test} from 'node:test';
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import vm from 'node:vm';
+test('editable topology lesson distinguishes seam joining, wrapping rank and corner contact',()=>{
+ const elements=new Map();
+ const element=id=>{if(!elements.has(id))elements.set(id,{checked:id==='periodic',textContent:'',events:{},addEventListener(event,fn){this.events[event]=fn;}});return elements.get(id);};
+ const canvas=element('topology-grid');canvas.getContext=()=>({clearRect(){},fillRect(){}});canvas.getBoundingClientRect=()=>({left:0,top:0,width:400,height:400});
+ const presets=['seam','stripe','staircase','ring','corner','clear'].map(name=>({...element(name),dataset:{preset:name}}));
+ vm.runInNewContext(fs.readFileSync('assets/js/topology-connectivity-tutorial.js','utf8'),{document:{getElementById:element,querySelectorAll:()=>presets}});
+ const result=()=>element('grid-results').textContent;
+ const preset=name=>presets.find(p=>p.dataset.preset===name).events.click();
+ const toggle=(id,value)=>{const e=element(id);e.checked=value;e.events.change();};
+ assert.match(result(),/Components: 1/);assert.match(result(),/winding rank 0/);
+ toggle('periodic',false);assert.match(result(),/Components: 2/);
+ toggle('periodic',true);preset('stripe');assert.match(result(),/winding rank 1/);
+ preset('staircase');assert.match(result(),/Components: 1/);assert.match(result(),/winding rank 1/);
+ preset('ring');assert.match(result(),/winding rank 0/);
+ preset('corner');assert.match(result(),/Components: 2/);toggle('diagonal',true);assert.match(result(),/Components: 1/);
+ preset('clear');assert.match(result(),/Red pixels: 0/);
+ canvas.events.click({clientX:25,clientY:25});assert.match(result(),/Red pixels: 1/);
+});
