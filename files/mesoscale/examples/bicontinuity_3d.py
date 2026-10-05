@@ -97,6 +97,72 @@ def validate_route(route,mask,axis):
     assert np.array_equal(d.sum(axis=0),target*n)
     return {'steps':len(route)-1,'winding':target.tolist(),'valid':True}
 
+@njit(cache=True)
+def interior_bfs(core,axis,start,margin):
+    """A lifted slab: transverse faces are excluded; only the winding axis wraps.
+    Start near the box centre, reach the identical voxel one period away.
+    Parent codes store reverse neighbour steps, keeping memory bounded.
+    """
+    n=core.shape[0];width=n+1;size=width*n*n
+    parents=np.full(size,-1,np.int32);queue=np.empty(size,np.int32)
+    other0=(axis+1)%3;other1=(axis+2)%3
+    # Axis lift runs from start[axis] to start[axis]+n, not from a box corner.
+    s=start[other0]*n+start[other1];target=n*n*n+s
+    queue[0]=s;parents[s]=s;head=0;tail=1
+    while head<tail:
+        u=queue[head];head+=1
+        if u==target:break
+        a=u//(n*n);b=(u//n)%n;c=u%n
+        for coordinate in range(3):
+            for sign in (-1,1):
+                aa=a;bb=b;cc=c
+                if coordinate==0:aa+=sign
+                elif coordinate==1:bb+=sign
+                else:cc+=sign
+                if aa<0 or aa>n or bb<margin or bb>=n-margin or cc<margin or cc>=n-margin:continue
+                v=(aa*n+bb)*n+cc
+                if parents[v]!=-1:continue
+                xyz=np.empty(3,np.int32);xyz[axis]=(start[axis]+aa)%n;xyz[other0]=bb;xyz[other1]=cc
+                if not core[xyz[0],xyz[1],xyz[2]]:continue
+                parents[v]=u;queue[tail]=v;tail+=1
+    if parents[target]==-1:return np.empty((0,3),np.int32)
+    count=1;u=target
+    while u!=s:u=parents[u];count+=1
+    route=np.empty((count,3),np.int32);u=target
+    for i in range(count-1,-1,-1):
+        route[i,axis]=(start[axis]+u//(n*n))%n;route[i,other0]=(u//n)%n;route[i,other1]=u%n
+        u=parents[u]
+    return route
+
+def interior_routes(c,phase):
+    """Select safe core voxels, then route across the interior lifted domain.
+    Core thresholds are a route-clearance choice, not the phase definition.
+    The measured phase boundary remains c=0.5 and is never changed.
+    """
+    from scipy.ndimage import binary_erosion,generate_binary_structure
+    n=c.shape[0];mask=c>=.5 if phase=='red' else c<.5
+    # Periodic erosion guarantees two face-sharing voxel layers of clearance.
+    padded=np.pad(mask,2,mode='wrap')
+    clearance=binary_erosion(padded,structure=generate_binary_structure(3,1),iterations=2)[2:-2,2:-2,2:-2]
+    core=clearance & ((c>=.75) if phase=='red' else (c<=.25))
+    candidates=np.argwhere(core[n//2-24:n//2+24,n//2-24:n//2+24,n//2-24:n//2+24])+n//2-24
+    candidates=candidates[np.argsort(np.sum((candidates-n//2)**2,axis=1))]
+    routes={};checks={}
+    for axis in range(3):
+        route=np.empty((0,3),np.int32)
+        for candidate in candidates[:12]:
+            route=interior_bfs(core,axis,candidate.astype(np.int32),32)
+            if len(route):break
+        assert len(route),f'No interior {phase} {"xyz"[axis]} loop'
+        name='xyz'[axis];routes[name]=route.tolist();check=validate_route(routes[name],mask,name)
+        transverse=[j for j in range(3) if j!=axis]
+        check.update({'route_selection':'two-voxel eroded phase core, red c>=0.75 / blue c<=0.25; start near box centre; transverse coordinates bounded 32..223',
+                      'minimum_transverse_box_clearance_voxels':int(np.minimum(route[:,transverse],n-1-route[:,transverse]).min()),
+                      'composition_min':float(c[tuple(route.T)].min()),'composition_max':float(c[tuple(route.T)].max())})
+        checks[name]=check
+        print('Interior route',phase,name,check,flush=True)
+    return routes,checks
+
 def export_viewer(c,out,routes):
     # Pad each phase with opposite-phase values to close its surface at the box.
     # Interface coordinates are voxel centres (i+0.5); box caps are at 0 and N.
@@ -167,10 +233,10 @@ def run(output):
         results={}
         for phase,mask in [('red',saved>=threshold),('blue',saved<threshold)]:
             print('Measuring full 256^3 graph',threshold,phase,flush=True)
-            results[phase],routes=analyze(mask,threshold==.5)
+            results[phase],_=analyze(mask,False)
             assert results[phase]['winding_rank']==3
             if threshold==.5:
-                allroutes[phase]=routes;report['routes'][phase]={a:validate_route(r,mask,a) for a,r in routes.items()}
+                allroutes[phase],report['routes'][phase]=interior_routes(saved,phase)
             print(json.dumps(results[phase]),flush=True)
         report['thresholds'][str(threshold)]=results
     report['display_mesh']=export_viewer(saved,out,allroutes)

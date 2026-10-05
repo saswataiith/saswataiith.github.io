@@ -5,7 +5,7 @@
   const el = id => document.getElementById(id), status = el('status');
   try {
     const base = new URL('../../../assets/examples/bicontinuity-3d/', location.href);
-    const fetchJSON = async name => { const r = await fetch(new URL(name, base)); if (!r.ok) throw Error(`${name}: ${r.status}`); return r.json(); };
+    const fetchJSON = async name => { const r = await fetch(new URL(name+'?v=interior-routes-20261005', base)); if (!r.ok) throw Error(`${name}: ${r.status}`); return r.json(); };
     const [data, report] = await Promise.all([fetchJSON('viewer.json'), fetchJSON('report.json')]);
     window.__context = {glowscript_container: $('#glowscript')};
     const n = data.n, scene = canvas({width:Math.min(760,innerWidth-40),height:480,background:vec(0.98,0.98,0.96),center:vec(n/2,n/2,n/2),range:n*.8});
@@ -19,7 +19,7 @@
         const triangles=mesh.triangles.slice(start,start+1500),vertices=new Map();
         const point=i=>{if(!vertices.has(i))vertices.set(i,vertex({pos:vec(...mesh.vertices[i]),normal:vec(...mesh.normals[i]),color:colors[phase]}));return vertices.get(i);};
         const faces=triangles.map(t=>triangle({v0:point(t[0]),v1:point(t[1]),v2:point(t[2])}));
-        const surface=compound(faces);surface.opacity=.15;surface.visible=false;phases[phase].push(surface);
+        const surface=compound(faces);surface.opacity=.05;surface.visible=false;phases[phase].push(surface);
         status.textContent=`Loading saved 256³ surface: ${phase}, ${Math.min(start+1500,mesh.triangles.length)} / ${mesh.triangles.length} triangles…`;
         // Yield between meshes so the page stays responsive while loading.
         await new Promise(resolve=>setTimeout(resolve,0));

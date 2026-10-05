@@ -26,6 +26,22 @@ test('all saved routes and rendered centre interpolation stay in their selected 
   }
  }
 });
+test('routes start near the centre and stay in the phase core away from transverse faces',()=>{
+ const n=data.n;
+ for(const phase of ['red','blue'])for(const [axisName,route] of Object.entries(data.routes[phase])){
+  const axis='xyz'.indexOf(axisName);
+  assert(route[0].every(x=>Math.abs(x-n/2)<=24));
+  for(const p of route){
+   assert(phase==='red'?value(p)>=.75:value(p)<=.25);
+   for(let j=0;j<3;j++)if(j!==axis)assert(p[j]>=32&&p[j]<n-32);
+   for(let x=-2;x<=2;x++)for(let y=-2;y<=2;y++)for(let z=-2;z<=2;z++){
+    if(Math.abs(x)+Math.abs(y)+Math.abs(z)>2)continue;
+    const q=p.map((v,j)=>(v+[x,y,z][j]+n)%n);
+    assert(phase==='red'?value(q)>=.5:value(q)<.5);
+   }
+  }
+ }
+});
 test('display meshes have finite bounded geometry and recorded full-resolution provenance',()=>{
  for(const [phase,m] of Object.entries(data.meshes)){
   assert.equal(m.vertices.length,m.normals.length);
@@ -38,7 +54,7 @@ test('display meshes have finite bounded geometry and recorded full-resolution p
 });
 test('browser control and animation logic completes all six loops (mock graphics, not WebGL)',async()=>{
  const ids=['phase','direction','speed','opacity','other','start','pause','reset','status','measurements'];
- const els=Object.fromEntries(ids.map(id=>[id,{value:({phase:'red',direction:'x',speed:200,opacity:.15})[id],checked:false}]));
+ const els=Object.fromEntries(ids.map(id=>[id,{value:({phase:'red',direction:'x',speed:200,opacity:.05})[id],checked:false}]));
  let callback, now=0;const object=opts=>({...opts});
  const context={document:{getElementById:id=>els[id]},location:{href:'https://example.com/files/mesoscale/examples/bicontinuity-3d.html'},innerWidth:800,window:{},URL,console,
   $:()=>({}),setTimeout,performance:{now:()=>now},requestAnimationFrame:fn=>callback=fn,

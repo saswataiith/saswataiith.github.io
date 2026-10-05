@@ -230,60 +230,84 @@
   "routes": {
     "red": {
       "x": {
-        "steps": 304,
+        "steps": 338,
         "winding": [
           1,
           0,
           0
         ],
-        "valid": true
+        "valid": true,
+        "route_selection": "two-voxel eroded phase core, red c>=0.75 / blue c<=0.25; start near box centre; transverse coordinates bounded 32..223",
+        "minimum_transverse_box_clearance_voxels": 104,
+        "composition_min": 0.7508461475372314,
+        "composition_max": 0.984508216381073
       },
       "y": {
-        "steps": 298,
+        "steps": 332,
         "winding": [
           0,
           1,
           0
         ],
-        "valid": true
+        "valid": true,
+        "route_selection": "two-voxel eroded phase core, red c>=0.75 / blue c<=0.25; start near box centre; transverse coordinates bounded 32..223",
+        "minimum_transverse_box_clearance_voxels": 100,
+        "composition_min": 0.7500436305999756,
+        "composition_max": 0.9806568026542664
       },
       "z": {
-        "steps": 308,
+        "steps": 358,
         "winding": [
           0,
           0,
           1
         ],
-        "valid": true
+        "valid": true,
+        "route_selection": "two-voxel eroded phase core, red c>=0.75 / blue c<=0.25; start near box centre; transverse coordinates bounded 32..223",
+        "minimum_transverse_box_clearance_voxels": 92,
+        "composition_min": 0.750019371509552,
+        "composition_max": 0.9847149848937988
       }
     },
     "blue": {
       "x": {
-        "steps": 308,
+        "steps": 288,
         "winding": [
           1,
           0,
           0
         ],
-        "valid": true
+        "valid": true,
+        "route_selection": "two-voxel eroded phase core, red c>=0.75 / blue c<=0.25; start near box centre; transverse coordinates bounded 32..223",
+        "minimum_transverse_box_clearance_voxels": 113,
+        "composition_min": 0.009587772190570831,
+        "composition_max": 0.24910587072372437
       },
       "y": {
-        "steps": 330,
+        "steps": 340,
         "winding": [
           0,
           1,
           0
         ],
-        "valid": true
+        "valid": true,
+        "route_selection": "two-voxel eroded phase core, red c>=0.75 / blue c<=0.25; start near box centre; transverse coordinates bounded 32..223",
+        "minimum_transverse_box_clearance_voxels": 89,
+        "composition_min": 0.02370401844382286,
+        "composition_max": 0.24968500435352325
       },
       "z": {
-        "steps": 350,
+        "steps": 352,
         "winding": [
           0,
           0,
           1
         ],
-        "valid": true
+        "valid": true,
+        "route_selection": "two-voxel eroded phase core, red c>=0.75 / blue c<=0.25; start near box centre; transverse coordinates bounded 32..223",
+        "minimum_transverse_box_clearance_voxels": 107,
+        "composition_min": 0.013004249893128872,
+        "composition_max": 0.24986597895622253
       }
     }
   },

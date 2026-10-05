@@ -21,7 +21,7 @@ for name in colors:
             if i not in vertices:vertices[i]=vertex(pos=vec(*mesh['vertices'][i]),normal=vec(*mesh['normals'][i]),color=colors[name])
             return vertices[i]
         faces=[triangle(v0=point(t[0]),v1=point(t[1]),v2=point(t[2])) for t in mesh['triangles'][start:start+1500]]
-        surface=compound(faces);surface.opacity=.15;phases[name].append(surface)
+        surface=compound(faces);surface.opacity=.05;phases[name].append(surface)
 marker=n/32
 parts=[ellipsoid(size=vec(.85*marker,.65*marker,1.1*marker),color=vec(.2,.65,.22)),sphere(radius=.23*marker,color=vec(.35,.8,.3))]
 offsets=[vec(0,0,0),vec(0,0,.65)]
@@ -56,7 +56,7 @@ button(text='Start',bind=start);button(text='Pause',bind=pause);button(text='Res
 scene.append_to_caption('\nSpeed (voxels/s): ')
 speed=slider(min=5,max=200,value=40,bind=lambda _:None)
 scene.append_to_caption('\nSelected phase opacity: ')
-opacity=slider(min=0,max=1,step=.05,value=.15,bind=visibility)
+opacity=slider(min=0,max=1,step=.05,value=.05,bind=visibility)
 other=checkbox(text='Show other phase',checked=False,bind=visibility)
 scene.append_to_caption('\nRotate: right-drag / Ctrl-drag. Zoom: wheel. Face crossings reappear on the opposite face.\nThe enlarged turtle body is a marker; its centre follows checked six-neighbour voxel routes.\n')
 status=wtext(text='')
