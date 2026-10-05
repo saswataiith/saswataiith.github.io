@@ -80,17 +80,17 @@ test('each branched percolation witness is connected, phase-valid and has windin
   assert(rank3);assert(adj.some(a=>a.length>=3));
  }
 });
-test('static percolation viewer renders all branch edges and supports both/single-phase views (mock graphics)',async()=>{
- const ids=['phase','opacity','interface','loops','camera-reset','status','measurements'];
- const els=Object.fromEntries(ids.map(id=>[id,{value:id==='phase'?'both':.04,checked:true}]));
+test('focused VPython view loads on demand and shows only one wrapping loop',async()=>{
+ const ids=['phase','show-loop','loop-axis','open-three','three-panel','camera-reset','surface-status'];
+ const els=Object.fromEntries(ids.map(id=>[id,{value:id==='phase'?'red':'x',checked:false,addEventListener(name,fn){this[name]=fn;}}]));
  const objects=[],object=opts=>{const o={...opts};objects.push(o);return o;};
  const ctx={document:{getElementById:id=>els[id]},location:{href:'https://example.com/files/mesoscale/examples/bicontinuity-3d.html'},innerWidth:900,window:{},URL,console,$:()=>({}),setTimeout,
- fetch:async url=>({ok:true,json:async()=>url.pathname.endsWith('viewer.json')?data:report}),vec:(...p)=>p,canvas:object,vertex:object,triangle:object,compound:object,curve:object,distant_light:object};
+ fetch:async()=>({ok:true,json:async()=>data}),vec:(...p)=>p,canvas:object,vertex:object,triangle:object,compound:object,curve:object,sphere:object,distant_light:object};
  vm.runInNewContext(readFileSync('assets/js/bicontinuity-3d.js','utf8'),ctx);
- for(let i=0;i<1000&&!ctx.window.percolationState;i++)await new Promise(resolve=>setTimeout(resolve,5));
- assert(ctx.window.percolationState,els.status.textContent);assert.equal(ctx.window.percolationState.phase,'both');
- for(const phase of ['red','blue','both']){els.phase.value=phase;els.phase.onchange();assert.equal(ctx.window.percolationState.phase,phase);}
- els.interface.checked=false;els.interface.onchange();assert.equal(ctx.window.percolationState.interfaceVisible,false);
- els.loops.checked=false;els.loops.onchange();assert.equal(ctx.window.percolationState.loopsVisible,false);
+ assert.equal(objects.length,0,'3D geometry is lazy');await els['open-three'].onclick();
+ assert(ctx.window.focusedSurfaceReady,els['surface-status'].textContent);assert.equal(ctx.window.focusedSurfaceState.loop,null);
+ els['show-loop'].checked=true;els['show-loop'].onchange();assert.equal(ctx.window.focusedSurfaceState.loop,'x');
+ els.phase.value='blue';els.phase.change();assert.equal(ctx.window.focusedSurfaceState.phase,'blue');
+ els['loop-axis'].value='z';els['loop-axis'].onchange();assert.equal(ctx.window.focusedSurfaceState.loop,'z');
  els['camera-reset'].onclick();assert(!objects.some(o=>'make_trail' in o));
 });

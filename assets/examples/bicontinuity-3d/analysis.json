@@ -1,0 +1,275 @@
+{
+  "field": "composition.npy",
+  "grid": [
+    256,
+    256,
+    256
+  ],
+  "dx": 0.25,
+  "thresholds": {
+    "0.45": {
+      "red": {
+        "components": 1,
+        "phase_voxels": 8774331,
+        "phase_fraction": 0.522990882396698,
+        "largest_fraction_of_phase": 1.0,
+        "clusters": [
+          {
+            "root": 24319,
+            "voxels": 8774331,
+            "winding_rank": 3,
+            "winding_basis": [
+              [
+                0,
+                0,
+                1
+              ],
+              [
+                0,
+                1,
+                0
+              ],
+              [
+                1,
+                0,
+                0
+              ]
+            ]
+          }
+        ],
+        "method": "Hoshen\u2013Kopelman style scan / union\u2013find; weighted root displacements; per-component winding",
+        "neighbors": 6,
+        "periodic": true,
+        "digital_euler_6": -106,
+        "digital_euler_26": -106,
+        "volume": 137098.921875
+      },
+      "blue": {
+        "components": 1,
+        "phase_voxels": 8002885,
+        "phase_fraction": 0.477009117603302,
+        "largest_fraction_of_phase": 1.0,
+        "clusters": [
+          {
+            "root": 5103,
+            "voxels": 8002885,
+            "winding_rank": 3,
+            "winding_basis": [
+              [
+                0,
+                0,
+                1
+              ],
+              [
+                0,
+                1,
+                0
+              ],
+              [
+                1,
+                0,
+                0
+              ]
+            ]
+          }
+        ],
+        "method": "Hoshen\u2013Kopelman style scan / union\u2013find; weighted root displacements; per-component winding",
+        "neighbors": 6,
+        "periodic": true,
+        "digital_euler_6": -106,
+        "digital_euler_26": -106,
+        "volume": 125045.078125
+      }
+    },
+    "0.5": {
+      "red": {
+        "components": 1,
+        "phase_voxels": 8384798,
+        "phase_fraction": 0.49977290630340576,
+        "largest_fraction_of_phase": 1.0,
+        "clusters": [
+          {
+            "root": 24575,
+            "voxels": 8384798,
+            "winding_rank": 3,
+            "winding_basis": [
+              [
+                0,
+                0,
+                1
+              ],
+              [
+                0,
+                1,
+                0
+              ],
+              [
+                1,
+                0,
+                0
+              ]
+            ]
+          }
+        ],
+        "method": "Hoshen\u2013Kopelman style scan / union\u2013find; weighted root displacements; per-component winding",
+        "neighbors": 6,
+        "periodic": true,
+        "digital_euler_6": -106,
+        "digital_euler_26": -106,
+        "volume": 131012.46875
+      },
+      "blue": {
+        "components": 1,
+        "phase_voxels": 8392418,
+        "phase_fraction": 0.5002270936965942,
+        "largest_fraction_of_phase": 1.0,
+        "clusters": [
+          {
+            "root": 7872,
+            "voxels": 8392418,
+            "winding_rank": 3,
+            "winding_basis": [
+              [
+                0,
+                0,
+                1
+              ],
+              [
+                0,
+                1,
+                0
+              ],
+              [
+                1,
+                0,
+                0
+              ]
+            ]
+          }
+        ],
+        "method": "Hoshen\u2013Kopelman style scan / union\u2013find; weighted root displacements; per-component winding",
+        "neighbors": 6,
+        "periodic": true,
+        "digital_euler_6": -106,
+        "digital_euler_26": -106,
+        "volume": 131131.53125
+      }
+    },
+    "0.55": {
+      "red": {
+        "components": 1,
+        "phase_voxels": 7995492,
+        "phase_fraction": 0.47656846046447754,
+        "largest_fraction_of_phase": 1.0,
+        "clusters": [
+          {
+            "root": 53247,
+            "voxels": 7995492,
+            "winding_rank": 3,
+            "winding_basis": [
+              [
+                0,
+                0,
+                1
+              ],
+              [
+                0,
+                1,
+                0
+              ],
+              [
+                1,
+                0,
+                0
+              ]
+            ]
+          }
+        ],
+        "method": "Hoshen\u2013Kopelman style scan / union\u2013find; weighted root displacements; per-component winding",
+        "neighbors": 6,
+        "periodic": true,
+        "digital_euler_6": -106,
+        "digital_euler_26": -106,
+        "volume": 124929.5625
+      },
+      "blue": {
+        "components": 1,
+        "phase_voxels": 8781724,
+        "phase_fraction": 0.5234315395355225,
+        "largest_fraction_of_phase": 1.0,
+        "clusters": [
+          {
+            "root": 7618,
+            "voxels": 8781724,
+            "winding_rank": 3,
+            "winding_basis": [
+              [
+                0,
+                0,
+                1
+              ],
+              [
+                0,
+                1,
+                0
+              ],
+              [
+                1,
+                0,
+                0
+              ]
+            ]
+          }
+        ],
+        "method": "Hoshen\u2013Kopelman style scan / union\u2013find; weighted root displacements; per-component winding",
+        "neighbors": 6,
+        "periodic": true,
+        "digital_euler_6": -106,
+        "digital_euler_26": -106,
+        "volume": 137214.4375
+      }
+    }
+  },
+  "morphology": {
+    "threshold": 0.5,
+    "surface_area": 39809.03249874069,
+    "units": "dimensionless; dx applied",
+    "vertices": 952985,
+    "edges": 2859591,
+    "triangles": 1906394,
+    "edge_incidence_two": true,
+    "boundary_or_nonmanifold_edges": 0,
+    "periodic_welding_tolerance_voxels": 1e-06,
+    "display_mesh_used": false,
+    "coherent_orientation": true,
+    "surface_euler": -212,
+    "surface_components": 1,
+    "sum_surface_genera": 107,
+    "integrated_mean_curvature_high_c_outward": 30.31491807601187,
+    "integrated_gaussian_curvature": -1332.0352851220723,
+    "curvature_convention": "H=(k1+k2)/2; convex high-c ball has positive integrated H; K integral from Gauss\u2013Bonnet",
+    "source": "New implementation inspired by morphological measures studied by Fia\u0142kowski\u2013Aksimentiev\u2013Ho\u0142yst; not their recovered C code."
+  },
+  "flood": {
+    "red": {
+      "root": [
+        128,
+        133,
+        124
+      ],
+      "reached_voxels": 8384798,
+      "maximum_distance": 384,
+      "distance": "shortest face-sharing steps from one seed, on the full periodic phase graph"
+    },
+    "blue": {
+      "root": [
+        128,
+        128,
+        128
+      ],
+      "reached_voxels": 8392418,
+      "maximum_distance": 367,
+      "distance": "shortest face-sharing steps from one seed, on the full periodic phase graph"
+    }
+  }
+}
