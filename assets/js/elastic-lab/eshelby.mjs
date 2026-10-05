@@ -139,7 +139,7 @@ export function interfaceJump(c, e0, inside, point) {
 }
 // Periodic FFT solution for an ellipse in a unit cell (homogeneous C, mean
 // total strain zero). Returns total strain and stress fields (xx, yy, xy).
-export function fieldSolve(c, e0, { n = 256, a = 0.16, ratio = 0.5, phi = 0, sub: ss = 4 } = {}) {
+export function fieldSolve(c, e0, { n = 1024, a = 0.16, ratio = 0.5, phi = 0, sub: ss = 4 } = {}) {
   const b = a * ratio,
     cp = Math.cos(phi),
     sp = Math.sin(phi),

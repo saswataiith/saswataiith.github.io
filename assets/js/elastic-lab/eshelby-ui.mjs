@@ -9,7 +9,7 @@ import {
   sample,
   frame,
   contract4,
-} from "./eshelby.mjs?v=20260924c";
+} from "./eshelby.mjs?v=20261005-grid1024";
 import { roots } from "./math.mjs?v=20260924c";
 import { fmt } from "./plots.mjs?v=20260924c";
 import {
@@ -219,7 +219,7 @@ function drawMap(F, s) {
 function profile(F, s, inside, J) {
   const p = boundaryPoint(F.a, F.b, F.phi, s.psi),
     L = 0.1,
-    N = 161,
+    N = Math.max(161, Math.ceil(4 * L * F.n) + 1),
     rows = { strain: { ss: [], sm: [], mm: [] }, stress: { ss: [], sm: [], mm: [] } };
   for (let q = 0; q < N; q++) {
     const d = -L + (2 * L * q) / (N - 1),
@@ -287,19 +287,20 @@ function profile(F, s, inside, J) {
 }
 function scheduleField(s, inside, J) {
   const ratio = Math.max(s.ratio, 0.08),
-    key = JSON.stringify([s.c, s.e0, ratio.toFixed(4), s.phi.toFixed(4)]);
+    n = num("es-resolution"),
+    key = JSON.stringify([s.c, s.e0, ratio.toFixed(4), s.phi.toFixed(4), n]);
   clearTimeout(fieldTimer);
   const run = () => {
     if (key !== fieldKey) {
-      fieldCache = fieldSolve(s.c, s.e0, { n: 256, a: 0.16, ratio, phi: s.phi });
+      fieldCache = fieldSolve(s.c, s.e0, { n, a: 0.16, ratio, phi: s.phi });
       fieldKey = key;
     }
     drawMap(fieldCache, s);
     profile(fieldCache, s, inside, J);
     $("es-field-note").textContent =
       s.ratio < 0.08
-        ? "The field map uses b/a = 0.08, the thinnest plate the 256 × 256 grid resolves; the table and curves above use the exact b/a."
-        : "";
+        ? `The field map uses b/a = 0.08 on a ${n} × ${n} grid; the table and curves above use the exact b/a.`
+        : `Field and profiles: ${n} × ${n} grid. Small sharp-interface Fourier ripples can remain; compare resolutions.`;
   };
   if (key === fieldKey) run();
   else {
@@ -428,6 +429,7 @@ function setRatio(r) {
 }
 for (const id of ["es-eps", "es-t", "es-c11", "es-c12", "es-c44", "es-ratio", "es-phi", "es-psi"])
   $(id).addEventListener("input", render);
+$("es-resolution").addEventListener("change", render);
 $("es-comp").addEventListener("change", () => fieldCache && render());
 for (const button of document.querySelectorAll("[data-es]"))
   button.addEventListener("click", () => {
