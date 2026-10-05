@@ -164,38 +164,30 @@ def interior_routes(c,phase):
     return routes,checks
 
 def export_viewer(c,out,routes):
-    # Pad each phase with opposite-phase values to close its surface at the box.
-    # Interface coordinates are voxel centres (i+0.5); box caps are at 0 and N.
+    """Extract the c=0.5 interface itself, without any artificial box-face caps.
+    Both phases share this interface; normals point in opposite directions.
+    """
+    print('Extracting full-resolution c=0.5 isosurface (no caps)',flush=True)
+    verts,faces,_,_=marching_cubes(c,level=.5,allow_degenerate=False)
+    verts+=.5  # array samples are at voxel centres
+    original=len(faces)
+    verts,faces=fast_simplification.simplify(verts,faces,target_count=60000)
+    vertices=np.round(np.clip(verts,.5,N-.5),3)
+    normal=np.zeros_like(vertices);triangles=vertices[faces]
+    face_normals=np.cross(triangles[:,1]-triangles[:,0],triangles[:,2]-triangles[:,0])
+    for corner in range(3):np.add.at(normal,faces[:,corner],face_normals)
+    norm=np.linalg.norm(normal,axis=1);norm[norm==0]=1;normal/=norm[:,None]
     meshes={}
     for phase in ('red','blue'):
-        values=(c-.5) if phase=='red' else (.5-c)
-        volume=np.pad(values,1,mode='edge')
-        # Mirror the magnitude with opposite sign at each ghost face so the
-        # closure is located at x/y/z=0 or N, halfway between voxel centres.
-        for axis in range(3):
-            for boundary in (0,-1):
-                sl=[slice(None)]*3;sl[axis]=boundary
-                volume[tuple(sl)]=-np.abs(volume[tuple(sl)])
-        print('Extracting full-resolution',phase,'surface',flush=True)
-        verts,faces,_,_=marching_cubes(volume,level=0,allow_degenerate=False)
-        verts-=.5;verts=np.clip(verts,0,N)
-        original=len(faces)
-        verts,faces=fast_simplification.simplify(verts,faces,target_count=60000)
-        # Surface simplification is visual only. Routes use the unsimplified field.
-        vertices=np.round(np.clip(verts,0,N),3)
-        normal=np.zeros_like(vertices)
-        triangles=vertices[faces]
-        face_normals=np.cross(triangles[:,1]-triangles[:,0],triangles[:,2]-triangles[:,0])
-        for corner in range(3):np.add.at(normal,faces[:,corner],face_normals)
-        norm=np.linalg.norm(normal,axis=1);norm[norm==0]=1
-        normals=np.round(normal/norm[:,None],5).tolist()
-        vertices=vertices.tolist();faces=faces.tolist()
-        meshes[phase]={'vertices':vertices,'normals':normals,'triangles':faces,'full_resolution_triangles':original}
-        print(phase,'display triangles',len(faces),'from',original,flush=True)
+        meshes[phase]={'vertices':vertices.tolist(),
+                       'normals':np.round(normal if phase=='red' else -normal,5).tolist(),
+                       'triangles':(faces if phase=='red' else faces[:,[0,2,1]]).tolist(),
+                       'full_resolution_triangles':original,'isovalue':.5,'box_caps':False}
     viewer={'n':N,'threshold':.5,'routes':routes,'meshes':meshes,
-            'display':'full-resolution isosurface simplified to 60000 triangles per phase; connectivity and routes use every saved voxel'}
+            'display':'c=0.5 isosurface extracted at full resolution, no box-face caps, simplified to 60000 triangles; connectivity and routes use every saved voxel'}
     (out/'viewer.json').write_text(json.dumps(viewer,separators=(',',':')))
-    return {p:{'full_resolution_triangles':m['full_resolution_triangles'],'display_triangles':len(m['triangles'])} for p,m in meshes.items()}
+    print('Isosurface display triangles',len(faces),'from',original,flush=True)
+    return {p:{'full_resolution_triangles':original,'display_triangles':len(faces),'isovalue':.5,'box_caps':False} for p in meshes}
 
 def run(output):
     out=Path(output);out.mkdir(parents=True,exist_ok=True);start=time.perf_counter()

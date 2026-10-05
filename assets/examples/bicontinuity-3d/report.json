@@ -313,12 +313,16 @@
   },
   "display_mesh": {
     "red": {
-      "full_resolution_triangles": 2285902,
-      "display_triangles": 60000
+      "full_resolution_triangles": 1883828,
+      "display_triangles": 60000,
+      "isovalue": 0.5,
+      "box_caps": false
     },
     "blue": {
-      "full_resolution_triangles": 2296842,
-      "display_triangles": 60000
+      "full_resolution_triangles": 1883828,
+      "display_triangles": 60000,
+      "isovalue": 0.5,
+      "box_caps": false
     }
   }
 }

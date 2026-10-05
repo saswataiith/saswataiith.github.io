@@ -5,11 +5,15 @@
   const el = id => document.getElementById(id), status = el('status');
   try {
     const base = new URL('../../../assets/examples/bicontinuity-3d/', location.href);
-    const fetchJSON = async name => { const r = await fetch(new URL(name+'?v=interior-routes-20261005', base)); if (!r.ok) throw Error(`${name}: ${r.status}`); return r.json(); };
+    const fetchJSON = async name => { const r = await fetch(new URL(name+'?v=isosurface-trail-20261005', base)); if (!r.ok) throw Error(`${name}: ${r.status}`); return r.json(); };
     const [data, report] = await Promise.all([fetchJSON('viewer.json'), fetchJSON('report.json')]);
     window.__context = {glowscript_container: $('#glowscript')};
     const n = data.n, scene = canvas({width:Math.min(760,innerWidth-40),height:480,background:vec(0.98,0.98,0.96),center:vec(n/2,n/2,n/2),range:n*.8});
     scene.forward = vec(-1,-.7,-1);
+    scene.lights=[];scene.ambient=vec(.22,.22,.22);
+    distant_light({direction:vec(-.6,.8,-1),color:vec(.45,.45,.45)});
+    distant_light({direction:vec(1,-.2,.4),color:vec(.18,.18,.18)});
+    distant_light({direction:vec(.3,.7,1),color:vec(.12,.12,.12)});
     const colors = {red:vec(.85,.14,.12),blue:vec(.12,.38,.85)}, phases = {};
     for (const phase of ['red','blue']) {
       // A display-only surface extracted from the 256^3 simulation offline.
@@ -19,7 +23,7 @@
         const triangles=mesh.triangles.slice(start,start+1500),vertices=new Map();
         const point=i=>{if(!vertices.has(i))vertices.set(i,vertex({pos:vec(...mesh.vertices[i]),normal:vec(...mesh.normals[i]),color:colors[phase]}));return vertices.get(i);};
         const faces=triangles.map(t=>triangle({v0:point(t[0]),v1:point(t[1]),v2:point(t[2])}));
-        const surface=compound(faces);surface.opacity=.05;surface.visible=false;phases[phase].push(surface);
+        const surface=compound(faces);surface.opacity=.1;surface.shininess=.25;surface.visible=false;phases[phase].push(surface);
         status.textContent=`Loading saved 256³ surface: ${phase}, ${Math.min(start+1500,mesh.triangles.length)} / ${mesh.triangles.length} triangles…`;
         // Yield between meshes so the page stays responsive while loading.
         await new Promise(resolve=>setTimeout(resolve,0));
@@ -38,13 +42,13 @@
     const turtle = [ellipsoid({size:vec(.85*marker,.65*marker,1.1*marker),color:vec(.2,.65,.22)}),sphere({radius:.23*marker,color:vec(.35,.8,.3)})];
     const offsets=[[0,0,0],[0,0,.65]];
     for(const x of [-.38,.38]) for(const z of [-.32,.32]){turtle.push(sphere({radius:.16*marker,color:vec(.35,.8,.3)}));offsets.push([x,-.18,z]);}
-    let lines=[];
+    let lines=[],trails=[],currentTrail,executed=0;
     let route, progress=0, running=false, last=performance.now(), crossings=0;
-    const updateVisibility = () => {for(const phase of ['red','blue']){for(const mesh of phases[phase]){mesh.visible=phase===el('phase').value || el('other').checked; mesh.opacity=phase===el('phase').value ? Number(el('opacity').value):.08;}}};
+    const updateVisibility = () => {for(const phase of ['red','blue']){for(const mesh of phases[phase]){mesh.visible=phase===el('phase').value && el('other').checked; mesh.opacity=Number(el('opacity').value);}}};
     function drawRoute(){
       for(const line of lines)line.visible=false;lines=[];
       let points=[route[0].map(x=>x+.5)];
-      function flush(){if(points.length>1)lines.push(curve({pos:points.map(p=>vec(...p)),radius:n/1100,color:vec(.2,.1,.35)}));}
+      function flush(){if(points.length>1)lines.push(curve({pos:points.map(p=>vec(...p)),radius:n/1100,color:vec(.55,.55,.55),visible:el('planned').checked}));}
       for(let i=0;i<route.length-1;i++){
         const a=route[i].map(x=>x+.5),b=route[i+1].map(x=>x+.5);
         const axis=b.findIndex((x,j)=>Math.abs(x-a[j])>1);
@@ -53,24 +57,46 @@
       }
       flush();
     }
-    function reset(){running=false;progress=0;crossings=0;route=data.routes[el('phase').value][el('direction').value];updateVisibility();drawRoute();draw();}
+    function positionAt(q){
+      const i=Math.min(Math.floor(q),route.length-2),t=q>=route.length-1?1:q-i;
+      const a=route[i],b=route[i+1],d=b.map((x,j)=>((x-a[j]+n+n/2)%n)-n/2);
+      return a.map((x,j)=>((x+.5+d[j]*t)%n+n)%n);
+    }
+    function beginTrail(point){
+      currentTrail=curve({pos:[vec(...point)],radius:n/350,color:vec(.68,.02,.42),emissive:true});trails.push(currentTrail);
+    }
+    function extendTrail(to){
+      let q=executed;
+      while(q<to-1e-9){
+        const i=Math.min(Math.floor(q+1e-9),route.length-2),end=Math.min(to,i+1);
+        const a=route[i],b=route[i+1],axis=b.findIndex((x,j)=>Math.abs(x-a[j])>n/2);
+        if(axis>=0 && q<i+.5-1e-9 && end>=i+.5){
+          const face=a.map(x=>x+.5);face[axis]=b[axis]<a[axis]?n:0;
+          currentTrail.push(vec(...face));const partner=[...face];partner[axis]=face[axis]===n?0:n;beginTrail(partner);
+          q=i+.5;crossings++;
+        }else{currentTrail.push(vec(...positionAt(end)));q=end;}
+      }
+      executed=to;
+    }
+    function reset(){
+      running=false;progress=0;crossings=0;executed=0;route=data.routes[el('phase').value][el('direction').value];
+      for(const trail of trails){trail.clear();trail.visible=false;}trails=[];
+      updateVisibility();drawRoute();beginTrail(positionAt(0));draw();
+    }
     function draw(){
-      const i=Math.min(Math.floor(progress),route.length-2), t=progress>=route.length-1?1:progress-i;
-      const a=route[i], b=route[i+1];
-      const delta=b.map((x,j)=>((x-a[j]+n+n/2)%n)-n/2);
-      const p=a.map((x,j)=>((x+.5+delta[j]*t)%n+n)%n);
+      const p=positionAt(progress);
       for(let j=0;j<turtle.length;j++) turtle[j].pos=vec(...p.map((x,k)=>x+marker*offsets[j][k]));
       status.textContent=`${el('phase').value} · ${el('direction').value} loop · step ${Math.floor(progress)} / ${route.length-1} · ${crossings} periodic face crossings · ${progress>=route.length-1?'Complete: winding +1 in '+el('direction').value:running?'Running':'Paused'}`;
-      window.bicontinuityState={phase:el('phase').value,direction:el('direction').value,progress,running,crossings,position:p};
+      window.bicontinuityState={phase:el('phase').value,direction:el('direction').value,progress,running,crossings,position:p,executedProgress:executed,trailSegments:trails.length};
     }
     el('start').onclick=()=>{if(progress>=route.length-1) reset();running=true;last=performance.now();};
     el('pause').onclick=()=>{running=false;draw();};el('reset').onclick=reset;
-    el('phase').onchange=reset;el('direction').onchange=reset;el('opacity').oninput=updateVisibility;el('other').onchange=updateVisibility;
+    el('phase').onchange=reset;el('direction').onchange=reset;el('opacity').oninput=updateVisibility;el('other').onchange=updateVisibility;el('planned').onchange=()=>{for(const line of lines)line.visible=el('planned').checked;};
     let html='<h2>Measured periodic connectivity</h2><table><tr><th>Threshold</th><th>Phase</th><th>Fraction</th><th>Components</th><th>Largest / phase</th><th>Winding rank</th></tr>';
     for(const [threshold,ph] of Object.entries(report.thresholds)) for(const [name,r] of Object.entries(ph))html+=`<tr><td>${threshold}</td><td>${name}</td><td>${(100*r.phase_fraction).toFixed(2)}%</td><td>${r.components}</td><td>${(100*r.largest_fraction_of_phase).toFixed(0)}%</td><td>${r.winding_rank} (x,y,z)</td></tr>`;
     el('measurements').innerHTML=html+'</table><p>Six face-sharing neighbours with periodic indexing. Winding is obtained from closed loops in a lifted graph; opposite-face contact alone is insufficient. Maximum mass drift: '+report.max_mass_drift.toExponential(2)+'. Energy: '+report.energy_initial.toFixed(3)+' → '+report.energy_final.toFixed(3)+'. Fixed 256³ field: the viewer does not evolve the simulation.</p>';
     reset();
-    function frame(now){const dt=Math.min((now-last)/1000,.1);last=now;if(running){const old=Math.floor(progress);progress=Math.min(route.length-1,progress+dt*Number(el('speed').value));for(let i=old;i<Math.floor(progress);i++) if(route[i].some((x,j)=>Math.abs(route[i+1][j]-x)>1))crossings++;if(progress>=route.length-1)running=false;draw();}requestAnimationFrame(frame);}
+    function frame(now){const dt=Math.min((now-last)/1000,.1);last=now;if(running){progress=Math.min(route.length-1,progress+dt*Number(el('speed').value));extendTrail(progress);if(progress>=route.length-1)running=false;draw();}requestAnimationFrame(frame);}
     requestAnimationFrame(frame);
   } catch(error){status.textContent='Viewer could not load: '+error.message+'. Use the source downloads or try a browser with WebGL enabled.';console.error(error);}
 })();
