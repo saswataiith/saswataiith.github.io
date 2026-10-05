@@ -2,7 +2,7 @@
 
 A 75–90 minute companion to [Thermodynamics and Kinetics of Materials (NPTEL)](https://nptel.ac.in/courses/113106109), linked from the existing Teaching page.
 
-Open `phase-equilibria-01-v3.ipynb` in JupyterLab or upload it to Google Colab. The notebook contains the complete model, instructions, six saved figures (ten panels), seven student exercises and worked solutions and self-checks. No thermodynamic database is required. This is a fictional solid–liquid ideal-solution binary, not a real-alloy assessment.
+Open `phase-equilibria-01-v4.ipynb` in JupyterLab or upload it to Google Colab. The notebook contains the complete model, instructions, six saved figures (ten panels), seven student exercises and worked solutions and self-checks. No thermodynamic database is required. This is a fictional solid–liquid ideal-solution binary, not a real-alloy assessment.
 
 ## Local setup
 
@@ -14,7 +14,7 @@ python -m venv .venv
 source .venv/bin/activate
 # Windows PowerShell instead: .venv\Scripts\Activate.ps1
 python -m pip install -r requirements.txt
-python -m jupyter lab phase-equilibria-01-v3.ipynb
+python -m jupyter lab phase-equilibria-01-v4.ipynb
 ```
 
 Choose **Restart Kernel and Run All Cells**. Edit T, z and x_probe in the parameter cell and rerun downward. The intended temperature range is 200–3000 K. Self-checks reset the reference energies to their original values. Dependency bounds are compatibility ranges; tested versions are recorded below and in the notebook output.
@@ -71,8 +71,11 @@ Full Jekyll rendering was not run locally because Ruby/Jekyll was unavailable; t
 The numerical reference energies, exposition, code and figures are original teaching material, released under the MIT license embedded in the notebook, consistent with the site's MIT licensing. No external database, third-party figure, textbook extract or restricted course material is redistributed. Dependencies retain their respective licenses.
 
 
-## Revision 3 — 5 October 2026
+## Revision 4 — 5 October 2026
 
-The distinct filenames `phase-equilibria-01-v3.ipynb` and `phase-equilibria-01-v3.html` identify this revision; the unversioned notebook is also updated for compatibility. The browser preview displays the saved figures without opening Jupyter. It is read-only; download the notebook to run or modify the calculations. The preview loads the site's existing local MathJax bundle for equations.
+The distinct filenames `phase-equilibria-01-v4.ipynb` and `phase-equilibria-01-v4.html` identify this revision; the unversioned notebook is also updated for compatibility. The browser preview displays the saved figures without opening Jupyter. It is read-only; download the notebook to run or modify the calculations. The preview loads the site's existing local MathJax bundle for equations.
 
 The three-phase example is a separate, explicitly illustrative quadratic model. At fixed pressure, C=2 and P=3 give F=0. At 1000 K one common supporting tangent touches alpha, liquid and beta at compositions 0.15, 0.50 and 0.85. Tests confirm the stable pairs below and above this temperature, both chemical-potential equalities at the invariant, nonnegative phase amounts and composition conservation. A fraction-family plot demonstrates why fixed overall composition alone leaves one free phase-amount parameter.
+
+
+Revision 4 adds a final self-learning coding appendix: 15 subsections explain Python data structures, vectorization, functions, root solving, phase fractions, Figure/Axes/Axis handles, matched ordinate scales, annotations, zip, itertools.combinations, SER bookkeeping, numerical assertions, linear programming and troubleshooting. All 17 Python code examples were run sequentially in a fresh namespace. The existing scientific code and saved figures were retained. The earlier versioned files remain available, while Teaching and the unversioned notebook point to the current content.
