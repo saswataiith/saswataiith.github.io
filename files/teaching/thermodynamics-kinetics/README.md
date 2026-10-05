@@ -1,8 +1,8 @@
 # Thermodynamics and Kinetics — computational laboratory 01
 
-A 45–60 minute companion to [Thermodynamics and Kinetics of Materials (NPTEL)](https://nptel.ac.in/courses/113106109), linked from the existing Teaching page.
+A 60–75 minute companion to [Thermodynamics and Kinetics of Materials (NPTEL)](https://nptel.ac.in/courses/113106109), linked from the existing Teaching page.
 
-Open `phase-equilibria-01.ipynb` in JupyterLab or upload it to Google Colab. The notebook contains the complete model, instructions, three saved figures (four panels), five student exercises and an explicitly marked instructor solution/check section. No thermodynamic database is required. This is a fictional two-phase ideal-solution binary, not a real-alloy assessment.
+Open `phase-equilibria-01.ipynb` in JupyterLab or upload it to Google Colab. The notebook contains the complete model, instructions, four saved figures (six panels), six student exercises and an explicitly marked instructor solution/check section. No thermodynamic database is required. This is a fictional solid–liquid ideal-solution binary, not a real-alloy assessment.
 
 ## Local setup
 
@@ -25,20 +25,23 @@ Choose **Restart Kernel and Run All Cells**. Edit T, z and x_probe in the parame
 2. Read them from tangent intercepts; distinguish the slope from either potential.
 3. Match tangent slopes and intercepts across two phases.
 4. Connect the lower convex envelope to equilibrium energy and the lever rule.
-5. Investigate overall composition, temperature and a shared affine reference shift.
+5. Construct explicit SER-based unary functions for A and B in solid alpha and liquid; compare with a common pure-solid Gibbs reference.
+6. Investigate overall composition, temperature and a shared affine reference shift.
+
+The single-tangent and common-tangent plots have vertical axes at x_B=0 and x_B=1 on the same energy scale, with numerical mu_A and mu_B intercept labels.
 
 The notebook distinguishes phase mole fractions from mass/volume fractions, curve crossings from common tangents, and equilibrium from kinetics. Each individual branch is convex; this example is not a single-phase spinodal model. pycalphad and FiPy are described as next steps, not dependencies or software used by this notebook.
 
-## Reference result
+## Reference result (initial illustrative reference convention)
 
 At T = 800 K and overall B mole fraction z = 0.40:
 
 | Quantity | Value |
 |---|---:|
 | x_alpha | 0.121167 |
-| x_beta | 0.736021 |
+| x_liquid | 0.736021 |
 | f_alpha | 0.546505 |
-| f_beta | 0.453495 |
+| f_liquid | 0.453495 |
 | mu_A (J/mol) | -859.122196 |
 | mu_B (J/mol) | -2038.687054 |
 | g_eq (J/mol) | -1330.948 |
@@ -46,9 +49,13 @@ At T = 800 K and overall B mole fraction z = 0.40:
 
 ## Validation performed
 
-All nine code cells executed sequentially in a fresh Python 3.12.14 process with a shared namespace; three Matplotlib figures were captured and visually inspected. NumPy 2.3.5, SciPy 1.17.0 and Matplotlib 3.10.8 were used. Notebook schema validation passed. The review environment disallowed kernel sockets, so this was direct sequential execution rather than an end-to-end Jupyter kernel run; this limitation is also recorded in notebook metadata.
+All eleven code cells executed sequentially in a fresh Python 3.12.14 process with a shared namespace; four Matplotlib figures were captured and visually inspected. NumPy 2.3.5, SciPy 1.17.0 and Matplotlib 3.10.8 were used. Notebook schema validation passed. The review environment disallowed kernel sockets, so this was direct sequential execution rather than an end-to-end Jupyter kernel run; this limitation is also recorded in notebook metadata.
 
 Checks passed for analytic coexistence compositions, equality of both chemical potentials, supporting-line stability on both branches, nonnegative fractions, unit fraction sum, composition conservation, pure endpoints, tie-line boundaries and invariance under a shared affine energy shift. These checks span 200, 600, 800, 1200 and 3000 K. An independent linear-programming minimization over 2,001 compositions per phase agreed with the default equilibrium energy within 0.000482 J/mol. Its small positive discrepancy is expected from grid discretization.
+
+Additional SER checks verify solid/liquid equality at each pure element's melting point, G-H_SER = -T_ref*S_ref at 298.15 K, and invariant equilibrium compositions/fractions under a common species reference change. At 800 K the SER chemical potentials are mu_A = -32053.172438 and mu_B = -54671.547344 J/mol; under a common pure-solid Gibbs reference they become -859.122196 and -14038.687054 J/mol. The initial illustrative reference yields the table above. These are different reference conventions for the same 800 K equilibrium.
+
+The initial frozen-endmember temperature sweep is only an entropy sensitivity exercise, not a melting phase diagram. The separate SER example constructs temperature-dependent solid/liquid functions with constant and equal phase heat capacities, specified elemental entropies and fusion enthalpies. No assessed data are used.
 
 ## Website integration
 
