@@ -8,7 +8,7 @@
   const scale=phase=>[[0,'#f4f3ed'],[.24,'#f4f3ed'],[.25,phase==='red'?'#f9dadd':'#d5e5fa'],[.49,phase==='red'?'#f9dadd':'#d5e5fa'],[.5,phase==='red'?'#bc244b':'#167dcc'],[.74,phase==='red'?'#bc244b':'#167dcc'],[.75,'#ffd329'],[1,'#ffd329']];
   function traces(state){
    const out=[],stride=4,selected=state.phase==='red';
-   for(let axis=0;axis<3;axis++){
+   if(el('plotly-sections').checked)for(let axis=0;axis<3;axis++){
     const coords=[[],[],[]],colour=[],others=[0,1,2].filter(a=>a!==axis),position=Number(el('position-'+axis).value);
     for(let v=0;v<n;v+=stride){const rows=[[],[],[]],c=[];for(let u=0;u<n;u+=stride){const p=[0,0,0];p[axis]=position;p[others[0]]=u;p[others[1]]=v;const word=volume[(p[0]*n+p[1])*n+p[2]],d=word&32767;
       p.forEach((x,a)=>rows[a].push(x));c.push(Boolean(word&32768)!==selected?0:d>state.step?1:d===state.step&&state.step<analysis.flood[state.phase].maximum_distance?3:2);
@@ -26,6 +26,9 @@
   window.playgroundUpdate=state=>{latest=state;const now=performance.now();if(now-last>180||!state.playing){last=now;paint();}else if(!pending)pending=setTimeout(()=>{pending=null;paint();},180);};
   el('plotly-interface').onchange=async()=>{if(el('plotly-interface').checked&&!mesh){el('plotly-status').textContent='Loading the shared 0.5 interface…';try{const r=await fetch(new URL('../../../assets/examples/bicontinuity-3d/viewer.json',location.href));if(!r.ok)throw Error('Mesh unavailable');const m=(await r.json()).meshes.red;mesh={type:'mesh3d',x:m.vertices.map(p=>p[0]),y:m.vertices.map(p=>p[1]),z:m.vertices.map(p=>p[2]),i:m.triangles.map(t=>t[0]),j:m.triangles.map(t=>t[1]),k:m.triangles.map(t=>t[2]),name:'c = 0.5',hoverinfo:'skip',lighting:{ambient:.35,diffuse:.8,specular:.3,roughness:.6},lightposition:{x:400,y:300,z:500}};}catch(e){el('plotly-status').textContent=e.message;return;}}el('plotly-status').textContent='Drag to rotate, scroll to zoom; camera stays fixed while the flood grows.';paint();};
   el('interface-opacity').oninput=paint;
+  el('plotly-sections').onchange=paint;
+  el('plotly-reset').onclick=()=>Plotly.relayout(el('plotly-volume'),{'scene.camera':layout.scene.camera});
+  if(el('plotly-interface').checked)el('plotly-interface').onchange();
 
   el('plotly-status').textContent='Drag to rotate, scroll to zoom. The same flood animates here and in the exact sections below.';
  };
