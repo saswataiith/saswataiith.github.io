@@ -3,36 +3,50 @@ import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import vm from 'node:vm';
 const data=JSON.parse(readFileSync('assets/examples/bicontinuity-3d/viewer.json'));
+const field=readFileSync('assets/examples/bicontinuity-3d/composition.npy');
+const fieldOffset=10+field.readUInt16LE(8);
+const value=p=>field.readFloatLE(fieldOffset+4*((p[0]*data.n+p[1])*data.n+p[2]));
 const report=JSON.parse(readFileSync('assets/examples/bicontinuity-3d/report.json'));
 test('all saved routes and rendered centre interpolation stay in their selected phase',()=>{
- const n=data.n;
+ const n=data.n;assert.equal(n,256);assert.equal(field.length-fieldOffset,256**3*4);
  for(const phase of ['red','blue']){
-  const mask=new Set(data[phase].map(p=>p.join(',')));
+  const belongs=p=>phase==='red'?value(p)>=.5:value(p)<.5;
   for(const [axis,route] of Object.entries(data.routes[phase])){
    assert.deepEqual(route[0],route.at(-1));const winding=[0,0,0];
    for(let i=0;i<route.length-1;i++){
-    const a=route[i],b=route[i+1];assert(mask.has(a.join(',')));assert(mask.has(b.join(',')));
+    const a=route[i],b=route[i+1];assert(belongs(a));assert(belongs(b));
     const d=b.map((v,j)=>((v-a[j]+n+n/2)%n)-n/2);assert.equal(d.reduce((s,v)=>s+Math.abs(v),0),1);
     d.forEach((v,j)=>winding[j]+=v);
     for(let tick=0;tick<=20;tick++){
      const p=a.map((v,j)=>Math.floor(((v+.5+d[j]*tick/20)%n+n)%n));
-     assert(mask.has(p.join(',')),`${phase}/${axis}: interpolation left phase`);
+     assert(belongs(p),`${phase}/${axis}: interpolation left phase`);
     }
    }
    assert.deepEqual(winding,[...'xyz'].map(a=>a===axis?n:0));
   }
  }
 });
+test('display meshes have finite bounded geometry and recorded full-resolution provenance',()=>{
+ for(const [phase,m] of Object.entries(data.meshes)){
+  assert.equal(m.vertices.length,m.normals.length);
+  assert(m.triangles.length<=60000&&m.triangles.length>50000);
+  assert(m.full_resolution_triangles>2000000);
+  for(const point of m.vertices)for(const x of point)assert(Number.isFinite(x)&&x>=0&&x<=256);
+  for(const normal of m.normals)for(const x of normal)assert(Number.isFinite(x));
+  for(const face of m.triangles)for(const i of face)assert(Number.isInteger(i)&&i>=0&&i<m.vertices.length);
+ }
+});
 test('browser control and animation logic completes all six loops (mock graphics, not WebGL)',async()=>{
  const ids=['phase','direction','speed','opacity','other','start','pause','reset','status','measurements'];
- const els=Object.fromEntries(ids.map(id=>[id,{value:({phase:'red',direction:'x',speed:30,opacity:.15})[id],checked:false}]));
+ const els=Object.fromEntries(ids.map(id=>[id,{value:({phase:'red',direction:'x',speed:200,opacity:.15})[id],checked:false}]));
  let callback, now=0;const object=opts=>({...opts});
  const context={document:{getElementById:id=>els[id]},location:{href:'https://example.com/files/mesoscale/examples/bicontinuity-3d.html'},innerWidth:800,window:{},URL,console,
-  $:()=>({}),performance:{now:()=>now},requestAnimationFrame:fn=>callback=fn,
+  $:()=>({}),setTimeout,performance:{now:()=>now},requestAnimationFrame:fn=>callback=fn,
   fetch:async url=>({ok:true,json:async()=>url.pathname.endsWith('viewer.json')?data:report}),
-  vertex:object,quad:object,curve:object,vec:(...a)=>a,canvas:object,box:object,compound:object,arrow:object,label:object,ellipsoid:object,sphere:object};
+  vertex:object,triangle:object,curve:object,vec:(...a)=>a,canvas:object,box:object,compound:object,arrow:object,label:object,ellipsoid:object,sphere:object};
  vm.runInNewContext(readFileSync('assets/js/bicontinuity-3d.js','utf8'),context);
- await new Promise(resolve=>setImmediate(resolve));assert(callback,els.status.textContent);
+ for(let i=0;i<1000&&!callback;i++)await new Promise(resolve=>setTimeout(resolve,5));
+ assert(callback,els.status.textContent);
  for(const phase of ['red','blue'])for(const axis of 'xyz'){
   els.phase.value=phase;els.direction.value=axis;els.phase.onchange();els.start.onclick();
   for(let i=0;i<300&&context.window.bicontinuityState.progress<data.routes[phase][axis].length-1;i++){now+=100;callback(now);}

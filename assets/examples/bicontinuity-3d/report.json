@@ -5,37 +5,134 @@
     "M": 1.0,
     "kappa": 1.0,
     "grid": [
-      24,
-      24,
-      24
+      256,
+      256,
+      256
     ],
-    "dx": 1.0,
-    "dt": 0.1,
-    "steps": 1200,
-    "time": 120.0,
+    "dx": 0.25,
+    "box_length": 64.0,
+    "dt": 0.5,
+    "steps": 400,
+    "time": 200.0,
     "seed": 20261005,
     "initial": "0.5 + zero-mean Gaussian noise, standard deviation 0.01",
-    "numpy_version": "2.3.5",
+    "numpy_version": "2.5.3",
     "units": "dimensionless",
-    "method": "semi-implicit Fourier: nonlinear f derivative explicit, gradient term implicit; no dealiasing"
+    "method": "stabilized semi-implicit Fourier, nonlinear f derivative explicit; stabilization S=2; no dealiasing",
+    "stabilization": 2.0,
+    "fft_workers": 4
   },
-  "mean": 0.49999999999990086,
-  "max_mass_drift": 9.914291609902648e-14,
-  "min": 0.008275552589317484,
-  "max": 0.9921569373695824,
-  "energy_initial": 870.0380533091735,
-  "energy_final": 520.7245515305474,
-  "maximum_energy_step_increase": -0.00043868483851383644,
+  "mean": 0.5000000000042002,
+  "max_mass_drift": 1.1102230246251565e-16,
+  "dependencies": {
+    "numpy": "2.5.3",
+    "scipy": "1.18.1",
+    "numba": "0.68.0",
+    "scikit-image": "0.26.0",
+    "fast-simplification": "0.2.0"
+  },
+  "saved_precision": "float32; connectivity measured on saved field",
+  "min": -0.009269876405596733,
+  "max": 1.0154277086257935,
+  "energy_initial": 18442.130598868836,
+  "energy_final": 9159.284418721058,
+  "energy_samples": [
+    {
+      "step": 0,
+      "energy": 18442.130598868836
+    },
+    {
+      "step": 20,
+      "energy": 16383.981813669518
+    },
+    {
+      "step": 40,
+      "energy": 16383.69332184634
+    },
+    {
+      "step": 60,
+      "energy": 16378.302670103123
+    },
+    {
+      "step": 80,
+      "energy": 16276.469707840835
+    },
+    {
+      "step": 100,
+      "energy": 15093.945990961356
+    },
+    {
+      "step": 120,
+      "energy": 13175.312641435454
+    },
+    {
+      "step": 140,
+      "energy": 12533.137348112268
+    },
+    {
+      "step": 160,
+      "energy": 12100.015716135213
+    },
+    {
+      "step": 180,
+      "energy": 11743.775790599113
+    },
+    {
+      "step": 200,
+      "energy": 11439.090830247273
+    },
+    {
+      "step": 220,
+      "energy": 11162.34505441162
+    },
+    {
+      "step": 240,
+      "energy": 10906.901498658484
+    },
+    {
+      "step": 260,
+      "energy": 10659.127733831412
+    },
+    {
+      "step": 280,
+      "energy": 10421.930221507691
+    },
+    {
+      "step": 300,
+      "energy": 10197.835080317382
+    },
+    {
+      "step": 320,
+      "energy": 9980.799869658797
+    },
+    {
+      "step": 340,
+      "energy": 9770.669712554518
+    },
+    {
+      "step": 360,
+      "energy": 9562.622640666326
+    },
+    {
+      "step": 380,
+      "energy": 9356.830522433369
+    },
+    {
+      "step": 400,
+      "energy": 9159.284418721058
+    }
+  ],
+  "maximum_sampled_energy_increase": -0.2884918231775373,
   "thresholds": {
     "0.45": {
       "red": {
-        "phase_fraction": 0.5275607638888888,
+        "phase_fraction": 0.522990882396698,
         "components": 1,
         "largest_fraction_of_phase": 1.0,
+        "winding_rank": 3,
         "component_details": [
           {
-            "voxels": 7293,
-            "winding_rank": 3,
+            "voxels": 8774331,
             "wrap_xyz": [
               true,
               true,
@@ -45,13 +142,13 @@
         ]
       },
       "blue": {
-        "phase_fraction": 0.4724392361111111,
+        "phase_fraction": 0.477009117603302,
         "components": 1,
         "largest_fraction_of_phase": 1.0,
+        "winding_rank": 3,
         "component_details": [
           {
-            "voxels": 6531,
-            "winding_rank": 3,
+            "voxels": 8002885,
             "wrap_xyz": [
               true,
               true,
@@ -63,13 +160,13 @@
     },
     "0.5": {
       "red": {
-        "phase_fraction": 0.5020254629629629,
+        "phase_fraction": 0.49977290630340576,
         "components": 1,
         "largest_fraction_of_phase": 1.0,
+        "winding_rank": 3,
         "component_details": [
           {
-            "voxels": 6940,
-            "winding_rank": 3,
+            "voxels": 8384798,
             "wrap_xyz": [
               true,
               true,
@@ -79,13 +176,13 @@
         ]
       },
       "blue": {
-        "phase_fraction": 0.49797453703703703,
+        "phase_fraction": 0.5002270936965942,
         "components": 1,
         "largest_fraction_of_phase": 1.0,
+        "winding_rank": 3,
         "component_details": [
           {
-            "voxels": 6884,
-            "winding_rank": 3,
+            "voxels": 8392418,
             "wrap_xyz": [
               true,
               true,
@@ -97,13 +194,13 @@
     },
     "0.55": {
       "red": {
-        "phase_fraction": 0.4759837962962963,
+        "phase_fraction": 0.47656846046447754,
         "components": 1,
         "largest_fraction_of_phase": 1.0,
+        "winding_rank": 3,
         "component_details": [
           {
-            "voxels": 6580,
-            "winding_rank": 3,
+            "voxels": 7995492,
             "wrap_xyz": [
               true,
               true,
@@ -113,13 +210,13 @@
         ]
       },
       "blue": {
-        "phase_fraction": 0.5240162037037037,
+        "phase_fraction": 0.5234315395355225,
         "components": 1,
         "largest_fraction_of_phase": 1.0,
+        "winding_rank": 3,
         "component_details": [
           {
-            "voxels": 7244,
-            "winding_rank": 3,
+            "voxels": 8781724,
             "wrap_xyz": [
               true,
               true,
@@ -132,26 +229,26 @@
   },
   "routes": {
     "red": {
-      "y": {
-        "steps": 28,
+      "x": {
+        "steps": 304,
         "winding": [
-          0,
           1,
+          0,
           0
         ],
         "valid": true
       },
-      "x": {
-        "steps": 32,
+      "y": {
+        "steps": 298,
         "winding": [
-          1,
           0,
+          1,
           0
         ],
         "valid": true
       },
       "z": {
-        "steps": 32,
+        "steps": 308,
         "winding": [
           0,
           0,
@@ -161,26 +258,26 @@
       }
     },
     "blue": {
-      "y": {
-        "steps": 24,
+      "x": {
+        "steps": 308,
         "winding": [
-          0,
           1,
+          0,
           0
         ],
         "valid": true
       },
-      "x": {
-        "steps": 30,
+      "y": {
+        "steps": 330,
         "winding": [
-          1,
           0,
+          1,
           0
         ],
         "valid": true
       },
       "z": {
-        "steps": 36,
+        "steps": 350,
         "winding": [
           0,
           0,
@@ -188,6 +285,16 @@
         ],
         "valid": true
       }
+    }
+  },
+  "display_mesh": {
+    "red": {
+      "full_resolution_triangles": 2285902,
+      "display_triangles": 60000
+    },
+    "blue": {
+      "full_resolution_triangles": 2296842,
+      "display_triangles": 60000
     }
   }
 }
