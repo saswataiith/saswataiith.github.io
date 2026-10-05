@@ -137,6 +137,39 @@ export function interfaceJump(c, e0, inside, point) {
     stress: { inside: row(inside.stress), outside: row(stressOut) },
   };
 }
+// Infinite-matrix exterior field, evaluated separately from the uniform interior.
+// In scaled ellipse coordinates r=(x/a,y/b), the Fourier radial integral is
+// 1 for |r·v|<1, and 1-|r·v|/sqrt((r·v)^2-1) otherwise.
+// On the two exterior angular arcs set sin(delta)=sqrt(1-r^-2)*sin(u).
+// This cancels the square-root singularity, leaving a smooth angular average
+// of sym(g(n) tensor n). At r=1 it is precisely the interface jump tensor.
+export function exterior(c, e0, inside, a, b, phi, x, y, count = 2048) {
+  const cp=Math.cos(phi),sp=Math.sin(phi),X=(x*cp+y*sp)/a,Y=(-x*sp+y*cp)/b;
+  const r=Math.hypot(X,Y);
+  if(r<1-1e-10)throw Error("Exterior evaluation point lies inside the ellipse");
+  const alpha=Math.atan2(Y,X),beta=Math.sqrt(Math.max(0,1-1/(r*r))),jump=[[0,0],[0,0]];
+  for(let q=0;q<count;q++){
+    const u=-Math.PI/2+Math.PI*(q+.5)/count,theta=alpha+Math.asin(beta*Math.sin(u));
+    const zx=Math.cos(theta)/a,zy=Math.sin(theta)/b,L=Math.hypot(zx,zy);
+    const n=[(zx*cp-zy*sp)/L,(zx*sp+zy*cp)/L],g=jumpVector(c,inside.eigenstress,n),A=symOuter(g,n);
+    for(let i=0;i<2;i++)for(let j=0;j<2;j++)jump[i][j]+=A[i][j]/count;
+  }
+  const strain=sub(inside.strain,jump);
+  return {strain,stress:contract4(c,strain)};
+}
+// Separate one-sided profile branches; never interpolate through the interface.
+export function sharpProfile(c,e0,a,b,phi,psi,{count=161,quadrature=2048}={}){
+ const inside=interior(c,e0,a,b,phi),p=boundaryPoint(a,b,phi,psi),J=interfaceJump(c,e0,inside,p);
+ const cp=Math.cos(phi),sp=Math.sin(phi),px=p.x*cp+p.y*sp,py=-p.x*sp+p.y*cp,mx=p.m[0]*cp+p.m[1]*sp,my=-p.m[0]*sp+p.m[1]*cp;
+ const chord=2*(px*mx/(a*a)+py*my/(b*b))/(mx*mx/(a*a)+my*my/(b*b));
+ const Lin=Math.min(.1,.8*chord),Lout=.1,rows={strain:{},stress:{}};
+ for(const kind of ['strain','stress'])for(const k of ['ss','sm','mm'])rows[kind][k]={inside:[[-Lin/a,J[kind].inside[k]],[0,J[kind].inside[k]]],outside:[[0,J[kind].outside[k]]]};
+ for(let q=1;q<count;q++){
+  const d=Lout*q/(count-1),out=exterior(c,e0,inside,a,b,phi,p.x+d*p.m[0],p.y+d*p.m[1],quadrature);
+  for(const kind of ['strain','stress']){const values=frame(out[kind],p.s,p.m);for(const k of ['ss','sm','mm'])rows[kind][k].outside.push([d/a,values[k]]);}
+ }
+ return {rows,J,Lin,Lout,point:p};
+}
 // Periodic FFT solution for an ellipse in a unit cell (homogeneous C, mean
 // total strain zero). Returns total strain and stress fields (xx, yy, xy).
 export function fieldSolve(c, e0, { n = 1024, a = 0.16, ratio = 0.5, phi = 0, sub: ss = 4 } = {}) {

@@ -6,10 +6,10 @@ import {
   interfaceJump,
   kernelB,
   fieldSolve,
-  sample,
+  sharpProfile,
   frame,
   contract4,
-} from "./eshelby.mjs?v=20261005-grid1024";
+} from "./eshelby.mjs?v=20261005-sharp-branches";
 import { roots } from "./math.mjs?v=20260924c";
 import { fmt } from "./plots.mjs?v=20260924c";
 import {
@@ -213,35 +213,11 @@ function drawMap(F, s) {
   const [label, kind] = COMPONENTS[comp];
   setHTML(
     "es-map-legend",
-    `<span class="es-bar"></span> ${label.replace("_", "<sub>").concat("</sub>")} from −${fmt(scale)} (blue) to +${fmt(scale)} (orange). Periodic cell; inclusion area fraction ${(100 * F.fraction).toFixed(1)}%. Dashed: the ${kind} profile line below, along m.`,
+    `<span class="es-bar"></span> ${label.replace("_", "<sub>").concat("</sub>")} from −${fmt(scale)} (blue) to +${fmt(scale)} (orange). Periodic cell; inclusion area fraction ${(100 * F.fraction).toFixed(1)}%. Dashed: the normal sampling direction. The profiles below use the separate infinite-matrix sharp-interface solution.`,
   );
 }
 function profile(F, s, inside, J) {
-  const p = boundaryPoint(F.a, F.b, F.phi, s.psi),
-    L = 0.1,
-    N = Math.max(161, Math.ceil(4 * L * F.n) + 1),
-    rows = { strain: { ss: [], sm: [], mm: [] }, stress: { ss: [], sm: [], mm: [] } };
-  for (let q = 0; q < N; q++) {
-    const d = -L + (2 * L * q) / (N - 1),
-      x = p.x + d * p.m[0],
-      y = p.y + d * p.m[1],
-      e = [
-        [sample(F.exx, F.n, x, y), sample(F.exy, F.n, x, y)],
-        [sample(F.exy, F.n, x, y), sample(F.eyy, F.n, x, y)],
-      ],
-      sg = [
-        [sample(F.sxx, F.n, x, y), sample(F.sxy, F.n, x, y)],
-        [sample(F.sxy, F.n, x, y), sample(F.syy, F.n, x, y)],
-      ],
-      fe = frame(e, p.s, p.m),
-      fs = frame(sg, p.s, p.m);
-    for (const k of ["ss", "sm", "mm"]) {
-      rows.strain[k].push([d / F.a, fe[k]]);
-      rows.stress[k].push([d / F.a, fs[k]]);
-    }
-  }
-  // Exact values just inside / outside the chosen point for the same shape.
-  const Jf = interfaceJump(s.c, s.e0, interior(s.c, s.e0, F.a, F.b, F.phi), p);
+  const {rows,J:Jf,Lin,Lout}=sharpProfile(s.c,s.e0,F.a,F.a*s.ratio,s.phi,s.psi);
   const mk = (kind) => {
     const colours = { ss: O, sm: Y, mm: B },
       series = [];
@@ -251,18 +227,17 @@ function profile(F, s, inside, J) {
       series.push({
         name: sub(`${kind === "strain" ? "ε" : "σ"}_${k}`) + (cont ? " continuous" : " jumps"),
         color: colours[k],
-        points: rows[kind][k],
+        points: rows[kind][k].inside,
       });
+      series.push({name:"",color:colours[k],points:rows[kind][k].outside});
       series.push({
         name: "",
         color: colours[k],
         dash: "2 3",
         width: 1.6,
         points: [
-          [-L / F.a, Jf[kind].inside[k]],
           [0, Jf[kind].inside[k]],
           [0, Jf[kind].outside[k]],
-          [L / F.a, Jf[kind].outside[k]],
         ],
       });
     }
@@ -273,12 +248,12 @@ function profile(F, s, inside, J) {
       title: `${kind === "strain" ? "Total strain" : "Stress"} across the interface, (s, m) frame`,
       series: mk(kind),
       xlabel: "distance along m, in units of a (inside < 0)",
-      xmin: -L / F.a,
-      xmax: L / F.a,
+      xmin: -Lin / F.a,
+      xmax: Lout / F.a,
       xticks: [
-        [-L / F.a, (-L / F.a).toFixed(2)],
+        [-Lin / F.a, (-Lin / F.a).toFixed(2)],
         [0, "0"],
-        [L / F.a, (L / F.a).toFixed(2)],
+        [Lout / F.a, (Lout / F.a).toFixed(2)],
       ],
       vlines: [{ x: 0, color: T, label: "interface" }],
     }));
@@ -300,7 +275,7 @@ function scheduleField(s, inside, J) {
     $("es-field-note").textContent =
       s.ratio < 0.08
         ? `The field map uses b/a = 0.08 on a ${n} × ${n} grid; the table and curves above use the exact b/a.`
-        : `Field and profiles: ${n} × ${n} grid. Small sharp-interface Fourier ripples can remain; compare resolutions.`;
+        : `Periodic map: ${n} × ${n} grid; profiles use separate sharp-interface solutions. Small sharp-interface Fourier ripples can remain; compare resolutions.`;
   };
   if (key === fieldKey) run();
   else {

@@ -950,9 +950,9 @@ nav_active: research
           <option value="exy">ε_xy (total)</option>
         </select></label>
     </div>
-    <label for="es-resolution">Field resolution <select id="es-resolution"><option value="256">256 × 256 · quick comparison</option><option value="512">512 × 512</option><option value="1024" selected>1024 × 1024 · finer profiles</option></select></label>
+    <label for="es-resolution">Field resolution <select id="es-resolution"><option value="256">256 × 256 · quick comparison</option><option value="512">512 × 512</option><option value="1024" selected>1024 × 1024 · finer field map</option></select></label>
     <p id="es-field-note" role="status"></p>
-    <p class="es-caption">The default grid is four times finer along each axis. Compare resolutions to identify numerical ripples. A sharp interface can retain Gibbs ringing even on a finer grid; the curves are not smoothed. Dotted lines mark the analytical one-sided interface limits, extended for reference.</p>
+    <p class="es-caption">The map uses the selectable periodic FFT grid. The profiles below instead evaluate the uniform interior and the spatially varying exterior of an isolated ellipse in an infinite matrix separately. Both branches end at their analytical one-sided interface values. Dashed vertical connectors mark actual jumps; no interpolation or smoothing crosses the interface. Periodic map values can differ from these infinite-matrix profiles.</p>
     <div class="lab-grid">
       <div class="lab-plot es-mapwrap">
         <canvas id="es-map" width="440" height="440" aria-label="Colour map of the selected field component"></canvas>
@@ -1106,7 +1106,7 @@ nav_active: research
         </li>
         <li>
           Choose the map component \(\sigma_{xy}\) and move the interface point.
-          In the profiles, the green curves pass straight through the interface
+          In the profiles, the continuous components meet at the same one-sided interface value
           while the orange ones step.
         </li>
         <li>
@@ -1124,11 +1124,11 @@ nav_active: research
         41 aspect ratios and 91 orientations.
       </p>
       <p>
-        The field maps and profiles use a 1024 × 1024 FFT grid by default (256 and 512 are selectable) on a periodic unit cell with an inclusion of
+        The field maps use a 1024 × 1024 FFT grid by default (256 and 512 are selectable) on a periodic unit cell with an inclusion of
         semi-axis a = 0.16, a 4 × 4 supersampled indicator, and zero mean total
         strain. Periodic images and the finite area fraction shift the interior
         values by a few per cent relative to the infinite-matrix solution, and
-        the sharp interface shows small Gibbs ripples. The maps use b/a ≥ 0.08,
+        the sharp interface shows small Gibbs ripples. The separate sharp-interface profiles use the actual selected aspect ratio and a singularity-removing angular substitution, with 2048 midpoint samples per exterior point. The maps use b/a ≥ 0.08,
         the thinnest plate the grid resolves.
       </p>
     </details>
@@ -1700,4 +1700,4 @@ nav_active: research
   </section>
 </div>
 <script type="module" src="/assets/js/elastic-lab/ui.mjs?v=20260924c"></script>
-<script type="module" src="/assets/js/elastic-lab/eshelby-ui.mjs?v=20261005-grid1024"></script>
+<script type="module" src="/assets/js/elastic-lab/eshelby-ui.mjs?v=20261005-sharp-branches"></script>
