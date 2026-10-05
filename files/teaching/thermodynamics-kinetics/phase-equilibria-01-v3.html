@@ -5,7 +5,7 @@
 <strong>Revision 3 · 5 October 2026 — dual energy axes, explicit SER and three-phase invariant equilibrium.</strong></p>
 <p>Level: undergraduate materials science · Suggested time: 75–90 minutes</p>
 <p>How can two phases with different compositions have the same chemical potentials? Why is the intersection of two G–X curves usually <strong>not</strong> the equilibrium answer?</p>
-<p>You will draw tangents, read chemical potentials from intercepts, compute a common tangent, and use conservation to obtain phase amounts. Predict each result before running its cell. Submit your plots, calculations and short explanations for the seven exercises; the instructor section at the end provides worked checks.</p>
+<p>You will draw tangents, read chemical potentials from intercepts, compute a common tangent, and use conservation to obtain phase amounts. Predict each result before running its cell. Work through the seven exercises at your own pace. Record your predictions, plots and explanations, then compare them with the worked solutions and self-checks.</p>
 <p><strong>Prerequisites:</strong> mole fraction, molar Gibbs energy, derivatives and binary phase equilibria. Only basic Python is needed. This is an original, fictional A–B model, not an assessed alloy database or a prediction for a real material.</p>
 </div>
 </div>
@@ -23,7 +23,7 @@ python<span class="w"> </span>-m<span class="w"> </span>pip<span class="w"> </sp
 python<span class="w"> </span>-m<span class="w"> </span>jupyter<span class="w"> </span>lab
 </pre></div>
 <p>Open this notebook and choose <strong>Kernel → Restart Kernel and Run All Cells</strong>. Alternatively, upload the notebook to Google Colab and run it; install missing packages there with <code>%pip install numpy scipy matplotlib</code>. No database, API key or internet connection is needed after installation. Saved outputs let you inspect the reference run without executing anything.</p>
-<p>The parameter cell in §2 is the place to experiment. After a change, rerun from that cell downward. The instructor section deliberately restores its own baseline parameters so its checks remain reproducible.</p>
+<p>The parameter cell in §2 is the place to experiment. After a change, rerun from that cell downward. The self-check section restores the baseline parameters so you can compare your results with a reproducible reference calculation.</p>
 </div>
 </div>
 </div>
@@ -771,19 +771,19 @@ All nonnegative solutions have the same equilibrium Gibbs energy on the common t
 <div class="cell border-box-sizing text_cell rendered" id="cell-id=411c6e94"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="8.-Short-student-exercises">8. Short student exercises<a class="anchor-link" href="#8.-Short-student-exercises">¶</a></h2><p>Write a prediction first, then use the code. Keep units and distinguish $z$ from $x_\alpha,x_L$.</p>
+<h2 id="8.-Try-it-yourself">8. Try it yourself<a class="anchor-link" href="#8.-Try-it-yourself">¶</a></h2><p>Write a prediction first, then use the code. Keep units and distinguish $z$ from $x_\alpha,x_L$.</p>
 <ol>
-<li><strong>Intercepts (2 marks).</strong> At $T=800$ K, $x_0=0.35$ on $\alpha$, calculate both chemical potentials and the slope. Explain why the slope alone cannot give both potentials.</li>
-<li><strong>Equilibrium amounts (3 marks).</strong> At 800 K, find $x_\alpha,x_L$ and the fractions for $z=0.20,0.40,0.70$. Which quantities change with $z$? Verify the B balance for one case. Then classify $z=0.05,0.90$.</li>
-<li><strong>The crossing trap (2 marks).</strong> Find where $g_\alpha(x)=g_L(x)$. At that composition, are the slopes equal? Compare the homogeneous energy with the equilibrium energy. Explain why equal $g$ at the same composition is insufficient.</li>
-<li><strong>Temperature experiment (2 marks).</strong> Repeat the common-tangent calculation at 600, 800 and 1200 K, holding $z=0.40$. Tabulate both phase compositions and fractions. Does the tie-line interval widen or narrow? Explain using mixing entropy, within this model's assumptions.</li>
-<li><strong>Reference-energy challenge (1 mark).</strong> Add the same affine term $c+dx$ to <em>both</em> branches, using $c=1500$, $d=-2000$ J/mol. Predict changes in compositions, fractions, common-tangent slope and both chemical potentials. Explain why relative phase energies, rather than a common reference choice, determine equilibrium.</li>
+<li><strong>Intercepts.</strong> At $T=800$ K, $x_0=0.35$ on $\alpha$, calculate both chemical potentials and the slope. Explain why the slope alone cannot give both potentials.</li>
+<li><strong>Equilibrium amounts.</strong> At 800 K, find $x_\alpha,x_L$ and the fractions for $z=0.20,0.40,0.70$. Which quantities change with $z$? Verify the B balance for one case. Then classify $z=0.05,0.90$.</li>
+<li><strong>The crossing trap.</strong> Find where $g_\alpha(x)=g_L(x)$. At that composition, are the slopes equal? Compare the homogeneous energy with the equilibrium energy. Explain why equal $g$ at the same composition is insufficient.</li>
+<li><strong>Temperature experiment.</strong> Repeat the common-tangent calculation at 600, 800 and 1200 K, holding $z=0.40$. Tabulate both phase compositions and fractions. Does the tie-line interval widen or narrow? Explain using mixing entropy, within this model's assumptions.</li>
+<li><strong>Reference-energy challenge.</strong> Add the same affine term $c+dx$ to <em>both</em> branches, using $c=1500$, $d=-2000$ J/mol. Predict changes in compositions, fractions, common-tangent slope and both chemical potentials. Explain why relative phase energies, rather than a common reference choice, determine equilibrium.</li>
 </ol>
-<p><strong>Submission:</strong> two annotated plots (common tangent and phase fractions), the temperature table and brief answers. The remaining section is an answer key; attempt the exercises before reading it.</p>
+<p><strong>Check your understanding:</strong> annotate your common-tangent and phase-fraction plots, complete the temperature table, and explain each result in your own words. Try the exercises before consulting the worked solutions.</p>
 <ol start="6">
-<li><p><strong>SER and phase references (2 additional marks).</strong> At 800 K, reproduce the four SER-referenced pure-element energies. Why is the solid Gibbs energy not zero at 298.15 K? Convert both phases to the common pure-solid Gibbs reference. Explain why zeroing liquid endmembers <em>independently</em> would erase physical information. Identify the fusion-energy difference for each species and explain its sign at 800 K.</p>
+<li><p><strong>SER and phase references.</strong> At 800 K, reproduce the four SER-referenced pure-element energies. Why is the solid Gibbs energy not zero at 298.15 K? Convert both phases to the common pure-solid Gibbs reference. Explain why zeroing liquid endmembers <em>independently</em> would erase physical information. Identify the fusion-energy difference for each species and explain its sign at 800 K.</p>
 </li>
-<li><p><strong>Binary invariant (3 additional marks).</strong> Apply the phase rule at fixed pressure to α + L + β. For $z=0.40$, calculate all three fractions first with $f_L=0.20$ and then with $f_L=0.60$. Explain why both states are equilibrium states at the same invariant temperature and compositions. What additional measurement could determine the fractions uniquely? Use the neighboring-temperature plots to explain why three-phase coexistence is lost when temperature changes.</p>
+<li><p><strong>Binary invariant.</strong> Apply the phase rule at fixed pressure to α + L + β. For $z=0.40$, calculate all three fractions first with $f_L=0.20$ and then with $f_L=0.60$. Explain why both states are equilibrium states at the same invariant temperature and compositions. What additional measurement could determine the fractions uniquely? Use the neighboring-temperature plots to explain why three-phase coexistence is lost when temperature changes.</p>
 </li>
 </ol>
 </div>
@@ -806,7 +806,7 @@ All nonnegative solutions have the same equilibrium Gibbs energy on the common t
 <div class="cell border-box-sizing text_cell rendered" id="cell-id=1e8ca412"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="9.-Instructor-solution-and-numerical-checks">9. Instructor solution and numerical checks<a class="anchor-link" href="#9.-Instructor-solution-and-numerical-checks">¶</a></h2><p>This section is deliberately included for self-study. It restores the original model. Code cells are tagged <code>instructor-solution</code> for removal when preparing an assessed version; Markdown answers would also need removal.</p>
+<h2 id="9.-Worked-solutions-and-self-checks">9. Worked solutions and self-checks<a class="anchor-link" href="#9.-Worked-solutions-and-self-checks">¶</a></h2><p>Compare your reasoning and calculations with the worked solutions below. The checks restore the original model parameters. If a result differs, revisit the relevant equation, units and reference convention, then rerun the calculation.</p>
 <p>An independent analytic result follows directly from the ideal-solution chemical potentials. Define
 $$K_A=\exp[(g_A^{0,\alpha}-g_A^{0,L})/(RT)],\quad
 K_B=\exp[(g_B^{0,\alpha}-g_B^{0,L})/(RT)].$$
@@ -816,7 +816,7 @@ This provides a check independent of the slope-root construction.</p>
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing code_cell rendered celltag_instructor-solution" id="cell-id=1d87bb95">
+<div class="cell border-box-sizing code_cell rendered celltag_self-check" id="cell-id=1d87bb95">
 <details><summary>Show Python code</summary><div class="input">
 <div class="prompt input_prompt">In [12]:</div>
 <div class="inner_cell">
@@ -895,7 +895,7 @@ This provides a check independent of the slope-root construction.</p>
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing code_cell rendered celltag_instructor-solution" id="cell-id=ed4405f4">
+<div class="cell border-box-sizing code_cell rendered celltag_self-check" id="cell-id=ed4405f4">
 <details><summary>Show Python code</summary><div class="input">
 <div class="prompt input_prompt">In [13]:</div>
 <div class="inner_cell">

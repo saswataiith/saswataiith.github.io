@@ -2,7 +2,7 @@
 
 A 75–90 minute companion to [Thermodynamics and Kinetics of Materials (NPTEL)](https://nptel.ac.in/courses/113106109), linked from the existing Teaching page.
 
-Open `phase-equilibria-01-v3.ipynb` in JupyterLab or upload it to Google Colab. The notebook contains the complete model, instructions, six saved figures (ten panels), seven student exercises and an explicitly marked instructor solution/check section. No thermodynamic database is required. This is a fictional solid–liquid ideal-solution binary, not a real-alloy assessment.
+Open `phase-equilibria-01-v3.ipynb` in JupyterLab or upload it to Google Colab. The notebook contains the complete model, instructions, six saved figures (ten panels), seven student exercises and worked solutions and self-checks. No thermodynamic database is required. This is a fictional solid–liquid ideal-solution binary, not a real-alloy assessment.
 
 ## Local setup
 
@@ -17,7 +17,7 @@ python -m pip install -r requirements.txt
 python -m jupyter lab phase-equilibria-01-v3.ipynb
 ```
 
-Choose **Restart Kernel and Run All Cells**. Edit T, z and x_probe in the parameter cell and rerun downward. The intended temperature range is 200–3000 K. Instructor checks reset the reference energies to their original values. Dependency bounds are compatibility ranges; tested versions are recorded below and in the notebook output.
+Choose **Restart Kernel and Run All Cells**. Edit T, z and x_probe in the parameter cell and rerun downward. The intended temperature range is 200–3000 K. Self-checks reset the reference energies to their original values. Dependency bounds are compatibility ranges; tested versions are recorded below and in the notebook output.
 
 ## Learning sequence
 
@@ -62,7 +62,7 @@ The initial frozen-endmember temperature sweep is only an entropy sensitivity ex
 
 Prepared against `saswataiith/saswataiith.github.io` commit `34b2de98863a87e70539919cc6fee7c472b0014d`, with publication approved on 5 October 2026.
 
-The Teaching page links this notebook from the NPTEL section using the site's existing styles. The download includes instructor solutions, as explicitly stated on the page. No additional website JavaScript or build dependencies are required.
+The Teaching page links this notebook from the NPTEL section using the site's existing styles. The download includes worked solutions and self-checks, as explicitly stated on the page. No additional website JavaScript or build dependencies are required.
 
 Full Jekyll rendering was not run locally because Ruby/Jekyll was unavailable; the insertion and local link target were checked structurally. The notebook validation and its execution limitations are recorded above.
 
