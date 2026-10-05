@@ -29,8 +29,9 @@
   el('wave-label').textContent='Shortest-path distance: '+step+' face-sharing steps from seed ('+analysis.flood[state.phase].root.join(', ')+').';
   el('flood-status').textContent=step===max?'Every voxel of this phase is reached from one seed. The entire phase is connected.':'The colour front travels only through the selected phase, including periodic links. Apparent separate patches in a slice can join outside that plane.';
   window.connectivityExplorerState={...state,step,reached,total};
+  if(window.playgroundUpdate)window.playgroundUpdate(window.connectivityExplorerState);
  }
- function frame(time,token){if(!state.playing||token!==generation)return;state.step=(time-stageStart)/8000*analysis.flood[state.phase].maximum_distance;render();if(state.step>=analysis.flood[state.phase].maximum_distance){state.playing=false;generation++;el('grow').textContent='Flood again';}else requestAnimationFrame(t=>frame(t,token));}
+ function frame(time,token){if(!state.playing||token!==generation)return;state.step=(time-stageStart)/(8000/Number(el('flood-speed').value||1))*analysis.flood[state.phase].maximum_distance;render();if(state.step>=analysis.flood[state.phase].maximum_distance){state.playing=false;generation++;el('grow').textContent='Flood again';}else requestAnimationFrame(t=>frame(t,token));}
  function phaseChanged(){state.phase=el('phase').value;state.playing=false;generation++;state.step=analysis.flood[state.phase].maximum_distance;el('grow').textContent='Flood from one seed';analysis.flood[state.phase].root.forEach((v,a)=>el('position-'+a).value=v);render();}
  try{
   const base=new URL('../../../assets/examples/bicontinuity-3d/',location.href);
@@ -42,6 +43,7 @@
   histograms={red:new Uint32Array(32768),blue:new Uint32Array(32768)};
   for(const encoded of volume)histograms[(encoded&32768)?'red':'blue'][encoded&32767]++;
   for(const phase of ['red','blue']){const h=histograms[phase];for(let i=1;i<h.length;i++)h[i]+=h[i-1];}
+  if(window.mountConnectivityPlayground)window.mountConnectivityPlayground({volume,analysis,n,histograms});
   state.loaded=true;phaseChanged();
   for(let axis=0;axis<3;axis++){el('position-'+axis).oninput=render;canvases[axis].width=canvases[axis].height=n;}
   el('phase').addEventListener('change',phaseChanged);el('show-both').onchange=render;
