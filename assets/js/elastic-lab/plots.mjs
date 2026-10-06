@@ -90,14 +90,14 @@ export function cartesian(series, title, selected = null) {
   body += text(285, 307, "angle (degrees)");
   return svg(title, body);
 }
-export function polar(series, title, magnitude = false) {
-  // A magnitude plot keeps direction unchanged; the adjacent graph shows signs.
+export function polar(series, title, magnitude = false, direct = false) {
+  // I retain signs in the angle graph when a magnitude plot is requested.
   if (magnitude) series = series.map(s => ({...s, points: s.points.map(p => ({...p, value: Math.abs(p.value)}))}));
   const vals = series.flatMap((s) => s.points.map((p) => p.value)),
     lo = Math.min(0, ...vals),
     hi = Math.max(...vals),
     span = Math.max(hi - lo, 1e-12),
-    R = (v) => magnitude ? 120 * v / Math.max(hi, 1e-12) : 20 + (100 * (v - lo)) / span,
+    R = (v) => direct ? 120 * Math.max(0, v) / Math.max(hi, 1e-30) : magnitude ? 120 * v / Math.max(hi, 1e-12) : 20 + (100 * (v - lo)) / span,
     cx = 220,
     cy = 165,
     same = coincident(series),
@@ -138,7 +138,7 @@ export function polar(series, title, magnitude = false) {
       b += `<circle cx="${cx + R(p.value) * Math.cos(p.angle)}" cy="${cy - R(p.value) * Math.sin(p.angle)}" r="${minima(s.points).global.includes(p) ? 5 : 3}" fill="${colors[i]}"/>`;
     b += text(40 + i * 130, 310, s.name, `fill="${colors[i]}"`);
   });
-  b += text(20, 334, magnitude ? "Radius = |Bpq|; signs are shown in the angle graph." : "Offset radial scale; labels give signed values.");
+  b += text(20, 334, direct ? "Radius proportional to Bpp; centre: Bpp = 0." : magnitude ? "Radius = |Bpq|; signs are shown in the angle graph." : "Offset radial scale; labels give signed values.");
   return svg(title, b);
 }
 // I use one signed radial scale for all three kernels, so none hides another.

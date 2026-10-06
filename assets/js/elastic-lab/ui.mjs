@@ -22,7 +22,7 @@ import {
   sketch,
   strainShape,
   fmt,
-} from "./plots.mjs?v=20261006-three-polar";
+} from "./plots.mjs?v=20261007-direct-self-polar";
 import {
   element,
   value,
@@ -113,6 +113,9 @@ function syncPairStiffness(c) {
 }
 function renderKernels(s) {
   syncPairStiffness(s.c);
+  for (const [id, number] of [["kernel-epsilon", s.epsilon], ["kernel-t", s.t]]) {
+    if (document.activeElement !== element(id)) element(id).value = number;
+  }
   const e = [s.epsilon, s.epsilon * s.t, 0],
     single = sample((a) => kernel(s.c, e, e, a)),
     m = minima(single),
@@ -121,10 +124,10 @@ function renderKernels(s) {
     "kernel-cart",
     cartesian(series, "Elastic energy kernel versus normal angle"),
   );
-  draw("kernel-polar", polar(series, "B(n): modulation normal"));
+  draw("kernel-polar", polar(series, "Bpp(n): modulation normal", false, true));
   set(
     "kernel-result",
-    `AZ = ${fmt(zener(s.c))}. Minimum B = ${fmt(m.lo)}. Normal directions: ${locations(m)}. ${m.flat ? "No preferred orientation from this kernel." : "Ideal plate tangents are 90° from these normals."}`,
+    `Self kernel Bpp: ε⁰ = diag(${fmt(e[0])}, ${fmt(e[1])}); strain ratio t = ${fmt(s.t)}. AZ = ${fmt(zener(s.c))}. Minimum B = ${fmt(m.lo)}. Normal directions: ${locations(m)}. ${m.flat ? "No preferred orientation from this kernel." : "Ideal plate tangents are 90° from these normals."}`,
   );
   set(
     "kernel-why",
@@ -374,6 +377,14 @@ for (const id of ["t", "epsilon", "theta"])
       );
     }
   });
+// I expose the inherited eigenstrain beside the Module III plots.
+for (const [local, shared] of [["kernel-epsilon", "epsilon"], ["kernel-t", "t"]]) {
+  element(local).addEventListener("input", () => {
+    element(shared).value = element(local).value;
+    if (shared === "t") followHabit();
+    render();
+  });
+}
 // I link the local stiffness inputs to the shared constants and both plots.
 for (const id of ["pair-c11", "pair-c12", "pair-c44", "pair-mu", "pair-az"]) {
   element(id).addEventListener("input", () => {
@@ -440,6 +451,10 @@ for (const button of document.querySelectorAll("[data-preset]"))
       const preset = button.dataset.preset;
       if (["minus", "zero", "positive"].includes(preset)) {
         element("t").value = { minus: -1, zero: 0, positive: 0.5 }[preset];
+        followHabit();
+      }
+      if (preset === "dilatational") {
+        element("t").value = 1;
         followHabit();
       }
       if (preset === "isotropic") {

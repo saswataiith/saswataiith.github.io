@@ -1137,8 +1137,7 @@ nav_active: research
     <h2>The stiffness is not the energy.</h2>
     <p>
       Keep the eigenstrain from Module I and change the elastic constants. The
-      plots calculate the elastic energy kernel \(B_{pq}(\mathbf n)\), not
-      Young’s modulus. The polar angle here denotes a
+      plots calculate the self elastic energy kernel \(B_{pp}(\mathbf n)\), using the same eigenstrain on both sides of the contraction. They do not plot a cross kernel or Young’s modulus. The polar angle denotes the Fourier wavevector direction: a
       <strong>modulation normal</strong>, not a plate tangent.
     </p>
     <div class="lab-controls">
@@ -1157,11 +1156,21 @@ nav_active: research
       <button data-preset="isotropic">Isotropic elasticity</button
       ><button data-preset="anisotropic">A<sub>Z</sub> &gt; 1 example</button>
     </div>
+    <div class="lab-controls">
+      <label for="kernel-epsilon">Eigenstrain scale \(\epsilon_p\) (dimensionless)<input id="kernel-epsilon" type="number" value="0.01" step="any" /></label>
+      <label for="kernel-t">Strain ratio \(t=\epsilon_{yy}^{(p)}/\epsilon_{xx}^{(p)}\) (dimensionless)<input id="kernel-t" type="number" value="-0.5" step="any" /></label>
+    </div>
+    <div class="lab-buttons"><button data-preset="dilatational">Equal dilatational components: t = 1</button></div>
+    <p>The eigenstrain is \(\boldsymbol\epsilon^{(p)}=\epsilon_p\operatorname{diag}(1,t)\). These inputs are linked to Module I. Equal components, \(t=1\), give in-plane dilatation. Unequal components can give a different angular symmetry, even with isotropic elastic constants. The self kernel has energy-density units for dimensional stiffnesses; this widget uses scaled model values.</p>
     <p id="kernel-result" class="lab-readout"></p>
     <div class="lab-grid">
       <div class="lab-plot" id="kernel-cart"></div>
       <div class="lab-plot" id="kernel-polar"></div>
     </div>
+    <h3>Read this polar plot as an energy plot</h3>
+    <p><strong>The radius is proportional to \(B_{pp}(\mathbf n)\), with zero at the centre.</strong> The concentric circles label kernel values. The drawing is scaled to fit the panel, so compare the labelled values when changing parameters. A minimum lies closer to the centre. The previous offset scale placed zero away from the centre and changed the apparent shape; the self kernel now uses a direct radial scale. Module IV retains its labelled signed scale because a cross kernel can be negative.</p>
+    <p>A surface-energy plot uses radius \(\gamma(\mathbf n)\), where \(\gamma\) is interfacial energy per area. This plot uses the elastic kernel, which depends on stiffness, eigenstrain and mechanical relaxation. Both are functions of direction, but they need not have the same angular shape. Neither raw polar curve is automatically the equilibrium particle shape: a surface-energy shape requires a Wulff construction, while an elastic particle shape requires the total elastic and interfacial energies.</p>
+    <p><strong>Try the limiting case.</strong> Select equal dilatational components and isotropic elasticity. The kernel is independent of direction and the polar curve is a circle. Keeping isotropic stiffness but changing the strain ratio can restore angular variation. With cubic anisotropy and equal components, the curve has the corresponding fourfold symmetry. Ideal plate tangents are perpendicular to the plotted modulation normals.</p>
     <details class="lab-insight">
       <summary>Why did this happen?</summary>
       <p id="kernel-why"></p>
@@ -1787,5 +1796,5 @@ nav_active: research
     </p>
   </section>
 </div>
-<script type="module" src="/assets/js/elastic-lab/ui.mjs?v=20261006-fixed-nu"></script>
+<script type="module" src="/assets/js/elastic-lab/ui.mjs?v=20261007-direct-self-polar"></script>
 <script type="module" src="/assets/js/elastic-lab/eshelby-ui.mjs?v=20261005-sharp-branches"></script>
