@@ -144,7 +144,7 @@ function renderKernels(s) {
   sandeepCheck(s);
   set(
     "pair-kernels-why",
-    `All three curves use the same C and Q⁻¹, but separate eigenstrain pairs. Self terms are quadratic; the cross term is bilinear. β = (${fmt(s.beta[0])}, ${fmt(s.beta[1])}), γ = (${fmt(s.gamma[0])}, ${fmt(s.gamma[1])}). Reversing every component of γ reverses Bβγ without changing Bγγ. The curve minima above are calculated from these contractions, not assigned from AZ.`,
+    `All three curves use the same homogeneous C and Q⁻¹, but separate eigenstrain pairs. Self terms are quadratic; the cross term is bilinear. β = (${fmt(s.beta[0])}, ${fmt(s.beta[1])}), γ = (${fmt(s.gamma[0])}, ${fmt(s.gamma[1])}). Reversing every component of γ reverses Bβγ without changing Bγγ. ${Math.abs(zener(s.c)-1)<1e-10 && s.beta[0]===s.beta[1] && s.gamma[0]===s.gamma[1] ? "Homogeneous isotropic moduli and dilatational misfits: these kernels are direction independent, as required by the Bitter–Crum limit. Changing a misfit changes the coefficient, not the flat curve shape." : "Directional dependence can come from anisotropic stiffness or non-dilatational eigenstrain. Compare with the isotropic dilatational case."} The curve minima above are calculated from these contractions.`,
   );
 }
 // Reference case: Sandeep Sugathan, IIT Hyderabad thesis (2019), Chapter 5,
@@ -360,6 +360,9 @@ for (const id of ["t", "epsilon", "theta"])
       );
     }
   });
+// Update the kernel controls while the student edits them, not only on blur.
+for (const id of ["beta", "gamma", "tbeta", "tgamma", "cc11", "cc12", "cc44"])
+  element(id).addEventListener("input", render);
 // Module II (ids es-*) has its own controller.
 for (const input of document.querySelectorAll(
   "#elastic-lab input:not([id^=es-]),#elastic-lab select:not([id^=es-])",
