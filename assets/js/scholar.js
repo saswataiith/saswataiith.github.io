@@ -15,7 +15,7 @@ if (menu && navigation) {
   });
 }
 const filterButtons = [...document.querySelectorAll('[data-filter]')];
-const cards = [...document.querySelectorAll('.resource-card')];
+const cards = [...document.querySelectorAll('#library .resource-card[data-category][data-search]')];
 const search = document.querySelector('#resource-search');
 let selectedCategory = 'All';
 function filterResources() {
