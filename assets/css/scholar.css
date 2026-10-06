@@ -89,3 +89,11 @@
 @media(max-width:680px){.thesis-movies{grid-template-columns:1fr}.thesis-movies .thesis-figure{padding:10px}}
 
 .research-movie{display:block;width:100%;height:auto;border-radius:6px}
+
+/* I keep the final-frame preview visible until Play is selected. */
+.movie-player{position:relative}
+.movie-start{position:absolute;inset:0;width:100%;height:100%;padding:0;border:0;border-radius:6px;overflow:hidden;background:#f4f6f5;cursor:pointer}
+.movie-start img{display:block;width:100%;height:100%;object-fit:contain}
+.movie-start span{position:absolute;bottom:12px;left:50%;transform:translateX(-50%);width:max-content;max-width:94%;padding:9px 13px;border-radius:6px;background:#fff;color:var(--ink);font:600 13px/1.4 sans-serif;box-shadow:0 2px 8px #0003}
+.movie-start:focus-visible{outline:3px solid #2372a0;outline-offset:4px}
+.movie-start[hidden]{display:none}
