@@ -4,6 +4,7 @@ import assert from "node:assert/strict";
 import { writeFileSync } from "node:fs";
 import {
   moduli,
+  elasticParameters,
   kernel,
   roots,
   projection,
@@ -36,6 +37,17 @@ function test(name, fn) {
   console.log("PASS", name);
 }
 const iso = { c11: 3, c12: 1, c44: 1 };
+test("Independent cubic stiffness and parameter conversion", () => {
+  for (const mu of [1, 2000]) for (const nu of [-0.2, 0.25, 1/3]) for (const z of [0.5, 1, 3]) {
+    const c = moduli(mu, nu, z), recovered = elasticParameters(c);
+    close(recovered.mu, mu); close(recovered.nu, nu); close(recovered.z, z);
+  }
+  const c = { c11: 9, c12: 2, c44: 4 }, p = elasticParameters(c), back = moduli(p.mu, p.nu, p.z);
+  for (const key of ["c11", "c12", "c44"]) close(c[key], back[key]);
+  assert.throws(() => elasticParameters({ c11: 1, c12: 2, c44: 1 }));
+  return { reference: elasticParameters(moduli(2000, 1/3, 3)) };
+});
+
 test("Interpolation endpoints, derivatives and diffuse-profile symmetry", () => {
   for (const kind of ["linear", "cubic", "quintic", "tanh"]) {
     close(interpolation(kind, 0), 0);

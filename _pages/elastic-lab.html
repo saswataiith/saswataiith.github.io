@@ -1145,11 +1145,11 @@ nav_active: research
       <fieldset>
         <legend>Homogeneous stiffness</legend>
         <label for="cc11"
-          >C11<input id="cc11" type="number" value="3" step="0.1" /></label
+          >\(C_{11}\)<input id="cc11" type="number" value="3" step="0.1" /></label
         ><label for="cc12"
-          >C12<input id="cc12" type="number" value="1" step="0.1" /></label
+          >\(C_{12}\)<input id="cc12" type="number" value="1" step="0.1" /></label
         ><label for="cc44"
-          >C44<input id="cc44" type="number" value="1" step="0.1"
+          >\(C_{44}\)<input id="cc44" type="number" value="1" step="0.1"
         /></label>
       </fieldset>
     </div>
@@ -1317,8 +1317,31 @@ nav_active: research
     <p><strong>This is the Bitter–Crum result in this model.</strong> The energy depends on the phase fractions and misfits. It does not depend on precipitate shape, position, separation or arrangement. Moving disjoint precipitates while keeping their amounts fixed does not change the energy: there is no elastic interaction driving their relative motion. Opposite misfits do not change this conclusion.</p>
     <p>For imposed mean strain \(\bar\epsilon\), add \(E_0/V=\tfrac12(\bar\epsilon-\langle\epsilon^0\rangle):C:(\bar\epsilon-\langle\epsilon^0\rangle)\). The colons denote tensor contraction. This term also depends only on the mean transformation strain when the imposed strain is fixed. At relaxed zero mean stress, it vanishes. Comparing arrangements at fixed phase amounts is essential; a cross term obtained by subtracting two separate clamped calculations is not, by itself, a separation-dependent interaction.</p>
     <p>Select <strong>Isotropic comparison</strong> to check the constant kernel numerically. Its circle and the horizontal signed curves demonstrate the directional cancellation derived above; the energy reduction proves the shape-and-arrangement independence. With anisotropic moduli, the kernel generally retains its directional dependence, and this Bitter–Crum proof no longer applies. Eshelby’s uniform-interior-strain theorem for an ellipsoidal inclusion is a separate result.</p>
+    <h3>Set the elastic constants</h3>
+    <p>Change each stiffness independently here. Alternatively, change the shear parameter \(\mu\), Poisson parameter \(\nu\), and Zener anisotropy ratio \(A_Z\). Both sets of inputs describe the same homogeneous cubic stiffness and update each other. These constants also update Module III.</p>
+    <div class="lab-controls">
+      <fieldset><legend>Independent stiffness constants</legend>
+        <label for="pair-c11">\(C_{11}\)<input id="pair-c11" type="number" value="3" step="any" /></label>
+        <label for="pair-c12">\(C_{12}\)<input id="pair-c12" type="number" value="1" step="any" /></label>
+        <label for="pair-c44">\(C_{44}\)<input id="pair-c44" type="number" value="1" step="any" /></label>
+      </fieldset>
+      <fieldset><legend>Equivalent elastic parameters</legend>
+        <label for="pair-mu">Shear parameter \(\mu\)<input id="pair-mu" type="number" value="1" step="any" /></label>
+        <label for="pair-nu">Poisson parameter \(\nu\) (dimensionless)<input id="pair-nu" type="number" value="0.25" step="any" /></label>
+        <label for="pair-az">Anisotropy ratio \(A_Z\) (dimensionless)<input id="pair-az" type="number" value="1" step="any" /></label>
+      </fieldset>
+    </div>
+    <p>The stiffness constants and \(\mu\) use the same energy-density scale. This demonstration uses scaled values; no conversion to pascals is assumed. For an anisotropic solid, \(\mu\) and \(\nu\) are the parameters in the conversion below, rather than a shear modulus and Poisson ratio for every direction. When \(A_Z=1\), they reduce to the usual isotropic values.</p>
+    <div class="formula-box">
+      \[C_{11}=\mu\left[\frac{2(2+A_Z)}{1+A_Z}-\frac{1-4\nu}{1-2\nu}\right],\qquad
+      C_{12}=\mu\left[\frac{2A_Z}{1+A_Z}-\frac{1-4\nu}{1-2\nu}\right],\qquad
+      C_{44}=\frac{2\mu A_Z}{1+A_Z}.\]
+      \[A_Z=\frac{2C_{44}}{C_{11}-C_{12}}.\]
+    </div>
+    <p>Use \(\mu&gt;0\), \(-1&lt;\nu&lt;1/2\), and \(A_Z&gt;0\). Independent stiffness inputs must satisfy \(C_{44}&gt;0\), \(C_{11}-C_{12}&gt;0\), and \(C_{11}+2C_{12}&gt;0\). Invalid inputs produce an explanation and retain the last valid plots.</p>
+    <p>At \(A_Z=3\), a dilatational self kernel favours Fourier directions \(\langle10\rangle\). Opposite misfits reverse the sign of the cross kernel, whose minimum is then along \(\langle11\rangle\). The pair-energy graph separately calculates the preferred separation direction by summing all Fourier modes.</p>
     <h3>Explore the three kernels</h3>
-    <p>Select <strong>Sandeep thesis example</strong> to load the anisotropic reference case. Select <strong>Isotropic comparison</strong> to retain the misfits and set \(A_Z=1\). The stiffness controls in Module III are shared with this module. Misfits and strain ratios update the plots as you type. Keeping both ratios at one gives dilatational misfit; changing a ratio introduces non-dilatational strain and leaves the thesis example’s assumptions.</p>
+    <p>Select <strong>Sandeep thesis example</strong> to load the anisotropic reference case. Select <strong>Isotropic comparison</strong> to retain the misfits and set \(A_Z=1\). The stiffness controls above and in Module III are linked. Misfits and strain ratios update the plots as you type. Keeping both ratios at one gives dilatational misfit; changing a ratio introduces non-dilatational strain and leaves the thesis example’s assumptions.</p>
     <div class="lab-controls">
       <label for="beta"
         >\(\beta\) misfit \(\epsilon_\beta\) (dimensionless)<input
@@ -1743,5 +1766,5 @@ nav_active: research
     </p>
   </section>
 </div>
-<script type="module" src="/assets/js/elastic-lab/ui.mjs?v=20261006-polar-magnitude"></script>
+<script type="module" src="/assets/js/elastic-lab/ui.mjs?v=20261006-independent-stiffness"></script>
 <script type="module" src="/assets/js/elastic-lab/eshelby-ui.mjs?v=20261005-sharp-branches"></script>

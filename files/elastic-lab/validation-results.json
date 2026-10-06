@@ -1,7 +1,18 @@
 {
-  "date": "2026-10-02T01:06:13.513Z",
+  "date": "2026-10-06T10:54:18.732Z",
   "boundary": "periodic, fixed mean total strain zero",
   "tests": [
+    {
+      "name": "Independent cubic stiffness and parameter conversion",
+      "passed": true,
+      "details": {
+        "reference": {
+          "mu": 2000,
+          "nu": 0.3333333333333333,
+          "z": 3
+        }
+      }
+    },
     {
       "name": "Interpolation endpoints, derivatives and diffuse-profile symmetry",
       "passed": true,

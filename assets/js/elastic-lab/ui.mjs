@@ -10,8 +10,9 @@ import {
   sample,
   minima,
   zener,
+  elasticParameters,
   moduli,
-} from "./math.mjs?v=20260924c";
+} from "./math.mjs?v=20261006-independent-stiffness";
 import { pairCurve } from "./solver.mjs?v=20260924c";
 import {
   cartesian,
@@ -101,7 +102,16 @@ function renderHabit(s) {
   );
   element("find-habit").disabled = !solutions.length;
 }
+function syncPairStiffness(c) {
+  const parameters = elasticParameters(c);
+  const values = { "pair-c11": c.c11, "pair-c12": c.c12, "pair-c44": c.c44,
+    "pair-mu": parameters.mu, "pair-nu": parameters.nu, "pair-az": parameters.z };
+  for (const [id, number] of Object.entries(values)) {
+    if (document.activeElement !== element(id)) element(id).value = Number(number.toPrecision(12));
+  }
+}
 function renderKernels(s) {
+  syncPairStiffness(s.c);
   const e = [s.epsilon, s.epsilon * s.t, 0],
     single = sample((a) => kernel(s.c, e, e, a)),
     m = minima(single),
@@ -361,6 +371,30 @@ for (const id of ["t", "epsilon", "theta"])
       );
     }
   });
+// I link the local stiffness inputs to the shared constants and both plots.
+for (const id of ["pair-c11", "pair-c12", "pair-c44", "pair-mu", "pair-nu", "pair-az"]) {
+  element(id).addEventListener("input", () => {
+    try {
+      if (element(id).value.trim() === "" || !Number.isFinite(value(id)))
+        throw Error("Enter a finite elastic parameter.");
+      let c;
+      if (["pair-c11", "pair-c12", "pair-c44"].includes(id)) {
+        c = { c11: value("pair-c11"), c12: value("pair-c12"), c44: value("pair-c44") };
+        elasticParameters(c);
+      } else {
+        const mu = value("pair-mu"), nu = value("pair-nu"), z = value("pair-az");
+        if (!(mu > 0 && nu > -1 && nu < 0.5 && z > 0))
+          throw Error("Require μ > 0, −1 < ν < 1/2 and AZ > 0.");
+        c = moduli(mu, nu, z);
+      }
+      setStiffness("c", c);
+      syncPairStiffness(c);
+      render();
+    } catch (error) {
+      set("lab-error", error.message + " Plots retain the last valid calculation.");
+    }
+  });
+}
 // Update the kernel controls while the student edits them, not only on blur.
 for (const id of ["beta", "gamma", "tbeta", "tgamma", "cc11", "cc12", "cc44"])
   element(id).addEventListener("input", render);

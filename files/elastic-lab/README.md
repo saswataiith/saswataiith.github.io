@@ -51,3 +51,5 @@ CICP: Bhattacharyya, Heo, Chang and Chen (2012), Communications in Computational
 
 ## Licence
 New files in `assets/js/elastic-lab/` and `files/elastic-lab/`, and `_pages/elastic-lab.html`, are GPL-3.0-or-later. See LICENSE.txt. Existing site template and its MIT notice remain unchanged. Referenced thesis text and figures retain their authors' rights and are not relicensed as software.
+
+Module IV provides linked independent inputs for C11, C12 and C44, or the equivalent mu, nu and Zener ratio. The conversion and inverse conversion are tested. Math labels use the local MathJax TeX-to-SVG renderer.

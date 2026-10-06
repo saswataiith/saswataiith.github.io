@@ -94,3 +94,13 @@ export function mohrState(t, angle) {
     transverse: Math.sin(angle) ** 2 + t * Math.cos(angle) ** 2,
   };
 }
+
+// I recover the equivalent parameters from independently specified stiffnesses.
+export function elasticParameters(c) {
+  validate(c);
+  const z = zener(c);
+  const mu = c.c44 * (1 + z) / (2 * z);
+  const d = c.c12 / mu - 2 * z / (1 + z);
+  const nu = (d + 1) / (2 * d + 4);
+  return { mu, nu, z };
+}
