@@ -1,7 +1,9 @@
-"""Teaching adaptation of demo2_many_walkers_diffusion.jl.
+"""Random-walk diffusion example based on my teaching code demo2_many_walkers_diffusion.jl.
+Purpose: show how random molecular steps produce diffusion.
 Run: python walkers.py [output_directory]. Requires NumPy.
 Each walker takes one unit cardinal step per sweep on an unbounded 2D lattice.
-This changes the classroom code's asynchronous periodic convention explicitly.
+My original teaching code uses asynchronous moves in a periodic box.
+This example moves every molecule once per sweep on an unbounded lattice.
 MSD uses unwrapped coordinates; theoretical MSD=steps, D=1/4.
 """
 import sys

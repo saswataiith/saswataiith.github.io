@@ -1,4 +1,5 @@
-"""NumPy counterpart of course order.jl and Potts.jl; periodic square lattice.
+"""NumPy examples based on my teaching codes order.jl and Potts.jl.
+Purpose: demonstrate spin alignment and grain growth on a periodic square lattice.
 python monte_carlo.py [ising|potts] [output_directory]
 Random sequential updates; pure Python loop favors clarity over speed.
 Potts neighbor-copy proposals are grain-growth kinetics, not equilibrium sampling.

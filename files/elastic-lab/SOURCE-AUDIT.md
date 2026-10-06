@@ -1,8 +1,8 @@
 # Source equations and independent verification
 
-This is a teaching adaptation, not a verbatim transcription. The equations were checked against the rendered PDF pages as well as extracted text. References retain their original notation; implementation conventions and any necessary clarifications are stated below.
+This laboratory explains elastic energy and mechanical equilibrium using equations from my teaching and research, with the additional sources listed below. The website calculations are separate implementations of those equations. The equations were checked against the rendered PDF pages as well as extracted text. References retain their original notation; implementation conventions and any necessary clarifications are stated below.
 
-## Homogeneous elastic energy: Saswata's appendices
+## Homogeneous elastic energy: appendices of my PhD thesis
 
 Saswata Bhattacharyya, *Evolution of Multivariant Microstructures with Anisotropic Misfit: A Phase Field Study*, Appendix A, pp. 107–111, Eqs. A.1–A.12; Appendix B, pp. 112–114, Eqs. B.1–B.12. The underlying homogeneous-modulus framework is A. G. Khachaturyan, *Theory of Structural Transformations in Solids*, Wiley, 1983, Chapter 7, especially §7.2 on the strain energy of multiphase alloys and §7.3 on strain-induced interactions between coherent inclusions (thesis reference 4).
 

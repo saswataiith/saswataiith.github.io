@@ -77,7 +77,7 @@ function glauber_step!(spin::Matrix{Int}, J::Float64, T::Float64, rng)
 end
 
 
-# Course-code adaptation. One sweep = n*n attempted updates; periodic boundaries.
+# Based on my teaching codes order.jl and Potts.jl, for spin alignment and grain growth. One sweep = n*n attempted updates; periodic boundaries.
 # Potts neighbor proposals are a grain-growth heuristic, not equilibrium sampling.
 function movie(mode="ising",output="mc_output";n=256,sweeps=(mode=="potts" ? 2000 : 200),save_every=(mode=="potts" ? 25 : 5))
     mode in ("ising","potts") || error("Choose ising or potts")

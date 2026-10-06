@@ -1,4 +1,5 @@
-"""Fourier diffusion lesson, related to Fourier_Julia.ipynb.
+"""Diffusion example based on my teaching notebook Fourier_Julia.ipynb.
+Purpose: show how Fourier modes decay during diffusion.
 Run: python diffusion.py [output_directory]. Requires NumPy.
 Periodic domain L=2*pi; D=1. Exact Fourier propagation, not time stepping.
 """

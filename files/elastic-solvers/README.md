@@ -85,15 +85,15 @@ Odd grids 33, 65 and 129 avoid Nyquist ambiguities. The diffuse interface width 
 6. Compare the physical transformation strain with η. Which regions require the largest correction?
 7. Compare grid sizes before trusting a small energy difference between orientations.
 
-## Sources and adaptation
+## Teaching purpose and research sources
 
-The direct method follows the reference-stiffness split in Saswata Bhattacharyya's earlier C solver and the Fortran `muelast.f90` polycrystal solver, and the equations in Bhattacharyya, Heo, Chang and Chen, *A Spectral Iterative Method for the Computation of Effective Properties of Elastically Inhomogeneous Polycrystals*, CICP 11 (2012), 726–738, https://doi.org/10.4208/cicp.290610.060411a. Consult the laboratory's SOURCE-AUDIT.md for wavevector normalization and the mean-strain distinction. Tushar Jogi's thesis §§3.1.4–3.1.6 and Appendix B provide related equilibrium and driving-force formulations; no claim is made that these scripts are a line-by-line port of Tushar's code.
+The direct method follows the reference-stiffness split in my earlier research C solver and the Fortran `muelast.f90` polycrystal solver, and the equations in Bhattacharyya, Heo, Chang and Chen, *A Spectral Iterative Method for the Computation of Effective Properties of Elastically Inhomogeneous Polycrystals*, CICP 11 (2012), 726–738, https://doi.org/10.4208/cicp.290610.060411a. Consult the laboratory's SOURCE-AUDIT.md for wavevector normalization and the mean-strain distinction. Tushar Jogi's thesis §§3.1.4–3.1.6 and Appendix B provide related equilibrium and driving-force formulations; no claim is made that these scripts are a line-by-line port of Tushar's code.
 
 The second teaching example is inspired by Soumya Bandyopadhyay's equivalent/virtual-eigenstrain approach. His `src_inhomogeneous_elasticity/serial/elasticity.c` constructs transformation strains from polarization, solves a reference-medium problem and relaxes auxiliary eigenstrain in a film/vacuum geometry. This example independently derives a damped constitutive-matching iteration for two positive-stiffness solids. It does not reproduce his film boundary treatment or auxiliary-field time-relaxation law. It makes the common equivalent-eigenstrain principle explicit and testable.
 
 ## The corrected Elastic.ipynb
 
-The course notebook introduced stiffness, acoustic tensors, eigenstrains and Bpq. The public teaching edition retains that progression but repairs the original Voigt-to-fourth-order mapping. It uses explicit cubic indices, treats k=0 separately instead of regularizing a singular inverse, includes shear and symmetry checks, and plots self/cross kernels. It uses a full 3-D cubic tensor for the kernel with in-plane n and explicitly specified εzz⁰. This distinction from the 2-D standalone solvers is stated in the notebook. Original private files were not overwritten.
+My teaching notebook introduced stiffness, acoustic tensors, eigenstrains and Bpq. The public teaching edition retains that progression but repairs the original Voigt-to-fourth-order mapping. It uses explicit cubic indices, treats k=0 separately instead of regularizing a singular inverse, includes shear and symmetry checks, and plots self/cross kernels. It uses a full 3-D cubic tensor for the kernel with in-plane n and explicitly specified εzz⁰. This distinction from the 2-D standalone solvers is stated in the notebook. Original private files were not overwritten.
 
 ## Validation
 

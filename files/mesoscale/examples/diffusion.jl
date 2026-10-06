@@ -1,4 +1,5 @@
-# Fourier diffusion lesson related to Fourier_Julia.ipynb.
+# Diffusion example based on my teaching notebook Fourier_Julia.ipynb.
+# Purpose: show how Fourier modes decay during diffusion.
 # julia diffusion.jl [output_directory]; requires FFTW.
 using FFTW, Statistics, DelimitedFiles, Printf
 function run(output="diffusion_output")

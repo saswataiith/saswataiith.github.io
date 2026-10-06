@@ -1,4 +1,5 @@
-# MS5033 teaching adaptation of PhaseField_Examples_Spectral.ipynb.
+# Phase-field example based on my teaching notebook PhaseField_Examples_Spectral.ipynb.
+# Purpose: explain spinodal decomposition and the effect of elastic strain energy.
 # julia phase_field.jl [chemical|elastic] [output_directory]
 # Install FFTW: julia -e 'using Pkg; Pkg.add("FFTW")'
 # Dimensionless periodic 2D model. CSV rows=x, columns=y.

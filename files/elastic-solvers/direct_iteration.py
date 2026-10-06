@@ -1,7 +1,7 @@
 """Direct perturbative spectral iteration. GPL-3.0-or-later.
-Based on the reference-stiffness split in the group's C/Fortran solvers
+Based on the reference-stiffness split in my earlier research C/Fortran solvers
 and Bhattacharyya et al., CICP 11 (2012), 726–738, Eqs. 2.6–2.16.
-This is a small, independently written 2-D teaching adaptation.
+This two-dimensional teaching example explains the reference-stiffness iteration used in my research. It is a separate implementation of the equations, not a copy of the larger research code.
 """
 import numpy as np
 from elasticity_common import prepare, stress, diagnostics, result, plate_problem, plot_solution

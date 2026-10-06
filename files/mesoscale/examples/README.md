@@ -1,6 +1,6 @@
 # MS5033 worked examples — Julia and NumPy
 
-Teaching adaptations of Saswata Bhattacharyya's course material. All quantities are dimensionless. These are simplified educational models, not calibrated materials predictions.
+These examples are based on my MS5033 teaching codes and notebooks. I wrote the original material to explain random walks, diffusion, phase separation and elastic effects. The website versions focus on one calculation at a time. All quantities are dimensionless. These are simplified educational models, not calibrated materials predictions.
 
 ## Run
 
@@ -16,12 +16,12 @@ Julia: install FFTW with `julia -e 'using Pkg; Pkg.add("FFTW")'` (not needed for
 
 Each run writes CSV snapshots and diagnostics. Use different output directories for different runs. Scripts do not require plotting libraries. Website viewers display results generated from these NumPy scripts. Field CSV row index is x, column index is y; transpose for common plotting conventions.
 
-## Model provenance and changes
+## My teaching sources and changes in these examples
 
-- `walkers.*`: adapted from `demo2_many_walkers_diffusion.jl`. Updates every walker once per sweep on an unbounded lattice rather than asynchronous moves in a periodic box. MSD uses unwrapped coordinates. Julia and NumPy use different random-number generators; compare ensemble statistics, not identical trajectories.
-- `diffusion.*`: a compact worked example related to `Fourier_Julia.ipynb`, with two Fourier modes and an exact analytic benchmark.
-- `phase_field.*`: simplified from the chemical and elastochemical sections of `PhaseField_Examples_Spectral.ipynb`. Chemical free energy is c²(1−c)². FFT-based semi-implicit integration, constant mobility and gradient coefficient, periodic boundaries. Explicit nonlinear term; not unconditionally stable, not dealiased. No clipping of composition.
-- Elastic example: homogeneous 2D square-symmetric stiffness, linear dilatational composition eigenstrain, zero mean stress. Uses the acoustic-tensor contraction Q_ik=C_ijkl n_j n_l. Q11=C11 nx²+C44 ny² and Q22=C44 nx²+C11 ny². The supplied notebook used C12 in place of C44 in these diagonal terms; this adaptation corrects them. This is not a full 3D plane-strain eigenstrain reduction.
+- `walkers.*`: based on my teaching code `demo2_many_walkers_diffusion.jl`. Updates every walker once per sweep on an unbounded lattice rather than asynchronous moves in a periodic box. MSD uses unwrapped coordinates. Julia and NumPy use different random-number generators; compare ensemble statistics, not identical trajectories.
+- `diffusion.*`: a worked example based on my teaching notebook `Fourier_Julia.ipynb`, with two Fourier modes and an exact analytic benchmark.
+- `phase_field.*`: based on the chemical and elastochemical sections of my teaching notebook `PhaseField_Examples_Spectral.ipynb`. Chemical free energy is c²(1−c)². FFT-based semi-implicit integration, constant mobility and gradient coefficient, periodic boundaries. Explicit nonlinear term; not unconditionally stable, not dealiased. No clipping of composition.
+- Elastic example: homogeneous 2D square-symmetric stiffness, linear dilatational composition eigenstrain, zero mean stress. Uses the acoustic-tensor contraction Q_ik=C_ijkl n_j n_l. Q11=C11 nx²+C44 ny² and Q22=C44 nx²+C11 ny². My original notebook used C12 in place of C44 in these diagonal terms; this version corrects them. This is not a full 3D plane-strain eigenstrain reduction.
 - The elastic default uses n=256, with conjugate-pair symmetrization of the discrete kernel for a real self-adjoint operator on even grids. To compare chemical and elastic evolution, use n=256 for BOTH runs and the same initial condition/time. Default chemical n=64 and elastic n=256 galleries are separate demonstrations. Increasing n at fixed grid spacing increases the domain; it is not fixed-domain refinement. Snapshots are saved every 25 steps.
 - Deterministic broadband perturbations enable cross-language checks, but math libraries can give small floating-point differences.
 

@@ -1,4 +1,5 @@
-# Teaching adaptation of demo2_many_walkers_diffusion.jl.
+# Random-walk diffusion example based on my teaching code demo2_many_walkers_diffusion.jl.
+# Purpose: show how random molecular steps produce diffusion.
 # julia walkers.jl [output_directory]; standard-library dependencies only.
 # All walkers step each sweep, unbounded 2D lattice, unit steps. D=1/4.
 # Julia/NumPy RNGs differ; compare ensemble statistics, not paths.

@@ -1,4 +1,5 @@
-"""MS5033 teaching adaptation of PhaseField_Examples_Spectral.ipynb.
+"""Phase-field example based on my teaching notebook PhaseField_Examples_Spectral.ipynb.
+Purpose: explain spinodal decomposition and the effect of elastic strain energy.
 Run: python phase_field.py [chemical|elastic] [output_directory]
 Requires NumPy. CSV rows index x, columns index y; all units dimensionless.
 Periodic 2D homogeneous elasticity; zero mean stress. Not a calibrated alloy.
