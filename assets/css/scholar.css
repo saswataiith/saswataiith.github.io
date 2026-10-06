@@ -97,3 +97,9 @@
 .movie-start span{position:absolute;bottom:12px;left:50%;transform:translateX(-50%);width:max-content;max-width:94%;padding:9px 13px;border-radius:6px;background:#fff;color:var(--ink);font:600 13px/1.4 sans-serif;box-shadow:0 2px 8px #0003}
 .movie-start:focus-visible{outline:3px solid #2372a0;outline-offset:4px}
 .movie-start[hidden]{display:none}
+
+.sandeep-movies{grid-template-columns:repeat(3,minmax(0,1fr))}
+.sandeep-movies video{aspect-ratio:1}
+.sandeep-movies details{margin-top:14px;font-size:.9em}
+.sandeep-movies summary{cursor:pointer;font-weight:600}
+@media(max-width:900px){.sandeep-movies{grid-template-columns:1fr}}
