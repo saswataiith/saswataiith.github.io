@@ -4519,43 +4519,17 @@ nav_active: research
         >Open the explained solver notebooks →</a
       >
     </p>
-    <h3>My research codes and their development</h3>
+    <h3>My elasticity research codes</h3>
     <p>
-      My
-      <a href="https://github.com/saswataiith/hex-to-orth-historical-codes"
-        >historical hexagonal-to-orthorhombic codes</a
-      >
-      are public. They include the recovered model sources and the GSL working
-      version. The
-      <a
-        href="https://github.com/saswataiith/anisotropic-misfit-model-julia-from-my-thesis"
-        >Julia thesis model</a
-      >
-      retains conserved noise in composition and separate nonconserved noise in
-      all three variants, and includes my particle-moment utility. Its README
-      states exactly what I tested.
+      My <a href="https://github.com/saswataiith/hex-to-orth-historical-codes">historical hexagonal-to-orthorhombic codes</a>
+      and <a href="https://github.com/saswataiith/anisotropic-misfit-model-julia-from-my-thesis">Julia thesis model</a>
+      describe elastic effects on microstructural evolution. The historical repository includes the GSL version.
+      The Julia model includes conserved noise in composition, separate nonconserved noise in all three variants,
+      and my particle-moment utility for measuring changes in particle shape. Each repository describes its equations and tests.
     </p>
     <p>
-      In my PRL ternary model, I used \(c_A\) as the auxiliary variable. In my
-      PCCP work, I introduced a separate field \(\phi\) and used it to impose
-      boundary conditions. In the
-      <a
-        href="https://github.com/saswataiith/embedded-spinodal-core-shell-julia"
-        >embedded-particle code</a
-      >, I use \(1-h(\phi)\) and \(h(\phi)\) to weight the exterior and particle
-      free energies. I describe this development and the earlier papers in the
-      <a
-        href="https://github.com/saswataiith/embedded-spinodal-core-shell-julia/blob/main/MODEL-HISTORY.md"
-        >model history</a
-      >.
-    </p>
-    <p>
-      We also explored the interpolation in Sandeep’s thesis: Chapter 3, Eq.
-      (3.77), printed p. 45, and Chapter 6, Section 6.1, printed p. 155. There,
-      \(\phi=0\) identifies the disordered matrix and \(\phi=1\) identifies
-      either ordered precipitate phase; composition distinguishes the two
-      precipitates. This evolving structural field is different from the fixed
-      particle field in the recovered 2022 code.
+      I discuss <a href="{{ '/resources/spinodal/#embedded-particles' | relative_url }}">phase separation inside a particle</a>
+      with the Cahn–Hilliard example, including the role of the field that distinguishes the particle from its surroundings.
     </p>
     <h3>From my thesis: a growing precipitate tilts.</h3>
     <figure class="lab-thesis">
