@@ -5,7 +5,7 @@ permalink: /research/elastic-lab/
 nav_active: research
 ---
 
-<link rel="stylesheet" href="/assets/js/elastic-lab/lab.css?v=20261002a" />
+<link rel="stylesheet" href="/assets/js/elastic-lab/lab.css?v=20261006-three-polar-20261002a" />
 <section class="page-heading">
   <span class="eyebrow">AN OPEN COMPUTATIONAL LABORATORY</span>
   <h1>Read the physics<br /><em>from the energy.</em></h1>
@@ -1276,47 +1276,6 @@ nav_active: research
     <p>This part of our work is described clearly in Sandeep Sugathan’s thesis. We have also written it up in our arXiv preprint, <a href="https://arxiv.org/abs/1906.09637"><em>Effect of elastic anisotropy on phase separation in ternary alloys: A phase-field study</em></a>, by Sandeep Sugathan and Saswata Bhattacharya. We are continuing this work by examining additional cases.</p>
     <p><strong>The elastic moduli are homogeneous and anisotropic.</strong> Homogeneous means that the same stiffness tensor \(C_{ijkl}\) is used in all three phases. Anisotropic means that the elastic response depends on direction. These are different properties: equal moduli across phases do not mean isotropic moduli.</p>
     <p>The thesis reference is Chapter 5, Tables 5.1–5.2, Eq. (5.1) and Fig. 5.18. The parameters are \(G=2000\), \(\nu=1/3\), \(A_Z=3\), \(\epsilon_\beta=0.01\) and \(\epsilon_\gamma=-0.01\). Here \(G\) is the modulus parameter used in the thesis, \(\nu\) is Poisson’s ratio, \(A_Z\) is the Zener anisotropy ratio, and \(\epsilon_p\) is the stress-free linear misfit of precipitate phase \(p\) relative to \(\alpha\). Strains, \(\nu\) and \(A_Z\) are dimensionless. The stiffness and energy values below use the thesis’s model units; they are not labelled as pascals or joules without a dimensional conversion.</p>
-    <h3>1. Write the transformation strain of each phase</h3>
-    <p>Let \(h_\beta(\mathbf x)\) and \(h_\gamma(\mathbf x)\) be dimensionless fields describing where the precipitates are located. A field is one inside its phase and zero outside for a sharp interface; a smooth field can represent a diffuse interface. The position is \(\mathbf x\). Taking the matrix as the zero-misfit reference gives</p>
-    <div class="formula-box">\[\epsilon^0_{ij}(\mathbf x)=\epsilon^{\beta}_{ij}h_\beta(\mathbf x)+\epsilon^{\gamma}_{ij}h_\gamma(\mathbf x),\qquad \epsilon^p_{ij}=\epsilon_p\delta_{ij},\quad p\in\{\beta,\gamma\}.\]</div>
-    <p>Here \(\epsilon^0_{ij}\) is the prescribed transformation strain, and \(\delta_{ij}\) is one when \(i=j\) and zero otherwise. The indices identify Cartesian components. A three-dimensional dilatation has three equal diagonal components. <strong>This widget uses the two-dimensional in-plane elastic law described in Module III:</strong> \(\boldsymbol\epsilon^p=\epsilon_p\operatorname{diag}(1,1)\). It omits the out-of-plane transformation strain; it is not a full three-dimensional plane-strain reduction.</p>
-    <h3>2. Impose mechanical equilibrium</h3>
-    <p>The displacement components are \(u_i\). The total strain is \(\epsilon_{ij}=(\partial_i u_j+\partial_j u_i)/2\), where \(\partial_i\) denotes differentiation with respect to position component \(x_i\). Elastic strain is total strain minus transformation strain. Stress \(\sigma_{ij}\) and elastic energy \(E_{\mathrm{el}}\) are therefore</p>
-    <div class="formula-box">\[\sigma_{ij}=C_{ijkl}(\epsilon_{kl}-\epsilon^0_{kl}),\qquad \partial_j\sigma_{ij}=0,\]\[E_{\mathrm{el}}=\frac12\int_V(\epsilon_{ij}-\epsilon^0_{ij})C_{ijkl}(\epsilon_{kl}-\epsilon^0_{kl})\,dV.\]</div>
-    <p>Repeated indices are summed. \(V\) is the body volume; the two-dimensional calculation uses area and energy per unit out-of-plane thickness. Stiffness and stress have units of pressure in a dimensional model, and the integral then has units of energy. Mechanical equilibrium assumes no body force. The displacement adjusts to reduce the energy while satisfying the boundary conditions.</p>
-    <h3>3. Solve each nonzero Fourier mode</h3>
-    <p>A Fourier mode has wavevector \(\mathbf k\), with units of inverse length in a dimensional model. Its unit normal is \(\mathbf n=\mathbf k/|\mathbf k|\). Define the stress associated with the prescribed strain, the acoustic tensor, and the inverse acoustic tensor by</p>
-    <div class="formula-box">\[\sigma^p_{ij}=C_{ijkl}\epsilon^p_{kl},\qquad Q_{ik}(\mathbf n)=C_{ijkl}n_jn_l,\qquad \Omega_{ik}(\mathbf n)=[Q(\mathbf n)^{-1}]_{ik}.\]</div>
-    <p>\(Q\) describes the directional stiffness of the mode. \(\Omega\) has units of inverse stiffness. With the Fourier convention \(\widehat{\partial_j u_i}=\mathrm i k_j\hat u_i\), mechanical equilibrium gives</p>
-    <div class="formula-box">\[|\mathbf k|^2Q_{ik}\hat u_k=-\mathrm i|\mathbf k|n_j\hat\sigma^0_{ij},\qquad \hat u_i=-\frac{\mathrm i}{|\mathbf k|}\Omega_{im}n_j\hat\sigma^0_{mj}.\]</div>
-    <p>Here \(\mathrm i^2=-1\), a hat denotes a Fourier coefficient, and \(\hat\sigma^0_{ij}=\sum_p\sigma^p_{ij}\hat h_p\). Substituting this equilibrium displacement into the energy removes the displacement as an independent unknown.</p>
-    <h3>4. Obtain the two self kernels and one cross kernel</h3>
-    <div class="formula-box">\[B_{pq}(\mathbf n)=\epsilon^p_{ij}C_{ijkl}\epsilon^q_{kl}-a^p_i\Omega_{im}a^q_m,\qquad a^p_i=\sigma^p_{ij}n_j.\]</div>
-    <p>The first term is the energy coefficient before displacement relaxation. The second term is the reduction produced by mechanical relaxation. The vector \(a^p_i\) is the traction associated with the prescribed strain on a plane normal to \(\mathbf n\). Each \(B_{pq}\) has units of energy density in a dimensional model.</p>
-    <p>For clarity, define \(\hat h_p(\mathbf k)=V^{-1}\int_V h_p(\mathbf x)e^{-\mathrm i\mathbf k\cdot\mathbf x}\,dV\) in a periodic body. These coefficients are dimensionless. The nonzero-mode energy density is</p>
-    <div class="formula-box">\[\frac{E_{\mathrm{el}}^{\ne0}}{V}=\frac12\sum_{\mathbf k\ne0}\left[B_{\beta\beta}|\hat h_\beta|^2+B_{\gamma\gamma}|\hat h_\gamma|^2+2B_{\beta\gamma}\operatorname{Re}(\hat h_\beta\hat h_\gamma^*)\right].\]</div>
-    <p>\(\operatorname{Re}\) means real part, and an asterisk means complex conjugate. The two self kernels describe each precipitate phase’s contribution. The cross kernel describes the coupling between their fields. Symmetry gives \(B_{\beta\gamma}=B_{\gamma\beta}\), so there are three independent kernels, although the system contains three phases. The matrix contributes through the common stiffness and the reference strain.</p>
-    <p>For the two-dimensional square-symmetric stiffness, write \(n_x=\cos\theta\) and \(n_y=\sin\theta\), where \(\theta\) is the wavevector-normal angle. The matrix actually inverted by the widget is</p>
-    <div class="formula-box">\[Q=\begin{pmatrix}C_{11}n_x^2+C_{44}n_y^2&(C_{12}+C_{44})n_xn_y\\(C_{12}+C_{44})n_xn_y&C_{44}n_x^2+C_{11}n_y^2\end{pmatrix},\qquad A_Z=\frac{2C_{44}}{C_{11}-C_{12}}.\]</div>
-    <p>The thesis parameters give \(C_{11}=7000\), \(C_{12}=5000\), \(C_{44}=3000\) in model units. The equal and opposite misfits imply \(B_{\beta\beta}=B_{\gamma\gamma}\) and \(B_{\beta\gamma}=-B_{\beta\beta}\). For this in-plane calculation, the self coefficient is \(0.342857\) along [10] and \(0.8\) along [11]; the cross coefficient is their negative. These numbers check the kernel calculation, not the reproduction of a complete thesis microstructure.</p>
-    <h3>5. Derive the Bitter–Crum theorem from the isotropic kernel</h3>
-    <p><strong>The isotropic example demonstrates the Bitter–Crum theorem.</strong> We can show why it holds by calculating \(B_{pq}\). Assume that the elastic moduli are the same in all phases, the elasticity is isotropic, and each phase has a purely dilatational transformation strain. Keep the phase fractions and misfits fixed. Use an infinite body or the compatible periodic boundary conditions described below.</p>
-    <p>For the two-dimensional in-plane law used here, let \(\lambda=C_{12}\) and \(\mu=C_{44}\) be the Lamé elastic constants. Both have units of pressure in a dimensional model. Isotropy requires \(C_{11}=\lambda+2\mu\), or \(A_Z=1\). Since \(\epsilon^p_{ij}=\epsilon_p\delta_{ij}\), the prescribed stress is \(\sigma^p_{ij}=2(\lambda+\mu)\epsilon_p\delta_{ij}\). Thus</p>
-    <div class="formula-box">\[Q=\mu I+(\lambda+\mu)\mathbf n\otimes\mathbf n,\qquad Q^{-1}\mathbf n=\frac{\mathbf n}{\lambda+2\mu},\qquad \mathbf a^p=2(\lambda+\mu)\epsilon_p\mathbf n.\]</div>
-    <p>Here \(I\) is the identity matrix, and \(\mathbf n\otimes\mathbf n\) has components \(n_i n_j\). Substitute these expressions into the kernel. The two terms give</p>
-    <div class="formula-box">\[B_{pq}=\left[4(\lambda+\mu)-\frac{4(\lambda+\mu)^2}{\lambda+2\mu}\right]\epsilon_p\epsilon_q
-    =\underbrace{\frac{4\mu(\lambda+\mu)}{\lambda+2\mu}}_{K_B}\epsilon_p\epsilon_q
-    =\frac{C_{11}^2-C_{12}^2}{C_{11}}\epsilon_p\epsilon_q.\]</div>
-    <p>The coefficient \(K_B\) has units of pressure. <strong>There is no direction \(\mathbf n\) left in this expression.</strong> Equal and opposite misfits give \(B_{\beta\gamma}=-B_{\beta\beta}\), but this negative coefficient alone does not imply attraction between precipitates. We must substitute it into the complete energy expression.</p>
-    <p>Define the scalar misfit field \(e(\mathbf x)=\epsilon_\beta h_\beta(\mathbf x)+\epsilon_\gamma h_\gamma(\mathbf x)\). It is dimensionless. Parseval’s identity states that the sum of the squared Fourier coefficients equals the spatial average of the squared field. Removing the zero mode therefore gives</p>
-    <div class="formula-box">\[\frac{E_{\mathrm{el}}^{\ne0}}{V}=\frac{K_B}{2}\sum_{\mathbf k\ne0}|\hat e(\mathbf k)|^2
-    =\frac{K_B}{2}\left(\langle e^2\rangle-\langle e\rangle^2\right).\]</div>
-    <p>Angle brackets denote the spatial average. For disjoint phase regions, \(h_p\) is one inside phase \(p\) and zero outside. Consequently \(h_p^2=h_p\) and \(h_\beta h_\gamma=0\). If \(f_p=\langle h_p\rangle\) is the dimensionless phase fraction, then</p>
-    <div class="formula-box">\[\frac{E_{\mathrm{el}}^{\ne0}}{V}=\frac{K_B}{2}\left[f_\beta\epsilon_\beta^2+f_\gamma\epsilon_\gamma^2-
-    (f_\beta\epsilon_\beta+f_\gamma\epsilon_\gamma)^2\right].\]</div>
-    <p><strong>This is the Bitter–Crum result in this model.</strong> The energy depends on the phase fractions and misfits. It does not depend on precipitate shape, position, separation or arrangement. Moving disjoint precipitates while keeping their amounts fixed does not change the energy: there is no elastic interaction driving their relative motion. Opposite misfits do not change this conclusion.</p>
-    <p>For imposed mean strain \(\bar\epsilon\), add \(E_0/V=\tfrac12(\bar\epsilon-\langle\epsilon^0\rangle):C:(\bar\epsilon-\langle\epsilon^0\rangle)\). The colons denote tensor contraction. This term also depends only on the mean transformation strain when the imposed strain is fixed. At relaxed zero mean stress, it vanishes. Comparing arrangements at fixed phase amounts is essential; a cross term obtained by subtracting two separate clamped calculations is not, by itself, a separation-dependent interaction.</p>
-    <p>Select <strong>Isotropic comparison</strong> to check the constant kernel numerically. Its circle and the horizontal signed curves demonstrate the directional cancellation derived above; the energy reduction proves the shape-and-arrangement independence. With anisotropic moduli, the kernel generally retains its directional dependence, and this Bitter–Crum proof no longer applies. Eshelby’s uniform-interior-strain theorem for an ellipsoidal inclusion is a separate result.</p>
     <h3>Set the elastic constants</h3>
     <p>Change each stiffness independently here. Alternatively, change the shear parameter \(\mu\), Poisson parameter \(\nu\), and Zener anisotropy ratio \(A_Z\). Both sets of inputs describe the same homogeneous cubic stiffness and update each other. These constants also update Module III.</p>
     <div class="lab-controls">
@@ -1383,19 +1342,18 @@ nav_active: research
       ><button data-preset="sandeep">Sandeep thesis example</button>
     </div>
     <p id="pair-current-moduli" class="lab-readout"></p>
-    <p><strong>How to read the two graphs.</strong> The angle graph shows the signed kernel values. The polar graph shows their magnitudes: distance from the centre is \( |B_{pq}(\mathbf n)| \), with no added radial shift. For equal and opposite misfits, \(B_{\beta\beta}=B_{\gamma\gamma}=-B_{\beta\gamma}\). All three magnitudes therefore lie on the same polar curve. A circle means that the value is independent of direction; it does not represent a particle shape. The opposite-misfit button changes the misfits and keeps the current moduli. Select the Sandeep thesis example to also load anisotropic moduli.</p>
+    <p><strong>Read the signed values.</strong> Each polar panel displays one kernel: \(B_{\beta\beta}\), \(B_{\gamma\gamma}\), or \(B_{\beta\gamma}\). All three use the same scale. The bold circle marks zero; values inside it are negative and values outside it are positive. Moving inward means a lower signed value. Green dots mark the minimum. The angle is the Fourier normal direction \(\mathbf n\), measured from [10].</p>
+    <p>For equal and opposite misfits, the two self kernels are identical and the cross kernel is their negative. Separate panels let you see all three without hiding coincident curves. These are kernel plots; they do not show particle shapes.</p>
     <p id="pair-kernels-result" class="lab-readout"></p>
     <div id="sandeep-check" class="sd-check" hidden></div>
-    <div class="lab-grid">
-      <div class="lab-plot" id="pair-kernels-cart"></div>
-      <div class="lab-plot" id="pair-kernels-polar"></div>
-    </div>
+    <div class="lab-plot" id="pair-kernels-cart"></div>
+    <div class="kernel-polar-grid" id="pair-kernels-polar"></div>
     <details class="lab-insight">
       <summary>Why did this happen?</summary>
       <p id="pair-kernels-why"></p>
     </details>
     <h3>Now calculate a particle-pair energy.</h3>
-    <p>The thesis preset selects a β–γ pair with opposite misfits. For this case at \(A_Z=3\), [11] has lower interaction energy. A β–β or γ–γ pair has same-sign misfits and gives a different preference. The positive self kernels are higher along [11]; the signed β–γ cross kernel is lower there. A larger radius in the magnitude polar plot means a larger absolute value, not necessarily higher energy.</p>
+    <p>The thesis preset selects a β–γ pair with opposite misfits. For this case at \(A_Z=3\), [11] has lower interaction energy. A β–β or γ–γ pair has same-sign misfits and gives a different preference. The positive self kernels are higher along [11]; the signed β–γ cross kernel is lower there. The three polar panels use signed radial values; a smaller radius means a lower kernel value.</p>
     <div class="lab-controls">
       <label for="pair-type"
         >Pair<select id="pair-type">
@@ -1476,6 +1434,49 @@ nav_active: research
         experiment is a teaching calculation, not a reproduction of the thesis’s
         full phase-field microstructure.
       </p>
+    </details>
+    <details class="lab-insight"><summary>Derivation and the Bitter–Crum limit</summary>
+    <h3>1. Write the transformation strain of each phase</h3>
+    <p>Let \(h_\beta(\mathbf x)\) and \(h_\gamma(\mathbf x)\) be dimensionless fields describing where the precipitates are located. A field is one inside its phase and zero outside for a sharp interface; a smooth field can represent a diffuse interface. The position is \(\mathbf x\). Taking the matrix as the zero-misfit reference gives</p>
+    <div class="formula-box">\[\epsilon^0_{ij}(\mathbf x)=\epsilon^{\beta}_{ij}h_\beta(\mathbf x)+\epsilon^{\gamma}_{ij}h_\gamma(\mathbf x),\qquad \epsilon^p_{ij}=\epsilon_p\delta_{ij},\quad p\in\{\beta,\gamma\}.\]</div>
+    <p>Here \(\epsilon^0_{ij}\) is the prescribed transformation strain, and \(\delta_{ij}\) is one when \(i=j\) and zero otherwise. The indices identify Cartesian components. A three-dimensional dilatation has three equal diagonal components. <strong>This widget uses the two-dimensional in-plane elastic law described in Module III:</strong> \(\boldsymbol\epsilon^p=\epsilon_p\operatorname{diag}(1,1)\). It omits the out-of-plane transformation strain; it is not a full three-dimensional plane-strain reduction.</p>
+    <h3>2. Impose mechanical equilibrium</h3>
+    <p>The displacement components are \(u_i\). The total strain is \(\epsilon_{ij}=(\partial_i u_j+\partial_j u_i)/2\), where \(\partial_i\) denotes differentiation with respect to position component \(x_i\). Elastic strain is total strain minus transformation strain. Stress \(\sigma_{ij}\) and elastic energy \(E_{\mathrm{el}}\) are therefore</p>
+    <div class="formula-box">\[\sigma_{ij}=C_{ijkl}(\epsilon_{kl}-\epsilon^0_{kl}),\qquad \partial_j\sigma_{ij}=0,\]\[E_{\mathrm{el}}=\frac12\int_V(\epsilon_{ij}-\epsilon^0_{ij})C_{ijkl}(\epsilon_{kl}-\epsilon^0_{kl})\,dV.\]</div>
+    <p>Repeated indices are summed. \(V\) is the body volume; the two-dimensional calculation uses area and energy per unit out-of-plane thickness. Stiffness and stress have units of pressure in a dimensional model, and the integral then has units of energy. Mechanical equilibrium assumes no body force. The displacement adjusts to reduce the energy while satisfying the boundary conditions.</p>
+    <h3>3. Solve each nonzero Fourier mode</h3>
+    <p>A Fourier mode has wavevector \(\mathbf k\), with units of inverse length in a dimensional model. Its unit normal is \(\mathbf n=\mathbf k/|\mathbf k|\). Define the stress associated with the prescribed strain, the acoustic tensor, and the inverse acoustic tensor by</p>
+    <div class="formula-box">\[\sigma^p_{ij}=C_{ijkl}\epsilon^p_{kl},\qquad Q_{ik}(\mathbf n)=C_{ijkl}n_jn_l,\qquad \Omega_{ik}(\mathbf n)=[Q(\mathbf n)^{-1}]_{ik}.\]</div>
+    <p>\(Q\) describes the directional stiffness of the mode. \(\Omega\) has units of inverse stiffness. With the Fourier convention \(\widehat{\partial_j u_i}=\mathrm i k_j\hat u_i\), mechanical equilibrium gives</p>
+    <div class="formula-box">\[|\mathbf k|^2Q_{ik}\hat u_k=-\mathrm i|\mathbf k|n_j\hat\sigma^0_{ij},\qquad \hat u_i=-\frac{\mathrm i}{|\mathbf k|}\Omega_{im}n_j\hat\sigma^0_{mj}.\]</div>
+    <p>Here \(\mathrm i^2=-1\), a hat denotes a Fourier coefficient, and \(\hat\sigma^0_{ij}=\sum_p\sigma^p_{ij}\hat h_p\). Substituting this equilibrium displacement into the energy removes the displacement as an independent unknown.</p>
+    <h3>4. Obtain the two self kernels and one cross kernel</h3>
+    <div class="formula-box">\[B_{pq}(\mathbf n)=\epsilon^p_{ij}C_{ijkl}\epsilon^q_{kl}-a^p_i\Omega_{im}a^q_m,\qquad a^p_i=\sigma^p_{ij}n_j.\]</div>
+    <p>The first term is the energy coefficient before displacement relaxation. The second term is the reduction produced by mechanical relaxation. The vector \(a^p_i\) is the traction associated with the prescribed strain on a plane normal to \(\mathbf n\). Each \(B_{pq}\) has units of energy density in a dimensional model.</p>
+    <p>For clarity, define \(\hat h_p(\mathbf k)=V^{-1}\int_V h_p(\mathbf x)e^{-\mathrm i\mathbf k\cdot\mathbf x}\,dV\) in a periodic body. These coefficients are dimensionless. The nonzero-mode energy density is</p>
+    <div class="formula-box">\[\frac{E_{\mathrm{el}}^{\ne0}}{V}=\frac12\sum_{\mathbf k\ne0}\left[B_{\beta\beta}|\hat h_\beta|^2+B_{\gamma\gamma}|\hat h_\gamma|^2+2B_{\beta\gamma}\operatorname{Re}(\hat h_\beta\hat h_\gamma^*)\right].\]</div>
+    <p>\(\operatorname{Re}\) means real part, and an asterisk means complex conjugate. The two self kernels describe each precipitate phase’s contribution. The cross kernel describes the coupling between their fields. Symmetry gives \(B_{\beta\gamma}=B_{\gamma\beta}\), so there are three independent kernels, although the system contains three phases. The matrix contributes through the common stiffness and the reference strain.</p>
+    <p>For the two-dimensional square-symmetric stiffness, write \(n_x=\cos\theta\) and \(n_y=\sin\theta\), where \(\theta\) is the wavevector-normal angle. The matrix actually inverted by the widget is</p>
+    <div class="formula-box">\[Q=\begin{pmatrix}C_{11}n_x^2+C_{44}n_y^2&(C_{12}+C_{44})n_xn_y\\(C_{12}+C_{44})n_xn_y&C_{44}n_x^2+C_{11}n_y^2\end{pmatrix},\qquad A_Z=\frac{2C_{44}}{C_{11}-C_{12}}.\]</div>
+    <p>The thesis parameters give \(C_{11}=7000\), \(C_{12}=5000\), \(C_{44}=3000\) in model units. The equal and opposite misfits imply \(B_{\beta\beta}=B_{\gamma\gamma}\) and \(B_{\beta\gamma}=-B_{\beta\beta}\). For this in-plane calculation, the self coefficient is \(0.342857\) along [10] and \(0.8\) along [11]; the cross coefficient is their negative. These numbers check the kernel calculation, not the reproduction of a complete thesis microstructure.</p>
+    <h3>5. Derive the Bitter–Crum theorem from the isotropic kernel</h3>
+    <p><strong>The isotropic example demonstrates the Bitter–Crum theorem.</strong> We can show why it holds by calculating \(B_{pq}\). Assume that the elastic moduli are the same in all phases, the elasticity is isotropic, and each phase has a purely dilatational transformation strain. Keep the phase fractions and misfits fixed. Use an infinite body or the compatible periodic boundary conditions described below.</p>
+    <p>For the two-dimensional in-plane law used here, let \(\lambda=C_{12}\) and \(\mu=C_{44}\) be the Lamé elastic constants. Both have units of pressure in a dimensional model. Isotropy requires \(C_{11}=\lambda+2\mu\), or \(A_Z=1\). Since \(\epsilon^p_{ij}=\epsilon_p\delta_{ij}\), the prescribed stress is \(\sigma^p_{ij}=2(\lambda+\mu)\epsilon_p\delta_{ij}\). Thus</p>
+    <div class="formula-box">\[Q=\mu I+(\lambda+\mu)\mathbf n\otimes\mathbf n,\qquad Q^{-1}\mathbf n=\frac{\mathbf n}{\lambda+2\mu},\qquad \mathbf a^p=2(\lambda+\mu)\epsilon_p\mathbf n.\]</div>
+    <p>Here \(I\) is the identity matrix, and \(\mathbf n\otimes\mathbf n\) has components \(n_i n_j\). Substitute these expressions into the kernel. The two terms give</p>
+    <div class="formula-box">\[B_{pq}=\left[4(\lambda+\mu)-\frac{4(\lambda+\mu)^2}{\lambda+2\mu}\right]\epsilon_p\epsilon_q
+    =\underbrace{\frac{4\mu(\lambda+\mu)}{\lambda+2\mu}}_{K_B}\epsilon_p\epsilon_q
+    =\frac{C_{11}^2-C_{12}^2}{C_{11}}\epsilon_p\epsilon_q.\]</div>
+    <p>The coefficient \(K_B\) has units of pressure. <strong>There is no direction \(\mathbf n\) left in this expression.</strong> Equal and opposite misfits give \(B_{\beta\gamma}=-B_{\beta\beta}\), but this negative coefficient alone does not imply attraction between precipitates. We must substitute it into the complete energy expression.</p>
+    <p>Define the scalar misfit field \(e(\mathbf x)=\epsilon_\beta h_\beta(\mathbf x)+\epsilon_\gamma h_\gamma(\mathbf x)\). It is dimensionless. Parseval’s identity states that the sum of the squared Fourier coefficients equals the spatial average of the squared field. Removing the zero mode therefore gives</p>
+    <div class="formula-box">\[\frac{E_{\mathrm{el}}^{\ne0}}{V}=\frac{K_B}{2}\sum_{\mathbf k\ne0}|\hat e(\mathbf k)|^2
+    =\frac{K_B}{2}\left(\langle e^2\rangle-\langle e\rangle^2\right).\]</div>
+    <p>Angle brackets denote the spatial average. For disjoint phase regions, \(h_p\) is one inside phase \(p\) and zero outside. Consequently \(h_p^2=h_p\) and \(h_\beta h_\gamma=0\). If \(f_p=\langle h_p\rangle\) is the dimensionless phase fraction, then</p>
+    <div class="formula-box">\[\frac{E_{\mathrm{el}}^{\ne0}}{V}=\frac{K_B}{2}\left[f_\beta\epsilon_\beta^2+f_\gamma\epsilon_\gamma^2-
+    (f_\beta\epsilon_\beta+f_\gamma\epsilon_\gamma)^2\right].\]</div>
+    <p><strong>This is the Bitter–Crum result in this model.</strong> The energy depends on the phase fractions and misfits. It does not depend on precipitate shape, position, separation or arrangement. Moving disjoint precipitates while keeping their amounts fixed does not change the energy: there is no elastic interaction driving their relative motion. Opposite misfits do not change this conclusion.</p>
+    <p>For imposed mean strain \(\bar\epsilon\), add \(E_0/V=\tfrac12(\bar\epsilon-\langle\epsilon^0\rangle):C:(\bar\epsilon-\langle\epsilon^0\rangle)\). The colons denote tensor contraction. This term also depends only on the mean transformation strain when the imposed strain is fixed. At relaxed zero mean stress, it vanishes. Comparing arrangements at fixed phase amounts is essential; a cross term obtained by subtracting two separate clamped calculations is not, by itself, a separation-dependent interaction.</p>
+    <p>Select <strong>Isotropic comparison</strong> to check the constant kernel numerically. Its circle and the horizontal signed curves demonstrate the directional cancellation derived above; the energy reduction proves the shape-and-arrangement independence. With anisotropic moduli, the kernel generally retains its directional dependence, and this Bitter–Crum proof no longer applies. Eshelby’s uniform-interior-strain theorem for an ellipsoidal inclusion is a separate result.</p>
     </details>
   </section>
   <section class="section" id="contrast">
@@ -1772,5 +1773,5 @@ nav_active: research
     </p>
   </section>
 </div>
-<script type="module" src="/assets/js/elastic-lab/ui.mjs?v=20261006-thesis-pair"></script>
+<script type="module" src="/assets/js/elastic-lab/ui.mjs?v=20261006-three-polar"></script>
 <script type="module" src="/assets/js/elastic-lab/eshelby-ui.mjs?v=20261005-sharp-branches"></script>

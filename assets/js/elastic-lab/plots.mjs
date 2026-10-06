@@ -141,6 +141,33 @@ export function polar(series, title, magnitude = false) {
   b += text(20, 334, magnitude ? "Radius = |Bpq|; signs are shown in the angle graph." : "Offset radial scale; labels give signed values.");
   return svg(title, b);
 }
+// I use one signed radial scale for all three kernels, so none hides another.
+export function kernelPolarPanels(series) {
+  const limit = Math.max(1e-12, ...series.flatMap(s => s.points.map(p => Math.abs(p.value))));
+  const radius = value => 14 + 112 * (value + limit) / (2 * limit);
+  const cx = 220, cy = 165;
+  return series.map((s, index) => {
+    let body = "";
+    for (const [angle, label] of [[0,"[10]"],[Math.PI / 4,"[11]"],[Math.PI / 2,"[01]"],[3 * Math.PI / 4,"[1̄1]"]]) {
+      body += line(cx - 128 * Math.cos(angle), cy + 128 * Math.sin(angle), cx + 128 * Math.cos(angle), cy - 128 * Math.sin(angle), 'class="gridline"');
+      body += text(cx + 143 * Math.cos(angle) - 14, cy - 143 * Math.sin(angle), label);
+    }
+    for (const value of [-limit, -limit / 2, 0, limit / 2, limit]) {
+      const r = radius(value);
+      body += `<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" class="${value === 0 ? "zero-line" : "gridline"}"/>`;
+      body += `<text x="${cx + r * .82 + 3}" y="${cy + r * .57 + 11}" font-size="11" fill="#17313a" stroke="#fff" stroke-width="3" paint-order="stroke">${fmt(value)}</text>`;
+    }
+    const points = [...s.points, ...s.points.map(p => ({...p, angle:p.angle + Math.PI})), s.points[0]];
+    body += `<polyline fill="none" stroke="${colors[index]}" stroke-width="3" points="${points.map(p => `${cx + radius(p.value) * Math.cos(p.angle)},${cy - radius(p.value) * Math.sin(p.angle)}`).join(" ")}"/>`;
+    const m = minima(s.points);
+    for (const p of m.global) {
+      for (const angle of [p.angle, p.angle + Math.PI]) body += `<circle cx="${cx + radius(p.value) * Math.cos(angle)}" cy="${cy - radius(p.value) * Math.sin(angle)}" r="5" fill="#267c70" stroke="#fff" stroke-width="1.5"/>`;
+    }
+    body += text(20, 318, "Signed radial scale: inward is lower B.");
+    body += text(20, 334, "Green dots: minimum; bold ring: B = 0.");
+    return `<figure class="kernel-polar-panel lab-plot"><h4>\\(${plotTex[s.name]}\\)</h4>${svg(s.name + ": signed elastic kernel", body)}<figcaption>At [10]: ${fmt(s.points[0].value)} · At [11]: ${fmt(s.points[45].value)}${m.flat ? " · independent of direction" : ""}</figcaption></figure>`;
+  }).join("");
+}
 export function mohr(t, angle, stage = 4) {
   const { centre, radius, normal, shear } = mohrState(t, angle);
   const cx = 220,

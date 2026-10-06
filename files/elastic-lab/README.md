@@ -53,3 +53,5 @@ CICP: Bhattacharyya, Heo, Chang and Chen (2012), Communications in Computational
 New files in `assets/js/elastic-lab/` and `files/elastic-lab/`, and `_pages/elastic-lab.html`, are GPL-3.0-or-later. See LICENSE.txt. Existing site template and its MIT notice remain unchanged. Referenced thesis text and figures retain their authors' rights and are not relicensed as software.
 
 Module IV provides linked independent inputs for C11, C12 and C44, or the equivalent mu, nu and Zener ratio. The conversion and inverse conversion are tested. Math labels use the local MathJax TeX-to-SVG renderer.
+
+Module IV opens with the opposite-misfit thesis example. Enter the homogeneous stiffness constants and the two misfits directly. Its three polar panels show signed kernels on a common offset radial scale: the zero ring separates negative and positive values. The panels keep coincident self kernels visible separately.

@@ -17,11 +17,12 @@ import { pairCurve } from "./solver.mjs?v=20260924c";
 import {
   cartesian,
   polar,
+  kernelPolarPanels,
   mohr,
   sketch,
   strainShape,
   fmt,
-} from "./plots.mjs?v=20261006-polar-magnitude";
+} from "./plots.mjs?v=20261006-three-polar";
 import {
   element,
   value,
@@ -141,7 +142,7 @@ function renderKernels(s) {
     "pair-kernels-cart",
     cartesian(pairSeries, "Self and cross elastic energy kernels"),
   );
-  draw("pair-kernels-polar", polar(pairSeries, "Kernel magnitudes: |Bpq(n)|", true));
+  draw("pair-kernels-polar", kernelPolarPanels(pairSeries));
   set(
     "pair-kernels-result",
     pairSeries
@@ -151,7 +152,7 @@ function renderKernels(s) {
       )
       .join(" | "),
   );
-  set("pair-current-moduli", `Current stiffness: C11 = ${fmt(s.c.c11)}, C12 = ${fmt(s.c.c12)}, C44 = ${fmt(s.c.c44)}. Zener anisotropy ratio AZ = ${fmt(zener(s.c))}. ${Math.abs(zener(s.c)-1)<1e-10 ? "The moduli are isotropic. Dilatational kernels are constant with direction, so their polar magnitudes are circles." : "The moduli are anisotropic; dilatational kernels can vary with direction."}`);
+  set("pair-current-moduli", `Current stiffness: C11 = ${fmt(s.c.c11)}, C12 = ${fmt(s.c.c12)}, C44 = ${fmt(s.c.c44)}. Zener anisotropy ratio AZ = ${fmt(zener(s.c))}. ${Math.abs(zener(s.c)-1)<1e-10 ? "The moduli are isotropic. Dilatational kernels are constant with direction, so their signed polar curves are circles." : "The moduli are anisotropic; dilatational kernels can vary with direction."}`);
   sandeepCheck(s);
   set(
     "pair-kernels-why",
@@ -223,7 +224,7 @@ function renderPair(s) {
     `${type === "bg" ? "β–γ" : type === "bb" ? "β–β" : "γ–γ"} pair: minimum interaction energy ${fmt(m.lo)} at ${locations(m)}. At nearest 1° sample to selected angle: ${fmt(nearest.value)}. Energy is per box area.`,
   );
   const axis = points[0].value, diagonal = points[45].value;
-  draw("pair-direction-comparison", `<table class="lab-table"><thead><tr><th>Particle separation</th><th>Signed interaction energy / box area</th></tr></thead><tbody><tr><td>[10] · 0°</td><td>${fmt(axis)}</td></tr><tr><td>[11] · 45°</td><td>${fmt(diagonal)}</td></tr></tbody></table><p>${m.flat ? "No resolved directional preference." : diagonal < axis ? "[11] has lower interaction energy than [10]." : "[10] has lower interaction energy than [11]."} Compare signed values: a more negative value is lower energy. The self kernels and the magnitude polar plot above are different quantities.</p>`);
+  draw("pair-direction-comparison", `<table class="lab-table"><thead><tr><th>Particle separation</th><th>Signed interaction energy / box area</th></tr></thead><tbody><tr><td>[10] · 0°</td><td>${fmt(axis)}</td></tr><tr><td>[11] · 45°</td><td>${fmt(diagonal)}</td></tr></tbody></table><p>${m.flat ? "No resolved directional preference." : diagonal < axis ? "[11] has lower interaction energy than [10]." : "[10] has lower interaction energy than [11]."} Compare signed values: a more negative value is lower energy. The polar panels above show kernels, rather than this particle-pair energy.</p>`);
   set(
     "pair-why",
     `The cross kernel weights every mode of the particle profile. Separation ${value("separation")} enters through cos(k·R), so the summed interaction has minima at ${locations(m)}. This includes periodic copies and the clamped zero mode. Negative interaction energy lowers the total relative to the two separate profiles in the same box; it does not mean the full elastic energy is negative.`,
@@ -529,6 +530,8 @@ fetch("/files/elastic-lab/validation-results.json")
     ),
   )
   .catch(() => {});
+// I start the laboratory with the opposite-misfit thesis example.
+setStiffness("c", moduli(2000, 1 / 3, 3));
 followHabit();
 render();
 plateSketch();
