@@ -1344,6 +1344,8 @@ nav_active: research
       <button data-preset="opposite">Opposite β/γ misfit</button
       ><button data-preset="sandeep">Sandeep thesis example</button>
     </div>
+    <p id="pair-current-moduli" class="lab-readout"></p>
+    <p><strong>How to read the two graphs.</strong> The angle graph shows the signed kernel values. The polar graph shows their magnitudes: distance from the centre is \( |B_{pq}(\mathbf n)| \), with no added radial shift. For equal and opposite misfits, \(B_{\beta\beta}=B_{\gamma\gamma}=-B_{\beta\gamma}\). All three magnitudes therefore lie on the same polar curve. A circle means that the value is independent of direction; it does not represent a particle shape. The opposite-misfit button changes the misfits and keeps the current moduli. Select the Sandeep thesis example to also load anisotropic moduli.</p>
     <p id="pair-kernels-result" class="lab-readout"></p>
     <div id="sandeep-check" class="sd-check" hidden></div>
     <div class="lab-grid">
@@ -1726,5 +1728,5 @@ nav_active: research
     </p>
   </section>
 </div>
-<script type="module" src="/assets/js/elastic-lab/ui.mjs?v=20261006-module4"></script>
+<script type="module" src="/assets/js/elastic-lab/ui.mjs?v=20261006-polar-magnitude"></script>
 <script type="module" src="/assets/js/elastic-lab/eshelby-ui.mjs?v=20261005-sharp-branches"></script>

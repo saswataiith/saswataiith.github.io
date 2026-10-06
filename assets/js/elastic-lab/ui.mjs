@@ -20,7 +20,7 @@ import {
   sketch,
   strainShape,
   fmt,
-} from "./plots.mjs?v=20260924c";
+} from "./plots.mjs?v=20261006-polar-magnitude";
 import {
   element,
   value,
@@ -131,7 +131,7 @@ function renderKernels(s) {
     "pair-kernels-cart",
     cartesian(pairSeries, "Self and cross elastic energy kernels"),
   );
-  draw("pair-kernels-polar", polar(pairSeries, "Bpq(n): signed radial values"));
+  draw("pair-kernels-polar", polar(pairSeries, "Kernel magnitudes: |Bpq(n)|", true));
   set(
     "pair-kernels-result",
     pairSeries
@@ -141,6 +141,7 @@ function renderKernels(s) {
       )
       .join(" | "),
   );
+  set("pair-current-moduli", `Current stiffness: C11 = ${fmt(s.c.c11)}, C12 = ${fmt(s.c.c12)}, C44 = ${fmt(s.c.c44)}. Zener anisotropy ratio AZ = ${fmt(zener(s.c))}. ${Math.abs(zener(s.c)-1)<1e-10 ? "The moduli are isotropic. Dilatational kernels are constant with direction, so their polar magnitudes are circles." : "The moduli are anisotropic; dilatational kernels can vary with direction."}`);
   sandeepCheck(s);
   set(
     "pair-kernels-why",
