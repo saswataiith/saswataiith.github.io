@@ -7,6 +7,17 @@ Module I: n(theta) is an arbitrary measurement direction. epsilon_nn/epsilon_eta
 
 A zero tangential strain permits a rank-one displacement-gradient jump in the 2-D small-strain setting: epsilon0=sym(a tensor m), after allowing a rigid rotation. This is the compatibility argument for an ideal infinite thin plate, not an assertion that every zero normal-strain direction has zero total elastic energy. Finite plates and interfaces add constraints and costs.
 
+## Module 0: positive-definite cubic stiffness and conversion
+For an unstressed crystal, w=epsilon:C:epsilon/2 must be positive for each nonzero elastic strain. The cubic engineering-strain stiffness matrix has a normal eigenvalue C11+2 C12, two eigenvalues C11-C12 and three shear entries C44. All must be positive. K=(C11+2 C12)/3 and AZ=2 C44/(C11-C12). AZ=1 makes the cubic tensor isotropic.
+
+The Schmidt–Gross parameters use the (001)-plane angular averages mu=average(C1212) and Lambda=average(C1122), and nu=Lambda/[2(Lambda+mu)]. The conversion is C11=mu[2(2+AZ)/(1+AZ)-(1-4 nu)/(1-2 nu)], C12=mu[2 AZ/(1+AZ)-(1-4 nu)/(1-2 nu)], C44=2 mu AZ/(1+AZ). Therefore C11+2 C12=mu(1+3 AZ+4 nu)/[(1+AZ)(1-2 nu)]. With positive mu and AZ and nu<1/2, require 1+3 AZ+4 nu>0; the isotropic nu range alone is insufficient. These averaged parameters need not equal directional moduli.
+
+Energy demonstration: epsilon_xx=epsilon_yy=epsilon_zz=q gives w=3(C11+2 C12)q²/2; epsilon_xx=q, epsilon_yy=-q, epsilon_zz=0 gives w=(C11-C12)q²; engineering shear gamma_xy=q gives w=C44 q²/2. The plotted q is dimensionless. Stiffnesses and energies share the model energy-density unit.
+
+Sources: Schmidt and Gross (1997), doi:10.1016/S0022-5096(97)00011-2; Sandeep Chapter 3 Eqs.3.23–3.29; Mouhat and Coudert (2014), arXiv:1410.0065. The page distinguishes hexagonal and tetragonal I conditions and the orthorhombic positive principal minors. These are harmonic unstressed elastic conditions, not a full lattice-dynamical stability test.
+
+Each later module keeps separate input state. Explicit copying in Module II is optional. Module I’s zero-extension geometry depends on eigenstrain; its added zero-total-strain energy depends on stiffness as well. Module IV retains fixed nu=1/3 only for its conversion panel.
+
 ## Module II: Eshelby's elliptical inclusion and jump conditions
 Homogeneous stiffness C (in-plane cubic law, plane strain), eigenstrain epsilon0 uniform inside an ellipse with semi-axes a (long axis at angle phi from [10]) and b. With Q_ik(n)=C_ijkl n_j n_l, sigma0=C:epsilon0 and g(n)=Q(n)^-1 sigma0 n, the interior displacement gradient is D=(1/2pi) int_0^2pi g(n) (x) n dtheta with n parallel to R(phi)(cos theta/a, sin theta/b) (Mura, Micromechanics of Defects in Solids, section 11). Interior strain eps_c=sym D (=S:epsilon0), rotation omega=(D_yx-D_xy)/2, stress sigma_in=C:(eps_c-epsilon0), energy per unit inclusion area w=-sigma_in:epsilon0/2. Midpoint rule, 4096 samples (2048 in sweeps); b/a >= 0.01.
 

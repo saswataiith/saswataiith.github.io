@@ -22,7 +22,7 @@ import {
   sketch,
   strainShape,
   fmt,
-} from "./plots.mjs?v=20261007-direct-self-polar";
+} from "./plots.mjs?v=20261007-independent-modules";
 import {
   element,
   value,
@@ -30,7 +30,7 @@ import {
   setStiffness,
   read,
   plateSettings,
-} from "./state.mjs?v=20260924c";
+} from "./state.mjs?v=20261007-independent-modules";
 import {
   clearMath,
   renderMath,
@@ -102,20 +102,27 @@ function renderHabit(s) {
       : "Both principal strains have the same positive sign. Every directional projection is positive. The Mohr circle does not cross the zero-normal-strain axis; rotating the plate cannot supply this compatibility mechanism.",
   );
   element("find-habit").disabled = !solutions.length;
+  const eigenstrain = [s.epsilon, s.epsilon * s.t, 0];
+  set(
+    "habit-energy",
+    `Elastic energy density at zero total strain = ${fmt(0.5 * contract(eigenstrain, stress(s.c, eigenstrain)))} in model units. AZ = ${fmt(zener(s.c))}. Stiffness changes this energy, but the geometric zero-extension condition depends on the eigenstrain only.`,
+  );
 }
 function syncPairStiffness(c) {
   const parameters = elasticParameters(c);
-  const values = { "pair-c11": c.c11, "pair-c12": c.c12, "pair-c44": c.c44,
-    "pair-mu": parameters.mu, "pair-az": parameters.z };
+  const values = {
+    "pair-c11": c.c11,
+    "pair-c12": c.c12,
+    "pair-c44": c.c44,
+    "pair-mu": parameters.mu,
+    "pair-az": parameters.z,
+  };
   for (const [id, number] of Object.entries(values)) {
-    if (document.activeElement !== element(id)) element(id).value = Number(number.toPrecision(12));
+    if (document.activeElement !== element(id))
+      element(id).value = Number(number.toPrecision(12));
   }
 }
 function renderKernels(s) {
-  syncPairStiffness(s.c);
-  for (const [id, number] of [["kernel-epsilon", s.epsilon], ["kernel-t", s.t]]) {
-    if (document.activeElement !== element(id)) element(id).value = number;
-  }
   const e = [s.epsilon, s.epsilon * s.t, 0],
     single = sample((a) => kernel(s.c, e, e, a)),
     m = minima(single),
@@ -133,6 +140,9 @@ function renderKernels(s) {
     "kernel-why",
     `C11 = ${fmt(s.c.c11)}, C12 = ${fmt(s.c.c12)}, C44 = ${fmt(s.c.c44)} set Q(n). Together with ε⁰ = diag(${fmt(e[0])}, ${fmt(e[1])}), they set σ⁰ and the relaxation term a·Q⁻¹a. The unrelaxed contraction ε⁰:C:ε⁰ is ${fmt(contract(e, stress(s.c, e)))}. At the minimum, relaxation removes ${fmt(contract(e, stress(s.c, e)) - m.lo)}, leaving B = ${fmt(m.lo)}. The preferred direction permits the greatest relaxation for this eigenstrain. ${m.flat ? "The cancellation is independent of direction." : "It favors a modulation normal, not an arbitrary real-space particle-separation direction."}`,
   );
+}
+function renderPairKernels(s) {
+  syncPairStiffness(s.c);
   const bb = sample((a) => kernel(s.c, s.beta, s.beta, a)),
     gg = sample((a) => kernel(s.c, s.gamma, s.gamma, a)),
     bg = sample((a) => kernel(s.c, s.beta, s.gamma, a));
@@ -155,11 +165,14 @@ function renderKernels(s) {
       )
       .join(" | "),
   );
-  set("pair-current-moduli", `Current stiffness: C11 = ${fmt(s.c.c11)}, C12 = ${fmt(s.c.c12)}, C44 = ${fmt(s.c.c44)}. Zener anisotropy ratio AZ = ${fmt(zener(s.c))}. ${Math.abs(zener(s.c)-1)<1e-10 ? "The moduli are isotropic. Dilatational kernels are constant with direction, so their signed polar curves are circles." : "The moduli are anisotropic; dilatational kernels can vary with direction."}`);
+  set(
+    "pair-current-moduli",
+    `Current stiffness: C11 = ${fmt(s.c.c11)}, C12 = ${fmt(s.c.c12)}, C44 = ${fmt(s.c.c44)}. Zener anisotropy ratio AZ = ${fmt(zener(s.c))}. ${Math.abs(zener(s.c) - 1) < 1e-10 ? "The moduli are isotropic. Dilatational kernels are constant with direction, so their signed polar curves are circles." : "The moduli are anisotropic; dilatational kernels can vary with direction."}`,
+  );
   sandeepCheck(s);
   set(
     "pair-kernels-why",
-    `All three curves use the same homogeneous C and Q⁻¹, but separate eigenstrain pairs. Self terms are quadratic; the cross term is bilinear. β = (${fmt(s.beta[0])}, ${fmt(s.beta[1])}), γ = (${fmt(s.gamma[0])}, ${fmt(s.gamma[1])}). Reversing every component of γ reverses Bβγ without changing Bγγ. ${Math.abs(zener(s.c)-1)<1e-10 && s.beta[0]===s.beta[1] && s.gamma[0]===s.gamma[1] ? "Homogeneous isotropic moduli and dilatational misfits: these kernels are direction independent, as required by the Bitter–Crum limit. Changing a misfit changes the coefficient, not the flat curve shape." : "Directional dependence can come from anisotropic stiffness or non-dilatational eigenstrain. Compare with the isotropic dilatational case."} The curve minima above are calculated from these contractions.`,
+    `All three curves use the same homogeneous C and Q⁻¹, but separate eigenstrain pairs. Self terms are quadratic; the cross term is bilinear. β = (${fmt(s.beta[0])}, ${fmt(s.beta[1])}), γ = (${fmt(s.gamma[0])}, ${fmt(s.gamma[1])}). Reversing every component of γ reverses Bβγ without changing Bγγ. ${Math.abs(zener(s.c) - 1) < 1e-10 && s.beta[0] === s.beta[1] && s.gamma[0] === s.gamma[1] ? "Homogeneous isotropic moduli and dilatational misfits: these kernels are direction independent, as required by the Bitter–Crum limit. Changing a misfit changes the coefficient, not the flat curve shape." : "Directional dependence can come from anisotropic stiffness or non-dilatational eigenstrain. Compare with the isotropic dilatational case."} The curve minima above are calculated from these contractions.`,
   );
 }
 // Reference case: Sandeep Sugathan, IIT Hyderabad thesis (2019), Chapter 5,
@@ -226,26 +239,36 @@ function renderPair(s) {
     "pair-result",
     `${type === "bg" ? "β–γ" : type === "bb" ? "β–β" : "γ–γ"} pair: minimum interaction energy ${fmt(m.lo)} at ${locations(m)}. At nearest 1° sample to selected angle: ${fmt(nearest.value)}. Energy is per box area.`,
   );
-  const axis = points[0].value, diagonal = points[45].value;
-  draw("pair-direction-comparison", `<table class="lab-table"><thead><tr><th>Particle separation</th><th>Signed interaction energy / box area</th></tr></thead><tbody><tr><td>[10] · 0°</td><td>${fmt(axis)}</td></tr><tr><td>[11] · 45°</td><td>${fmt(diagonal)}</td></tr></tbody></table><p>${m.flat ? "No resolved directional preference." : diagonal < axis ? "[11] has lower interaction energy than [10]." : "[10] has lower interaction energy than [11]."} Compare signed values: a more negative value is lower energy. The polar panels above show kernels, rather than this particle-pair energy.</p>`);
+  const axis = points[0].value,
+    diagonal = points[45].value;
+  draw(
+    "pair-direction-comparison",
+    `<table class="lab-table"><thead><tr><th>Particle separation</th><th>Signed interaction energy / box area</th></tr></thead><tbody><tr><td>[10] · 0°</td><td>${fmt(axis)}</td></tr><tr><td>[11] · 45°</td><td>${fmt(diagonal)}</td></tr></tbody></table><p>${m.flat ? "No resolved directional preference." : diagonal < axis ? "[11] has lower interaction energy than [10]." : "[10] has lower interaction energy than [11]."} Compare signed values: a more negative value is lower energy. The polar panels above show kernels, rather than this particle-pair energy.</p>`,
+  );
   set(
     "pair-why",
     `The cross kernel weights every mode of the particle profile. Separation ${value("separation")} enters through cos(k·R), so the summed interaction has minima at ${locations(m)}. This includes periodic copies and the clamped zero mode. Negative interaction energy lowers the total relative to the two separate profiles in the same box; it does not mean the full elastic energy is negative.`,
   );
 }
-function render() {
+function renderModule(module) {
   try {
-    const s = read();
-    renderHabit(s);
-    renderKernels(s);
-    renderPair(s);
-    set("lab-error", "");
+    const s = read(module);
+    if (module === "habit") renderHabit(s);
+    if (module === "kernel") renderKernels(s);
+    if (module === "pairs") {
+      renderPairKernels(s);
+      renderPair(s);
+    }
+    set(module + "-error", "");
   } catch (error) {
     set(
-      "lab-error",
-      error.message + " Plots retain the last valid calculation.",
+      module + "-error",
+      error.message + " This module retains its last valid plots.",
     );
   }
+}
+function render() {
+  for (const module of ["habit", "kernel", "pairs"]) renderModule(module);
 }
 function plateSketch() {
   const angle = radians(value("plate-angle"));
@@ -273,7 +296,6 @@ function stop() {
 function scan() {
   stop();
   try {
-    read();
     const config = plateSettings();
     plateConfig = config;
     plateData = null;
@@ -349,149 +371,89 @@ function queueScan() {
   element("download-plate").disabled = true;
   scanTimer = setTimeout(scan, 450);
 }
+// I keep every module's controls and presets local.
 element("t-slider").addEventListener("input", () => {
   element("t").value = value("t-slider");
   followHabit();
-  try {
-    const s = read();
-    renderHabit(s);
-    renderKernels(s);
-    set("lab-error", "");
-  } catch (error) {
-    set("lab-error", error.message + " Plots retain the last valid calculation.");
-  }
+  renderModule("habit");
 });
-for (const id of ["t", "epsilon", "theta"])
-  element(id).addEventListener("input", () => {
-    try {
-      if (id === "theta") element("follow-habit").checked = false;
-      if (id === "t") followHabit();
-      const s = read();
-      renderHabit(s);
-      renderKernels(s);
-      set("lab-error", "");
-    } catch (error) {
-      set(
-        "lab-error",
-        error.message + " Plots retain the last valid calculation.",
-      );
-    }
+for (const module of ["habit", "kernel", "pairs"]) {
+  element(module).addEventListener("input", (event) => {
+    if (module === "habit" && event.target.id === "theta")
+      element("follow-habit").checked = false;
+    if (module === "habit" && event.target.id === "t") followHabit();
+    renderModule(module);
   });
-// I expose the inherited eigenstrain beside the Module III plots.
-for (const [local, shared] of [["kernel-epsilon", "epsilon"], ["kernel-t", "t"]]) {
-  element(local).addEventListener("input", () => {
-    element(shared).value = element(local).value;
-    if (shared === "t") followHabit();
-    render();
+  element(module).addEventListener("change", () => {
+    if (module === "habit") followHabit();
+    renderModule(module);
+  });
+  element(module).addEventListener("lab:apply", () => {
+    if (module === "habit") followHabit();
+    renderModule(module);
   });
 }
-// I link the local stiffness inputs to the shared constants and both plots.
-for (const id of ["pair-c11", "pair-c12", "pair-c44", "pair-mu", "pair-az"]) {
-  element(id).addEventListener("input", () => {
-    try {
-      if (element(id).value.trim() === "" || !Number.isFinite(value(id)))
-        throw Error("Enter a finite elastic parameter.");
-      let c;
-      if (["pair-c11", "pair-c12", "pair-c44"].includes(id)) {
-        c = { c11: value("pair-c11"), c12: value("pair-c12"), c44: value("pair-c44") };
-        elasticParameters(c);
-      } else {
-        const mu = value("pair-mu"), nu = 1 / 3, z = value("pair-az");
-        if (!(mu > 0 && nu > -1 && nu < 0.5 && z > 0))
-          throw Error("Require μ > 0, −1 < ν < 1/2 and AZ > 0.");
-        c = moduli(mu, nu, z);
-      }
-      setStiffness("c", c);
-      syncPairStiffness(c);
-      render();
-    } catch (error) {
-      set("lab-error", error.message + " Plots retain the last valid calculation.");
-    }
-  });
-}
-// Update the kernel controls while the student edits them, not only on blur.
-for (const id of ["beta", "gamma", "tbeta", "tgamma", "cc11", "cc12", "cc44"])
-  element(id).addEventListener("input", render);
-// Module II (ids es-*) has its own controller.
-for (const input of document.querySelectorAll(
-  "#elastic-lab input:not([id^=es-]),#elastic-lab select:not([id^=es-])",
-))
-  input.addEventListener("change", () => {
-    if (input.id === "follow-habit") {
-      followHabit();
-      render();
-      return;
-    }
-    if (input.id === "mohr-step") {
-      renderHabit(read());
-      return;
-    }
-    if (input.id === "plate-angle") {
-      plateSketch();
-      return;
-    }
-    render();
-    if (
-      /^[mbg]c(11|12|44)$/.test(input.id) ||
-      [
-        "beta",
-        "gamma",
-        "tbeta",
-        "tgamma",
-        "plate-phase",
-        "grid-size",
-        "angle-count",
-      ].includes(input.id)
-    )
-      queueScan();
-  });
-for (const button of document.querySelectorAll("[data-preset]"))
+for (const button of document.querySelectorAll("[data-preset]")) {
   button.addEventListener("click", () => {
+    const module = button.closest("section").id;
     try {
       const preset = button.dataset.preset;
       if (["minus", "zero", "positive"].includes(preset)) {
         element("t").value = { minus: -1, zero: 0, positive: 0.5 }[preset];
         followHabit();
       }
-      if (preset === "dilatational") {
-        element("t").value = 1;
-        followHabit();
+      if (preset === "dilatational") element("kernel-t").value = 1;
+      if (["isotropic", "anisotropic"].includes(preset)) {
+        const prefix = module === "pairs" ? "pair-" : "c";
+        const c = stiffness(prefix);
+        if (preset === "isotropic") c.c44 = (c.c11 - c.c12) / 2;
+        else {
+          c.c11 = 3;
+          c.c12 = 1;
+          c.c44 = 3;
+        }
+        setStiffness(prefix, c);
       }
-      if (preset === "isotropic") {
-        const c = stiffness("c");
-        c.c44 = (c.c11 - c.c12) / 2;
-        setStiffness("c", c);
-      }
-      if (preset === "anisotropic")
-        setStiffness("c", { c11: 3, c12: 1, c44: 3 });
       if (["opposite", "sandeep"].includes(preset)) {
         element("beta").value = 0.01;
         element("gamma").value = -0.01;
         element("tbeta").value = 1;
         element("tgamma").value = 1;
         if (preset === "sandeep") {
-          setStiffness("c", moduli(2000, 1 / 3, 3));
+          setStiffness("pair-", moduli(2000, 1 / 3, 3));
           element("pair-type").value = "bg";
           element("pair-angle").value = 45;
         }
-        queueScan();
       }
       if (["soft", "hard", "homogeneous"].includes(preset)) {
-        const c = stiffness("m"),
+        const cm = stiffness("m"),
           ratio = { soft: 0.5, hard: 2, homogeneous: 1 }[preset];
         setStiffness(
           element("plate-phase").value === "beta" ? "b" : "g",
           Object.fromEntries(
-            Object.entries(c).map(([key, v]) => [key, v * ratio]),
+            Object.entries(cm).map(([key, v]) => [key, v * ratio]),
           ),
         );
         queueScan();
-      }
-      render();
+      } else renderModule(module);
+      element(module).dispatchEvent(new Event("lab:sync"));
     } catch (error) {
-      set("lab-error", error.message);
+      set(
+        module === "contrast" ? "plate-progress" : module + "-error",
+        error.message,
+      );
     }
   });
+}
+element("contrast").addEventListener("input", (event) => {
+  if (event.target.id === "plate-angle") plateSketch();
+  else if (!event.target.closest("[data-conversion]")) queueScan();
+});
+element("contrast").addEventListener("change", (event) => {
+  if (event.target.id === "plate-angle") plateSketch();
+  else queueScan();
+});
+element("contrast").addEventListener("lab:apply", queueScan);
 element("find-habit").addEventListener("click", () => {
   const target = roots(value("t"))[0];
   if (target === undefined) return;
@@ -504,7 +466,7 @@ element("find-habit").addEventListener("click", () => {
     const f = duration ? Math.min(1, (now - time) / duration) : 1;
     element("theta").value = (start + (end - start) * f).toFixed(4);
     if (f >= 1) element("follow-habit").checked = true;
-    renderHabit(read());
+    renderHabit(read("habit"));
     if (f < 1) requestAnimationFrame(frame);
   }
   requestAnimationFrame(frame);
@@ -545,8 +507,7 @@ fetch("/files/elastic-lab/validation-results.json")
     ),
   )
   .catch(() => {});
-// I start the laboratory with the opposite-misfit thesis example.
-setStiffness("c", moduli(2000, 1 / 3, 3));
+// I use independent defaults recorded in each module's controls.
 followHabit();
 render();
 plateSketch();

@@ -17,10 +17,10 @@ export const eigen = (phase) => [
   value(phase) * value("t" + phase),
   0,
 ];
-export function read() {
-  for (const input of document.querySelectorAll(
-    "#elastic-lab input:not([type=checkbox]):not([id^=es-])",
-  ))
+// I validate only the module being calculated, so another module cannot block it.
+export function read(module = "habit") {
+  const section = element(module);
+  for (const input of section.querySelectorAll("input:not([type=checkbox])")) {
     if (
       input.value.trim() === "" ||
       input.validity.badInput ||
@@ -28,28 +28,51 @@ export function read() {
       input.validity.rangeOverflow ||
       !Number.isFinite(Number(input.value))
     )
-      throw Error("Enter finite values within the displayed input limits.");
+      throw Error("Enter finite values within this module's displayed limits.");
+  }
+  if (module === "kernel")
+    return {
+      t: value("kernel-t"),
+      epsilon: value("kernel-epsilon"),
+      c: stiffness("c"),
+    };
+  if (module === "pairs")
+    return {
+      c: stiffness("pair-"),
+      beta: eigen("beta"),
+      gamma: eigen("gamma"),
+    };
   return {
     t: value("t"),
     epsilon: value("epsilon"),
-    // The field shows θ to 4 decimals; while following, compute on the exact root.
+    c: stiffness("habit-"),
     theta:
       element("follow-habit")?.checked && roots(value("t")).length
         ? roots(value("t"))[0]
         : radians(value("theta")),
-    c: stiffness("c"),
-    beta: eigen("beta"),
-    gamma: eigen("gamma"),
   };
 }
 export function plateSettings() {
+  for (const input of element("contrast").querySelectorAll("input")) {
+    if (
+      input.value.trim() === "" ||
+      !Number.isFinite(Number(input.value)) ||
+      input.validity.rangeUnderflow ||
+      input.validity.rangeOverflow
+    )
+      throw Error("Enter finite values within Module V's limits.");
+  }
   const phase = element("plate-phase").value;
   return {
     n: value("grid-size"),
     count: value("angle-count"),
     cm: stiffness("m"),
     cp: stiffness(phase === "beta" ? "b" : "g"),
-    eigen: eigen(phase),
+    eigen: [
+      value("plate-" + phase),
+      value("plate-" + phase) * value("plate-t" + phase),
+      0,
+    ],
     phase,
   };
 }

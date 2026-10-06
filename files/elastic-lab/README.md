@@ -13,7 +13,8 @@ Numerical and UI modules are in `assets/js/elastic-lab/`:
 - `eshelby.mjs`: Module II Eshelby interior field, interface jumps, thin-plate limit and periodic FFT field maps.
 - `eshelby-ui.mjs`: Module II controls, jump table, energy sweeps, field maps and profiles.
 - `plots.mjs`: accessible SVG diagrams and signed-axis plotting.
-- `state.mjs`: parameters and input validation.
+- `state.mjs`: independent parameters and input validation for each module.
+- `controls.mjs`: local stiffness conversion, stability demonstration, Try and Reset buttons.
 - `ui.mjs`: interactions, explanations and downloads.
 - `math-render.mjs`: local MathJax TeX typography for equations and SVG symbols.
 - `interfaces.mjs`: independently testable linear, cubic, quintic and normalized-tanh interpolation functions.
@@ -56,4 +57,13 @@ Module IV provides linked independent inputs for C11, C12 and C44, or the equiva
 
 Module IV opens with the opposite-misfit thesis example. Enter the homogeneous stiffness constants and the two misfits directly. Its three polar panels show signed kernels on a common offset radial scale: the zero ring separates negative and positive values. The panels keep coincident self kernels visible separately.
 
-The shear-parameter/anisotropy conversion fixes the Poisson parameter at 1/3. Direct stiffness inputs remain independent. The page distinguishes interaction-controlled pair orientation from the competing energies in an evolving microstructure.
+Module IV’s shear-parameter/anisotropy conversion fixes the Poisson parameter at 1/3. Direct stiffness inputs remain independent. The page distinguishes interaction-controlled pair orientation from the competing energies in an evolving microstructure.
+
+## Independent module controls
+Modules I–V have their own misfit and stiffness inputs. Changes and resets stay within the selected module. Module II can explicitly copy the eigenstrain from Module I. Module V has separate matrix, beta and gamma stiffness conversion panels and its own two eigenstrains; it calculates one selected plate at a time. Try recalculates the selected module; Reset restores its initial values. Inputs also update the plots directly.
+
+Module 0 explains positive-definite stiffness, cubic stability and Zener anisotropy, and lists the hexagonal, tetragonal I and orthorhombic conditions. Its energy graph uses three specified strains; an unstable example demonstrates negative tetragonal energy. Those three-dimensional conditions do not turn the later in-plane solvers into general crystal-symmetry solvers.
+
+All conversion panels use the Schmidt–Gross averaged parameters, as specified in Sandeep’s Chapter 3, Eqs. 3.23–3.29. For mu > 0, AZ > 0 and nu < 1/2, the additional cubic stability bound is 1 + 3 AZ + 4 nu > 0. Module IV alone keeps nu fixed at 1/3 in its conversion panel; direct C11, C12 and C44 remain independent.
+
+References: I. Schmidt and D. Gross, JMPS 45, 1521–1549 (1997), doi:10.1016/S0022-5096(97)00011-2; F. Mouhat and F.-X. Coudert, PRB 90, 224104 (2014), arXiv:1410.0065; J. F. Nye, Physical Properties of Crystals (1957), for tensor notation.

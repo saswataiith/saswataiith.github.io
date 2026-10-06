@@ -47,25 +47,34 @@ function coincident(series) {
 const dashFor = (same, i) => (same[i] >= 0 ? ' stroke-dasharray="9 7"' : "");
 const sameNote = (series, same) =>
   same
-    .map((j, i) => (j >= 0 ? `${series[i].name} (dashed) lies on ${series[j].name}` : ""))
+    .map((j, i) =>
+      j >= 0 ? `${series[i].name} (dashed) lies on ${series[j].name}` : "",
+    )
     .filter(Boolean)
     .join("; ");
-export function cartesian(series, title, selected = null) {
+export function cartesian(series, title, selected = null, axis = {}) {
   const vals = series.flatMap((s) => s.points.map((p) => p.value)),
     lo = Math.min(...vals),
     hi = Math.max(...vals),
     pad = Math.max((hi - lo) * 0.12, Math.abs(hi) * 0.04, 1e-12),
     ymin = lo - pad,
     ymax = hi + pad;
-  const X = (a) => 58 + (a / Math.PI) * 340,
+  const xmin = axis.min ?? 0,
+    xmax = axis.max ?? Math.PI;
+  const X = (a) => 58 + ((a - xmin) / (xmax - xmin)) * 340,
     Y = (v) => 270 - ((v - ymin) / (ymax - ymin)) * 215;
   const same = coincident(series),
     note = sameNote(series, same);
   let body =
     text(20, 24, title) + line(58, 55, 58, 270) + line(58, 270, 400, 270);
-  if (note) body += `<text x="20" y="44" font-size="11" fill="#60717a">${note}</text>`;
+  if (note)
+    body += `<text x="20" y="44" font-size="11" fill="#60717a">${note}</text>`;
   for (let tick = 0; tick <= 4; tick++)
-    body += text(X((tick * Math.PI) / 4) - 9, 290, String(tick * 45));
+    body += text(
+      X(xmin + (tick * (xmax - xmin)) / 4) - 9,
+      290,
+      axis.label ? fmt(xmin + (tick * (xmax - xmin)) / 4) : String(tick * 45),
+    );
   // Round-number value ticks: 1, 2 or 5 times a power of ten.
   const raw = (ymax - ymin) / 4,
     power = 10 ** Math.floor(Math.log10(raw)),
@@ -87,23 +96,33 @@ export function cartesian(series, title, selected = null) {
   });
   if (selected)
     body += `<circle cx="${X(selected.angle)}" cy="${Y(selected.value)}" r="6" fill="#142c35"/>`;
-  body += text(285, 307, "angle (degrees)");
+  body += text(285, 307, axis.label ?? "angle (degrees)");
   return svg(title, body);
 }
 export function polar(series, title, magnitude = false, direct = false) {
   // I retain signs in the angle graph when a magnitude plot is requested.
-  if (magnitude) series = series.map(s => ({...s, points: s.points.map(p => ({...p, value: Math.abs(p.value)}))}));
+  if (magnitude)
+    series = series.map((s) => ({
+      ...s,
+      points: s.points.map((p) => ({ ...p, value: Math.abs(p.value) })),
+    }));
   const vals = series.flatMap((s) => s.points.map((p) => p.value)),
     lo = Math.min(0, ...vals),
     hi = Math.max(...vals),
     span = Math.max(hi - lo, 1e-12),
-    R = (v) => direct ? 120 * Math.max(0, v) / Math.max(hi, 1e-30) : magnitude ? 120 * v / Math.max(hi, 1e-12) : 20 + (100 * (v - lo)) / span,
+    R = (v) =>
+      direct
+        ? (120 * Math.max(0, v)) / Math.max(hi, 1e-30)
+        : magnitude
+          ? (120 * v) / Math.max(hi, 1e-12)
+          : 20 + (100 * (v - lo)) / span,
     cx = 220,
     cy = 165,
     same = coincident(series),
     note = sameNote(series, same);
   let b = text(14, 22, title);
-  if (note) b += `<text x="14" y="40" font-size="11" fill="#60717a">${note}</text>`;
+  if (note)
+    b += `<text x="14" y="40" font-size="11" fill="#60717a">${note}</text>`;
   for (const [a, label] of [
     [0, "[10]"],
     [Math.PI / 2, "[01]"],
@@ -138,35 +157,69 @@ export function polar(series, title, magnitude = false, direct = false) {
       b += `<circle cx="${cx + R(p.value) * Math.cos(p.angle)}" cy="${cy - R(p.value) * Math.sin(p.angle)}" r="${minima(s.points).global.includes(p) ? 5 : 3}" fill="${colors[i]}"/>`;
     b += text(40 + i * 130, 310, s.name, `fill="${colors[i]}"`);
   });
-  b += text(20, 334, direct ? "Radius proportional to Bpp; centre: Bpp = 0." : magnitude ? "Radius = |Bpq|; signs are shown in the angle graph." : "Offset radial scale; labels give signed values.");
+  b += text(
+    20,
+    334,
+    direct
+      ? "Radius proportional to Bpp; centre: Bpp = 0."
+      : magnitude
+        ? "Radius = |Bpq|; signs are shown in the angle graph."
+        : "Offset radial scale; labels give signed values.",
+  );
   return svg(title, b);
 }
 // I use one signed radial scale for all three kernels, so none hides another.
 export function kernelPolarPanels(series) {
-  const limit = Math.max(1e-12, ...series.flatMap(s => s.points.map(p => Math.abs(p.value))));
-  const radius = value => 14 + 112 * (value + limit) / (2 * limit);
-  const cx = 220, cy = 165;
-  return series.map((s, index) => {
-    let body = "";
-    for (const [angle, label] of [[0,"[10]"],[Math.PI / 4,"[11]"],[Math.PI / 2,"[01]"],[3 * Math.PI / 4,"[1̄1]"]]) {
-      body += line(cx - 128 * Math.cos(angle), cy + 128 * Math.sin(angle), cx + 128 * Math.cos(angle), cy - 128 * Math.sin(angle), 'class="gridline"');
-      body += text(cx + 143 * Math.cos(angle) - 14, cy - 143 * Math.sin(angle), label);
-    }
-    for (const value of [-limit, -limit / 2, 0, limit / 2, limit]) {
-      const r = radius(value);
-      body += `<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" class="${value === 0 ? "zero-line" : "gridline"}"/>`;
-      body += `<text x="${cx + r * .82 + 3}" y="${cy + r * .57 + 11}" font-size="11" fill="#17313a" stroke="#fff" stroke-width="3" paint-order="stroke">${fmt(value)}</text>`;
-    }
-    const points = [...s.points, ...s.points.map(p => ({...p, angle:p.angle + Math.PI})), s.points[0]];
-    body += `<polyline fill="none" stroke="${colors[index]}" stroke-width="3" points="${points.map(p => `${cx + radius(p.value) * Math.cos(p.angle)},${cy - radius(p.value) * Math.sin(p.angle)}`).join(" ")}"/>`;
-    const m = minima(s.points);
-    for (const p of m.global) {
-      for (const angle of [p.angle, p.angle + Math.PI]) body += `<circle cx="${cx + radius(p.value) * Math.cos(angle)}" cy="${cy - radius(p.value) * Math.sin(angle)}" r="5" fill="#267c70" stroke="#fff" stroke-width="1.5"/>`;
-    }
-    body += text(20, 318, "Signed radial scale: inward is lower B.");
-    body += text(20, 334, "Green dots: minimum; bold ring: B = 0.");
-    return `<figure class="kernel-polar-panel lab-plot"><h4>\\(${plotTex[s.name]}\\)</h4>${svg(s.name + ": signed elastic kernel", body)}<figcaption>At [10]: ${fmt(s.points[0].value)} · At [11]: ${fmt(s.points[45].value)}${m.flat ? " · independent of direction" : ""}</figcaption></figure>`;
-  }).join("");
+  const limit = Math.max(
+    1e-12,
+    ...series.flatMap((s) => s.points.map((p) => Math.abs(p.value))),
+  );
+  const radius = (value) => 14 + (112 * (value + limit)) / (2 * limit);
+  const cx = 220,
+    cy = 165;
+  return series
+    .map((s, index) => {
+      let body = "";
+      for (const [angle, label] of [
+        [0, "[10]"],
+        [Math.PI / 4, "[11]"],
+        [Math.PI / 2, "[01]"],
+        [(3 * Math.PI) / 4, "[1̄1]"],
+      ]) {
+        body += line(
+          cx - 128 * Math.cos(angle),
+          cy + 128 * Math.sin(angle),
+          cx + 128 * Math.cos(angle),
+          cy - 128 * Math.sin(angle),
+          'class="gridline"',
+        );
+        body += text(
+          cx + 143 * Math.cos(angle) - 14,
+          cy - 143 * Math.sin(angle),
+          label,
+        );
+      }
+      for (const value of [-limit, -limit / 2, 0, limit / 2, limit]) {
+        const r = radius(value);
+        body += `<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" class="${value === 0 ? "zero-line" : "gridline"}"/>`;
+        body += `<text x="${cx + r * 0.82 + 3}" y="${cy + r * 0.57 + 11}" font-size="11" fill="#17313a" stroke="#fff" stroke-width="3" paint-order="stroke">${fmt(value)}</text>`;
+      }
+      const points = [
+        ...s.points,
+        ...s.points.map((p) => ({ ...p, angle: p.angle + Math.PI })),
+        s.points[0],
+      ];
+      body += `<polyline fill="none" stroke="${colors[index]}" stroke-width="3" points="${points.map((p) => `${cx + radius(p.value) * Math.cos(p.angle)},${cy - radius(p.value) * Math.sin(p.angle)}`).join(" ")}"/>`;
+      const m = minima(s.points);
+      for (const p of m.global) {
+        for (const angle of [p.angle, p.angle + Math.PI])
+          body += `<circle cx="${cx + radius(p.value) * Math.cos(angle)}" cy="${cy - radius(p.value) * Math.sin(angle)}" r="5" fill="#267c70" stroke="#fff" stroke-width="1.5"/>`;
+      }
+      body += text(20, 318, "Signed radial scale: inward is lower B.");
+      body += text(20, 334, "Green dots: minimum; bold ring: B = 0.");
+      return `<figure class="kernel-polar-panel lab-plot"><h4>\\(${plotTex[s.name]}\\)</h4>${svg(s.name + ": signed elastic kernel", body)}<figcaption>At [10]: ${fmt(s.points[0].value)} · At [11]: ${fmt(s.points[45].value)}${m.flat ? " · independent of direction" : ""}</figcaption></figure>`;
+    })
+    .join("");
 }
 export function mohr(t, angle, stage = 4) {
   const { centre, radius, normal, shear } = mohrState(t, angle);

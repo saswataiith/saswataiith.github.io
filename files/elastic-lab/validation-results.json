@@ -1,5 +1,5 @@
 {
-  "date": "2026-10-06T10:54:18.732Z",
+  "date": "2026-10-06T19:39:30.685Z",
   "boundary": "periodic, fixed mean total strain zero",
   "tests": [
     {
@@ -10,7 +10,8 @@
           "mu": 2000,
           "nu": 0.3333333333333333,
           "z": 3
-        }
+        },
+        "stabilityBoundaryChecked": "nu > -(1+3 AZ)/4 for positive mu and AZ, nu < 1/2"
       }
     },
     {

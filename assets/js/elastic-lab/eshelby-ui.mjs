@@ -39,18 +39,35 @@ const svg = (label, body, h = 340) =>
 const text = (x, y, s, more = "") =>
   `<text x="${x}" y="${y}" font-size="12" fill="${T}" ${more}>${s}</text>`;
 const sub = (s) =>
-  s.replace(/_([a-z]+)/g, '<tspan baseline-shift="sub" font-size="75%">$1</tspan>');
+  s.replace(
+    /_([a-z]+)/g,
+    '<tspan baseline-shift="sub" font-size="75%">$1</tspan>',
+  );
 
 function state() {
-  const inputs = ["es-eps", "es-t", "es-c11", "es-c12", "es-c44", "es-ratio", "es-phi", "es-psi"];
+  const inputs = [
+    "es-eps",
+    "es-t",
+    "es-c11",
+    "es-c12",
+    "es-c44",
+    "es-ratio",
+    "es-phi",
+    "es-psi",
+  ];
   for (const id of inputs) {
     const el = $(id);
-    if (el.value.trim() === "" || !Number.isFinite(Number(el.value)) || el.validity.rangeUnderflow || el.validity.rangeOverflow)
+    if (
+      el.value.trim() === "" ||
+      !Number.isFinite(Number(el.value)) ||
+      el.validity.rangeUnderflow ||
+      el.validity.rangeOverflow
+    )
       throw Error("Enter finite values within the displayed limits.");
   }
   const c = { c11: num("es-c11"), c12: num("es-c12"), c44: num("es-c44") };
-  if (!(c.c44 > 0 && c.c11 - c.c12 > 0 && c.c11 + c.c12 > 0))
-    throw Error("Require C44 > 0, C11 − C12 > 0 and C11 + C12 > 0.");
+  if (!(c.c44 > 0 && c.c11 - c.c12 > 0 && c.c11 + 2 * c.c12 > 0))
+    throw Error("Require C44 > 0, C11 − C12 > 0 and C11 + 2C12 > 0.");
   const eps = num("es-eps"),
     t = num("es-t");
   return {
@@ -94,7 +111,12 @@ function shapePanel(s, inside, point) {
     py = cy - p.y;
   let b =
     `<defs><marker id="esa-o" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="${O}"/></marker><marker id="esa-g" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="${G}"/></marker></defs>` +
-    text(14, 22, "Inclusion shapes (strain exaggerated ×" + Math.round(k) + ")", 'font-weight="600"') +
+    text(
+      14,
+      22,
+      "Inclusion shapes (strain exaggerated ×" + Math.round(k) + ")",
+      'font-weight="600"',
+    ) +
     `<line x1="${cx}" y1="${cy}" x2="${cx + 190}" y2="${cy}" stroke="#dce4e1"/><line x1="${cx}" y1="${cy}" x2="${cx}" y2="${cy - 140}" stroke="#dce4e1"/>` +
     text(cx + 175, cy + 16, "[10]") +
     text(cx + 6, cy - 128, "[01]") +
@@ -105,17 +127,51 @@ function shapePanel(s, inside, point) {
     `<line x1="${px}" y1="${py}" x2="${px + 42 * p.m[0]}" y2="${py - 42 * p.m[1]}" stroke="${O}" stroke-width="2.4" marker-end="url(#esa-o)"/>` +
     `<line x1="${px - 30 * p.s[0]}" y1="${py + 30 * p.s[1]}" x2="${px + 30 * p.s[0]}" y2="${py - 30 * p.s[1]}" stroke="${G}" stroke-width="2.4" marker-end="url(#esa-g)"/>` +
     `<circle cx="${px}" cy="${py}" r="5" fill="${T}"/>` +
-    text(px + 46 * p.m[0] - 4, py - 46 * p.m[1] + 4, "m", `fill="${O}" font-style="italic" font-weight="700"`) +
-    text(px + 36 * p.s[0] - 4, py - 36 * p.s[1] + 4, "s", `fill="${G}" font-style="italic" font-weight="700"`);
+    text(
+      px + 46 * p.m[0] - 4,
+      py - 46 * p.m[1] + 4,
+      "m",
+      `fill="${O}" font-style="italic" font-weight="700"`,
+    ) +
+    text(
+      px + 36 * p.s[0] - 4,
+      py - 36 * p.s[1] + 4,
+      "s",
+      `fill="${G}" font-style="italic" font-weight="700"`,
+    );
   b +=
-    text(14, 306, `<tspan fill="${GR}">- - hole (original shape)</tspan>   <tspan fill="${O}">— — free: ε⁰</tspan>   <tspan fill="${G}">■ constrained: ∇u = D</tspan>`) +
-    text(14, 326, "Click the outline to choose the interface point.", `fill="${GR}"`);
-  return svg("Hole, free and constrained inclusion shapes with the selected interface point", b);
+    text(
+      14,
+      306,
+      `<tspan fill="${GR}">- - hole (original shape)</tspan>   <tspan fill="${O}">— — free: ε⁰</tspan>   <tspan fill="${G}">■ constrained: ∇u = D</tspan>`,
+    ) +
+    text(
+      14,
+      326,
+      "Click the outline to choose the interface point.",
+      `fill="${GR}"`,
+    );
+  return svg(
+    "Hole, free and constrained inclusion shapes with the selected interface point",
+    b,
+  );
 }
 
 // ---------- generic xy plot ----------
-function xyPlot({ title, series, xlabel, xmin, xmax, xticks, marker, vlines = [], note = "" }) {
-  const vals = series.flatMap((s) => s.points.map((p) => p[1])).filter(Number.isFinite);
+function xyPlot({
+  title,
+  series,
+  xlabel,
+  xmin,
+  xmax,
+  xticks,
+  marker,
+  vlines = [],
+  note = "",
+}) {
+  const vals = series
+    .flatMap((s) => s.points.map((p) => p[1]))
+    .filter(Number.isFinite);
   let lo = Math.min(0, ...vals),
     hi = Math.max(...vals);
   if (hi - lo < 1e-14) hi = lo + 1e-14;
@@ -131,19 +187,36 @@ function xyPlot({ title, series, xlabel, xmin, xmax, xticks, marker, vlines = []
     step = [1, 2, 5, 10].map((m) => m * pow).find((m) => m >= raw);
   for (let v = Math.ceil(lo / step) * step; v <= hi + 1e-15; v += step) {
     const cv = Math.abs(v) < step * 1e-9 ? 0 : v;
-    b += `<line x1="62" y1="${Yf(cv)}" x2="412" y2="${Yf(cv)}" stroke="#dce4e1"/>` + text(4, Yf(cv) + 4, fmt(cv), 'font-size="11"');
+    b +=
+      `<line x1="62" y1="${Yf(cv)}" x2="412" y2="${Yf(cv)}" stroke="#dce4e1"/>` +
+      text(4, Yf(cv) + 4, fmt(cv), 'font-size="11"');
   }
-  for (const [x, lab] of xticks) b += text(X(x) - 10, 288, lab, 'font-size="11"');
+  for (const [x, lab] of xticks)
+    b += text(X(x) - 10, 288, lab, 'font-size="11"');
   b += text(412, 306, xlabel, 'font-size="11.5" text-anchor="end"');
   for (const v of vlines)
-    b += `<line x1="${X(v.x)}" y1="50" x2="${X(v.x)}" y2="270" stroke="${v.color}" stroke-dasharray="4 3"/>` + text(X(v.x) + 3, 60, v.label, `font-size="10.5" fill="${v.color}"`);
+    b +=
+      `<line x1="${X(v.x)}" y1="50" x2="${X(v.x)}" y2="270" stroke="${v.color}" stroke-dasharray="4 3"/>` +
+      text(X(v.x) + 3, 60, v.label, `font-size="10.5" fill="${v.color}"`);
   series.forEach((s) => {
-    b += `<polyline fill="none" stroke="${s.color}" stroke-width="${s.width || 2.4}" ${s.dash ? `stroke-dasharray="${s.dash}"` : ""} points="${s.points.filter((p) => Number.isFinite(p[1])).map((p) => `${X(p[0]).toFixed(1)},${Yf(p[1]).toFixed(1)}`).join(" ")}"/>`;
+    b += `<polyline fill="none" stroke="${s.color}" stroke-width="${s.width || 2.4}" ${s.dash ? `stroke-dasharray="${s.dash}"` : ""} points="${s.points
+      .filter((p) => Number.isFinite(p[1]))
+      .map((p) => `${X(p[0]).toFixed(1)},${Yf(p[1]).toFixed(1)}`)
+      .join(" ")}"/>`;
   });
-  if (marker) b += `<circle cx="${X(marker[0])}" cy="${Yf(marker[1])}" r="5.5" fill="${T}"/>`;
+  if (marker)
+    b += `<circle cx="${X(marker[0])}" cy="${Yf(marker[1])}" r="5.5" fill="${T}"/>`;
   series
     .filter((s) => s.name)
-    .forEach((s, i) => (b += text(14 + i * 142, 326, s.name, `font-size="11.5" fill="${s.color}"`)));
+    .forEach(
+      (s, i) =>
+        (b += text(
+          14 + i * 142,
+          326,
+          s.name,
+          `font-size="11.5" fill="${s.color}"`,
+        )),
+    );
   if (note) b += text(250, 326, note, 'font-size="11" fill="' + GR + '"');
   return svg(title, b);
 }
@@ -217,7 +290,12 @@ function drawMap(F, s) {
   );
 }
 function profile(F, s, inside, J) {
-  const {rows,J:Jf,Lin,Lout}=sharpProfile(s.c,s.e0,F.a,F.a*s.ratio,s.phi,s.psi);
+  const {
+    rows,
+    J: Jf,
+    Lin,
+    Lout,
+  } = sharpProfile(s.c, s.e0, F.a, F.a * s.ratio, s.phi, s.psi);
   const mk = (kind) => {
     const colours = { ss: O, sm: Y, mm: B },
       series = [];
@@ -225,11 +303,17 @@ function profile(F, s, inside, J) {
       const cont =
         (kind === "strain" && k === "ss") || (kind === "stress" && k !== "ss");
       series.push({
-        name: sub(`${kind === "strain" ? "ε" : "σ"}_${k}`) + (cont ? " continuous" : " jumps"),
+        name:
+          sub(`${kind === "strain" ? "ε" : "σ"}_${k}`) +
+          (cont ? " continuous" : " jumps"),
         color: colours[k],
         points: rows[kind][k].inside,
       });
-      series.push({name:"",color:colours[k],points:rows[kind][k].outside});
+      series.push({
+        name: "",
+        color: colours[k],
+        points: rows[kind][k].outside,
+      });
       series.push({
         name: "",
         color: colours[k],
@@ -288,9 +372,21 @@ function scheduleField(s, inside, J) {
 function jumpTable(J) {
   const cell = (v) => fmt(v);
   const law = {
-    strain: { ss: ["continuous", "Hadamard"], sm: ["jumps", "set by g"], mm: ["jumps", "set by g"] },
-    stress: { ss: ["jumps", "remnant"], sm: ["continuous", "traction"], mm: ["continuous", "traction"] },
-    eigen: { ss: ["jumps", "prescribed"], sm: ["jumps", "prescribed"], mm: ["jumps", "prescribed"] },
+    strain: {
+      ss: ["continuous", "Hadamard"],
+      sm: ["jumps", "set by g"],
+      mm: ["jumps", "set by g"],
+    },
+    stress: {
+      ss: ["jumps", "remnant"],
+      sm: ["continuous", "traction"],
+      mm: ["continuous", "traction"],
+    },
+    eigen: {
+      ss: ["jumps", "prescribed"],
+      sm: ["jumps", "prescribed"],
+      mm: ["jumps", "prescribed"],
+    },
   };
   let h =
     '<table class="lab-table es-table"><thead><tr><th>quantity</th><th>inside</th><th>outside</th><th>jump ⟦·⟧ = in − out</th><th>rule</th></tr></thead><tbody>';
@@ -303,7 +399,12 @@ function jumpTable(J) {
       const a = J[kind].inside[k],
         b = J[kind].outside[k],
         [state, why] = law[kind][k],
-        cls = kind === "eigen" ? "" : state === "continuous" ? "es-cont" : "es-jump";
+        cls =
+          kind === "eigen"
+            ? ""
+            : state === "continuous"
+              ? "es-cont"
+              : "es-jump";
       h += `<tr class="${cls}"><td>\\(${sym === "ε⁰" ? "\\epsilon^0" : sym === "ε" ? "\\epsilon" : "\\sigma"}_{${k}}\\)</td><td>${cell(a)}</td><td>${cell(b)}</td><td><strong>${cell(a - b)}</strong></td><td>${state} (${why})</td></tr>`;
     }
   return h + "</tbody></table>";
@@ -324,7 +425,10 @@ function sweepOrientation(s) {
   for (let q = 0; q <= 90; q++) {
     const ph = (q * Math.PI) / 90;
     pts.push([deg(ph), interior(s.c, s.e0, 1, s.ratio, ph, 2048).energy]);
-    thin.push([deg(ph), 0.5 * kernelB(s.c, s.e0, [-Math.sin(ph), Math.cos(ph)])]);
+    thin.push([
+      deg(ph),
+      0.5 * kernelB(s.c, s.e0, [-Math.sin(ph), Math.cos(ph)]),
+    ]);
   }
   return { pts, thin };
 }
@@ -336,7 +440,8 @@ function render() {
     s = state();
     $("es-error").textContent = "";
   } catch (err) {
-    $("es-error").textContent = err.message + " Plots keep the last valid state.";
+    $("es-error").textContent =
+      err.message + " Plots keep the last valid state.";
     return;
   }
   $("es-ratio-out").textContent = s.ratio.toFixed(3);
@@ -368,29 +473,58 @@ function render() {
     title: "Energy per area vs aspect ratio (fixed orientation)",
     series: [
       { name: "w(b/a)", color: B, points: sweeps.aspect },
-      { name: "½B(m) thin limit", color: O, dash: "6 4", points: [[-2, thinW], [0, thinW]] },
+      {
+        name: "½B(m) thin limit",
+        color: O,
+        dash: "6 4",
+        points: [
+          [-2, thinW],
+          [0, thinW],
+        ],
+      },
     ],
     xlabel: "log₁₀(b/a): thin plate ← → circle",
     xmin: -2,
     xmax: 0,
-    xticks: [[-2, "0.01"], [-1, "0.1"], [0, "1"]],
+    xticks: [
+      [-2, "0.01"],
+      [-1, "0.1"],
+      [0, "1"],
+    ],
     marker: [Math.log10(s.ratio), inside.energy],
   });
   $("es-orient").innerHTML = xyPlot({
     title: "Energy per area vs orientation of the long axis",
     series: [
-      { name: `w(φ) at b/a = ${s.ratio.toFixed(2)}`, color: B, points: sweeps.orient.pts },
-      { name: "½B thin limit", color: O, dash: "6 4", points: sweeps.orient.thin },
+      {
+        name: `w(φ) at b/a = ${s.ratio.toFixed(2)}`,
+        color: B,
+        points: sweeps.orient.pts,
+      },
+      {
+        name: "½B thin limit",
+        color: O,
+        dash: "6 4",
+        points: sweeps.orient.thin,
+      },
     ],
     xlabel: "long-axis angle φ (degrees)",
     xmin: 0,
     xmax: 180,
-    xticks: [[0, "0"], [45, "45"], [90, "90"], [135, "135"], [180, "180"]],
+    xticks: [
+      [0, "0"],
+      [45, "45"],
+      [90, "90"],
+      [135, "135"],
+      [180, "180"],
+    ],
     marker: [deg(s.phi), inside.energy],
     vlines: hab.map((h) => ({ x: h, color: G, label: "habit" })),
   });
   // Why text
-  const jumps = ["sm", "mm"].map((k) => fmt(J.strain.inside[k] - J.strain.outside[k])),
+  const jumps = ["sm", "mm"].map((k) =>
+      fmt(J.strain.inside[k] - J.strain.outside[k]),
+    ),
     remn = fmt(J.stress.inside.ss - J.stress.outside.ss);
   setHTML(
     "es-why",
@@ -402,7 +536,16 @@ function render() {
 function setRatio(r) {
   $("es-ratio").value = Math.log10(r).toFixed(2);
 }
-for (const id of ["es-eps", "es-t", "es-c11", "es-c12", "es-c44", "es-ratio", "es-phi", "es-psi"])
+for (const id of [
+  "es-eps",
+  "es-t",
+  "es-c11",
+  "es-c12",
+  "es-c44",
+  "es-ratio",
+  "es-phi",
+  "es-psi",
+])
   $(id).addEventListener("input", render);
 $("es-resolution").addEventListener("change", render);
 $("es-comp").addEventListener("change", () => fieldCache && render());
@@ -433,6 +576,7 @@ for (const button of document.querySelectorAll("[data-es]"))
       $("es-c12").value = 1;
       $("es-c44").value = 3;
     }
+    $("eshelby").dispatchEvent(new Event("lab:sync"));
     render();
   });
 $("es-shape").addEventListener("click", (event) => {
@@ -451,3 +595,6 @@ $("es-shape").addEventListener("click", (event) => {
   render();
 });
 render();
+
+// I allow this module to be tried or reset without changing another experiment.
+$("eshelby").addEventListener("lab:apply", render);
