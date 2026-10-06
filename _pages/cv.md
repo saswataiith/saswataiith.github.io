@@ -37,7 +37,7 @@ nav_active: cv
       <h2>Education</h2>
       <ul>
         <li><strong>2008:</strong> Ph.D., Materials Engineering, Indian Institute of Science, Bangalore</li>
-        <li><strong>2002:</strong> M.S. (Eng.), Metallurgy, Indian Institute of Science, Bangalore</li>
+        <li><strong>2002:</strong> M.Sc. (Eng.), Metallurgy, Indian Institute of Science, Bangalore</li>
         <li><strong>1999:</strong> B.Sc. (Tech.), Ceramic Technology, Calcutta University</li>
       </ul>
     </section>
