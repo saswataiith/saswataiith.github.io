@@ -1,0 +1,29 @@
+---
+layout: scholar
+title: "My NRCM phase-field workshop examples"
+permalink: /resources/nrcm-phase-field/
+nav_active: resources
+---
+<section class="page-heading"><span class="eyebrow">NRCM · 2014 PHASE-FIELD WORKSHOP</span><h1>Spinodal decomposition and precipitate growth.</h1><p>My workshop codes explain two ways in which a microstructure can evolve: composition fluctuations can grow throughout a material, or an existing precipitate can grow by drawing solute from its surroundings.</p><a class="button secondary" href="/files/mesoscale/nrcm-2014/spinodal-precipitate-sources.zip" download>Download my original C sources and inputs ↓</a></section>
+<article class="tutorial"><a href="/research/#phase-field">← Microstructures in motion</a>
+<h2>1. Spinodal decomposition</h2>
+<p>The <code>Spinodal</code> example evolves the dimensionless composition \(c\) by the Cahn–Hilliard equation. Its bulk free energy is \(f=A c^2(1-c)^2\), where \(A\) sets the energy scale. The initial composition is close to 0.5, with small random fluctuations. Composition is conserved: redistribution changes the local value but not the total amount in the periodic domain.</p>
+<p>The saved input specifies a 512 × 512 grid, grid spacing 1, time step 1 and 10,000 steps. These are the original workshop settings, not a new convergence study. For a browser demonstration and explained downloadable scripts, use the <a href="/resources/examples/chemical/">chemical spinodal example</a>.</p>
+<h2>2. Precipitate growth</h2>
+<p>The <code>PptCodes1D</code> and <code>PptCodes2D</code> examples evolve composition \(c\) and a dimensionless structural order parameter \(\eta\). The matrix has \(\eta=0\); the precipitate has \(\eta=1\). Composition is conserved. The structural field is not conserved, so the precipitate boundary can move as the precipitate grows or dissolves.</p>
+<div class="formula-box">\[
+f(c,\eta)=A c^2[1-h(\eta)]+B(1-c)^2h(\eta)+P\eta^2(1-\eta)^2,
+\qquad h(\eta)=\eta^2(3-2\eta).
+\]</div>
+<p>Here \(f\) is the local bulk free-energy density. The coefficients \(A\) and \(B\) set the matrix and precipitate free-energy scales; \(P\) sets the barrier between the two structures. All quantities in these codes are nondimensional. No physical conversion to metres, seconds or joules is supplied.</p>
+<p>The total free energy also includes \(\kappa_c|\nabla c|^2\) and \(\kappa_\eta|\nabla\eta|^2\), where \(\kappa_c\) and \(\kappa_\eta\) are the gradient-energy coefficients. Consequently, the composition chemical potential is \(\mu=\partial f/\partial c-2\kappa_c\nabla^2c\). Composition evolves as \(\partial c/\partial t=M\nabla^2\mu\), where \(M\) is mobility. The structural field evolves as \(\partial\eta/\partial t=-L[\partial f/\partial\eta-2\kappa_\eta\nabla^2\eta]\), where \(L\) is the relaxation coefficient. The factor 2 follows from the gradient-energy convention used in these sources.</p>
+<p>The two-dimensional input starts with a central precipitate, composition 1 inside it and composition 0.3 in the matrix. It specifies a 256 × 256 grid, spacing 0.4 and time step 0.2. The radius in the initializer is calculated in grid indices; it should not be treated as a physical length without checking that convention.</p>
+<h2>3. Add homogeneous elasticity</h2>
+<p>Homogeneous elasticity means that the elastic constants are the same throughout the material. It does not mean that they are isotropic. A composition-dependent misfit produces elastic strain energy, and elastic anisotropy can make the energy depend on direction. In the <a href="/resources/examples/elastic/">interactive binary spinodal example with homogeneous elasticity</a>, change the misfit and elastic parameters and observe the evolving composition. Set the misfit to zero to recover the chemical calculation with the same initial field.</p>
+<h2>4. Phase separation inside an embedded particle</h2>
+<p>For a particle surrounded by another material, I use a field to identify the particle and its exterior. That field weights the appropriate free energies and can also control transport or boundary conditions. Whether it remains fixed or evolves depends on the physical problem. An evolving precipitate field permits growth and dissolution; a fixed particle field describes phase separation within a prescribed particle.</p>
+<p><a href="/resources/spinodal/#embedded-particles">Read the embedded phase-field explanation, equations and research references →</a></p>
+<h2>Using the workshop sources</h2>
+<p>The download contains my original source files and input files for these three examples. It omits old executables and output fields. The codes use C and FFTW; the headers and supplied Makefiles also refer to OpenMP. The Makefiles contain library paths from the original setup and may need adjustment on another computer. I have inspected the equations and inputs for this page; I have not compiled or rerun these historical codes for this update.</p>
+<p>Before interpreting a new run, check conservation, energy, time-step sensitivity and grid refinement at a fixed domain size. The original evolution loops include the final step in an inclusive loop; check the saved time and the number of updates when making comparisons.</p>
+</article>
