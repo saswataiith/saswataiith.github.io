@@ -103,3 +103,8 @@
 .sandeep-movies details{margin-top:14px;font-size:.9em}
 .sandeep-movies summary{cursor:pointer;font-weight:600}
 @media(max-width:900px){.sandeep-movies{grid-template-columns:1fr}}
+
+.research-note{margin:18px 0 28px;padding:14px 18px;border:1px solid #dce4e1;border-radius:8px;background:#f7f9f8}
+.research-note summary{cursor:pointer;font-weight:600}
+.research-note[open] summary{margin-bottom:14px}
+.research-note p:last-child{margin-bottom:0}
