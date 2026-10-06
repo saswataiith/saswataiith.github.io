@@ -4,11 +4,10 @@ title: "Academic CV"
 permalink: /cv/
 nav_active: cv
 ---
-<section class="page-heading">
+<section class="page-heading cv-profile-heading">
   <span class="eyebrow">ACADEMIC PROFILE</span>
   <h1>Saswata<br><em>Bhattacharyya.</em></h1>
-  <p>Professor · Department of Materials Science and Metallurgical Engineering<br>Indian Institute of Technology Hyderabad</p>
-  <p>A brief summary of my experience, research and selected projects. My full CV includes publications, teaching, sponsored projects and academic service.</p>
+  <p class="cv-position">Professor, Department of Materials Science and Metallurgical Engineering, IIT Hyderabad.</p>
   <div class="transport-card-links">
     <a class="button primary" href="/files/saswata-bhattacharyya-full-cv.pdf?v=43ade922e35a">Full CV (PDF) ↓</a>
     <a class="button secondary" href="https://scholar.google.co.in/citations?hl=en&amp;user=i9VAh7sAAAAJ">Google Scholar ↗</a>
