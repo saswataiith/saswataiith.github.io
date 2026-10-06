@@ -1157,8 +1157,8 @@ nav_active: research
       ><button data-preset="anisotropic">A<sub>Z</sub> &gt; 1 example</button>
     </div>
     <div class="lab-controls">
-      <label for="kernel-epsilon">Eigenstrain scale \(\epsilon_p\) (dimensionless)<input id="kernel-epsilon" type="number" value="0.01" step="any" /></label>
-      <label for="kernel-t">Strain ratio \(t=\epsilon_{yy}^{(p)}/\epsilon_{xx}^{(p)}\) (dimensionless)<input id="kernel-t" type="number" value="-0.5" step="any" /></label>
+      <label for="kernel-epsilon">Eigenstrain scale \(\epsilon_p\) (dimensionless)<input id="kernel-epsilon" type="number" value="0.01" step="any" min="0.001" max="0.05" /></label>
+      <label for="kernel-t">Strain ratio \(t=\epsilon_{yy}^{(p)}/\epsilon_{xx}^{(p)}\) (dimensionless)<input id="kernel-t" type="number" value="-0.5" step="any" min="-1" max="1" /></label>
     </div>
     <div class="lab-buttons"><button data-preset="dilatational">Equal dilatational components: t = 1</button></div>
     <p>The eigenstrain is \(\boldsymbol\epsilon^{(p)}=\epsilon_p\operatorname{diag}(1,t)\). These inputs are linked to Module I. Equal components, \(t=1\), give in-plane dilatation. Unequal components can give a different angular symmetry, even with isotropic elastic constants. The self kernel has energy-density units for dimensional stiffnesses; this widget uses scaled model values.</p>
