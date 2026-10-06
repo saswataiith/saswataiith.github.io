@@ -220,8 +220,10 @@ function renderPair(s) {
   );
   set(
     "pair-result",
-    `Minimum interaction energy ${fmt(m.lo)} at ${locations(m)}. At nearest 1° sample to selected angle: ${fmt(nearest.value)}. Energy is per box area.`,
+    `${type === "bg" ? "β–γ" : type === "bb" ? "β–β" : "γ–γ"} pair: minimum interaction energy ${fmt(m.lo)} at ${locations(m)}. At nearest 1° sample to selected angle: ${fmt(nearest.value)}. Energy is per box area.`,
   );
+  const axis = points[0].value, diagonal = points[45].value;
+  draw("pair-direction-comparison", `<table class="lab-table"><thead><tr><th>Particle separation</th><th>Signed interaction energy / box area</th></tr></thead><tbody><tr><td>[10] · 0°</td><td>${fmt(axis)}</td></tr><tr><td>[11] · 45°</td><td>${fmt(diagonal)}</td></tr></tbody></table><p>${m.flat ? "No resolved directional preference." : diagonal < axis ? "[11] has lower interaction energy than [10]." : "[10] has lower interaction energy than [11]."} Compare signed values: a more negative value is lower energy. The self kernels and the magnitude polar plot above are different quantities.</p>`);
   set(
     "pair-why",
     `The cross kernel weights every mode of the particle profile. Separation ${value("separation")} enters through cos(k·R), so the summed interaction has minima at ${locations(m)}. This includes periodic copies and the clamped zero mode. Negative interaction energy lowers the total relative to the two separate profiles in the same box; it does not mean the full elastic energy is negative.`,
@@ -451,7 +453,11 @@ for (const button of document.querySelectorAll("[data-preset]"))
         element("gamma").value = -0.01;
         element("tbeta").value = 1;
         element("tgamma").value = 1;
-        if (preset === "sandeep") setStiffness("c", moduli(2000, 1 / 3, 3));
+        if (preset === "sandeep") {
+          setStiffness("c", moduli(2000, 1 / 3, 3));
+          element("pair-type").value = "bg";
+          element("pair-angle").value = 45;
+        }
         queueScan();
       }
       if (["soft", "hard", "homogeneous"].includes(preset)) {

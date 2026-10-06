@@ -1395,6 +1395,7 @@ nav_active: research
       <p id="pair-kernels-why"></p>
     </details>
     <h3>Now calculate a particle-pair energy.</h3>
+    <p>The thesis preset selects a β–γ pair with opposite misfits. For this case at \(A_Z=3\), [11] has lower interaction energy. A β–β or γ–γ pair has same-sign misfits and gives a different preference. The positive self kernels are higher along [11]; the signed β–γ cross kernel is lower there. A larger radius in the magnitude polar plot means a larger absolute value, not necessarily higher energy.</p>
     <div class="lab-controls">
       <label for="pair-type"
         >Pair<select id="pair-type">
@@ -1425,6 +1426,7 @@ nav_active: research
       <div class="lab-plot" id="pair-sketch"></div>
     </div>
     <p id="pair-result" class="lab-readout"></p>
+    <div id="pair-direction-comparison" aria-live="polite"></div>
     <details class="lab-insight">
       <summary>Why did this happen?</summary>
       <p id="pair-why"></p>
@@ -1770,5 +1772,5 @@ nav_active: research
     </p>
   </section>
 </div>
-<script type="module" src="/assets/js/elastic-lab/ui.mjs?v=20261006-independent-stiffness"></script>
+<script type="module" src="/assets/js/elastic-lab/ui.mjs?v=20261006-thesis-pair"></script>
 <script type="module" src="/assets/js/elastic-lab/eshelby-ui.mjs?v=20261005-sharp-branches"></script>
