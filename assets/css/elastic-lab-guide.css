@@ -1,0 +1,53 @@
+/* SPDX-License-Identifier: GPL-3.0-or-later */
+.elastic-lab-guide .section p,
+.elastic-lab-guide .section li {
+  max-width: 86ch;
+  line-height: 1.8;
+}
+.elastic-lab-guide .section h3 {
+  margin-top: 36px;
+  margin-bottom: 16px;
+}
+.elastic-lab-guide table {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  margin: 20px 0 32px;
+  overflow-x: auto;
+  border-collapse: collapse;
+  background: #fff;
+  font-size: 15px;
+  line-height: 1.6;
+}
+.elastic-lab-guide th,
+.elastic-lab-guide td {
+  padding: 12px 16px;
+  border: 1px solid #cce0e7;
+  text-align: left;
+  vertical-align: top;
+  min-width: 85px;
+}
+.elastic-lab-guide th {
+  background: #dceff6;
+  color: #173f50;
+}
+.elastic-lab-guide tbody tr:nth-child(even) {
+  background: #f4f9fb;
+}
+.elastic-lab-guide pre {
+  max-width: 100%;
+  overflow-x: auto;
+  padding: 18px;
+  border: 1px solid #cce0e7;
+  border-radius: 6px;
+  background: #fff;
+  font-size: 14px;
+  line-height: 1.7;
+}
+.elastic-lab-guide td code {
+  overflow-wrap: anywhere;
+}
+.elastic-lab-guide .section a {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}

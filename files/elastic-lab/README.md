@@ -1,69 +1,105 @@
-# Elastic Stress Effects Laboratory
+# Using the Elastic Stress Effects Laboratory
 
-A browser-based teaching tool for prescribed-shape linear elasticity. It runs on static hosting. No server, build framework or external numerical dependency is required. MathJax comes from the surrounding site.
+I use this laboratory to explain how misfit strain, elastic constants and particle shape affect stress and elastic energy. You can change the inputs, compare the results and download the source code.
 
-## Open and edit
-Open `/research/elastic-lab/` on the website. Jekyll source: `_pages/elastic-lab.html`.
+The browser calculates elastic fields for specified shapes. It does not evolve a microstructure with time. The numerical examples use scaled model units: strain is dimensionless, and stiffness and energy density use a common energy-density scale. No particular material or conversion to SI units is assumed.
 
-Numerical and UI modules are in `assets/js/elastic-lab/`:
-- `math.mjs`: constitutive law, acoustic tensor, Bpq, habit roots, minima.
-- `fft.mjs`: radix-2 FFT, derivatives and acoustic preconditioner.
-- `solver.mjs`: real-space heterogeneous equilibrium solve, independent homogeneous Fourier energy and finite-profile pair energy.
-- `worker.mjs`: cancellable plate sweeps off the main thread.
-- `eshelby.mjs`: Module II Eshelby interior field, interface jumps, thin-plate limit and periodic FFT field maps.
-- `eshelby-ui.mjs`: Module II controls, jump table, energy sweeps, field maps and profiles.
-- `plots.mjs`: accessible SVG diagrams and signed-axis plotting.
-- `state.mjs`: independent parameters and input validation for each module.
-- `controls.mjs`: local stiffness conversion, stability demonstration, Try and Reset buttons.
-- `ui.mjs`: interactions, explanations and downloads.
-- `math-render.mjs`: local MathJax TeX typography for equations and SVG symbols.
-- `interfaces.mjs`: independently testable linear, cubic, quintic and normalized-tanh interpolation functions.
-- `interfaces-ui.mjs`: sharp-to-diffuse profiles, interpolation plots and loading explanations in Module VI.
-- `lab.css`: responsive layout, scoped to the laboratory.
+## Start with the browser
 
-The standalone source archive preserves these paths. To run the tests from its root, use a modern Node.js:
+Open [the laboratory](https://saswataiith.github.io/research/elastic-lab/). Each module has its own inputs. Changing one module does not change another.
 
-    node files/elastic-lab/validate.mjs
+- **Module 0:** check elastic stability and convert between two ways of specifying cubic elastic constants.
+- **Module I:** change the misfit strain and find a line that has no extension under that strain.
+- **Module II:** calculate strain and stress inside and outside an elliptical inclusion. Compare the values on the two sides of its interface.
+- **Module III:** calculate how the elastic energy coefficient changes with direction for one phase.
+- **Module IV:** calculate the two self coefficients and the cross coefficient for two precipitate phases. Then compare the interaction energy for different particle separation directions.
+- **Module V:** rotate a plate whose stiffness differs from the matrix stiffness and compare its elastic energy at different orientations.
 
-This writes `files/elastic-lab/validation-results.json`. No npm install is required. To run the page, copy its files into the existing Jekyll website and build/serve with the existing Gemfile. Raw Jekyll source needs the website layout and local MathJax assets; opening it as file:// does not run ES modules or workers.
+**Try these values** repeats the calculation with the current inputs. **Reset this module** restores that module's initial inputs. Most plots also update when you change an input. Module II has a separate Copy button if you want to use the misfit from Module I.
 
-## Numerical controls
-The plate scan uses 32, 64 or 128 square grids, and 5°, 2.5° or 1.25° steps. Start at 32² for exploration; confirm at 64² and 128². Changing mechanical parameters cancels the previous scan. PCG relative residual tolerance is 1e-7, with a 300-iteration cap. Failed solves return an error. Browser hardware affects the time required.
+You can enter C11, C12 and C44 directly, or use the Schmidt–Gross parameters: average shear parameter mu, effective Poisson parameter nu and Zener anisotropy ratio AZ. The conversion panels describe the units. Module IV keeps nu = 1/3 in its conversion panel, as in the thesis example. Its three stiffness inputs can still be changed independently.
 
-A completed sweep can be downloaded as JSON with parameters, boundary conditions and energies. Plate angles are line/tangent angles, kernel angles are Fourier normal angles, and pair angles are centre-to-centre separation angles. Never interchange them.
+## Read the angles carefully
 
-Read FORMULATION.md for the boundary condition and reduction. The inhomogeneous module fixes mean total strain to zero; it does not enforce zero mean stress. It models one smooth plate of the selected phase in the matrix. Independent beta and gamma settings are retained, but it does not solve simultaneous inhomogeneous three-phase microstructures. That is a future extension.
+The angle has a different meaning in each calculation:
 
-The linked formulation page distinguishes this fixed-strain plate calculation from general macroscopic loading. In a periodic cell the displacement fluctuation is periodic, while the total displacement contains an affine homogeneous-strain part. Prescribed average stress is enforced by solving for that homogeneous strain. The formulation also distinguishes a spatial tanh regularization from a constitutive interpolation of an evolving order parameter.
+| Calculation | Meaning of the angle |
+| --- | --- |
+| Habit line or plate | Direction along the line or long axis of the plate |
+| Elastic energy coefficient | Direction of the Fourier wavevector, normal to a composition modulation |
+| Particle pair | Direction of the line joining the two particle centres |
 
-## Source verification
-Read SOURCE-AUDIT.md for the appendix derivations, the CICP reference and the checks on compact notation in Tushar’s thesis. `reference-checks.mjs` supplements the original tests with explicit four-index contractions, Mohr-circle invariants, wave-number scaling, an independent spectral fixed-point iteration, and re-equilibrated energy derivatives. The production solver remains PCG.
+A plate tangent is perpendicular to its normal. A minimum in an elastic coefficient plot does not, by itself, identify the preferred direction between two particles. Use the particle-pair energy calculation for that comparison.
 
-## Evidence and limitations
-The reference from Sandeep's thesis is Chapter5 Fig5.18 and its Table5.1/5.2 parameters. The tests reproduce all three X2 kernel curves numerically and check X1 and X3 scaling, as well as a separate finite-profile pair calculation. No full ternary decomposition is rerun. The real-space pair model includes periodic images and diffuse Gaussian profiles. It should not be read as an infinite-domain sharp-particle potential.
+## Choose the plate calculation settings
 
-Numerical angular minima are sampled, not rigorous global continuum minima. Weak orientation preferences must be checked against spatial and angular refinement. The current model has no evolving phase field, interfacial-energy minimization, plastic relaxation or arbitrary 3-D compatibility. It is part of a broader mesoscale microstructure modeling teaching collection, alongside teaching notebooks and research solvers for homogeneous and inhomogeneous elasticity, phase-field evolution and ferroics. The capabilities listed here describe this browser laboratory; the separate research codes have their own formulations and requirements.
+Module V offers 32 by 32, 64 by 64 and 128 by 128 grids. Start with 32 by 32 for a quick calculation. Repeat at finer grids before relying on a small energy difference. Also reduce the angular step from 5 degrees to 2.5 or 1.25 degrees to check whether the estimated minimum changes.
 
-## Provenance
-Saswata Bhattacharyya: Evolution of Multivariant Microstructures with Anisotropic Misfit: A Phase Field Study. Appendix A, pp. 107–111 (A.1–A.12), and Appendix B, pp. 112–114 (B.1–B.12), for the kernel and driving force; Chapter3 Eq3.2 and Chapter4 Eq4.10/Fig4.4 for the habit-line construction. The line/normal angle discrepancy between Eq3.2 and the wording at Eq4.10 is explicitly documented.
-Sandeep Sugathan: A Phase-Field Study of Elastic Stress Effects on Phase Separation in Ternary Alloy Systems. IIT Hyderabad, June 2019, Chapter3 Eqs3.22,3.27–3.29; Chapter5 Eq5.1, Tables5.1–5.2, Fig5.18. Formulas and numeric reference values are recorded in FORMULATION.md and validation-results.json.
+The program solves mechanical equilibrium using **preconditioned conjugate gradients**, abbreviated PCG. This is an iterative method for solving the discretized displacement equations. The relative residual measures how closely those equations are satisfied. The browser calculation requires a residual below 10^-7 and stops after at most 300 iterations. It reports a failed solve instead of treating that result as converged.
 
-CICP: Bhattacharyya, Heo, Chang and Chen (2012), Communications in Computational Physics 11, 726–738, DOI 10.4208/cicp.290610.060411a. Tushar Jogi: Computational Modeling and Simulations of Process-Microstructure-Property Relations in Model Ni-base Superalloys, IIT Hyderabad, 2021, §§3.1.4–3.1.6 and Appendix B.
+Changing the mechanical inputs cancels the previous orientation calculation. The time required depends on the grid, stiffness contrast and computer. A completed calculation can be downloaded with its inputs and energies.
+
+## Boundary conditions and scope
+
+Module V uses a periodic square. Crossing a boundary returns to the opposite boundary, so the plate also interacts with periodic copies. The average total strain is fixed at zero. This constrains the overall size and shape of the square; it does not require the average stress to be zero.
+
+The module calculates one selected beta or gamma plate at a time. It retains separate settings for both phases, but does not calculate a simultaneous three-phase microstructure with different stiffnesses in all three phases.
+
+Module II uses separate solutions for the interior and exterior interface profiles. Its field map uses a periodic calculation, with selectable resolutions of 256, 512 or 1024 points in each direction. These two calculations have different boundary conditions, so their values need not agree exactly.
+
+The laboratory uses small-strain, in-plane elasticity with the cubic (001) stiffness components. It does not include plastic deformation or a general three-dimensional elastic solution. The particle shapes and compositions are prescribed. To predict an evolving morphology, a phase-field calculation must also include the chemical and interfacial energies.
+
+## Download and check the source
+
+Download and extract [the source archive](https://saswataiith.github.io/files/elastic-lab/elastic-lab-source.zip). The archive retains the same folders as the website repository.
+
+To run the numerical checks, install Node.js and run this command from the extracted archive's root directory:
+
+```sh
+node files/elastic-lab/validate.mjs
+```
+
+No additional Node packages are required. Each successful check prints PASS. If an assertion fails, the program stops with an error. The completed run writes the numerical results to `files/elastic-lab/validation-results.json`.
+
+To run the webpage locally, place the archive's files in the website checkout and use the existing Jekyll setup:
+
+```sh
+bundle install
+bundle exec jekyll serve
+```
+
+Open the local address printed by Jekyll and go to `/research/elastic-lab/`. The archive alone is not a complete website: it needs the website layout, Gemfile and local MathJax files. Opening the page directly from a file on disk will not run its browser modules and workers correctly.
+
+## Where to find each calculation
+
+| File | What it contains |
+| --- | --- |
+| `_pages/elastic-lab.html` | The text, inputs and layout of the laboratory |
+| `assets/js/elastic-lab/math.mjs` | Stress, elastic coefficients, stiffness conversion and habit-line directions |
+| `assets/js/elastic-lab/fft.mjs` | Fast Fourier transforms and spatial derivatives |
+| `assets/js/elastic-lab/solver.mjs` | Mechanical equilibrium, plate energy and particle-pair energy |
+| `assets/js/elastic-lab/worker.mjs` | Plate calculations performed separately from the browser interface |
+| `assets/js/elastic-lab/eshelby.mjs` | Ellipse interior solution, interface jumps and field profiles |
+| `assets/js/elastic-lab/state.mjs` | Inputs and checks on allowed values |
+| `assets/js/elastic-lab/controls.mjs` | Stiffness conversion, stability example, Try and Reset buttons |
+| `assets/js/elastic-lab/ui.mjs` and `eshelby-ui.mjs` | Updates to the controls and displayed results |
+| `assets/js/elastic-lab/plots.mjs` and `math-render.mjs` | Diagrams and mathematical labels |
+| `assets/js/elastic-lab/lab.css` | Page layout and appearance |
+| `files/elastic-lab/validate.mjs` | The main numerical check program |
+| `files/elastic-lab/reference-checks.mjs` and `eshelby-checks.mjs` | Comparisons with independently calculated results |
+
+The archive also contains `interfaces.mjs` and `interfaces-ui.mjs`, which provide interpolation functions and a separate interface-profile demonstration. That demonstration is not currently a module on the main laboratory page.
+
+Read `FORMULATION.md` for the equations and assumptions, and `SOURCE-AUDIT.md` for the references and explanations of notation. The numerical report records the cases actually checked; passing these cases does not establish accuracy for every possible input.
+
+The website guide is generated from these three notes and the saved numerical report. After updating a note or rerunning the numerical checks, regenerate it with:
+
+```sh
+python3 files/elastic-lab/build-guide.py
+```
+
+This writes `_pages/elastic-lab-guide.html`. Keep that generated page with the updated notes when publishing.
 
 ## Licence
-New files in `assets/js/elastic-lab/` and `files/elastic-lab/`, and `_pages/elastic-lab.html`, are GPL-3.0-or-later. See LICENSE.txt. Existing site template and its MIT notice remain unchanged. Referenced thesis text and figures retain their authors' rights and are not relicensed as software.
 
-Module IV provides linked independent inputs for C11, C12 and C44, or the equivalent mu, nu and Zener ratio. The conversion and inverse conversion are tested. Math labels use the local MathJax TeX-to-SVG renderer.
-
-Module IV opens with the opposite-misfit thesis example. Enter the homogeneous stiffness constants and the two misfits directly. Its three polar panels show signed kernels on a common offset radial scale: the zero ring separates negative and positive values. The panels keep coincident self kernels visible separately.
-
-Module IV’s shear-parameter/anisotropy conversion fixes the Poisson parameter at 1/3. Direct stiffness inputs remain independent. The page distinguishes interaction-controlled pair orientation from the competing energies in an evolving microstructure.
-
-## Independent module controls
-Modules I–V have their own misfit and stiffness inputs. Changes and resets stay within the selected module. Module II can explicitly copy the eigenstrain from Module I. Module V has separate matrix, beta and gamma stiffness conversion panels and its own two eigenstrains; it calculates one selected plate at a time. Try recalculates the selected module; Reset restores its initial values. Inputs also update the plots directly.
-
-Module 0 explains positive-definite stiffness, cubic stability and Zener anisotropy, and lists the hexagonal, tetragonal I and orthorhombic conditions. Its energy graph uses three specified strains; an unstable example demonstrates negative tetragonal energy. Those three-dimensional conditions do not turn the later in-plane solvers into general crystal-symmetry solvers.
-
-All conversion panels use the Schmidt–Gross averaged parameters, as specified in Sandeep’s Chapter 3, Eqs. 3.23–3.29. For mu > 0, AZ > 0 and nu < 1/2, the additional cubic stability bound is 1 + 3 AZ + 4 nu > 0. Module IV alone keeps nu fixed at 1/3 in its conversion panel; direct C11, C12 and C44 remain independent.
-
-References: I. Schmidt and D. Gross, JMPS 45, 1521–1549 (1997), doi:10.1016/S0022-5096(97)00011-2; F. Mouhat and F.-X. Coudert, PRB 90, 224104 (2014), arXiv:1410.0065; J. F. Nye, Physical Properties of Crystals (1957), for tensor notation.
+The laboratory source and new documentation use GPL-3.0-or-later; see `LICENSE.txt`. The existing website template retains its MIT licence. Referenced books, papers and thesis figures retain their original rights.

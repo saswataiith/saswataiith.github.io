@@ -1,0 +1,518 @@
+---
+layout: scholar
+title: "Elastic Lab: equations, checks and instructions"
+permalink: /research/elastic-lab/guide/
+nav_active: research
+---
+<link rel="stylesheet" href="/assets/js/elastic-lab/lab.css?v=20261007-notes" />
+<link rel="stylesheet" href="/assets/css/elastic-lab-guide.css?v=20261007-notes" />
+<div class="elastic-formulation-page elastic-lab-guide">
+<section class="page-heading"><h1>Elastic Lab: equations, checks and instructions</h1>
+<p>Read what each calculation assumes, how it was checked and how to run the source.</p>
+<p><a href="/research/elastic-lab/#validation">Return to the laboratory</a> · <a href="#checks">Numerical checks</a> · <a href="#equations">Equations and assumptions</a> · <a href="#references">References and notation</a> · <a href="#instructions">Using the source</a></p></section>
+<section class="section" id="checks">
+{% capture guide_text %}
+## Numerical checks
+
+The saved report records **20 of 20 check groups passing**. The run was recorded at 06 October 2026 at 19:39 UTC. Each group contains comparisons for specified inputs and tolerances.
+
+I check the calculations by comparing independently calculated results and by repeating selected examples at finer resolutions. Passing a check means that its comparison met the tolerance in the check program. It does not mean that every possible input has been tested.
+
+### What was compared
+
+| Check | Result | What it checks |
+| --- | --- | --- |
+| Stiffness conversion and stability | Passed | Convert stiffnesses to the averaged parameters and back. Check which side of the stability boundary is allowed. |
+| Interpolation functions | Passed | Check the pure-phase values, derivatives and symmetry of the smooth interpolation functions. |
+| Isotropic dilatational misfit | Passed | Check that equal in-plane expansion with isotropic stiffness gives the same elastic coefficient in every direction. |
+| Zero-extension lines | Passed | Check the line directions for negative misfit ratios, the limiting zero ratio and the absence of a solution for positive ratios. |
+| Sandeep’s X2 example | Passed | Compare all three coefficients with the reference values along the axes and diagonals. |
+| Misfit signs and crystal symmetry | Passed | Check the other thesis misfit cases, reversal of a cross coefficient when one misfit changes sign, and the expected cubic symmetry. |
+| Uniform-stiffness plate energy | Passed | Compare the displacement solver with an independent Fourier energy calculation. |
+| Soft and hard plates | Passed | Repeat selected energies at finer grids and check recovery of the uniform-stiffness limit. |
+| Angular spacing for a uniform-stiffness plate | Passed | Repeat the orientation calculation with smaller angle steps at the same spatial resolution. |
+| Particle-pair energy | Passed | Check sign reversal, symmetry and changes between two Fourier resolutions. |
+| Orientation of a plate with different stiffness | Passed | Compare the sampled minimum at finer spatial grids and smaller angle steps. |
+| Elastic coefficient including shear | Passed | Compare the compact formula with a component-by-component calculation that retains shear terms. |
+| Mohr’s circle of strain | Passed | Check the transformed strain components, circle radius and zero-extension intersections. |
+| Fourier wave number | Passed | Check the displacement amplitude for specified sinusoidal modes, including its inverse dependence on wave number. |
+| Two mechanical-equilibrium solvers | Passed | Compare complete displacement fields from conjugate gradients and a separate Fourier iteration. |
+| Elastic energy derivative | Passed | Compare the analytical derivative with a small-change calculation of energy after mechanical equilibrium is solved again. |
+| Strain inside an ellipse | Passed | Compare the angular integration with Mura’s closed expression for isotropic stiffness. |
+| Thin-plate limit | Passed | Compare a very flat ellipse with the ideal thin-plate strain and energy. The energy tolerance uses the unrelaxed energy scale because the limiting energy can be nearly zero. |
+| Continuity at the interface | Passed | Check tangential total strain and both traction components at the sampled interface points. |
+| Periodic field map | Passed | Compare the centre strain with the infinite-matrix ellipse result. The allowed difference is 6%, because the periodic map has different boundary conditions. |
+
+### How to interpret the numerical differences
+
+A relative difference is the difference between two results divided by the specified reference scale. It is dimensionless. An absolute difference retains the units of the quantity being compared. The check code states the scale and tolerance for each comparison.
+
+- For the uniform-stiffness plate, the largest recorded relative energy difference between the two calculations is 7.88e-15.
+- For the selected soft and hard anisotropic cases, the largest recorded relative displacement difference between the two equilibrium solvers is 8.02e-12.
+- For the selected soft, uniform and hard plate cases, changing the grid from 64 by 64 to 128 by 128 changes energy by about 0.0093% to 0.0275%. These values apply to those cases.
+- The orientation estimate can change with resolution. In one different-stiffness plate example, the lowest sampled angle changes from 60 degrees on a 32 by 32 grid to 65 degrees on a 64 by 64 grid. Reducing the angular step gives 62.5 degrees. This is why small energy differences need spatial and angular checks.
+- The periodic ellipse map is compared with an isolated ellipse in an infinite matrix. These have different boundary conditions. Its check allows a 6% centre-strain difference; it is not an exact equality test.
+
+The laboratory does not evolve a phase field or establish the final shape of a decomposing alloy. The checks concern the elastic calculations described here.
+
+[Download the numerical values as JSON](/files/elastic-lab/validation-results.json). JSON is the structured data file used by the program. [Download the source and check programs](/files/elastic-lab/elastic-lab-source.zip).
+{% endcapture %}
+{{ guide_text | markdownify }}
+</section>
+<section class="section" id="equations">
+{% capture guide_text %}
+## Equations and assumptions
+
+I use the following equations to calculate stress and elastic energy in this laboratory. This note defines the quantities, describes each calculation and states its boundary conditions.
+
+### Quantities and units
+
+| Quantity | Meaning | Physical units |
+| --- | --- | --- |
+| u | Displacement from the reference position | metre |
+| epsilon | Total strain, obtained from the symmetric displacement gradient | dimensionless |
+| epsilon0 | Eigenstrain: the strain a region would adopt if it were free to deform | dimensionless |
+| e = epsilon - epsilon0 | Elastic strain | dimensionless |
+| sigma | Stress | pascal |
+| C | Elastic stiffness tensor, which relates elastic strain to stress | pascal |
+| w | Elastic energy per volume | joule per cubic metre |
+| F | Total elastic energy | joule |
+| n | Unit vector specifying a direction | dimensionless |
+| k | Fourier wavevector; its magnitude is 2 pi divided by wavelength | inverse metre |
+
+One pascal equals one joule per cubic metre. The website examples use scaled model values rather than a specified material. Stiffness and energy density therefore share the same model scale. Lengths in periodic calculations are measured relative to the box width. Two-dimensional energies are interpreted per unit thickness; an energy divided by the box area has the corresponding energy-density scale.
+
+The symbols i, j, k and l used as subscripts identify Cartesian components. Repeated component indices are summed. A colon means summation over matching tensor components. For example, sigma:e means the sum of sigma_ij e_ij. In two dimensions this includes twice the shear contribution sigma_xy e_xy.
+
+The basic elastic relations are:
+
+```text
+sigma = C:e
+w = (1/2) e:C:e
+F = integral of w over the body
+```
+
+The in-plane constitutive equations are:
+
+```text
+sigma_xx = C11 e_xx + C12 e_yy
+sigma_yy = C12 e_xx + C11 e_yy
+sigma_xy = 2 C44 e_xy
+```
+
+The code stores symmetric strains as `[xx, yy, xy]`. The last entry is tensor shear strain. Engineering shear strain is twice that entry. The calculations use the cubic (001) in-plane stiffness components, with no imposed out-of-plane eigenstrain. They are not a plane-stress reduction of a general three-dimensional transformation.
+
+### Module 0: elastic stability and stiffness conversion
+
+For cubic stiffness, C11 relates an axial elastic strain to stress along the same axis. C12 couples a normal strain along one axis to stress along another. C44 gives the response to engineering shear in a principal plane.
+
+A positive-definite stiffness gives positive elastic energy for every nonzero elastic strain. For an unstressed cubic crystal, the necessary and sufficient conditions are:
+
+```text
+C11 - C12 > 0
+C11 + 2 C12 > 0
+C44 > 0
+```
+
+The normal-strain block has one eigenvalue C11 + 2 C12 and two eigenvalues C11 - C12. The three engineering-shear entries are C44. A zero value gives a marginal deformation mode; a negative value gives a mode whose quadratic elastic energy is negative.
+
+The bulk modulus K = (C11 + 2 C12)/3 measures resistance to uniform volume change. The Zener ratio AZ = 2 C44/(C11 - C12) measures cubic elastic anisotropy. AZ = 1 gives an isotropic cubic elastic tensor.
+
+The energy graph applies a dimensionless strain amplitude q in three ways:
+
+| Deformation | Nonzero strain components | Energy density |
+| --- | --- | --- |
+| Uniform dilation | epsilon_xx = epsilon_yy = epsilon_zz = q | 3(C11 + 2 C12)q²/2 |
+| Tetragonal distortion | epsilon_xx = q, epsilon_yy = -q | (C11 - C12)q² |
+| Simple shear | engineering shear gamma_xy = q | C44 q²/2 |
+
+The Schmidt–Gross conversion uses an average shear parameter mu and an effective Poisson parameter nu. Here mu is the angular average of rotated C1212 in the (001) plane. If Lambda is the corresponding average of rotated C1122, then nu = Lambda/[2(Lambda + mu)]. The parameter mu has stiffness units; nu and AZ are dimensionless. These averages do not describe the response in every direction of an anisotropic crystal.
+
+```text
+C11 = mu [2(2 + AZ)/(1 + AZ) - (1 - 4 nu)/(1 - 2 nu)]
+C12 = mu [2 AZ/(1 + AZ) - (1 - 4 nu)/(1 - 2 nu)]
+C44 = 2 mu AZ/(1 + AZ)
+```
+
+For positive mu and AZ and nu < 1/2, stability also requires 1 + 3 AZ + 4 nu > 0. This follows by substituting the conversion into C11 + 2 C12. The usual isotropic range for nu alone does not ensure stability at every AZ.
+
+Module IV keeps nu = 1/3 in its conversion panel. The other panels allow nu to change. Direct stiffness inputs remain independent within each module.
+
+The page also gives the hexagonal, tetragonal I and orthorhombic stability conditions. These concern unstressed, small-strain elastic stability. They are not a complete test of lattice vibrations or stability under finite applied stress.
+
+References: Sandeep's thesis, Chapter 3, Eqs. 3.23–3.29; [Schmidt and Gross (1997)](https://doi.org/10.1016/S0022-5096(97)00011-2); [Mouhat and Coudert (2014)](https://arxiv.org/abs/1410.0065). Nye's *Physical Properties of Crystals* explains the tensor representation of elastic constants.
+
+### Module I: the zero-extension line
+
+The prescribed eigenstrain is epsilon0 = epsilon_eta diag(1,t). The scale epsilon_eta is dimensionless. The ratio t is the y eigenstrain divided by the x eigenstrain. For a measurement direction at angle theta from x (in radians in the formula; degrees in the controls):
+
+```text
+epsilon0_nn / epsilon_eta = cos²(theta) + t sin²(theta)
+```
+
+A zero of this expression identifies a line with no extension under the prescribed eigenstrain. For t < 0, the two directions are theta = atan2(1,sqrt(-t)) and pi - theta. At t = 0 the line is along y. For t > 0 there is no zero-extension line of this type. For example, t = -1 gives 45 and 135 degrees.
+
+The interface normal is perpendicular to the line. In the ideal two-dimensional thin-plate compatibility argument, a rigid rotation can accommodate the remaining displacement-gradient difference. This geometric condition depends on eigenstrain. The additional energy at zero total strain depends on stiffness as well. A finite particle may still have elastic and interfacial energy.
+
+My thesis, Chapter 3, Eq. 3.2, and Chapter 4, Eq. 4.10, use different wording for the line and normal angles. The laboratory states which direction each angle describes. The acute normal angle is atan(sqrt(-t)); it is not the line angle measured from x.
+
+### Module II: an elliptical inclusion
+
+The inclusion has uniform eigenstrain and the same elastic stiffness as its surrounding matrix. Its semi-axis lengths are a and b, measured in length units, and its long axis makes angle phi with x. The code uses radians; the controls show degrees. In the infinite-matrix solution, strain inside the ellipse is uniform. Strain outside varies with position.
+
+For a unit direction n, define the acoustic matrix Q and the eigenstress sigma0:
+
+```text
+Q_ik = C_ijkl n_j n_l
+sigma0 = C:epsilon0
+g(n) = inverse(Q) sigma0 n
+```
+
+The vector g is dimensionless. The interior displacement gradient D is the angular average of g(n) tensor n. The integration direction n is parallel to the rotated vector `(cos(theta)/a, sin(theta)/b)`. Here theta is the integration angle, and the rotation is by phi. The tensor product g tensor n has components g_i n_j. The symmetric part of D, obtained by averaging D with its transpose, gives the interior total strain. The antisymmetric part gives the local rigid rotation.
+
+```text
+epsilon_inside = (D + transpose(D))/2
+sigma_inside = C:(epsilon_inside - epsilon0)
+energy per inclusion volume = -(1/2) sigma_inside:epsilon0
+```
+
+The last expression is the total elastic energy of the inclusion and surrounding matrix divided by the inclusion volume. It is not simply the local energy density inside the inclusion. In this two-dimensional calculation, it is also described as energy per inclusion area per unit thickness. The angular integration uses 4096 samples for the selected state and 2048 samples for the orientation and aspect-ratio plots.
+
+At an interface point, let m be the outward unit normal and s the unit tangent. The one-sided exterior strain is:
+
+```text
+epsilon_outside = epsilon_inside - sym(g(m) tensor m)
+sigma_outside = C:epsilon_outside
+```
+
+Here sym means the symmetric part. The jump is the inside value minus the outside value. Displacement continuity requires the tangential total strain epsilon_ss to be continuous. Mechanical equilibrium requires the traction sigma m to be continuous, so sigma_sm and sigma_mm agree on both sides. Other strain components and sigma_ss can jump.
+
+The profiles use separate interior and exterior solutions and terminate at their one-sided interface values. A connector indicates a real jump; it does not interpolate across it. As the ellipse becomes a thin plate, its energy approaches B(m)/2, where m is the plate normal and B is the self elastic coefficient defined below.
+
+The colour map instead uses a periodic square with 256, 512 or 1024 grid points in each direction. It fixes average total strain at zero and includes periodic copies. Its default long semi-axis is 0.16 times the box width. The map limits b/a to at least 0.08 so a very thin shape remains resolved. Fourier oscillations near a sharp interface can remain. The map and the infinite-matrix profiles have different boundary conditions and need not match exactly.
+
+Reference: Mura, *Micromechanics of Defects in Solids*, section 11. The check program compares the isotropic ellipse solution with Mura's closed expression and separately checks interface continuity and the thin-plate limit.
+
+### Modules III and IV: self and cross elastic coefficients
+
+The phase labels p and q identify the two eigenstrains in a calculation. For each phase, define its eigenstress sigma0_p = C:epsilon0_p and the vector a_p = sigma0_p n. With homogeneous stiffness:
+
+```text
+B_pq(n) = epsilon0_p:C:epsilon0_q - a_p dot inverse(Q) a_q
+```
+
+B_pq has energy-density units for dimensional stiffnesses. It describes the elastic contribution associated with a Fourier mode; it is not the total particle energy. The first term is the unrelaxed contribution. The second is the energy removed by elastic displacement relaxation.
+
+When p = q, the result is a self coefficient. When p and q differ, it is a cross coefficient. Symmetry gives B_pq = B_qp. The matrix of coefficients is positive semidefinite for stable stiffness, although a cross entry can be negative. Reversing one phase's eigenstrain reverses its cross coefficient and leaves its self coefficient unchanged.
+
+Module III plots one self coefficient. Its polar radius is proportional to B_pp, with zero at the centre. Module IV displays B_beta,beta, B_gamma,gamma and B_beta,gamma separately. Its polar panels use a common labelled offset because the cross coefficient can be negative.
+
+Sandeep's X2 example uses mu = 2000, nu = 1/3 and AZ = 3, giving C11 = 7000, C12 = 5000 and C44 = 3000. The in-plane misfits are +0.01 for beta and -0.01 for gamma. Both self coefficients are 0.342857 along the axes and 0.8 along the diagonals. The cross coefficient has the corresponding negative values. These reproduce the coefficients in Chapter 5, Fig. 5.18; they do not reproduce a complete evolving microstructure.
+
+### Module IV: particle-pair interaction energy
+
+The pair calculation uses two smooth circular Gaussian profiles in a periodic square. The interaction energy is the difference between the combined elastic energy and the sum of the separate energies:
+
+```text
+E_interaction = E_both - E_beta - E_gamma
+```
+
+The calculation sums the cross contributions from all Fourier modes, including the separation factor cos(k dot R). R is the vector joining the particle centres, measured in length units. The product k dot R is dimensionless. Profile size, separation and periodic copies affect the result. B_pq at a single direction is not this particle-pair energy.
+
+A negative interaction energy lowers the combined energy relative to the separate profiles in the same box. It does not make the total elastic energy negative. In the X2 example the beta–gamma pair has lower interaction energy along [11] than along [10]. Shape, composition and interfacial energy would also have to be considered in an evolving microstructure.
+
+### Module V: a plate with different stiffness from the matrix
+
+Let h(x) be a smooth dimensionless field that is approximately zero in the matrix and one inside the plate. The stiffness and eigenstrain are:
+
+```text
+C(x) = (1 - h) C_matrix + h C_plate
+epsilon0(x) = h epsilon0_plate
+```
+
+The program finds the periodic displacement that minimizes elastic energy while keeping average total strain zero. The plate shape rotates; the crystal axes and eigenstrain remain fixed. The module calculates one plate at a time.
+
+Spatial derivatives are calculated by fast Fourier transforms, abbreviated FFT. The discrete equilibrium equations are solved by preconditioned conjugate gradients, abbreviated PCG. The derivative and its adjoint are paired in the energy calculation; the adjoint is the corresponding operator obtained by discrete integration by parts. The reference acoustic matrix helps the iterative solver converge. The mean displacement is fixed to remove the arbitrary rigid translation.
+
+On even grids, first derivatives set the Nyquist mode to zero. This is the highest sampled frequency, with wavelength two grid spacings. Its displacement null modes are excluded from the solve, while its unrelaxed eigenstrain energy is retained. Smooth profiles and resolution checks are therefore important.
+
+For uniform stiffness, an independent Fourier calculation provides a reference energy. The tests compare that result with the displacement solver, including the mean elastic energy. For different stiffnesses, a single homogeneous coefficient B cannot replace the equilibrium solve.
+
+The reported minimum is the lowest of the sampled angles. Repeat at finer spatial grids and smaller angle steps to assess its accuracy. A small energy difference may require substantially finer calculations.
+
+### Sharp interfaces and smoothly varying fields
+
+For a sharp coherent interface, displacement and traction are continuous. The stiffness and eigenstrain can change abruptly. A smooth profile spreads this change over a specified width; it does not describe an automatically evolving interface.
+
+A spatial profile h(d) = [1 - tanh(d/w)]/2 uses signed distance d from the interface and width parameter w. Both d and w have length units. This use of w is a width parameter, distinct from the energy-density symbol used above.
+
+A phase-field interpolation instead depends on a dimensionless order parameter eta. Linear interpolation is a useful starting point for a physical phase fraction. Common alternatives are h = eta²(3 - 2 eta) and h = eta³(10 - 15 eta + 6 eta²). Their derivatives vanish at pure-phase endpoints; the quintic also has zero second derivatives there. The choice should match the physical meaning of eta.
+
+If stiffness and eigenstrain depend on a dimensionless field phi, the elastic energy derivative at mechanical equilibrium is:
+
+```text
+dF_elastic/dphi = (1/2) e:(dC/dphi):e - sigma:(d epsilon0/dphi)
+```
+
+This expression denotes the local functional derivative, with energy-density units. Both terms are needed when stiffness varies. The first is the contribution from changing stiffness; the second is the contribution from changing eigenstrain. The field phi here is different from the ellipse orientation angle used in Module II.
+
+### Average strain and average stress
+
+A periodic displacement fluctuation does not determine the overall deformation of a cell. Write u = Ebar x + u_periodic. Ebar is the prescribed average total strain, x is position and u_periodic is the periodic displacement fluctuation. All strain components are dimensionless.
+
+Under strain control, Ebar is prescribed and the calculation gives the average stress. Under stress control, the average stress is prescribed and Ebar must be solved for. A prescribed average stress does not mean that local stress is the same everywhere. Module V uses Ebar = 0.
+
+A general linear elastic cell has average stress Sigma = C_effective:Ebar + Sigma0. C_effective is its effective stiffness and Sigma0 is the average stress due to eigenstrain at zero average total strain. Under stress control, solve this equation for Ebar. Mixed control prescribes some average strains and some average stresses.
+
+For a film and substrate represented with a soft surrounding region, negligible stress in that region can approximate a free surface. Its thickness and stiffness must be checked. Exactly zero stiffness leaves some displacements undetermined. Average film stress should refer to the solid volume or a membrane force per length, rather than depend on the arbitrary surrounding volume. The present plate widget is not that film calculation.
+
+### Sources
+
+My PhD thesis, *Evolution of Multivariant Microstructures with Anisotropic Misfit: A Phase Field Study*, Chapter 3, Eq. 3.2; Chapter 4, Eq. 4.10 and Fig. 4.4; Appendices A and B.
+
+Sandeep Sugathan, *A Phase-Field Study of Elastic Stress Effects on Phase Separation in Ternary Alloy Systems*, IIT Hyderabad, June 2019, Chapters 3 and 5, especially Tables 5.1–5.2 and Fig. 5.18.
+
+Bhattacharyya, Heo, Chang and Chen, [*A Spectral Iterative Method for the Computation of Effective Properties of Elastically Inhomogeneous Polycrystals*](https://doi.org/10.4208/cicp.290610.060411a), Communications in Computational Physics 11, 726–738 (2012).
+
+Tushar Jogi, *Computational Modeling and Simulations of Process-Microstructure-Property Relations in Model Ni-base Superalloys*, IIT Hyderabad, 2021, sections 3.1.4–3.1.6 and Appendix B. See `SOURCE-AUDIT.md` for notation details and the independent comparisons.
+{% endcapture %}
+{{ guide_text | markdownify }}
+</section>
+<section class="section" id="references">
+{% capture guide_text %}
+## References and notation
+
+I use equations from my teaching and research, together with the references below, to calculate elastic fields in this laboratory. This note explains how the notation in those sources corresponds to the code. The numerical checks compare independently calculated results for specified cases.
+
+### Common quantities
+
+Elastic stiffness C relates elastic strain e to stress sigma. Total strain is epsilon, eigenstrain is epsilon0, and e = epsilon - epsilon0. Eigenstrain is the strain a region would adopt if it were free to deform.
+
+Strains are dimensionless. In physical units, stiffness and stress are in pascals, and elastic energy density is in joules per cubic metre. These units are equivalent because one pascal is one joule per cubic metre. The laboratory examples use a common scaled energy-density unit rather than values for a specified material.
+
+Component indices i, j, k and l refer to Cartesian directions. Repeated component indices are summed. A colon denotes summation over matching tensor components. Phase labels p, q and a identify phases or fields; a selected phase label is kept fixed when a derivative is calculated.
+
+### My PhD thesis: homogeneous elastic constants
+
+Reference: Saswata Bhattacharyya, *Evolution of Multivariant Microstructures with Anisotropic Misfit: A Phase Field Study*, Appendix A, pp. 107–111, Eqs. A.1–A.12; Appendix B, pp. 112–114, Eqs. B.1–B.12. The underlying method is described in Khachaturyan's *Theory of Structural Transformations in Solids* (Wiley, 1983), Chapter 7, particularly sections 7.2 and 7.3.
+
+Appendix A starts from elastic energy F = integral of sigma:e/2. It separates average strain from the periodic strain variation and then uses mechanical equilibrium to eliminate displacement. The result for each nonzero Fourier mode contains the elastic coefficient:
+
+```text
+B_pq = C_ijkl epsilon0_ij^(p) epsilon0_kl^(q)
+       - n_j sigma0_ij^(p) Omega_ki sigma0_kl^(q) n_l
+```
+
+Here n is the unit Fourier direction, sigma0^(p) = C:epsilon0^(p) is the eigenstress of phase p, and Omega is the inverse acoustic matrix. Its inverse is Q_ik = C_ijkl n_j n_l. Omega has inverse-stiffness units. B_pq has energy-density units. The first term is the unrelaxed contribution; the second is the reduction due to elastic relaxation.
+
+B_pq is an energy coefficient, not a modulus or a complete particle energy. To obtain the energy, it must be multiplied by the appropriate Fourier field amplitudes, summed or integrated over wavevectors, and combined with the factor 1/2.
+
+The average-strain boundary condition matters. In the homogeneous, zero-average-stress calculation in the thesis, average total strain equals average eigenstrain and the mean elastic contribution vanishes. The prime on the Fourier integral excludes the zero wavevector. Module V instead fixes average total strain at zero, so it retains the mean elastic energy. Omitting that term would change the boundary condition.
+
+#### The energy derivative in Appendix B
+
+Differentiating the quadratic energy gives two equal contributions because B_aq = B_qa. For a selected field a:
+
+```text
+g_hat_a = sum over q of B_aq theta_hat_q
+```
+
+The hat denotes a Fourier transform. theta_q is a dimensionless phase field. The quantity g_a is the elastic energy derivative with respect to theta_a, with energy-density units. The label a is fixed, and only q is summed. If theta_a = eta_a², the derivative with respect to the dimensionless order parameter eta_a is 2 eta_a g_a in real space.
+
+The code uses explicit phase labels when implementing Appendix B. This avoids ambiguity in the compact index notation around Eq. B.12. The checks compare the implemented derivative with a small-change calculation of the equilibrated energy.
+
+### The 2012 paper: stiffness that varies with position
+
+Reference: Saswata Bhattacharyya, Tae Wook Heo, Kunok Chang and Long-Qing Chen, [*A Spectral Iterative Method for the Computation of Effective Properties of Elastically Inhomogeneous Polycrystals*](https://doi.org/10.4208/cicp.290610.060411a), Communications in Computational Physics 11(3), 726–738 (2012).
+
+Equations 2.6–2.11 give stress, mechanical equilibrium and the separation into reference stiffness and stiffness variation. Equations 2.12–2.14 give the Fourier iteration. Equations 2.15–2.16 describe the energy and average strain. In the code notes, CICP is an abbreviation for this journal.
+
+Write C = Cref + DeltaC, where Cref is a spatially uniform reference stiffness and DeltaC is the local difference. Let E be average total strain, and u the periodic displacement fluctuation. The stress-like field P used in the iteration is:
+
+```text
+P_ij = C_ijkl(epsilon0_kl - E_kl) - DeltaC_ijkl u_k,l
+Cref_ijkl u_k,lj = derivative of P_ij with respect to x_j
+```
+
+A comma denotes differentiation: u_k,l means derivative of displacement component k with respect to coordinate l. P has stress units. Cref and DeltaC have stiffness units. The derivatives of u are dimensionless strains or displacement gradients.
+
+#### Fourier wavevector factors
+
+Let k be the Fourier wavevector, with inverse-length units, and n = k divided by the magnitude of k its unit direction. A spatial derivative becomes multiplication by i k_j, where i is the imaginary unit. Define Q_ik(n) = Cref_ijkl n_j n_l. For a nonzero wavevector:
+
+```text
+u_hat_k = -i |k|^-2 inverse(Q)_ki k_j P_hat_ij
+```
+
+The subscript k on u here is a Cartesian component label; the vector k in the same expression is the wavevector. The two uses follow the source's index notation.
+
+If a Green tensor is defined using the unit direction n, the inverse-square wave-number factor must remain explicit. If it is instead defined as the inverse of Cref_ijkl k_j k_l, that factor is already included. These are equivalent definitions, but their factors must not be mixed. The code uses the full-wavevector definition in `inverseAcoustic`. The numerical check verifies that doubling the wave number halves the displacement amplitude for the specified sinusoidal input.
+
+#### Average stiffness and average strain
+
+Angle brackets mean a spatial average. When average stress is prescribed, the mean-strain equation uses the inverse of the average stiffness:
+
+```text
+<C_ijkl> E_kl = sigmaApplied_ij + <C_ijkl epsilon0_kl>
+               - <C_ijkl deltaEpsilon_kl>
+```
+
+Here sigmaApplied is the prescribed average stress, and deltaEpsilon is the zero-mean strain fluctuation. The inverse of average stiffness generally differs from the average of local inverse stiffnesses. Equation 2.16 uses the first quantity.
+
+Module V prescribes E = 0 and therefore does not solve this additional mean-strain equation. At prescribed average stress, the potential minimized must also include the external-work term. Stored elastic energy alone is not that fixed-stress potential.
+
+#### Which solver is used in the browser?
+
+The browser uses preconditioned conjugate gradients, or PCG, to solve the discretized equilibrium equations. The comparison program uses a separate Fourier fixed-point iteration based on the paper. A fixed-point iteration repeatedly calculates a new displacement from the previous displacement and checks whether the result has stopped changing.
+
+The tests compare complete displacement fields for selected soft and hard anisotropic inclusions. Agreement between two implementations is a useful check. It does not establish convergence of the fixed-point method for every stiffness contrast, or reproduce every polycrystal example in the paper.
+
+### Tushar's thesis: notation used in this implementation
+
+Reference: Tushar Jogi, *Computational Modeling and Simulations of Process-Microstructure-Property Relations in Model Ni-base Superalloys*, IIT Hyderabad, September 2021. Relevant equations are 3.17–3.20, 3.42–3.51 and 3.58–3.60, with the elastic derivative in Appendix B, pp. 181–182.
+
+The laboratory writes out the component equations to make the following choices explicit:
+
+- **Average strain, Eq. 3.48:** the mean-strain equation requires the inverse of the average stiffness, as in the 2012 paper. This is generally different from the average of the local inverse stiffnesses.
+- **Iteration sign, Eqs. 3.49 and 3.60:** the field P contains C:(epsilon0 - E) minus DeltaC:grad(u). The subtraction follows directly from mechanical equilibrium.
+- **Acoustic matrix, Eqs. 3.59–3.60:** the code forms Q_ik = C_ijkl n_j n_l explicitly. This identifies the two matrix indices and avoids an ambiguous tensor contraction. The wavevector factors follow the definition above.
+- **Energy derivative, Appendix B:** the code differentiates stiffness and eigenstrain separately. A prime denotes a derivative with respect to the relevant phase field, not a spatial derivative.
+
+At mechanical equilibrium and fixed displacement or average strain, the local elastic energy derivative with respect to a dimensionless field phi is:
+
+```text
+dF_elastic/dphi = (1/2) e_ij (dC_ijkl/dphi) e_kl
+                  - sigma_ij (d epsilon0_ij/dphi)
+```
+
+This is a functional derivative with energy-density units. The first term accounts for changing stiffness. The second accounts for changing eigenstrain. A model with spatially varying stiffness needs both terms. Changes in the equilibrated displacement do not contribute to this first variation under the stated boundary conditions.
+
+Tushar's scalar interpolation called B(phi) is different from the coefficient B_pq(n). The laboratory calls the interpolation h to keep the two quantities distinct.
+
+### Sandeep's thesis and the stiffness conversion
+
+Reference: Sandeep Sugathan, *A Phase-Field Study of Elastic Stress Effects on Phase Separation in Ternary Alloy Systems*, IIT Hyderabad, June 2019. Chapter 3, Eqs. 3.23–3.29 give the averaged elastic parameters and their conversion to cubic stiffnesses. Chapter 5, Tables 5.1–5.2 and Fig. 5.18 give the ternary-alloy examples used in Module IV.
+
+The conversion follows [I. Schmidt and D. Gross (1997)](https://doi.org/10.1016/S0022-5096(97)00011-2). The mu, nu and AZ definitions and the stability restriction are given in `FORMULATION.md`. The tests check conversion in both directions and the positive-definite boundary.
+
+For the X2 example, the checks reproduce the two self coefficients and the cross coefficient, including their signs and directional minima. The particle-pair calculation is a separate example. It is not a rerun of the thesis phase-separation simulation.
+
+### What the checks establish
+
+The numerical report contains 20 groups of checks. These compare the elastic coefficients and derivatives with independently calculated expressions, check strain rotations, compare two equilibrium solvers, test the ellipse solution and interface conditions, and compare selected spatial and angular resolutions.
+
+Each successful check applies to the inputs and tolerance used in that check. The tests do not establish accuracy for arbitrary stiffness contrast or particle shape. The laboratory remains a small-strain, in-plane calculation with prescribed shapes. The readable results page explains the comparisons, and the JSON file retains the numerical values.
+{% endcapture %}
+{{ guide_text | markdownify }}
+</section>
+<section class="section" id="instructions">
+{% capture guide_text %}
+## Using the Elastic Stress Effects Laboratory
+
+I use this laboratory to explain how misfit strain, elastic constants and particle shape affect stress and elastic energy. You can change the inputs, compare the results and download the source code.
+
+The browser calculates elastic fields for specified shapes. It does not evolve a microstructure with time. The numerical examples use scaled model units: strain is dimensionless, and stiffness and energy density use a common energy-density scale. No particular material or conversion to SI units is assumed.
+
+### Start with the browser
+
+Open [the laboratory](https://saswataiith.github.io/research/elastic-lab/). Each module has its own inputs. Changing one module does not change another.
+
+- **Module 0:** check elastic stability and convert between two ways of specifying cubic elastic constants.
+- **Module I:** change the misfit strain and find a line that has no extension under that strain.
+- **Module II:** calculate strain and stress inside and outside an elliptical inclusion. Compare the values on the two sides of its interface.
+- **Module III:** calculate how the elastic energy coefficient changes with direction for one phase.
+- **Module IV:** calculate the two self coefficients and the cross coefficient for two precipitate phases. Then compare the interaction energy for different particle separation directions.
+- **Module V:** rotate a plate whose stiffness differs from the matrix stiffness and compare its elastic energy at different orientations.
+
+**Try these values** repeats the calculation with the current inputs. **Reset this module** restores that module's initial inputs. Most plots also update when you change an input. Module II has a separate Copy button if you want to use the misfit from Module I.
+
+You can enter C11, C12 and C44 directly, or use the Schmidt–Gross parameters: average shear parameter mu, effective Poisson parameter nu and Zener anisotropy ratio AZ. The conversion panels describe the units. Module IV keeps nu = 1/3 in its conversion panel, as in the thesis example. Its three stiffness inputs can still be changed independently.
+
+### Read the angles carefully
+
+The angle has a different meaning in each calculation:
+
+| Calculation | Meaning of the angle |
+| --- | --- |
+| Habit line or plate | Direction along the line or long axis of the plate |
+| Elastic energy coefficient | Direction of the Fourier wavevector, normal to a composition modulation |
+| Particle pair | Direction of the line joining the two particle centres |
+
+A plate tangent is perpendicular to its normal. A minimum in an elastic coefficient plot does not, by itself, identify the preferred direction between two particles. Use the particle-pair energy calculation for that comparison.
+
+### Choose the plate calculation settings
+
+Module V offers 32 by 32, 64 by 64 and 128 by 128 grids. Start with 32 by 32 for a quick calculation. Repeat at finer grids before relying on a small energy difference. Also reduce the angular step from 5 degrees to 2.5 or 1.25 degrees to check whether the estimated minimum changes.
+
+The program solves mechanical equilibrium using **preconditioned conjugate gradients**, abbreviated PCG. This is an iterative method for solving the discretized displacement equations. The relative residual measures how closely those equations are satisfied. The browser calculation requires a residual below 10^-7 and stops after at most 300 iterations. It reports a failed solve instead of treating that result as converged.
+
+Changing the mechanical inputs cancels the previous orientation calculation. The time required depends on the grid, stiffness contrast and computer. A completed calculation can be downloaded with its inputs and energies.
+
+### Boundary conditions and scope
+
+Module V uses a periodic square. Crossing a boundary returns to the opposite boundary, so the plate also interacts with periodic copies. The average total strain is fixed at zero. This constrains the overall size and shape of the square; it does not require the average stress to be zero.
+
+The module calculates one selected beta or gamma plate at a time. It retains separate settings for both phases, but does not calculate a simultaneous three-phase microstructure with different stiffnesses in all three phases.
+
+Module II uses separate solutions for the interior and exterior interface profiles. Its field map uses a periodic calculation, with selectable resolutions of 256, 512 or 1024 points in each direction. These two calculations have different boundary conditions, so their values need not agree exactly.
+
+The laboratory uses small-strain, in-plane elasticity with the cubic (001) stiffness components. It does not include plastic deformation or a general three-dimensional elastic solution. The particle shapes and compositions are prescribed. To predict an evolving morphology, a phase-field calculation must also include the chemical and interfacial energies.
+
+### Download and check the source
+
+Download and extract [the source archive](https://saswataiith.github.io/files/elastic-lab/elastic-lab-source.zip). The archive retains the same folders as the website repository.
+
+To run the numerical checks, install Node.js and run this command from the extracted archive's root directory:
+
+```sh
+node files/elastic-lab/validate.mjs
+```
+
+No additional Node packages are required. Each successful check prints PASS. If an assertion fails, the program stops with an error. The completed run writes the numerical results to `files/elastic-lab/validation-results.json`.
+
+To run the webpage locally, place the archive's files in the website checkout and use the existing Jekyll setup:
+
+```sh
+bundle install
+bundle exec jekyll serve
+```
+
+Open the local address printed by Jekyll and go to `/research/elastic-lab/`. The archive alone is not a complete website: it needs the website layout, Gemfile and local MathJax files. Opening the page directly from a file on disk will not run its browser modules and workers correctly.
+
+### Where to find each calculation
+
+| File | What it contains |
+| --- | --- |
+| `_pages/elastic-lab.html` | The text, inputs and layout of the laboratory |
+| `assets/js/elastic-lab/math.mjs` | Stress, elastic coefficients, stiffness conversion and habit-line directions |
+| `assets/js/elastic-lab/fft.mjs` | Fast Fourier transforms and spatial derivatives |
+| `assets/js/elastic-lab/solver.mjs` | Mechanical equilibrium, plate energy and particle-pair energy |
+| `assets/js/elastic-lab/worker.mjs` | Plate calculations performed separately from the browser interface |
+| `assets/js/elastic-lab/eshelby.mjs` | Ellipse interior solution, interface jumps and field profiles |
+| `assets/js/elastic-lab/state.mjs` | Inputs and checks on allowed values |
+| `assets/js/elastic-lab/controls.mjs` | Stiffness conversion, stability example, Try and Reset buttons |
+| `assets/js/elastic-lab/ui.mjs` and `eshelby-ui.mjs` | Updates to the controls and displayed results |
+| `assets/js/elastic-lab/plots.mjs` and `math-render.mjs` | Diagrams and mathematical labels |
+| `assets/js/elastic-lab/lab.css` | Page layout and appearance |
+| `files/elastic-lab/validate.mjs` | The main numerical check program |
+| `files/elastic-lab/reference-checks.mjs` and `eshelby-checks.mjs` | Comparisons with independently calculated results |
+
+The archive also contains `interfaces.mjs` and `interfaces-ui.mjs`, which provide interpolation functions and a separate interface-profile demonstration. That demonstration is not currently a module on the main laboratory page.
+
+Read `FORMULATION.md` for the equations and assumptions, and `SOURCE-AUDIT.md` for the references and explanations of notation. The numerical report records the cases actually checked; passing these cases does not establish accuracy for every possible input.
+
+The website guide is generated from these three notes and the saved numerical report. After updating a note or rerunning the numerical checks, regenerate it with:
+
+```sh
+python3 files/elastic-lab/build-guide.py
+```
+
+This writes `_pages/elastic-lab-guide.html`. Keep that generated page with the updated notes when publishing.
+
+### Licence
+
+The laboratory source and new documentation use GPL-3.0-or-later; see `LICENSE.txt`. The existing website template retains its MIT licence. Referenced books, papers and thesis figures retain their original rights.
+{% endcapture %}
+{{ guide_text | markdownify }}
+</section>
+</div>

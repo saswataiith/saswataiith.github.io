@@ -500,12 +500,14 @@ element("download-plate").addEventListener("click", () => {
 });
 fetch("/files/elastic-lab/validation-results.json")
   .then((r) => r.json())
-  .then((report) =>
+  .then((report) => {
+    // I count the saved outcomes rather than assume every comparison passed.
+    const passed = report.tests.filter(test => test.passed === true).length;
     set(
       "validation-summary",
-      `${report.tests.length} validation groups passed. These cover the appendix kernel and driving force, Mohr-circle invariants, Eshelby’s ellipse against Mura’s closed form and its interface jump conditions, Fourier scaling, CICP spectral iteration versus PCG, Sandeep’s reference, homogeneous recovery and resolution convergence. The full report includes numerical errors.`,
-    ),
-  )
+      `${passed} of ${report.tests.length} numerical check groups passed in the saved run. Each group checks specified inputs against a stated tolerance. The results page explains the comparisons and gives the numerical differences. These checks apply to the cases tested; they do not establish accuracy for every possible input.`,
+    );
+  })
   .catch(() => {});
 // I use independent defaults recorded in each module's controls.
 followHabit();

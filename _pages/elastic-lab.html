@@ -4479,27 +4479,21 @@ nav_active: research
     </details>
   </section>
   <section class="section" id="validation">
-    <h2>Show the evidence. Read the code.</h2>
+    <h2>Equations, numerical checks and source code</h2>
     <p>
-      <a href="/files/elastic-lab/SOURCE-AUDIT.md"
-        >Read the source-equation audit and notation checks</a
-      >
+      I compare the calculated strains and elastic energies with known solutions
+      and with results from separate implementations. I also repeat selected
+      calculations at finer grid sizes and smaller angle steps to check how much
+      the results change.
     </p>
-    <p id="validation-summary">The validation report is available below.</p>
-    <p>
-      <a href="/files/elastic-lab/validation-results.json"
-        >Numerical validation report</a
-      >
-      ·
-      <a href="/files/elastic-lab/FORMULATION.md"
-        >Assumptions and formulation</a
-      >
-      ·
-      <a href="/files/elastic-lab/README.md">Run and extend the laboratory</a> ·
-      <a href="/files/elastic-lab/elastic-lab-source.zip" download
-        >Download source and tests</a
-      >
-    </p>
+    <p id="validation-summary">The saved numerical results and explanations of the checks are available below.</p>
+    <ul>
+      <li><a href="/research/elastic-lab/guide/#checks">Numerical checks and results</a>: what was compared, the differences found and what the checks establish.</li>
+      <li><a href="/research/elastic-lab/guide/#equations">Equations and assumptions</a>: the quantities, units, equations and boundary conditions used in each calculation.</li>
+      <li><a href="/research/elastic-lab/guide/#references">References and notation</a>: the books, papers and theses used, with explanations of the notation.</li>
+      <li><a href="/research/elastic-lab/guide/#instructions">How to use and run the laboratory</a>: the controls, source files and commands for running the checks.</li>
+      <li><a href="/files/elastic-lab/elastic-lab-source.zip" download>Download the source code and check programs</a>.</li>
+    </ul>
     <p>
       This laboratory is part of my teaching and research in mesoscale
       microstructure modeling. It connects eigenstrain, elastic equilibrium and
