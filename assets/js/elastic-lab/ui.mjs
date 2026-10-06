@@ -106,7 +106,7 @@ function renderHabit(s) {
 function syncPairStiffness(c) {
   const parameters = elasticParameters(c);
   const values = { "pair-c11": c.c11, "pair-c12": c.c12, "pair-c44": c.c44,
-    "pair-mu": parameters.mu, "pair-nu": parameters.nu, "pair-az": parameters.z };
+    "pair-mu": parameters.mu, "pair-az": parameters.z };
   for (const [id, number] of Object.entries(values)) {
     if (document.activeElement !== element(id)) element(id).value = Number(number.toPrecision(12));
   }
@@ -375,7 +375,7 @@ for (const id of ["t", "epsilon", "theta"])
     }
   });
 // I link the local stiffness inputs to the shared constants and both plots.
-for (const id of ["pair-c11", "pair-c12", "pair-c44", "pair-mu", "pair-nu", "pair-az"]) {
+for (const id of ["pair-c11", "pair-c12", "pair-c44", "pair-mu", "pair-az"]) {
   element(id).addEventListener("input", () => {
     try {
       if (element(id).value.trim() === "" || !Number.isFinite(value(id)))
@@ -385,7 +385,7 @@ for (const id of ["pair-c11", "pair-c12", "pair-c44", "pair-mu", "pair-nu", "pai
         c = { c11: value("pair-c11"), c12: value("pair-c12"), c44: value("pair-c44") };
         elasticParameters(c);
       } else {
-        const mu = value("pair-mu"), nu = value("pair-nu"), z = value("pair-az");
+        const mu = value("pair-mu"), nu = 1 / 3, z = value("pair-az");
         if (!(mu > 0 && nu > -1 && nu < 0.5 && z > 0))
           throw Error("Require μ > 0, −1 < ν < 1/2 and AZ > 0.");
         c = moduli(mu, nu, z);

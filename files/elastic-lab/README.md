@@ -55,3 +55,5 @@ New files in `assets/js/elastic-lab/` and `files/elastic-lab/`, and `_pages/elas
 Module IV provides linked independent inputs for C11, C12 and C44, or the equivalent mu, nu and Zener ratio. The conversion and inverse conversion are tested. Math labels use the local MathJax TeX-to-SVG renderer.
 
 Module IV opens with the opposite-misfit thesis example. Enter the homogeneous stiffness constants and the two misfits directly. Its three polar panels show signed kernels on a common offset radial scale: the zero ring separates negative and positive values. The panels keep coincident self kernels visible separately.
+
+The shear-parameter/anisotropy conversion fixes the Poisson parameter at 1/3. Direct stiffness inputs remain independent. The page distinguishes interaction-controlled pair orientation from the competing energies in an evolving microstructure.
