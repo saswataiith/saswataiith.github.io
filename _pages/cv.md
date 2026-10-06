@@ -4,4 +4,66 @@ title: "Academic CV"
 permalink: /cv/
 nav_active: cv
 ---
-<section class="page-heading"><span class="eyebrow">ACADEMIC PROFILE</span><h1>Saswata<br><em>Bhattacharyya.</em></h1><p>Professor · Department of Materials Science and Metallurgical Engineering<br>Indian Institute of Technology Hyderabad</p><button class="button secondary print-button" type="button">Print this CV ↗</button></section><section class="section cv-grid"><aside class="cv-nav"><a href="#experience">Experience</a><a href="#education">Education</a><a href="#advisers">Advisers</a><a href="#expertise">Expertise</a><a href="#service">Academic service</a><a href="#projects">Selected projects</a></aside><div><section id="experience"><h2>Professional experience</h2><div class="timeline"><article><span>2023–present</span><div><h3>Professor</h3><p>IIT Hyderabad · August 2023–present</p></div></article><article><span>2019–2023</span><div><h3>Associate Professor</h3><p>IIT Hyderabad · February 2019–August 2023</p></div></article><article><span>2013–2019</span><div><h3>Assistant Professor</h3><p>IIT Hyderabad · July 2013–January 2019</p></div></article><article><span>2011–2013</span><div><h3>Materials Scientist</h3><p>GE Global Research, Bangalore</p></div></article><article><span>2008–2011</span><div><h3>Postdoctoral Research Associate</h3><p>Pennsylvania State University, USA</p><p class="small">Postdoctoral research adviser: Prof. Long-Qing Chen</p></div></article></div></section><section id="education"><h2>Education</h2><div class="timeline"><article><span>2008</span><div><h3>Ph.D., Materials Engineering</h3><p>Indian Institute of Science, Bangalore</p><p class="small">Thesis: Evolution of Multivariant Microstructures with Anisotropic Misfit: A Phase Field Study</p><p class="small">PhD adviser: Prof. T. A. Abinandanan</p></div></article><article><span>2002</span><div><h3>M.S. (Eng.), Metallurgy</h3><p>Indian Institute of Science, Bangalore</p><p class="small">Thesis: Ternary Spinodal Decomposition: Effect of Interfacial Energy</p></div></article><article><span>1999</span><div><h3>B.Sc. (Tech.), Ceramic Technology</h3><p>Calcutta University · First Class with Honours</p></div></article></div></section><section id="advisers"><h2>Academic Advisers</h2><div class="timeline adviser-timeline"><article><span>PhD adviser</span><div><h3>Prof. T. A. Abinandanan</h3><p>Indian Institute of Science, Bengaluru</p><p class="small">His guidance established the foundation of Prof. Saswata Bhattacharyya’s work in phase-field modeling, microstructural evolution and elastic stress effects.</p><div class="inline-links"><a href="https://materials.iisc.ac.in/~abinand/">Homepage ↗</a><a href="https://materials.iisc.ac.in/faculty-list">Institute profile ↗</a><a href="https://iisc.ac.in/">Institute ↗</a></div></div></article><article><span>Postdoctoral research adviser</span><div><h3>Prof. Long-Qing Chen</h3><p>Pennsylvania State University, USA</p><div class="inline-links"><a href="https://www.matse.psu.edu/directory/long-qing-chen">Homepage ↗</a><a href="https://pure.psu.edu/en/persons/long-qing-chen/">Institute profile ↗</a><a href="https://www.psu.edu/">Institute ↗</a></div></div></article></div></section><section id="expertise"><h2>Expertise</h2><ul><li>Phase-field codes for microstructural evolution in alloys and oxides</li><li>Discrete dislocation dynamics and particle–dislocation interactions</li><li>GPU acceleration with CUDA and parallel CPU/GPU solvers</li><li>Elastic stress effects on microstructural evolution, including anisotropic misfit and elastic anisotropy and inhomogeneity</li><li>FFT-based microelasticity and crystal plasticity solvers</li><li>Physics-informed neural networks (PINNs) and multiobjective optimization for extracting diffusion coefficients and mobility data from experimental diffusion profiles in multicomponent alloys</li><li>Integrated computational materials engineering</li></ul></section><section id="service"><h2>Academic service</h2><ul><li>Head, Department of MSME, IIT Hyderabad: November 2023–July 2026</li><li>Coordination of the online M.Tech. program in ICME</li><li>Coordination and curriculum development for the interdisciplinary B.Tech. program in Computational Engineering</li></ul></section><section id="projects"><h2>Selected sponsored projects</h2><div class="project"><span>2022–2026 · ARDB (GTMAP)</span><h3>Through-process modeling of directionally solidified / single-crystal superalloy turbine blades</h3><p>Validation with CMSX-4 alloy</p></div><div class="project"><span>2021–2024 · DST–NSM</span><h3>MicroSim: high-performance phase-field solvers for microstructure simulations</h3><p>Phases 1 and 2</p></div><div class="project"><span>2022–2025 · DST-SERB (CRG)</span><h3>Diffusion coefficients in ternary and multicomponent Ni–Al–X alloys</h3><p>Assessment of diffusion data and effects on Ostwald ripening</p></div><div class="project"><span>2017–2020 · DST-SERB (EMR)</span><h3>Electromechanical forces and domain evolution in ferroelectric and multiferroic thin films</h3><p>Phase-field modeling and simulations</p></div><p class="small muted">Dates are the periods recorded in the CV, not assertions of current funding status.</p></section><p><a class="text-link dark" href="{{ '/publications/' | relative_url }}">Selected publications →</a></p></div></section>
+<section class="page-heading">
+  <span class="eyebrow">ACADEMIC PROFILE</span>
+  <h1>Saswata<br><em>Bhattacharyya.</em></h1>
+  <p>Professor · Department of Materials Science and Metallurgical Engineering<br>Indian Institute of Technology Hyderabad</p>
+  <p>A brief summary of my experience, research and selected projects. My full CV includes publications, teaching, sponsored projects and academic service.</p>
+  <div class="transport-card-links">
+    <a class="button primary" href="/files/saswata-bhattacharyya-full-cv.pdf?v=43ade922e35a">Full CV (PDF) ↓</a>
+    <a class="button secondary" href="https://scholar.google.co.in/citations?hl=en&amp;user=i9VAh7sAAAAJ">Google Scholar ↗</a>
+    <a class="button secondary" href="https://orcid.org/0000-0002-6738-1421">ORCID ↗</a>
+    <a class="button secondary" href="https://www.linkedin.com/in/saswata-bhattacharya-63474057/">LinkedIn ↗</a>
+  </div>
+</section>
+<section class="section cv-grid">
+  <aside class="cv-nav">
+    <a href="#experience">Experience</a><a href="#education">Education</a>
+    <a href="#advisers">Advisers</a><a href="#expertise">Research</a>
+    <a href="#service">Academic service</a><a href="#projects">Selected projects</a>
+  </aside>
+  <div>
+    <section id="experience">
+      <h2>Professional experience</h2>
+      <ul>
+        <li><strong>2023–present:</strong> Professor, IIT Hyderabad</li>
+        <li><strong>2019–2023:</strong> Associate Professor, IIT Hyderabad</li>
+        <li><strong>2013–2019:</strong> Assistant Professor, IIT Hyderabad</li>
+        <li><strong>2011–2013:</strong> Materials Scientist, GE Global Research, Bangalore</li>
+        <li><strong>2008–2011:</strong> Postdoctoral Research Associate, Pennsylvania State University</li>
+      </ul>
+    </section>
+    <section id="education">
+      <h2>Education</h2>
+      <ul>
+        <li><strong>2008:</strong> Ph.D., Materials Engineering, Indian Institute of Science, Bangalore</li>
+        <li><strong>2002:</strong> M.S. (Eng.), Metallurgy, Indian Institute of Science, Bangalore</li>
+        <li><strong>1999:</strong> B.Sc. (Tech.), Ceramic Technology, Calcutta University</li>
+      </ul>
+    </section>
+    <section id="advisers"><h2>Academic Advisers</h2><div class="timeline adviser-timeline"><article><span>PhD adviser</span><div><h3>Prof. T. A. Abinandanan</h3><p>Indian Institute of Science, Bengaluru</p><p class="small">His guidance established the foundation of Prof. Saswata Bhattacharyya’s work in phase-field modeling, microstructural evolution and elastic stress effects.</p><div class="inline-links"><a href="https://materials.iisc.ac.in/~abinand/">Homepage ↗</a><a href="https://materials.iisc.ac.in/faculty-list">Institute profile ↗</a><a href="https://iisc.ac.in/">Institute ↗</a></div></div></article><article><span>Postdoctoral research adviser</span><div><h3>Prof. Long-Qing Chen</h3><p>Pennsylvania State University, USA</p><div class="inline-links"><a href="https://www.matse.psu.edu/directory/long-qing-chen">Homepage ↗</a><a href="https://pure.psu.edu/en/persons/long-qing-chen/">Institute profile ↗</a><a href="https://www.psu.edu/">Institute ↗</a></div></div></article></div></section>
+    <section id="expertise">
+      <h2>Research</h2>
+      <ul>
+        <li>Phase-field modeling of phase transformations and microstructural evolution.</li>
+        <li>Microstructure and deformation: elastic stress effects, dislocation dynamics and crystal plasticity.</li>
+        <li>High-performance materials simulations using CPU/GPU computing, and physics-informed machine learning.</li>
+      </ul>
+    </section>
+    <section id="service">
+      <h2>Selected academic service</h2>
+      <ul>
+        <li>Head, Department of MSME, IIT Hyderabad, November 2023–July 2026.</li>
+        <li>Coordination of the online M.Tech. program in ICME and curriculum development for the B.Tech. program in Computational Engineering.</li>
+      </ul>
+    </section>
+    <section id="projects">
+      <h2>Selected sponsored projects</h2>
+      <div class="project"><span>2022–2026 · ARDB (GTMAP)</span><h3>Superalloy turbine blades</h3><p>Through-process modeling of directionally solidified and single-crystal blades, with validation using CMSX-4 alloy.</p></div>
+      <div class="project"><span>2021–2024 · DST–NSM</span><h3>MicroSim</h3><p>High-performance phase-field solvers for microstructure simulations, Phases 1 and 2.</p></div>
+      <div class="project"><span>2022–2025 · DST-SERB (CRG)</span><h3>Diffusion in Ni–Al–X alloys</h3><p>Diffusion coefficients in ternary and multicomponent alloys and their effects on Ostwald ripening.</p></div>
+      <p>See the full CV for the complete project list.</p>
+    </section>
+    <p><a class="text-link dark" href="/publications/">Selected publications →</a></p>
+  </div>
+</section>
