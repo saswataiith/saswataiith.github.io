@@ -1,0 +1,129 @@
+---
+layout: scholar
+title: "Chemical and elastic phase separation: code in steps"
+permalink: /resources/step-by-step/phase-field/
+nav_active: resources
+description: "Chemical and elastic phase separation, written and checked one part at a time in Python and Julia."
+---
+<style>.code-lesson{max-width:1100px}.code-lesson h2{margin:44px 0 18px}.code-lesson p{margin:18px 0}.code-lesson pre{white-space:pre;overflow-x:auto;background:#edf2ef;border:1px solid #d4dfd9;padding:20px;font:14px/1.7 ui-monospace,monospace}.code-lesson details{margin:20px 0;padding:18px;background:#f1f5f2}.code-lesson summary{cursor:pointer;font-weight:600}.code-lesson a{text-decoration:underline;text-underline-offset:4px}.code-lesson li{margin:12px 0;line-height:1.7}</style><section class="page-heading"><span class="eyebrow">STEP-BY-STEP TEACHING CODE</span><h1>Chemical and elastic phase separation.</h1><p>I build the calculation in small parts and test each part before continuing. The Python and Julia notebooks follow the same sequence.</p></section><section class="section code-lesson"><p>I use the website’s dimensionless two-dimensional model, with periodic boundaries, unit mobility and unit gradient coefficient. Composition c is a conserved field. The bulk free-energy density is c²(1-c)². Its derivative contributes 2c(1-c)(1-2c) to chemical potential. The elastic coefficient B(k) is zero for the chemical example. The elastic example uses a homogeneous 2D constitutive model with zero mean stress; it is not a calibrated alloy or a plane-strain reduction of a 3D eigenstrain.</p><p><a href="/files/mesoscale/examples/stepwise/phase-field-python.ipynb" download>Python notebook ↓</a> · <a href="/files/mesoscale/examples/stepwise/phase-field-julia.ipynb" download>Julia notebook ↓</a> · <a href="/files/mesoscale/examples/step-by-step-teaching-codes.zip" download>Complete collection ↓</a></p><p>Run notebook cells in order. Extract the complete collection without changing its folder structure: the phase-field lesson imports the original kernel from its parent folder. Use Python with NumPy, Matplotlib and Jupyter, or Julia with IJulia. Julia Fourier examples also require FFTW. The download includes installation commands and the actual check report.</p><!-- CODE-STEPS-START --><h2>1. Create wave numbers and the initial field</h2>
+<p>I start with the chemical case. The grid spacing is one dimensionless length unit. I remove the mean of the deterministic perturbation so that the initial mean composition is exactly 0.5 to floating-point accuracy.</p>
+<h3>Python</h3><pre><code>import numpy as np
+n = 64
+dt = 0.2
+k = 2 * np.pi * np.fft.fftfreq(n)
+kx, ky = np.meshgrid(k, k, indexing=&quot;ij&quot;)
+k2 = kx**2 + ky**2
+row, column = np.meshgrid(np.arange(n), np.arange(n), indexing=&quot;ij&quot;)
+noise = np.sin((row + 1) * 12.9898 + (column + 1) * 78.233) * 43758.5453
+noise = 0.02 * (noise - np.floor(noise) - 0.5)
+noise -= noise.mean()
+initial = 0.5 + noise
+assert abs(initial.mean() - 0.5) &lt; 1e-12
+assert k2[0, 0] == 0
+print(&quot;Initial mean:&quot;, initial.mean())</code></pre>
+<details><summary>The same part in Julia</summary><pre><code>using FFTW, Statistics
+n = 64
+dt = 0.2
+k = 2π .* fftfreq(n)
+kx = repeat(reshape(k, n, 1), 1, n)
+ky = permutedims(kx)
+k2 = kx.^2 .+ ky.^2
+noise = [sin(row*12.9898 + column*78.233)*43758.5453 for row in 1:n, column in 1:n]
+noise = 0.02 .* (noise .- floor.(noise) .- 0.5)
+noise .-= mean(noise)
+initial = 0.5 .+ noise
+@assert abs(mean(initial) - 0.5) &lt; 1e-12
+@assert k2[1, 1] == 0
+println(&quot;Initial mean: &quot;, mean(initial))</code></pre></details>
+<h2>2. Write one update and test conservation</h2>
+<p>The gradient and elastic terms are implicit; the nonlinear bulk derivative is explicit. The zero Fourier mode is unchanged because k² is zero there. I check the mean and finite values after one update. These checks do not prove energy stability.</p>
+<h3>Python</h3><pre><code>chemical_kernel = np.zeros_like(k2)
+bulk_derivative = 2 * initial * (1 - initial) * (1 - 2 * initial)
+numerator = np.fft.fft2(initial) - dt * k2 * np.fft.fft2(bulk_derivative)
+denominator = 1 + dt * k2 * (k2 + chemical_kernel)
+one_step = np.fft.ifft2(numerator / denominator).real
+assert np.isfinite(one_step).all()
+assert abs(one_step.mean() - initial.mean()) &lt; 1e-12
+print(&quot;Mean change after one update:&quot;, one_step.mean() - initial.mean())</code></pre>
+<details><summary>The same part in Julia</summary><pre><code>chemical_kernel = zeros(size(k2))
+bulk_derivative = 2 .* initial .* (1 .- initial) .* (1 .- 2 .* initial)
+numerator = fft(initial) .- dt .* k2 .* fft(bulk_derivative)
+denominator = 1 .+ dt .* k2 .* (k2 .+ chemical_kernel)
+one_step = real.(ifft(numerator ./ denominator))
+@assert all(isfinite, one_step)
+@assert abs(mean(one_step) - mean(initial)) &lt; 1e-12
+println(&quot;Mean change: &quot;, mean(one_step) - mean(initial))</code></pre></details>
+<h2>3. Add the elastic kernel separately</h2>
+<p>I use the existing tested kernel rather than introducing a different formula in this notebook. C11, C12 and C44 are dimensionless elastic stiffnesses here. The dilatational eigenstrain is dimensionless. I check the isotropic limit, in which the nonzero-mode kernel has no angular dependence. I also check that zero misfit removes the elastic contribution. I symmetrize conjugate Fourier partners for a real field on an even grid.</p>
+<h3>Python</h3><pre><code>from pathlib import Path
+import importlib.util
+source = Path(&quot;../phase_field.py&quot;)
+if not source.exists():
+    raise FileNotFoundError(&quot;Extract the download with its folder structure before running this cell.&quot;)
+spec = importlib.util.spec_from_file_location(&quot;teaching_phase_field&quot;, source)
+model = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(model)
+angles = np.linspace(0, 2 * np.pi, 33)
+isotropic = model.kernel(np.cos(angles), np.sin(angles), c11=4, c12=2, c44=1)
+assert np.ptp(isotropic) &lt; 1e-12
+assert np.allclose(model.kernel(kx, ky, eigenstrain=0), 0)
+elastic_kernel = model.kernel(kx, ky, c11=4, c12=2, c44=3, eigenstrain=0.2)
+partner = (-np.arange(n)) % n
+elastic_kernel = 0.5 * (elastic_kernel + elastic_kernel[np.ix_(partner, partner)])
+assert np.isfinite(elastic_kernel).all()
+print(&quot;Isotropic angular variation:&quot;, np.ptp(isotropic))</code></pre>
+<details><summary>The same part in Julia</summary><pre><code>include(&quot;../phase_field.jl&quot;)
+angles = range(0, 2π; length=33)
+isotropic = kernel(cos.(angles), sin.(angles); c11=4, c12=2, c44=1)
+@assert maximum(isotropic) - minimum(isotropic) &lt; 1e-12
+@assert all(abs.(kernel(kx, ky; eigenstrain=0)) .&lt; 1e-12)
+elastic_kernel = kernel(kx, ky; c11=4, c12=2, c44=3, eigenstrain=0.2)
+partner = mod.(-(0:n-1), n) .+ 1
+elastic_kernel = 0.5 .* (elastic_kernel .+ elastic_kernel[partner, partner])
+@assert all(isfinite, elastic_kernel)
+println(&quot;Isotropic angular variation: &quot;, maximum(isotropic) - minimum(isotropic))</code></pre></details>
+<h2>4. Compare short evolutions with the same initial field</h2>
+<p>I advance both cases from identical fields for 50 steps. This is a short execution and conservation check. The complete program supplies longer runs and free-energy records. Timestep and spatial refinement are separate questions and have not been established by this notebook.</p>
+<h3>Python</h3><pre><code>chemical = initial.copy()
+elastic = initial.copy()
+for step in range(50):
+    chemical_bulk = 2 * chemical * (1 - chemical) * (1 - 2 * chemical)
+    chemical_spectrum = np.fft.fft2(chemical) - dt * k2 * np.fft.fft2(chemical_bulk)
+    chemical = np.fft.ifft2(chemical_spectrum / (1 + dt*k2*(k2 + chemical_kernel))).real
+    elastic_bulk = 2 * elastic * (1 - elastic) * (1 - 2 * elastic)
+    elastic_spectrum = np.fft.fft2(elastic) - dt * k2 * np.fft.fft2(elastic_bulk)
+    elastic = np.fft.ifft2(elastic_spectrum / (1 + dt*k2*(k2 + elastic_kernel))).real
+for result in (chemical, elastic):
+    assert np.isfinite(result).all()
+    assert abs(result.mean() - initial.mean()) &lt; 1e-10
+assert np.linalg.norm(chemical - elastic) &gt; 0
+print(&quot;Final time:&quot;, 50 * dt)
+print(&quot;Field RMS difference:&quot;, np.sqrt(np.mean((chemical - elastic)**2)))
+
+import matplotlib.pyplot as plt
+fig, axes = plt.subplots(1, 2, figsize=(9, 4))
+for ax, field, name in zip(axes, [chemical, elastic], [&quot;Chemical&quot;, &quot;With elasticity&quot;]):
+    image = ax.imshow(field, vmin=0, vmax=1, origin=&quot;lower&quot;)
+    ax.set_title(name)
+    ax.set_xlabel(&quot;y grid index&quot;)
+    ax.set_ylabel(&quot;x grid index&quot;)
+fig.colorbar(image, ax=axes, label=&quot;Composition c (dimensionless)&quot;)
+plt.show()</code></pre>
+<details><summary>The same part in Julia</summary><pre><code>chemical = copy(initial)
+elastic = copy(initial)
+for step in 1:50
+    chemical_bulk = 2 .* chemical .* (1 .- chemical) .* (1 .- 2 .* chemical)
+    chemical_spectrum = fft(chemical) .- dt .* k2 .* fft(chemical_bulk)
+    chemical .= real.(ifft(chemical_spectrum ./ (1 .+ dt .* k2 .* (k2 .+ chemical_kernel))))
+    elastic_bulk = 2 .* elastic .* (1 .- elastic) .* (1 .- 2 .* elastic)
+    elastic_spectrum = fft(elastic) .- dt .* k2 .* fft(elastic_bulk)
+    elastic .= real.(ifft(elastic_spectrum ./ (1 .+ dt .* k2 .* (k2 .+ elastic_kernel))))
+end
+for result in (chemical, elastic)
+    @assert all(isfinite, result)
+    @assert abs(mean(result) - mean(initial)) &lt; 1e-10
+end
+@assert sum(abs2, chemical .- elastic) &gt; 0
+println(&quot;Final time: &quot;, 50 * dt)
+println(&quot;Field RMS difference: &quot;, sqrt(mean((chemical .- elastic).^2)))</code></pre></details>
+<figure><img loading="lazy" src="/assets/images/stepwise/phase-field-python-step-4.png" alt="Checked result: 4. Compare short evolutions with the same initial field"><figcaption>Result from the executed Python notebook.</figcaption></figure><!-- CODE-STEPS-END --><h2>What I checked</h2><p>I executed all Python notebook cells in a clean kernel and all Julia script stages. The checks apply to the short examples shown here. They do not establish grid convergence or reproduce every long simulation. Julia notebook-kernel execution is not included in these checks; the notebook code cells are identical to the tested Julia script.</p><p><a href="/resources/step-by-step-codes/">Return to the code collection →</a></p></section>

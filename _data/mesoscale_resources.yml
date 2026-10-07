@@ -1,5 +1,14 @@
 [
   {
+    "title": "Developing teaching codes in steps",
+    "url": "/resources/step-by-step-codes/",
+    "category": "Tutorial",
+    "topic": "Python Julia C notebooks incremental code tests Hoshen Kopelman structure function pair correlation",
+    "description": "Write and test a small part before continuing: cluster labeling, diffusion, random walks, phase separation, Monte Carlo and spatial correlations.",
+    "label": "Open the code lessons",
+    "level": "Getting started"
+  },
+  {
     "title": "Bicontinuity and connected phases",
     "url": "/notebook/bicontinuity/",
     "category": "Tutorial",
@@ -57,7 +66,7 @@
     "title": "Monte Carlo: Ising and Potts",
     "category": "Tutorial",
     "topic": "Monte Carlo MC spin alignment grain growth",
-    "description": "256 × 256 course simulations with high-resolution movies, diagnostics, and Julia/NumPy source.",
+    "description": "256 \u00d7 256 course simulations with high-resolution movies, diagnostics, and Julia/NumPy source.",
     "url": "/resources/examples/monte-carlo/",
     "label": "Open Monte Carlo lab",
     "level": "Intermediate"
@@ -75,7 +84,7 @@
     "title": "Chemical spinodal decomposition",
     "category": "Tutorial",
     "topic": "Julia NumPy chemical",
-    "description": "Follow composition fluctuations as they develop into domains, and check conservation and free-energy changes in a Cahn–Hilliard simulation.",
+    "description": "Follow composition fluctuations as they develop into domains, and check conservation and free-energy changes in a Cahn\u2013Hilliard simulation.",
     "url": "/resources/examples/chemical/",
     "label": "Work through the lesson",
     "level": "Getting started"
@@ -126,10 +135,10 @@
     "level": "Intermediate"
   },
   {
-    "title": "A reproducible Cahn–Hilliard example",
+    "title": "A reproducible Cahn\u2013Hilliard example",
     "category": "Tutorial",
     "topic": "Numerical methods",
-    "description": "A small Python example with periodic boundaries, mean-composition checks and an energy diagnostic. Includes the source for this website’s illustrative images.",
+    "description": "A small Python example with periodic boundaries, mean-composition checks and an energy diagnostic. Includes the source for this website\u2019s illustrative images.",
     "url": "/resources/spinodal/",
     "label": "Work through the example",
     "level": "Getting started"
@@ -165,7 +174,7 @@
     "title": "MicroSim workshop videos",
     "category": "Video",
     "topic": "Phase-field",
-    "description": "The MicroSim team’s channel for demonstrations, tutorials and workshop recordings.",
+    "description": "The MicroSim team\u2019s channel for demonstrations, tutorials and workshop recordings.",
     "url": "https://www.youtube.com/channel/UCnmLKb-kqQCNXWa0Oz6Ua_g",
     "label": "Watch tutorials",
     "level": "Getting started"
@@ -174,7 +183,7 @@
     "title": "MS5033: Mesoscale Microstructure Modeling",
     "category": "Course material",
     "topic": "Julia random walks coarse graining variational methods Fourier phase-field elastic stress effects",
-    "description": "Course folder with Julia examples, computational notebooks, assignments and simulation videos. Topics include random walks, coarse graining, variational methods, Fourier methods and phase-field modeling. Classroom topics also include elastic stress effects on microstructural evolution. Access is subject to the folder’s Google Drive permissions.",
+    "description": "Course folder with Julia examples, computational notebooks, assignments and simulation videos. Topics include random walks, coarse graining, variational methods, Fourier methods and phase-field modeling. Classroom topics also include elastic stress effects on microstructural evolution. Access is subject to the folder\u2019s Google Drive permissions.",
     "url": "https://drive.google.com/drive/folders/1fQPUxD6eaqAwvuxqXIoifjT4P-geNWhxAfMzf9dkHvvQX3n-zdMG8CQfqd5Fq1uu6wPy6exA",
     "label": "Open course folder",
     "level": "Course collection"

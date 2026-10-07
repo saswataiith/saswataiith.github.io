@@ -1,0 +1,11 @@
+Step 1 passed: five occupied cells.
+Step 2 passed: label lookup.
+Step 3 passed: label merging.
+Step 4 passed: provisional labels.
+Step 5 passed: one cluster of five cells.
+Step 6 passed: periodic seam.
+Python and C matched independent flood-fill partitions for 1128 bounded/periodic grids: all 512 binary 3x3 grids, 50 seeded rectangular grids and 2 thin grids.
+Julia matched the same 1128 independent reference partitions; script checkpoints passed.
+Python notebook executed from a clean kernel with all eight stages and saved outputs.
+Julia script executed; Julia notebook cells are identical to the tested script, but IJulia kernel execution was not tested.
+Historical C sources were inspected and preserved. The historical programs were not certified by these new-implementation checks.

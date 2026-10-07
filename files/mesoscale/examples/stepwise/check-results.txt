@@ -1,0 +1,53 @@
+All five Python teaching notebooks executed in fresh kernels: diffusion, walkers, phase-field, Monte Carlo and structure/correlation. Their saved outputs are included.
+All four corresponding Julia teaching scripts executed with all stage assertions passing.
+Julia notebook-kernel execution was not tested; the notebook code cells match the tested scripts.
+The short stage runs do not establish spatial convergence or reproduce every long simulation.
+The original complete teaching simulation files and previously published results were preserved unchanged.
+
+diffusion Julia output:
+Precompiling packages...
+    381.9 ms  ✓ AbstractFFTs
+    403.6 ms  ✓ FFTW_jll
+   4077.2 ms  ✓ FFTW
+  3 dependencies successfully precompiled in 5 seconds. 33 already precompiled.
+Grid points: 128; spacing: 0.04908738521234052
+Initial mean: 1.0
+Maximum analytical error: 2.220446049250313e-16
+Concentration variances: [0.1, 0.08740900361304683, 0.06631370432580587, 0.04390628546225194, 0.01082682265892927]
+
+walkers Julia output:
+Molecules: 50000
+First-sweep mean-square displacement: 1.0
+Measured: 99.62836; prediction: 100
+Mean position: [-0.00918, -0.00802]
+Root-mean-square distance: 9.981400703308129
+
+phase-field Julia output:
+Initial mean: 0.5
+Mean change: 0.0
+Precompiling packages...
+    300.7 ms  ✓ DelimitedFiles
+  1 dependency successfully precompiled in 0 seconds. 1 already precompiled.
+Isotropic angular variation: 1.6653345369377348e-16
+Final time: 10.0
+Field RMS difference: 0.005861495207825633
+
+monte-carlo Julia output:
+Periodic neighbor indexing passed.
+Ising energy changes passed.
+Acceptance checks passed.
+Ising state values: [-1, 1]
+Grains initially: 256; remaining labels: 25
+
+Hoshen–Kopelman checks:
+Step 1 passed: five occupied cells.
+Step 2 passed: label lookup.
+Step 3 passed: label merging.
+Step 4 passed: provisional labels.
+Step 5 passed: one cluster of five cells.
+Step 6 passed: periodic seam.
+Python and C matched independent flood-fill partitions for 1128 bounded/periodic grids: all 512 binary 3x3 grids, 50 seeded rectangular grids and 2 thin grids.
+Julia matched the same 1128 independent reference partitions; script checkpoints passed.
+Python notebook executed from a clean kernel with all eight stages and saved outputs.
+Julia script executed; Julia notebook cells are identical to the tested script, but IJulia kernel execution was not tested.
+Historical C sources were inspected and preserved. The historical programs were not certified by these new-implementation checks.

@@ -1,0 +1,92 @@
+---
+layout: scholar
+title: "Diffusion through Fourier modes: code in steps"
+permalink: /resources/step-by-step/diffusion/
+nav_active: resources
+description: "Diffusion through Fourier modes, written and checked one part at a time in Python and Julia."
+---
+<style>.code-lesson{max-width:1100px}.code-lesson h2{margin:44px 0 18px}.code-lesson p{margin:18px 0}.code-lesson pre{white-space:pre;overflow-x:auto;background:#edf2ef;border:1px solid #d4dfd9;padding:20px;font:14px/1.7 ui-monospace,monospace}.code-lesson details{margin:20px 0;padding:18px;background:#f1f5f2}.code-lesson summary{cursor:pointer;font-weight:600}.code-lesson a{text-decoration:underline;text-underline-offset:4px}.code-lesson li{margin:12px 0;line-height:1.7}</style><section class="page-heading"><span class="eyebrow">STEP-BY-STEP TEACHING CODE</span><h1>Diffusion through Fourier modes.</h1><p>I build the calculation in small parts and test each part before continuing. The Python and Julia notebooks follow the same sequence.</p></section><section class="section code-lesson"><p>I calculate diffusion on a periodic line. All quantities in this example are dimensionless: position x, time t, concentration c and diffusivity D. The domain length is 2π and D = 1. Fourier wave number k identifies a spatial mode. I use exact propagation of each mode rather than an approximate time-stepping scheme.</p><p><a href="/files/mesoscale/examples/stepwise/diffusion-python.ipynb" download>Python notebook ↓</a> · <a href="/files/mesoscale/examples/stepwise/diffusion-julia.ipynb" download>Julia notebook ↓</a> · <a href="/files/mesoscale/examples/step-by-step-teaching-codes.zip" download>Complete collection ↓</a></p><p>Run notebook cells in order. Extract the complete collection without changing its folder structure: the phase-field lesson imports the original kernel from its parent folder. Use Python with NumPy, Matplotlib and Jupyter, or Julia with IJulia. Julia Fourier examples also require FFTW. The download includes installation commands and the actual check report.</p><!-- CODE-STEPS-START --><h2>1. Define the grid</h2>
+<p>I omit the repeated endpoint of the periodic interval. I check that the grid spacing times the number of points equals the domain length.</p>
+<h3>Python</h3><pre><code>import numpy as np
+n = 128
+length = 2 * np.pi
+spacing = length / n
+x = spacing * np.arange(n)
+k = 2 * np.pi * np.fft.fftfreq(n, d=spacing)
+diffusivity = 1.0
+assert np.isclose(n * spacing, length)
+assert k[0] == 0
+print(&quot;Grid points:&quot;, n, &quot;spacing:&quot;, spacing)</code></pre>
+<details><summary>The same part in Julia</summary><pre><code>using FFTW, Statistics
+n = 128
+length_x = 2π
+spacing = length_x / n
+x = spacing .* (0:n-1)
+k = 2π .* fftfreq(n, 1 / spacing)
+diffusivity = 1.0
+@assert isapprox(n * spacing, length_x)
+@assert k[1] == 0
+println(&quot;Grid points: &quot;, n, &quot;; spacing: &quot;, spacing)</code></pre></details>
+<h2>2. Write the initial concentration</h2>
+<p>The constant term sets the mean. Two cosine terms give two spatial wavelengths. I check the mean and transform the field back before introducing evolution.</p>
+<h3>Python</h3><pre><code>initial = 1 + 0.4 * np.cos(x) + 0.2 * np.cos(4 * x)
+spectrum = np.fft.fft(initial)
+assert abs(initial.mean() - 1) &lt; 1e-12
+assert np.max(np.abs(np.fft.ifft(spectrum).real - initial)) &lt; 1e-12
+print(&quot;Initial mean:&quot;, initial.mean())</code></pre>
+<details><summary>The same part in Julia</summary><pre><code>initial = 1 .+ 0.4 .* cos.(x) .+ 0.2 .* cos.(4 .* x)
+spectrum = fft(initial)
+@assert abs(mean(initial) - 1) &lt; 1e-12
+@assert maximum(abs.(real.(ifft(spectrum)) .- initial)) &lt; 1e-12
+println(&quot;Initial mean: &quot;, mean(initial))</code></pre></details>
+<h2>3. Evolve one Fourier mode</h2>
+<p>Diffusion multiplies a Fourier mode by exp(-D k² t). Higher wave numbers decay faster. I check the known concentration profile at one time; this check would catch a missing square on k.</p>
+<h3>Python</h3><pre><code>time = 0.3
+decay = np.exp(-diffusivity * k**2 * time)
+field = np.fft.ifft(spectrum * decay).real
+exact = 1 + 0.4 * np.exp(-time) * np.cos(x) + 0.2 * np.exp(-16 * time) * np.cos(4 * x)
+assert np.max(np.abs(field - exact)) &lt; 1e-12
+assert abs(field.mean() - initial.mean()) &lt; 1e-12
+print(&quot;Maximum analytical error:&quot;, np.max(np.abs(field - exact)))</code></pre>
+<details><summary>The same part in Julia</summary><pre><code>time = 0.3
+decay = exp.(-diffusivity .* k.^2 .* time)
+field = real.(ifft(spectrum .* decay))
+exact = 1 .+ 0.4 * exp(-time) .* cos.(x) .+ 0.2 * exp(-16*time) .* cos.(4 .* x)
+@assert maximum(abs.(field .- exact)) &lt; 1e-12
+@assert abs(mean(field) - mean(initial)) &lt; 1e-12
+println(&quot;Maximum analytical error: &quot;, maximum(abs.(field .- exact)))</code></pre></details>
+<h2>4. Repeat at several times</h2>
+<p>I keep the same initial spectrum for every time, since each evaluation gives the solution from the initial state. I check mean conservation and the decreasing concentration variation. This is not a time-step convergence study.</p>
+<h3>Python</h3><pre><code>times = [0.0, 0.02, 0.1, 0.3, 1.0]
+profiles = []
+variation = []
+for sample_time in times:
+    decay = np.exp(-diffusivity * k**2 * sample_time)
+    profile = np.fft.ifft(spectrum * decay).real
+    profiles.append(profile)
+    variation.append(np.mean((profile - profile.mean())**2))
+assert all(abs(profile.mean() - 1) &lt; 1e-12 for profile in profiles)
+assert np.all(np.diff(variation) &lt;= 0)
+print(&quot;Concentration variances:&quot;, variation)
+
+import matplotlib.pyplot as plt
+fig, ax = plt.subplots()
+for sample_time, profile in zip(times, profiles):
+    ax.plot(x, profile, label=f&quot;t = {sample_time}&quot;)
+ax.set_xlabel(&quot;Position x (dimensionless)&quot;)
+ax.set_ylabel(&quot;Concentration c (dimensionless)&quot;)
+ax.legend()
+plt.show()</code></pre>
+<details><summary>The same part in Julia</summary><pre><code>times = [0.0, 0.02, 0.1, 0.3, 1.0]
+profiles = Vector{Float64}[]
+variation = Float64[]
+for sample_time in times
+    sample_decay = exp.(-diffusivity .* k.^2 .* sample_time)
+    profile = real.(ifft(spectrum .* sample_decay))
+    push!(profiles, profile)
+    push!(variation, mean((profile .- mean(profile)).^2))
+end
+@assert all(abs(mean(profile) - 1) &lt; 1e-12 for profile in profiles)
+@assert all(diff(variation) .&lt;= 0)
+println(&quot;Concentration variances: &quot;, variation)</code></pre></details>
+<figure><img loading="lazy" src="/assets/images/stepwise/diffusion-python-step-4.png" alt="Checked result: 4. Repeat at several times"><figcaption>Result from the executed Python notebook.</figcaption></figure><!-- CODE-STEPS-END --><h2>What I checked</h2><p>I executed all Python notebook cells in a clean kernel and all Julia script stages. The checks apply to the short examples shown here. They do not establish grid convergence or reproduce every long simulation. Julia notebook-kernel execution is not included in these checks; the notebook code cells are identical to the tested Julia script.</p><p><a href="/resources/step-by-step-codes/">Return to the code collection →</a></p></section>

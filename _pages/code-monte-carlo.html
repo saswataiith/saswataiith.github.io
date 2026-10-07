@@ -1,0 +1,154 @@
+---
+layout: scholar
+title: "Ising and Potts updates: code in steps"
+permalink: /resources/step-by-step/monte-carlo/
+nav_active: resources
+description: "Ising and Potts updates, written and checked one part at a time in Python and Julia."
+---
+<style>.code-lesson{max-width:1100px}.code-lesson h2{margin:44px 0 18px}.code-lesson p{margin:18px 0}.code-lesson pre{white-space:pre;overflow-x:auto;background:#edf2ef;border:1px solid #d4dfd9;padding:20px;font:14px/1.7 ui-monospace,monospace}.code-lesson details{margin:20px 0;padding:18px;background:#f1f5f2}.code-lesson summary{cursor:pointer;font-weight:600}.code-lesson a{text-decoration:underline;text-underline-offset:4px}.code-lesson li{margin:12px 0;line-height:1.7}</style><section class="page-heading"><span class="eyebrow">STEP-BY-STEP TEACHING CODE</span><h1>Ising and Potts updates.</h1><p>I build the calculation in small parts and test each part before continuing. The Python and Julia notebooks follow the same sequence.</p></section><section class="section code-lesson"><p>I build one local Monte Carlo update before repeating it. The square lattice is periodic. In the Ising model a spin has value -1 or +1; the dimensionless interaction strength is one and temperature is measured in units of the interaction energy divided by Boltzmann’s constant. For Potts grain growth the integers identify grains, not compositions. Neighbor-copy proposals describe the supplied grain-growth kinetics and should not be presented as unbiased equilibrium sampling.</p><p><a href="/files/mesoscale/examples/stepwise/monte-carlo-python.ipynb" download>Python notebook ↓</a> · <a href="/files/mesoscale/examples/stepwise/monte-carlo-julia.ipynb" download>Julia notebook ↓</a> · <a href="/files/mesoscale/examples/step-by-step-teaching-codes.zip" download>Complete collection ↓</a></p><p>Run notebook cells in order. Extract the complete collection without changing its folder structure: the phase-field lesson imports the original kernel from its parent folder. Use Python with NumPy, Matplotlib and Jupyter, or Julia with IJulia. Julia Fourier examples also require FFTW. The download includes installation commands and the actual check report.</p><!-- CODE-STEPS-START --><h2>1. Inspect periodic neighbors</h2>
+<p>I first test the boundary indexing on a grid of known values. Opposite edges are adjacent. Rows and columns identify sites; they are dimensionless indices.</p>
+<h3>Python</h3><pre><code>import numpy as np
+rng = np.random.default_rng(7)
+def neighbor_values(state, row, column):
+    rows, columns = state.shape
+    return [state[(row + 1) % rows, column], state[(row - 1) % rows, column],
+            state[row, (column + 1) % columns], state[row, (column - 1) % columns]]
+
+test_grid = np.arange(9).reshape(3, 3)
+assert neighbor_values(test_grid, 0, 0) == [3, 6, 1, 2]
+print(&quot;Periodic neighbor indexing passed.&quot;)</code></pre>
+<details><summary>The same part in Julia</summary><pre><code>using Random
+rng = MersenneTwister(7)
+function neighbor_values(state, row, column)
+    rows, columns = size(state)
+    return [state[mod1(row+1,rows),column], state[mod1(row-1,rows),column],
+            state[row,mod1(column+1,columns)], state[row,mod1(column-1,columns)]]
+end
+test_grid = [0 1 2; 3 4 5; 6 7 8]
+@assert neighbor_values(test_grid, 1, 1) == [3, 6, 1, 2]
+println(&quot;Periodic neighbor indexing passed.&quot;)</code></pre></details>
+<h2>2. Calculate the Ising energy change</h2>
+<p>Flipping a spin changes each of its four bond energies. In a uniform positive-spin neighborhood the change is +8. I check this before using a probability rule.</p>
+<h3>Python</h3><pre><code>def ising_energy_change(old_spin, neighbors):
+    return 2 * old_spin * sum(neighbors)
+
+assert ising_energy_change(1, [1, 1, 1, 1]) == 8
+assert ising_energy_change(-1, [1, 1, 1, 1]) == -8
+print(&quot;Ising energy changes passed.&quot;)</code></pre>
+<details><summary>The same part in Julia</summary><pre><code>function ising_energy_change(old_spin, neighbors)
+    return 2 * old_spin * sum(neighbors)
+end
+@assert ising_energy_change(1, [1,1,1,1]) == 8
+@assert ising_energy_change(-1, [1,1,1,1]) == -8
+println(&quot;Ising energy changes passed.&quot;)</code></pre></details>
+<h2>3. Accept or reject a trial</h2>
+<p>I always accept a decrease in energy. For an increase I accept with probability exp(-ΔE/T). The dimensionless temperature T must be positive in this implementation. This rule permits occasional uphill moves; energy need not decrease at every update.</p>
+<h3>Python</h3><pre><code>def accept_trial(energy_change, temperature, rng):
+    if temperature &lt;= 0:
+        raise ValueError(&quot;Use positive temperature in this example.&quot;)
+    if energy_change &lt;= 0:
+        return True
+    return rng.random() &lt; np.exp(-energy_change / temperature)
+
+assert accept_trial(-8, 1.5, rng)
+assert accept_trial(0, 1.5, rng)
+assert 0 &lt; np.exp(-8 / 1.5) &lt; 1
+print(&quot;Acceptance checks passed.&quot;)</code></pre>
+<details><summary>The same part in Julia</summary><pre><code>function accept_trial(energy_change, temperature, rng)
+    temperature &gt; 0 || error(&quot;Use positive temperature in this example.&quot;)
+    if energy_change &lt;= 0
+        return true
+    end
+    return rand(rng) &lt; exp(-energy_change / temperature)
+end
+@assert accept_trial(-8, 1.5, rng)
+@assert accept_trial(0, 1.5, rng)
+@assert 0 &lt; exp(-8 / 1.5) &lt; 1
+println(&quot;Acceptance checks passed.&quot;)</code></pre></details>
+<h2>4. Make and repeat one Ising trial</h2>
+<p>I choose a random site with replacement. One sweep consists of as many attempted updates as there are sites, so some sites can be chosen more than once. A spin flip does not conserve total spin.</p>
+<h3>Python</h3><pre><code>def ising_trial(state, temperature, rng):
+    row = rng.integers(state.shape[0])
+    column = rng.integers(state.shape[1])
+    old = state[row, column]
+    change = ising_energy_change(old, neighbor_values(state, row, column))
+    if accept_trial(change, temperature, rng):
+        state[row, column] = -old
+
+spins = rng.choice([-1, 1], (16, 16))
+for trial in range(spins.size * 10):
+    ising_trial(spins, 1.5, rng)
+assert set(np.unique(spins)) &lt;= {-1, 1}
+print(&quot;Ising state values:&quot;, np.unique(spins))</code></pre>
+<details><summary>The same part in Julia</summary><pre><code>function ising_trial!(state, temperature, rng)
+    row = rand(rng, axes(state,1))
+    column = rand(rng, axes(state,2))
+    old = state[row,column]
+    change = ising_energy_change(old, neighbor_values(state,row,column))
+    if accept_trial(change, temperature, rng)
+        state[row,column] = -old
+    end
+end
+spins = rand(rng, [-1,1], 16,16)
+for trial in 1:length(spins)*10
+    ising_trial!(spins, 1.5, rng)
+end
+@assert all(value in (-1,1) for value in spins)
+println(&quot;Ising state values: &quot;, unique(spins))</code></pre></details>
+<h2>5. Change the local rule for Potts grain growth</h2>
+<p>For a Potts trial I propose a neighbor’s label and count unlike neighbors before and after the change. The energy change is the difference in these counts, in units of the grain-boundary interaction. No new grain label can be created by copying a neighbor. I check both the local change and that property.</p>
+<h3>Python</h3><pre><code>def potts_energy_change(old, candidate, neighbors):
+    before = sum(value != old for value in neighbors)
+    after = sum(value != candidate for value in neighbors)
+    return after - before
+
+assert potts_energy_change(1, 2, [2, 2, 2, 1]) == -2
+
+def potts_trial(state, temperature, rng):
+    row = rng.integers(state.shape[0])
+    column = rng.integers(state.shape[1])
+    neighbors = neighbor_values(state, row, column)
+    candidate = neighbors[rng.integers(4)]
+    change = potts_energy_change(state[row, column], candidate, neighbors)
+    if accept_trial(change, temperature, rng):
+        state[row, column] = candidate
+
+grains = rng.permutation(np.arange(1, 257)).reshape(16, 16)
+initial_labels = set(grains.ravel())
+for trial in range(grains.size * 10):
+    potts_trial(grains, 0.3, rng)
+assert set(grains.ravel()) &lt;= initial_labels
+print(&quot;Grains initially:&quot;, len(initial_labels), &quot;remaining labels:&quot;, len(np.unique(grains)))
+
+import matplotlib.pyplot as plt
+fig, axes = plt.subplots(1, 2, figsize=(9, 4))
+axes[0].imshow(spins, vmin=-1, vmax=1, cmap=&quot;coolwarm&quot;)
+axes[0].set_title(&quot;Ising: spins -1 and +1&quot;)
+axes[1].imshow(grains, cmap=&quot;tab20&quot;)
+axes[1].set_title(&quot;Potts: grain labels&quot;)
+for ax in axes:
+    ax.set_xlabel(&quot;Column index&quot;)
+    ax.set_ylabel(&quot;Row index&quot;)
+plt.show()</code></pre>
+<details><summary>The same part in Julia</summary><pre><code>function potts_energy_change(old, candidate, neighbors)
+    return count(!=(candidate), neighbors) - count(!=(old), neighbors)
+end
+@assert potts_energy_change(1,2,[2,2,2,1]) == -2
+function potts_trial!(state, temperature, rng)
+    row = rand(rng, axes(state,1))
+    column = rand(rng, axes(state,2))
+    neighbors = neighbor_values(state,row,column)
+    candidate = rand(rng, neighbors)
+    change = potts_energy_change(state[row,column],candidate,neighbors)
+    if accept_trial(change,temperature,rng)
+        state[row,column] = candidate
+    end
+end
+grains = reshape(randperm(rng,256),16,16)
+initial_labels = Set(grains)
+for trial in 1:length(grains)*10
+    potts_trial!(grains,0.3,rng)
+end
+@assert issubset(Set(grains),initial_labels)
+println(&quot;Grains initially: &quot;, length(initial_labels), &quot;; remaining labels: &quot;, length(unique(grains)))</code></pre></details>
+<figure><img loading="lazy" src="/assets/images/stepwise/monte-carlo-python-step-5.png" alt="Checked result: 5. Change the local rule for Potts grain growth"><figcaption>Result from the executed Python notebook.</figcaption></figure><!-- CODE-STEPS-END --><h2>What I checked</h2><p>I executed all Python notebook cells in a clean kernel and all Julia script stages. The checks apply to the short examples shown here. They do not establish grid convergence or reproduce every long simulation. Julia notebook-kernel execution is not included in these checks; the notebook code cells are identical to the tested Julia script.</p><p><a href="/resources/step-by-step-codes/">Return to the code collection →</a></p></section>

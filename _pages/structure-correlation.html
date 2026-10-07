@@ -1,0 +1,115 @@
+---
+layout: scholar
+title: "Structure function and pair correlation"
+permalink: /resources/structure-correlation/
+nav_active: resources
+description: "My structure-function and pair-correlation methods, developed in small tested steps with original C sources and a NumPy notebook."
+---
+<style>.code-lesson{max-width:1100px}.code-lesson h2{margin:44px 0 18px}.code-lesson p{margin:18px 0}.code-lesson pre{white-space:pre;overflow-x:auto;background:#edf2ef;border:1px solid #d4dfd9;padding:20px;font:14px/1.7 ui-monospace,monospace}.code-lesson details{margin:20px 0;padding:18px;background:#f1f5f2}.code-lesson summary{cursor:pointer;font-weight:600}.code-lesson a{text-decoration:underline;text-underline-offset:4px}.code-lesson li{margin:12px 0;line-height:1.7}</style><section class="page-heading"><span class="eyebrow">MICROSTRUCTURE ANALYSIS · STEP-BY-STEP CODE</span><h1>Structure function<br><em>and pair correlation.</em></h1><p>I developed these codes to measure spatial patterns and characteristic lengths in simulated microstructures. Here I start with a known field, calculate its spectrum and correlation, then test each result before continuing.</p></section><section class="section code-lesson"><p><a href="/files/mesoscale/examples/stepwise/structure-correlation-python.ipynb" download>Python notebook ↓</a> · <a href="/files/mesoscale/examples/stepwise/structure_correlation.py" download>Complete worked Python code ↓</a> · <a href="/files/mesoscale/examples/stepwise/original-c/pair_corr.c" download>My original pair-correlation C source ↓</a> · <a href="/files/mesoscale/examples/stepwise/original-c/en_cor_str3.c" download>Original energy, correlation and structure-function routine ↓</a></p><p>The originals are retained unchanged. The notebook is a new teaching presentation of the calculation, rather than a reconstruction of my editing history. Use the tested notebook for this worked example; the old C copies require review before compilation with current FFTW.</p><!-- CODE-STEPS-START --><h2>1. Start with a field whose correlation is known</h2>
+<p>I choose a cosine composition wave on a periodic 16 by 16 grid. The composition c is dimensionless. Grid spacings dx and dy are one dimensionless length unit. Rows index x and columns index y, following the saved simulation arrays. The wave varies in x and is constant in y, so I can check the full directional result before averaging over directions.</p>
+<h3>Python</h3><pre><code>import numpy as np
+n = 16
+dx = dy = 1.0
+x = np.arange(n) * dx
+composition = 0.5 + 0.2 * np.cos(2 * np.pi * x[:, None] / (n * dx)) * np.ones((1, n))
+assert composition.shape == (n, n)
+assert abs(composition.mean() - 0.5) &lt; 1e-12
+print(&quot;Mean composition:&quot;, composition.mean())</code></pre>
+<h2>2. Remove the mean and calculate the variance</h2>
+<p>I use the fluctuation δc = c minus the measured mean of this field. Its variance is the mean of δc². Removing the actual mean avoids a residual zero mode when a nominal alloy composition differs from the saved field mean.</p>
+<h3>Python</h3><pre><code>fluctuation = composition - composition.mean()
+variance = np.mean(fluctuation**2)
+assert abs(fluctuation.mean()) &lt; 1e-12
+assert abs(variance - 0.02) &lt; 1e-12
+print(&quot;Composition variance:&quot;, variance)</code></pre>
+<h2>3. Calculate the structure function</h2>
+<p>I define F as the unnormalized forward discrete Fourier transform of δc and N as the total number of grid cells. The structure function is S = |F|²/N. Its units are squared composition units under this discrete convention; here they are dimensionless. It is nonnegative. Its sum divided by N equals the real-space variance. This check detects normalization errors.</p>
+<h3>Python</h3><pre><code>cells = composition.size
+transform = np.fft.fft2(fluctuation)
+structure = np.abs(transform)**2 / cells
+assert np.all(structure &gt;= 0)
+assert abs(structure[0, 0]) &lt; 1e-12
+assert abs(structure.sum() / cells - variance) &lt; 1e-12
+print(&quot;Parseval check:&quot;, structure.sum() / cells, variance)</code></pre>
+<h2>4. Invert the spectrum to obtain pair correlation</h2>
+<p>The unnormalized covariance C at displacement r is the spatial average of δc(x)δc(x+r). With NumPy’s normalized inverse transform, C = ifft2(S).real. I define the normalized correlation ρ = C/C(0). The origin must be one. A constant field has zero variance, so its normalized correlation is undefined; I reject it rather than divide by zero.</p>
+<h3>Python</h3><pre><code>def correlation_from_field(field):
+    deviation = field - field.mean()
+    variance = np.mean(deviation**2)
+    if variance == 0:
+        raise ValueError(&quot;A constant field has undefined normalized correlation.&quot;)
+    structure = np.abs(np.fft.fft2(deviation))**2 / field.size
+    covariance = np.fft.ifft2(structure).real
+    return structure, covariance, covariance / variance
+
+structure, covariance, correlation = correlation_from_field(composition)
+assert abs(covariance[0, 0] - variance) &lt; 1e-12
+assert abs(correlation[0, 0] - 1) &lt; 1e-12
+try:
+    correlation_from_field(np.ones((4, 4)))
+except ValueError:
+    print(&quot;Constant-field check passed.&quot;)
+else:
+    raise AssertionError(&quot;The constant field must be rejected.&quot;)</code></pre>
+<h2>5. Check every displacement by a direct sum</h2>
+<p>I now calculate the same covariance without using a Fourier transform. np.roll implements periodic displacements. This direct calculation is slow for large grids, but useful as an independent check on a small grid. The cosine field should give ρ(r_x,r_y) = cos(2π r_x/L_x), independent of r_y.</p>
+<h3>Python</h3><pre><code>direct = np.zeros_like(composition)
+for row in range(n):
+    for column in range(n):
+        shifted = np.roll(fluctuation, (row, column), axis=(0, 1))
+        direct[row, column] = np.mean(fluctuation * shifted)
+expected = np.cos(2 * np.pi * np.arange(n)[:, None] / n) * np.ones((1, n))
+assert np.max(np.abs(direct - covariance)) &lt; 1e-12
+assert np.max(np.abs(correlation - expected)) &lt; 1e-12
+print(&quot;Direct-sum maximum error:&quot;, np.max(np.abs(direct - covariance)))</code></pre>
+<h2>6. Average by radius only after checking the directional data</h2>
+<p>For the correlation I bin by real-space displacement radius r, in length units, using minimum-image displacements. For the structure function I bin by wave-number magnitude k, in inverse-length units. They need separate radii and bin widths. Radial averaging discards direction information and can conceal anisotropy. Empty bins are omitted rather than divided by zero.</p>
+<h3>Python</h3><pre><code>def radial_average(values, radii, bin_width):
+    bins = np.floor(radii / bin_width + 0.5).astype(int)
+    occupied_bins = np.unique(bins)
+    centers = occupied_bins * bin_width
+    means = np.array([values[bins == index].mean() for index in occupied_bins])
+    counts = np.array([np.count_nonzero(bins == index) for index in occupied_bins])
+    return centers, means, counts
+
+rx = np.fft.fftfreq(n) * n * dx
+ry = np.fft.fftfreq(n) * n * dy
+real_radius = np.sqrt(rx[:, None]**2 + ry[None, :]**2)
+kx = 2 * np.pi * np.fft.fftfreq(n, d=dx)
+ky = 2 * np.pi * np.fft.fftfreq(n, d=dy)
+wave_radius = np.sqrt(kx[:, None]**2 + ky[None, :]**2)
+r, radial_correlation, counts = radial_average(correlation, real_radius, min(dx, dy))
+k, radial_structure, mode_counts = radial_average(structure, wave_radius, min(2*np.pi/(n*dx), 2*np.pi/(n*dy)))
+assert counts.sum() == cells and mode_counts.sum() == cells
+assert radial_correlation[0] == correlation[0, 0]
+print(&quot;Correlation radii:&quot;, r)
+print(&quot;Wave-number magnitudes:&quot;, k)</code></pre>
+<h2>7. Report a first zero only if one is present</h2>
+<p>A first zero is one possible characteristic length. I find the first positive-to-nonpositive crossing and linearly interpolate between the sampled values. If no such crossing is present in the sampled range, I return None. This is not automatically a particle radius, and it is not a connectivity measurement. For the directional cosine test, the first zero is at one quarter of the wavelength.</p>
+<h3>Python</h3><pre><code>def first_zero(distances, values):
+    for index in range(1, len(values)):
+        if values[index - 1] &gt; 0 and values[index] &lt;= 0:
+            fraction = values[index - 1] / (values[index - 1] - values[index])
+            return distances[index - 1] + fraction * (distances[index] - distances[index - 1])
+    return None
+
+directional_zero = first_zero(x[:n//2+1], correlation[:n//2+1, 0])
+assert abs(directional_zero - n * dx / 4) &lt; 1e-12
+assert first_zero(np.arange(3), np.ones(3)) is None
+print(&quot;Directional first zero:&quot;, directional_zero)
+print(&quot;Radial first zero:&quot;, first_zero(r, radial_correlation))
+
+import matplotlib.pyplot as plt
+fig, axes = plt.subplots(1, 2, figsize=(9, 4))
+axes[0].plot(k, radial_structure, &quot;o-&quot;)
+axes[0].set_xlabel(&quot;Wave-number magnitude k (inverse length units)&quot;)
+axes[0].set_ylabel(&quot;Radial structure function S (dimensionless)&quot;)
+axes[1].plot(r, radial_correlation, &quot;o-&quot;, label=&quot;Radial average&quot;)
+axes[1].plot(x[:n//2+1], correlation[:n//2+1, 0], &quot;--&quot;, label=&quot;x direction&quot;)
+axes[1].axhline(0, color=&quot;gray&quot;, linewidth=0.7)
+axes[1].set_xlabel(&quot;Displacement radius r (length units)&quot;)
+axes[1].set_ylabel(&quot;Normalized correlation (dimensionless)&quot;)
+axes[1].legend()
+fig.tight_layout()
+plt.show()</code></pre>
+<figure><img loading="lazy" src="/assets/images/stepwise/structure-correlation-python-step-7.png" alt="Checked result: 7. Report a first zero only if one is present"><figcaption>Result from the executed Python notebook.</figcaption></figure><!-- CODE-STEPS-END --><h2>About the original C copies</h2><p>In the recovered pair_corr.c copy, FFTW plans are created before their array pointers are allocated. Modern C also does not allow assignment through creal or cimag. The first-zero calculation needs an explicit outcome when no crossing is found, and constant fields need a zero-variance check. These originals have not been compiled or certified here. I preserve them as source references and check the normalization independently in the notebook.</p><p>FFTW uses an unnormalized backward transform. The original convention S = |F|²/N therefore needs division by N after the backward transform to obtain covariance, followed by division by variance for normalized correlation. NumPy already includes that backward-transform division; applying it again would be an error.</p><p><a href="/resources/step-by-step-codes/">Return to the step-by-step code collection →</a></p></section>

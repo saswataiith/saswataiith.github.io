@@ -1,0 +1,290 @@
+---
+layout: scholar
+title: "Hoshen–Kopelman: build and test the code"
+permalink: /resources/hoshen-kopelman/
+nav_active: resources
+description: "Build cluster labeling in small tested steps, with Python and Julia notebooks and C checkpoints."
+---
+<style>.code-lesson{max-width:1100px}.code-lesson h2{margin:44px 0 18px}.code-lesson p{margin:18px 0}.code-lesson pre{white-space:pre;overflow-x:auto;background:#edf2ef;border:1px solid #d4dfd9;padding:20px;font:14px/1.7 ui-monospace,monospace}.code-lesson details{margin:20px 0;padding:18px;background:#f1f5f2}.code-lesson summary{cursor:pointer;font-weight:600}.code-lesson a{text-decoration:underline;text-underline-offset:4px}.code-lesson li{margin:12px 0;line-height:1.7}</style><section class="page-heading"><span class="eyebrow">STEP-BY-STEP CODE · CONNECTIVITY</span><h1>Write a small part.<br><em>Test it. Then continue.</em></h1><p>I build the Hoshen–Kopelman algorithm one part at a time. Each step introduces a small piece of code, explains its purpose and checks an expected result before I continue.</p></section><section class="section code-lesson"><p>I start with a small grid that I can check by eye. I retain the complete code alongside the individual steps.</p><p><a href="/files/mesoscale/examples/hoshen-kopelman/hoshen-kopelman-python.ipynb" download>Python notebook ↓</a> · <a href="/files/mesoscale/examples/hoshen-kopelman/hoshen-kopelman-julia.ipynb" download>Julia notebook ↓</a> · <a href="/files/mesoscale/examples/hoshen-kopelman/stepwise-hoshen-kopelman.zip" download>All notebooks, scripts and C checkpoints ↓</a></p><p>Install NumPy and Jupyter for the Python notebook. For Julia, use Julia and the IJulia kernel; the algorithm itself needs no Julia packages. For C, each checkpoint is a complete program: compile it, run its assertions, then move to the next file. The download includes commands and the recorded checks.</p><p>The tutorial uses four-edge adjacency in 2D. Labels, occupancy values and cell counts are dimensionless. Physical area requires the grid spacing. <a href="/files/mesoscale/examples/topology-connectivity.html">The topology playground</a> animates labeling and explains wrapping, holes and surfaces.</p><section><!-- CODE-STEPS-START --><h2>1. Write a small grid and inspect it</h2>
+<p>I begin with a small array that I can inspect by eye. A value of 1 identifies an occupied cell; 0 identifies background. Rows run downward and columns run to the right. These values and the labels are dimensionless. I count connections through shared edges, so corner contact alone does not connect two cells.</p>
+<h3>Python</h3><pre><code>import numpy as np
+
+mask = np.array([[1, 0, 1],
+                 [1, 1, 1],
+                 [0, 0, 0]], dtype=bool)
+assert mask.shape == (3, 3)
+assert mask.sum() == 5
+print(mask.astype(int))
+</code></pre>
+<details><summary>The same part in Julia</summary><pre><code>mask = Bool[1 0 1; 1 1 1; 0 0 0]
+@assert size(mask) == (3, 3)
+@assert sum(mask) == 5
+println(Int.(mask))</code></pre></details>
+<h2>2. Find the representative of a label</h2>
+<p>The first row appears to contain two separate clusters. Later cells connect them. I therefore need a way to record that two labels belong to the same cluster. In the parent list, parent[k] gives the next label to follow. A label that points to itself is the representative. Label 0 is reserved for background. I first test lookup without scanning a grid.</p>
+<h3>Python</h3><pre><code>def find_label(parent, label):
+    while parent[label] != label:
+        label = parent[label]
+    return label
+
+parent = [0, 1, 1, 2]
+assert find_label(parent, 3) == 1
+assert find_label(parent, 1) == 1
+print(&quot;Label 3 belongs to the cluster represented by label 1.&quot;)
+</code></pre>
+<details><summary>The same part in Julia</summary><pre><code>function find_label(parent, label)
+    while parent[label] != label
+        label = parent[label]
+    end
+    return label
+end
+parent = [1, 1, 2]
+@assert find_label(parent, 3) == 1
+println(&quot;Label lookup passed.&quot;)</code></pre></details>
+<h2>3. Merge two labels</h2>
+<p>I find the representatives before merging labels. Otherwise I could link the wrong entries or form a cycle in the parent list. I make the larger representative point to the smaller one. This gives predictable labels in the worked example. I do not need a more elaborate data structure for this small lesson.</p>
+<h3>Python</h3><pre><code>def merge_labels(parent, first, second):
+    first_root = find_label(parent, first)
+    second_root = find_label(parent, second)
+    root = min(first_root, second_root)
+    parent[max(first_root, second_root)] = root
+    return root
+
+parent = [0, 1, 2, 3]
+merge_labels(parent, 2, 3)
+merge_labels(parent, 1, 3)
+assert [find_label(parent, k) for k in (1, 2, 3)] == [1, 1, 1]
+print(&quot;Three labels now identify one cluster.&quot;)
+</code></pre>
+<details><summary>The same part in Julia</summary><pre><code>function merge_labels!(parent, first, second)
+    first_root = find_label(parent, first)
+    second_root = find_label(parent, second)
+    root = min(first_root, second_root)
+    parent[max(first_root, second_root)] = root
+    return root
+end
+parent = [1, 2, 3]
+merge_labels!(parent, 2, 3)
+merge_labels!(parent, 1, 3)
+@assert [find_label(parent, k) for k in 1:3] == [1, 1, 1]
+println(&quot;Label merging passed.&quot;)</code></pre></details>
+<h2>4. Scan the grid once</h2>
+<p>I visit rows from top to bottom, and cells within each row from left to right. Only the upper and left neighbors have already been visited. If both are background, I create a label. If one is occupied, I use its label. If both are occupied, I merge their labels. Each shared-edge connection is considered when its later cell is visited. The returned labels are provisional: some different numbers may already refer to the same cluster.</p>
+<h3>Python</h3><pre><code>def scan_grid(mask):
+    rows, columns = mask.shape
+    labels = np.zeros(mask.shape, dtype=int)
+    parent = [0]
+    for row in range(rows):
+        for column in range(columns):
+            if not mask[row, column]:
+                continue
+            above = labels[row - 1, column] if row &gt; 0 else 0
+            left = labels[row, column - 1] if column &gt; 0 else 0
+            if above == 0 and left == 0:
+                new_label = len(parent)
+                parent.append(new_label)
+                labels[row, column] = new_label
+            elif above == 0:
+                labels[row, column] = find_label(parent, left)
+            elif left == 0:
+                labels[row, column] = find_label(parent, above)
+            else:
+                labels[row, column] = merge_labels(parent, above, left)
+    return labels, parent
+
+labels, parent = scan_grid(mask)
+assert labels[0, 0] != labels[0, 2]
+assert find_label(parent, labels[0, 0]) == find_label(parent, labels[0, 2])
+print(&quot;Provisional labels:&quot;)
+print(labels)
+</code></pre>
+<details><summary>The same part in Julia</summary><pre><code>function scan_grid(mask)
+    rows, columns = size(mask)
+    labels = zeros(Int, rows, columns)
+    parent = Int[]
+    for row in 1:rows
+        for column in 1:columns
+            if !mask[row, column]
+                continue
+            end
+            above = row &gt; 1 ? labels[row - 1, column] : 0
+            left = column &gt; 1 ? labels[row, column - 1] : 0
+            if above == 0 &amp;&amp; left == 0
+                new_label = length(parent) + 1
+                push!(parent, new_label)
+                labels[row, column] = new_label
+            elseif above == 0
+                labels[row, column] = find_label(parent, left)
+            elseif left == 0
+                labels[row, column] = find_label(parent, above)
+            else
+                labels[row, column] = merge_labels!(parent, above, left)
+            end
+        end
+    end
+    return labels, parent
+end
+labels, parent = scan_grid(mask)
+@assert labels[1, 1] != labels[1, 3]
+@assert find_label(parent, labels[1, 1]) == find_label(parent, labels[1, 3])
+println(&quot;Provisional labels: &quot;, labels)</code></pre></details>
+<h2>5. Replace provisional labels and count cells</h2>
+<p>I now replace each occupied cell label by its representative. I renumber the surviving representatives from 1 upward. The size of a cluster is the number of cells with its final label. For a uniform two-dimensional grid, its area is this count multiplied by the cell area. A count has no units; an area has the units of the squared grid spacing. The largest-cluster fraction is the largest count divided by the occupied-cell count, not the total grid-cell count.</p>
+<h3>Python</h3><pre><code>def finish_labels(labels, parent):
+    final = np.zeros(labels.shape, dtype=int)
+    numbers = {}
+    for row in range(labels.shape[0]):
+        for column in range(labels.shape[1]):
+            label = labels[row, column]
+            if label == 0:
+                continue
+            root = find_label(parent, label)
+            if root not in numbers:
+                numbers[root] = len(numbers) + 1
+            final[row, column] = numbers[root]
+    sizes = [int(np.count_nonzero(final == k))
+             for k in range(1, len(numbers) + 1)]
+    return final, sizes
+
+final, sizes = finish_labels(labels, parent)
+assert sizes == [5]
+assert np.array_equal(final &gt; 0, mask)
+print(&quot;Final labels:&quot;)
+print(final)
+print(&quot;Cluster sizes:&quot;, sizes)
+</code></pre>
+<details><summary>The same part in Julia</summary><pre><code>function finish_labels(labels, parent)
+    final = zeros(Int, size(labels))
+    numbers = Dict{Int, Int}()
+    for row in axes(labels, 1)
+        for column in axes(labels, 2)
+            label = labels[row, column]
+            if label == 0
+                continue
+            end
+            root = find_label(parent, label)
+            if !haskey(numbers, root)
+                numbers[root] = length(numbers) + 1
+            end
+            final[row, column] = numbers[root]
+        end
+    end
+    sizes = [count(==(k), final) for k in 1:length(numbers)]
+    return final, sizes
+end
+final, sizes = finish_labels(labels, parent)
+@assert sizes == [5]
+@assert (final .&gt; 0) == mask
+println(&quot;Final labels: &quot;, final, &quot;; sizes: &quot;, sizes)</code></pre></details>
+<h2>6. Add periodic connections as a separate step</h2>
+<p>I keep the bounded scan unchanged. For periodic data I then connect occupied cells at matching positions on opposite edges. The top cell in a column is adjacent to the bottom cell in that same column. The left and right cells in a row are adjacent in the same way. I merge these labels before producing the final counts. The two-cell example has two bounded clusters and one periodic cluster. It is a small island crossing the displayed seam; it does not form a loop around the whole domain.</p>
+<h3>Python</h3><pre><code>def join_periodic_edges(labels, parent):
+    rows, columns = labels.shape
+    for column in range(columns):
+        top = labels[0, column]
+        bottom = labels[rows - 1, column]
+        if top and bottom:
+            merge_labels(parent, top, bottom)
+    for row in range(rows):
+        left = labels[row, 0]
+        right = labels[row, columns - 1]
+        if left and right:
+            merge_labels(parent, left, right)
+
+
+def hoshen_kopelman(mask, periodic=False):
+    mask = np.asarray(mask, dtype=bool)
+    if mask.ndim != 2 or min(mask.shape) == 0:
+        raise ValueError(&quot;Use a nonempty two-dimensional grid.&quot;)
+    labels, parent = scan_grid(mask)
+    if periodic:
+        join_periodic_edges(labels, parent)
+    return finish_labels(labels, parent)
+
+seam = np.zeros((5, 5), dtype=bool)
+seam[0, 2] = seam[-1, 2] = True
+assert hoshen_kopelman(seam)[1] == [1, 1]
+assert hoshen_kopelman(seam, periodic=True)[1] == [2]
+print(&quot;Seam island: 2 bounded clusters; 1 periodic cluster.&quot;)
+</code></pre>
+<details><summary>The same part in Julia</summary><pre><code>function join_periodic_edges!(labels, parent)
+    rows, columns = size(labels)
+    for column in 1:columns
+        top, bottom = labels[1, column], labels[rows, column]
+        if top != 0 &amp;&amp; bottom != 0
+            merge_labels!(parent, top, bottom)
+        end
+    end
+    for row in 1:rows
+        left, right = labels[row, 1], labels[row, columns]
+        if left != 0 &amp;&amp; right != 0
+            merge_labels!(parent, left, right)
+        end
+    end
+end
+function hoshen_kopelman(mask; periodic=false)
+    @assert ndims(mask) == 2 &amp;&amp; minimum(size(mask)) &gt; 0
+    labels, parent = scan_grid(Bool.(mask))
+    if periodic
+        join_periodic_edges!(labels, parent)
+    end
+    return finish_labels(labels, parent)
+end
+seam = falses(5, 5)
+seam[1, 3] = seam[end, 3] = true
+@assert hoshen_kopelman(seam)[2] == [1, 1]
+@assert hoshen_kopelman(seam; periodic=true)[2] == [2]
+println(&quot;Periodic seam check passed.&quot;)</code></pre></details>
+<h2>7. Test examples before analyzing a microstructure</h2>
+<p>I test an empty grid, a filled grid, a corner contact and a ring. A ring and a filled square each have one connected component. Cluster labeling cannot distinguish their hole counts. I also test a rectangular grid so that accidentally exchanging the row and column dimensions cannot remain hidden.</p>
+<h3>Python</h3><pre><code>assert hoshen_kopelman(np.zeros((3, 5), bool))[1] == []
+assert hoshen_kopelman(np.ones((3, 5), bool))[1] == [15]
+assert hoshen_kopelman(np.eye(3, dtype=bool))[1] == [1, 1, 1]
+ring = np.ones((5, 5), dtype=bool)
+ring[1:4, 1:4] = False
+assert hoshen_kopelman(ring)[1] == [16]
+rectangle = np.zeros((3, 5), dtype=bool)
+rectangle[1, 0] = rectangle[1, -1] = True
+assert hoshen_kopelman(rectangle)[1] == [1, 1]
+assert hoshen_kopelman(rectangle, periodic=True)[1] == [2]
+print(&quot;All small-grid checks passed.&quot;)
+</code></pre>
+<details><summary>The same part in Julia</summary><pre><code>@assert hoshen_kopelman(falses(3, 5))[2] == Int[]
+@assert hoshen_kopelman(trues(3, 5))[2] == [15]
+corner = falses(3, 3)
+for k in 1:3
+    corner[k, k] = true
+end
+@assert hoshen_kopelman(corner)[2] == [1, 1, 1]
+ring = trues(5, 5)
+ring[2:4, 2:4] .= false
+@assert hoshen_kopelman(ring)[2] == [16]
+rectangle = falses(3, 5)
+rectangle[2, 1] = rectangle[2, end] = true
+@assert hoshen_kopelman(rectangle)[2] == [1, 1]
+@assert hoshen_kopelman(rectangle; periodic=true)[2] == [2]
+println(&quot;All small-grid checks passed.&quot;)</code></pre></details>
+<h2>8. Apply a threshold and analyze both phases</h2>
+<p>The composition c and threshold are dimensionless here. I define the high-composition phase using c &gt;= 0.5 and the other phase using c &lt; 0.5. I measure each separately. The occupied fraction uses all grid cells in its denominator. For an absent phase I report a largest-cluster fraction of zero by convention. In a real simulation I would load the saved field instead of this small example. I do not infer winding, holes or numerical convergence from these counts.</p>
+<h3>Python</h3><pre><code>composition = np.array([[0.8, 0.2, 0.7],
+                        [0.9, 0.6, 0.8],
+                        [0.1, 0.2, 0.1]])
+for name, phase in [(&quot;High composition&quot;, composition &gt;= 0.5),
+                    (&quot;Low composition&quot;, composition &lt; 0.5)]:
+    labels, sizes = hoshen_kopelman(phase, periodic=True)
+    occupied = int(phase.sum())
+    largest_fraction = max(sizes) / occupied if occupied else 0.0
+    assert sum(sizes) == occupied
+    print(name, &quot;occupied fraction:&quot;, occupied / phase.size,
+          &quot;clusters:&quot;, len(sizes), &quot;largest-cluster fraction:&quot;, largest_fraction)
+</code></pre>
+<details><summary>The same part in Julia</summary><pre><code>composition = [0.8 0.2 0.7; 0.9 0.6 0.8; 0.1 0.2 0.1]
+for (name, phase) in [(&quot;High composition&quot;, composition .&gt;= 0.5),
+                      (&quot;Low composition&quot;, composition .&lt; 0.5)]
+    phase_labels, phase_sizes = hoshen_kopelman(phase; periodic=true)
+    occupied = sum(phase)
+    largest_fraction = occupied &gt; 0 ? maximum(phase_sizes) / occupied : 0.0
+    @assert sum(phase_sizes) == occupied
+    println(name, &quot;: occupied fraction = &quot;, occupied / length(phase),
+            &quot;; clusters = &quot;, length(phase_sizes), &quot;; largest fraction = &quot;, largest_fraction)
+end</code></pre></details><!-- CODE-STEPS-END --><h2>What the algorithm establishes</h2><p>Hoshen–Kopelman assigns the same final label to cells connected by the specified neighbor rule. It gives component counts and sizes. A periodic edge connection does not, by itself, prove a loop around the domain. A ring and a filled square can each have one component but different hole counts. Use the separate winding and topology measurements for those questions.</p><h2>References and source credits</h2><p>The algorithm is due to <a href="https://doi.org/10.1103/PhysRevB.14.3438">Hoshen and Kopelman (1976)</a>. <a href="https://www.ocf.berkeley.edu/~fricke/projects/hoshenkopelman/hoshenkopelman.html">Tobin Fricke explains the union–find formulation and provides a C implementation</a>. The code above is a new small teaching implementation. Older C files used in my analysis retain their existing credits, including Prof. T. A. Abinandanan, my PhD adviser (Abi in the original source comments); Fricke’s separate source retains his copyright and GPL notice. No historical source is relabeled as new code.</p></section>

@@ -1,0 +1,83 @@
+---
+layout: scholar
+title: "Random walks and diffusion: code in steps"
+permalink: /resources/step-by-step/walkers/
+nav_active: resources
+description: "Random walks and diffusion, written and checked one part at a time in Python and Julia."
+---
+<style>.code-lesson{max-width:1100px}.code-lesson h2{margin:44px 0 18px}.code-lesson p{margin:18px 0}.code-lesson pre{white-space:pre;overflow-x:auto;background:#edf2ef;border:1px solid #d4dfd9;padding:20px;font:14px/1.7 ui-monospace,monospace}.code-lesson details{margin:20px 0;padding:18px;background:#f1f5f2}.code-lesson summary{cursor:pointer;font-weight:600}.code-lesson a{text-decoration:underline;text-underline-offset:4px}.code-lesson li{margin:12px 0;line-height:1.7}</style><section class="page-heading"><span class="eyebrow">STEP-BY-STEP TEACHING CODE</span><h1>Random walks and diffusion.</h1><p>I build the calculation in small parts and test each part before continuing. The Python and Julia notebooks follow the same sequence.</p></section><section class="section code-lesson"><p>I begin with molecules at the origin on an unbounded two-dimensional lattice. Each step moves one lattice spacing in a cardinal direction. Position is measured in lattice spacings and time in sweeps. One sweep moves every molecule once. Mean-square displacement is the average squared distance from the starting point, in squared lattice spacings. The diffusion coefficient for this convention is 1/4 lattice-spacing squared per sweep.</p><p><a href="/files/mesoscale/examples/stepwise/walkers-python.ipynb" download>Python notebook ↓</a> · <a href="/files/mesoscale/examples/stepwise/walkers-julia.ipynb" download>Julia notebook ↓</a> · <a href="/files/mesoscale/examples/step-by-step-teaching-codes.zip" download>Complete collection ↓</a></p><p>Run notebook cells in order. Extract the complete collection without changing its folder structure: the phase-field lesson imports the original kernel from its parent folder. Use Python with NumPy, Matplotlib and Jupyter, or Julia with IJulia. Julia Fourier examples also require FFTW. The download includes installation commands and the actual check report.</p><!-- CODE-STEPS-START --><h2>1. Set the positions and allowed moves</h2>
+<p>I first check the move lengths. No boundary rule is applied to the positions: the histogram window used by the complete program is only a display window.</p>
+<h3>Python</h3><pre><code>import numpy as np
+rng = np.random.default_rng(7)
+number = 50000
+positions = np.zeros((number, 2), dtype=int)
+moves = np.array([[1, 0], [-1, 0], [0, 1], [0, -1]])
+assert np.all(np.sum(moves**2, axis=1) == 1)
+assert np.all(positions == 0)
+print(&quot;Molecules:&quot;, number)</code></pre>
+<details><summary>The same part in Julia</summary><pre><code>using Random, Statistics
+rng = MersenneTwister(7)
+number = 50000
+positions = zeros(Int, number, 2)
+moves = [1 0; -1 0; 0 1; 0 -1]
+@assert all(sum(moves.^2; dims=2) .== 1)
+@assert all(positions .== 0)
+println(&quot;Molecules: &quot;, number)</code></pre></details>
+<h2>2. Take one sweep</h2>
+<p>I choose a direction independently for each molecule. After the first sweep every molecule is exactly one lattice spacing from the origin.</p>
+<h3>Python</h3><pre><code>choices = rng.integers(0, 4, number)
+positions += moves[choices]
+assert np.all(np.sum(positions**2, axis=1) == 1)
+print(&quot;Mean-square displacement after one sweep:&quot;, np.mean(np.sum(positions**2, axis=1)))</code></pre>
+<details><summary>The same part in Julia</summary><pre><code>for molecule in axes(positions, 1)
+    choice = rand(rng, 1:4)
+    positions[molecule, :] .+= moves[choice, :]
+end
+@assert all(sum(positions.^2; dims=2) .== 1)
+println(&quot;First-sweep mean-square displacement: &quot;, mean(sum(positions.^2; dims=2)))</code></pre></details>
+<h2>3. Measure displacement over many sweeps</h2>
+<p>The predicted ensemble mean-square displacement equals the sweep count. An individual finite sample fluctuates. I therefore use a stated statistical tolerance instead of requiring exact equality. The seed makes this NumPy run repeatable; Julia uses a different random generator.</p>
+<h3>Python</h3><pre><code>sweep_count = 100
+history = [0.0, 1.0]
+for sweep in range(2, sweep_count + 1):
+    choices = rng.integers(0, 4, number)
+    positions += moves[choices]
+    history.append(float(np.mean(np.sum(positions**2, axis=1))))
+relative_error = abs(history[-1] / sweep_count - 1)
+assert relative_error &lt; 0.06
+print(&quot;Measured:&quot;, history[-1], &quot;prediction:&quot;, sweep_count)
+print(&quot;Relative error:&quot;, relative_error)</code></pre>
+<details><summary>The same part in Julia</summary><pre><code>sweep_count = 100
+history = [0.0, 1.0]
+for sweep in 2:sweep_count
+    for molecule in axes(positions, 1)
+        choice = rand(rng, 1:4)
+        positions[molecule, :] .+= moves[choice, :]
+    end
+    push!(history, mean(sum(positions.^2; dims=2)))
+end
+relative_error = abs(history[end] / sweep_count - 1)
+@assert relative_error &lt; 0.06
+println(&quot;Measured: &quot;, history[end], &quot;; prediction: &quot;, sweep_count)</code></pre></details>
+<h2>4. Separate individual motion from spreading</h2>
+<p>A molecule continues making discrete random steps. Diffusion describes the distribution of many molecules. The mean displacement should be small compared with the root-mean-square distance. The check below is an ensemble check for this seeded example, not a universal bound.</p>
+<h3>Python</h3><pre><code>mean_position = positions.mean(axis=0)
+root_mean_square_distance = np.sqrt(history[-1])
+assert np.linalg.norm(mean_position) &lt; 0.1 * root_mean_square_distance
+print(&quot;Mean position:&quot;, mean_position)
+print(&quot;Root-mean-square distance:&quot;, root_mean_square_distance)
+
+import matplotlib.pyplot as plt
+fig, ax = plt.subplots()
+ax.plot(range(sweep_count + 1), history, label=&quot;Measured&quot;)
+ax.plot(range(sweep_count + 1), range(sweep_count + 1), &quot;--&quot;, label=&quot;Prediction&quot;)
+ax.set_xlabel(&quot;Time (sweeps)&quot;)
+ax.set_ylabel(&quot;Mean-square displacement (lattice spacing squared)&quot;)
+ax.legend()
+plt.show()</code></pre>
+<details><summary>The same part in Julia</summary><pre><code>mean_position = vec(mean(positions; dims=1))
+root_mean_square_distance = sqrt(history[end])
+@assert sqrt(sum(mean_position.^2)) &lt; 0.1 * root_mean_square_distance
+println(&quot;Mean position: &quot;, mean_position)
+println(&quot;Root-mean-square distance: &quot;, root_mean_square_distance)</code></pre></details>
+<figure><img loading="lazy" src="/assets/images/stepwise/walkers-python-step-4.png" alt="Checked result: 4. Separate individual motion from spreading"><figcaption>Result from the executed Python notebook.</figcaption></figure><!-- CODE-STEPS-END --><h2>What I checked</h2><p>I executed all Python notebook cells in a clean kernel and all Julia script stages. The checks apply to the short examples shown here. They do not establish grid convergence or reproduce every long simulation. Julia notebook-kernel execution is not included in these checks; the notebook code cells are identical to the tested Julia script.</p><p><a href="/resources/step-by-step-codes/">Return to the code collection →</a></p></section>
