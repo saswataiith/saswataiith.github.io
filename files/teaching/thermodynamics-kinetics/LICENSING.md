@@ -1,0 +1,1 @@
+My original source code and notebook code cells in this directory are available under the [MIT licence](LICENSE-CODE-MIT.txt). My original teaching text follows CC BY 4.0. Existing licences and third-party rights are unchanged. See [scope and dependency terms](https://saswataiith.github.io/files/CODE-LICENSING.md).

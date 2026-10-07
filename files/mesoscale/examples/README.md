@@ -36,3 +36,7 @@ Before quantitative use, assess time-step and spatial convergence at fixed physi
 Edit the source or import/include it and call the functions. Python: `run('elastic', 'results', n=256, dt=0.1, steps=4000)`. Julia: `run("elastic", "results"; n=256, dt=0.1, steps=4000)`. Both reach time 400. For chemical evolution call the same function with `chemical`. The elastic constants and eigenstrain are keyword defaults in `kernel`; change them there. Zero eigenstrain should recover the chemical evolution on the same grid.
 
 Ink-drop defaults now use 100,000 walkers and 256-square density bins in [-128,128], with frames every 10 steps. The plotting window is not a physical boundary. MC examples are in `monte_carlo.jl` and `monte_carlo.py`: Ising Metropolis flips and the course Potts neighbor-copy heuristic. Julia movies: 256-square, 200 Ising sweeps and 2,000 Potts sweeps; NumPy smoke runs: 16-square, 5 sweeps. The latter do not validate long-run equilibrium. Potts starts with one distinct orientation label per pixel (a shuffled permutation of 1 through n²), with frames every 25 sweeps. Colors are fixed categorical labels, not crystallographic angles. Four-neighbor, equal-energy boundaries retain lattice anisotropy.
+
+## Using my code
+
+See [licence and dependency terms](LICENSING.md).
