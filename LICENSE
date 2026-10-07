@@ -1,21 +1,47 @@
-The MIT License (MIT)
+Using my website code
+Copyright (c) 2026 Saswata Bhattacharyya.
+Effective date: October 7, 2026.
 
-Copyright (c) 2016 Michael Rose
+These terms apply to my original code hosted on this website, including
+Julia, Python/NumPy, C, notebook code cells and browser demonstrations,
+and copies supplied in downloads, subject to the existing-license
+exceptions below.
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+Teaching and demonstrations
+I permit you to download, run, copy, modify and share my code without a
+fee for noncommercial teaching, learning and demonstrations. Acknowledge
+me and link to the source page. Keep my copyright notice and these terms
+with copies and adaptations, and identify any changes you make. This
+permission does not include using the code to carry out research.
 
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
+Research and commercial use
+Ask for my explicit written permission before using my code for research
+(including academic research) or for any commercial purpose. This includes
+research calculations and incorporating the code into a research or
+commercial program. Citation alone does not grant this permission.
+To request permission, write to saswata_at_msme.iith.ac.in (replace _at_
+with @). Identify the code and version and describe the intended use.
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+Existing licenses
+These terms do not revoke permissions already granted under an earlier
+MIT, GPL or other valid license. Earlier licensed releases retain their
+existing permissions. Earlier GPL releases of my elasticity laboratory and elasticity solvers
+retain their existing permissions. Current distributions of my original
+code use these teaching-and-permission terms. Third-party code, website-
+template code and dependencies retain their own licenses.
+Follow any applicable copyleft requirements when distributing combined
+programs. These terms do not override GitHub's terms for viewing and
+forking public repositories or rights provided by applicable law.
+
+Teaching text and figures have separate terms. See:
+https://saswataiith.github.io/using-my-resources/
+Separate research repositories retain the terms supplied in those
+repositories; this notice does not change them.
+
+I provide the code as is, without warranty. Check that it is suitable for
+your purpose. These restricted terms make the current distribution source
+available; they are not an open-source license.
+
+Website-theme exception
+The third-party website theme retains its original MIT license, supplied
+in LICENSE-THEME-MIT.txt. These code-use terms do not apply to that theme.

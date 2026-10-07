@@ -1,3 +1,7 @@
+## Using my original code
+
+My original code hosted here uses the terms in [LICENSE](LICENSE): free noncommercial teaching and demonstrations with acknowledgment; research and commercial use require my written permission. Earlier MIT and GPL releases retain their permissions. Third-party code and dependencies retain their own licenses.
+
 # Saswata Bhattacharyya's academic website
 
 Source for [saswataiith.github.io](https://saswataiith.github.io/), a Jekyll website hosted with GitHub Pages.
@@ -77,7 +81,7 @@ docker run -p 4000:4000 --rm -v $(pwd):/usr/src/app jekyll-site
 
 Bug reports and feature requests to the template should be [submitted via GitHub](https://github.com/academicpages/academicpages.github.io/issues/new/choose). For questions concerning how to style the template, please feel free to start a [new discussion on GitHub](https://github.com/academicpages/academicpages.github.io/discussions).
 
-This repository was forked (then detached) by [Stuart Geiger](https://github.com/staeiou) from the [Minimal Mistakes Jekyll Theme](https://mmistakes.github.io/minimal-mistakes/), which is © 2016 Michael Rose and released under the MIT License (see LICENSE.md). It is currently being maintained by [Robert Zupko](https://github.com/rjzupkoii) and additional maintainers would be welcomed.
+This repository was forked (then detached) by [Stuart Geiger](https://github.com/staeiou) from the [Minimal Mistakes Jekyll Theme](https://mmistakes.github.io/minimal-mistakes/), which is © 2016 Michael Rose and released under the MIT License (see [LICENSE-THEME-MIT.txt](LICENSE-THEME-MIT.txt)). It is currently being maintained by [Robert Zupko](https://github.com/rjzupkoii) and additional maintainers would be welcomed.
 
 ## Bugfixes and enhancements
 
