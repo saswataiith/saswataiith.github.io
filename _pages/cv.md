@@ -10,7 +10,7 @@ description: "My academic background, experience, advisers and selected projects
   <h1>Saswata<br><em>Bhattacharyya.</em></h1>
   <p class="cv-position">Professor, Department of Materials Science and Metallurgical Engineering, IIT Hyderabad.</p>
   <div class="transport-card-links">
-    <a class="button primary" href="/files/saswata-bhattacharyya-full-cv.pdf?v=43ade922e35a">Full CV (PDF) ↓</a>
+    <a class="button primary" href="/files/saswata-bhattacharyya-full-cv.pdf?v=1bfcc7fe997c">Full CV (PDF) ↓</a>
     <a class="button secondary" href="https://scholar.google.co.in/citations?hl=en&amp;user=i9VAh7sAAAAJ">Google Scholar ↗</a>
     <a class="button secondary" href="https://orcid.org/0000-0002-6738-1421">ORCID ↗</a>
     <a class="button secondary" href="https://www.linkedin.com/in/saswata-bhattacharya-63474057/">LinkedIn ↗</a>
