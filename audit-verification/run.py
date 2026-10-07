@@ -43,6 +43,27 @@ else:
    if not urlfile.exists():raise RuntimeError('VPython did not open a browser URL; exit='+str(proc.poll()))
    with sync_playwright() as pw:
     browser=pw.chromium.launch(headless=True,args=['--use-gl=angle','--use-angle=swiftshader','--enable-unsafe-swiftshader']);page=browser.new_page();errors=[];page.on('pageerror',lambda e:errors.append(str(e)));page.goto(urlfile.read_text());page.wait_for_function("document.body.innerText.includes('Full-volume connectivity') || document.body.innerText.includes('Magenta records only')",timeout=240000);page.wait_for_timeout(5000)
+    if proc.poll() is not None:raise RuntimeError('Viewer exited after creating controls: '+str(proc.returncode))
+    if 'turtle' in p.name:
+     import re
+     steps=[]
+     for phase in ('red','blue'):
+      for direction in ('x','y','z'):
+       page.locator('select').nth(0).select_option(phase);page.locator('select').nth(1).select_option(direction)
+       prefix=phase+' · '+direction+' · step '
+       page.wait_for_function('(prefix) => document.body.innerText.includes(prefix + "0/")',arg=prefix,timeout=15000)
+       page.get_by_role('button',name='Start',exact=True).click();page.wait_for_timeout(1500);page.get_by_role('button',name='Pause',exact=True).click();page.wait_for_timeout(500)
+       body=page.locator('body').inner_text();match=re.search(re.escape(prefix)+r'(\d+)/',body)
+       if not match or int(match[1])==0:raise RuntimeError('Route did not advance: '+prefix)
+       steps.append(dict(phase=phase,direction=direction,step=int(match[1])))
+       page.get_by_role('button',name='Reset',exact=True).click();page.wait_for_timeout(500)
+     result['animated_routes']=steps
+    else:
+     for phase in ('red','blue','both'):
+      page.locator('select').select_option(phase);page.wait_for_timeout(1000)
+     page.locator('input[type=checkbox]').nth(0).uncheck();page.wait_for_timeout(3000)
+     page.get_by_role('button',name='Reset camera',exact=True).click();page.wait_for_timeout(1000)
+    if proc.poll() is not None:raise RuntimeError('Viewer stopped during interaction: '+str(proc.returncode))
     result.update(returncode=0 if not errors else 1,page_errors=errors,body=page.locator('body').inner_text()[:2000]);page.screenshot(path=str(reports/(label+'.png')));browser.close()
   except Exception as e:result.update(returncode=1,error=str(e))
   finally:proc.terminate();stream.close()

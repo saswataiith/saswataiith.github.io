@@ -66,7 +66,8 @@ def update(_=None):
         for obj in loops[phase]:obj.visible=visible and emphasized.checked
 def reset_camera(_):scene.center=vec(n/2,n/2,n/2);scene.range=n*.75;scene.forward=vec(-1,-.7,-1)
 scene.append_to_caption('\nRed and blue connected witness networks. Thick lines emphasize independent wrapping loops.\n')
-selection=menu(choices=['both','red','blue'],bind=update)
+# I show both networks initially by setting the native menu selection.
+selection=menu(choices=['both','red','blue'],selected='both',bind=update)
 interface=checkbox(text='Show c=0.5 interface',checked=True,bind=update)
 emphasized=checkbox(text='Emphasize wrapping loops',checked=True,bind=update)
 opacity=slider(min=0,max=1,step=.02,value=.04,bind=update)
