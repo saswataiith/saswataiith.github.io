@@ -27,7 +27,12 @@ f(c,\eta)=A c^2[1-h(\eta)]+B(1-c)^2h(\eta)+P\eta^2(1-\eta)^2,
 <p>For a particle surrounded by another material, I use a field to identify the particle and its exterior. That field weights the appropriate free energies and can also control transport or boundary conditions. Whether it remains fixed or evolves depends on the physical problem. An evolving precipitate field permits growth and dissolution; a fixed particle field describes phase separation within a prescribed particle.</p>
 <p><a href="/resources/spinodal/#embedded-particles">Read the embedded phase-field explanation, equations and research references →</a></p>
 <h2>Using the workshop sources</h2>
-<p>The download contains my original source files and input files for these three examples. It omits old executables and output fields. The codes use C and FFTW; the headers and supplied Makefiles also refer to OpenMP. The Makefiles contain library paths from the original setup and may need adjustment on another computer. I have inspected the equations and inputs for this page; I have not compiled or rerun these historical codes for this update.</p>
+<p>The download contains my original source and input files for these three examples, with a Makefile in each folder and a README. It omits old executables and output fields. The codes use C and FFTW 3. The C sources are unchanged from 2014; in 2026 I updated the Makefiles so the codes build with current compilers, and added one for <code>Spinodal</code>. All three build without warnings with GCC 13 and FFTW 3.3 and run correctly: in <code>Spinodal</code>, the mean composition stays at 0.5 while the field separates towards 0 and 1.</p>
+<pre><code>sudo apt install build-essential libfftw3-dev   # Ubuntu or Debian
+cd PFWorkshop2014/Spinodal                      # or PptCodes1D, PptCodes2D
+make
+./spinodal.out                                  # ./pptg.out in PptCodes1D and PptCodes2D</code></pre>
+<p>Each program reads <code>bin1ary</code>, which names its input and output parameter files, so keep it in the folder. Edit <code>InputParams</code> to change the grid, time step and number of steps. The README explains the binary output format and how to build on macOS.</p>
 <p>Before interpreting a new run, check conservation, energy, time-step sensitivity and grid refinement at a fixed domain size. The original evolution loops include the final step in an inclusive loop; check the saved time and the number of updates when making comparisons.</p>
 </article>
 
