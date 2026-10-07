@@ -1,43 +1,27 @@
-Using my website code
+Using my code
 Copyright (c) 2026 Saswata Bhattacharyya.
 Effective date: October 7, 2026.
 
-These terms apply to my original code hosted on this website, including
-Julia, Python/NumPy, C, notebook code cells and browser demonstrations,
-and copies supplied in downloads, subject to the existing-license
-exceptions below.
+These conditions apply to my original code on this website and in its
+code downloads.
 
-Teaching and demonstrations
-I permit you to download, run, copy, modify and share my code without a
-fee for noncommercial teaching, learning and demonstrations. Acknowledge
-me and link to the source page. Keep my copyright notice and these terms
-with copies and adaptations, and identify any changes you make. This
-permission does not include using the code to carry out research.
+You may download, run, copy, modify and share my code free of charge for
+noncommercial teaching, learning and demonstrations. Acknowledge me and
+link to the source. Keep my copyright notice and these conditions with
+copies and adaptations, and identify your changes.
 
-Research and commercial use
-Ask for my explicit written permission before using my code for research
-(including academic research) or for any commercial purpose. This includes
-research calculations and incorporating the code into a research or
-commercial program. Citation alone does not grant this permission.
-To request permission, write to saswata_at_msme.iith.ac.in (replace _at_
-with @). Identify the code and version and describe the intended use.
+Research, including academic research, and commercial use require my
+explicit written permission. This includes research calculations and use
+within a research or commercial program. A citation alone is not permission.
+Write to saswata_at_msme.iith.ac.in (replace _at_ with @), identify the code
+and version, and describe your intended use.
 
-Existing licenses
-These terms do not revoke permissions already granted under an earlier
-MIT, GPL or other valid license. Earlier licensed releases retain their
-existing permissions. Earlier GPL releases of my elasticity laboratory and elasticity solvers
-retain their existing permissions. Current distributions of my original
-code use these teaching-and-permission terms. Third-party code, website-
-template code and dependencies retain their own licenses.
-Follow any applicable copyleft requirements when distributing combined
-programs. These terms do not override GitHub's terms for viewing and
-forking public repositories or rights provided by applicable law.
+Copies already released under another license retain that license.
+Third-party code and dependencies retain their own licenses and any
+applicable distribution requirements. Separate research repositories
+follow the terms supplied with them. Rights provided by law and GitHub's
+viewing and forking terms are unchanged. I provide the code without warranty.
 
-Teaching text and figures have separate terms. See:
+This is the code notice from Using my resources:
 https://saswataiith.github.io/using-my-resources/
-Separate research repositories retain the terms supplied in those
-repositories; this notice does not change them.
-
-I provide the code as is, without warranty. Check that it is suitable for
-your purpose. These restricted terms make the current distribution source
-available; they are not an open-source license.
+That page also explains the separate terms for my notes and figures.
