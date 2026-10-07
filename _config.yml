@@ -162,6 +162,7 @@ exclude:
   - files/teaching/thermodynamics-kinetics/phase-equilibria-01.ipynb
   - files/teaching/thermodynamics-kinetics/phase-equilibria-01-v3.ipynb
   - files/teaching/thermodynamics-kinetics/phase-equilibria-01-v3.html
+  - files/teaching/thermodynamics-kinetics/phase-equilibria-01-v4.html
   - OWNER-GUIDE.md
   - CONTRIBUTING.md
   - files/paper1.pdf
