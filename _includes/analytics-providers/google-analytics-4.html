@@ -1,8 +1,9 @@
 {% if site.analytics.google.tracking_id != nil and site.analytics.google.tracking_id != empty %}
-<div id="analytics-choice" hidden style="position:fixed;bottom:1rem;left:1rem;right:1rem;z-index:1000;max-width:42rem;margin:auto;padding:1rem;background:#fff;color:#142c35;border:1px solid #b9c9ce;border-radius:8px;box-shadow:0 4px 24px #0002;font:16px/1.5 sans-serif" role="region" aria-label="Website analytics">
-  <p style="margin:0 0 .75rem">May I use Google Analytics to understand which pages visitors use? It uses cookies. You can use the website without accepting. <a href="{{ '/privacy/' | relative_url }}">Privacy details</a></p>
-  <button type="button" data-analytics-choice="accepted">Accept analytics</button>
-  <button type="button" data-analytics-choice="declined">Decline</button>
-</div>
-<script defer src="{{ '/assets/js/analytics-consent.js' | relative_url }}" data-measurement-id="{{ site.analytics.google.tracking_id }}"></script>
+<script async src="https://www.googletagmanager.com/gtag/js?id={{ site.analytics.google.tracking_id }}"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', '{{ site.analytics.google.tracking_id }}');
+</script>
 {% endif %}
