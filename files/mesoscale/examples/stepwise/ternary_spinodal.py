@@ -110,14 +110,82 @@ print("Final time:", steps*dt)
 print("Maximum mean drift:", history[:, 1].max())
 print("Final minimum and maximum:", min(cA.min(), cB.min(), cC.min()), max(cA.max(), cB.max(), cC.max()))
 
-fig, axes = plt.subplots(1, 3, figsize=(12, 4), constrained_layout=True)
-for ax, field, label in zip(axes, [cA, cB, cC], ["A", "B", "C"]):
-    image = ax.imshow(field, origin="lower", vmin=0, vmax=1, cmap="viridis")
-    ax.set_title("Mole fraction c" + label)
-    ax.set_xlabel("y index (grid cells)")
-    ax.set_ylabel("x index (grid cells)")
-fig.colorbar(image, ax=axes, label="Mole fraction (dimensionless)", shrink=0.8)
-fig.suptitle("Ternary spinodal decomposition: dimensionless time " + str(steps*dt))
+def composition_rgb(a, b, c):
+    # I retain my continuous RGB map as an alternative view of composition.
+    return np.clip(np.stack([a, b, c], axis=-1), 0.0, 1.0)
+
+
+def composition_pastel(a, b, c, draw_edges=True, periodic=True):
+    # I assign one color according to the largest local mole fraction.
+    composition = np.clip(np.stack([a, b, c], axis=-1), 0.0, 1.0)
+    label = np.argmax(composition, axis=-1)
+    palette = np.array([[130, 160, 195], [170, 185, 140], [200, 145, 125]]) / 255.0
+    color = palette[label].copy()
+
+    # I use the difference between the largest two fractions to shade each region.
+    ordered = np.sort(composition, axis=-1)
+    difference = ordered[..., -1] - ordered[..., -2]
+    brightness = 0.65 + 0.35 * np.clip(difference / 0.7, 0.0, 1.0)
+    color *= brightness[..., None]
+
+    # I draw black lines where neighboring grid cells have different labels.
+    if draw_edges:
+        edge = np.zeros(label.shape, dtype=bool)
+        if periodic:
+            for axis in (0, 1):
+                edge |= label != np.roll(label, 1, axis=axis)
+                edge |= label != np.roll(label, -1, axis=axis)
+        else:
+            edge[:-1, :] |= label[:-1, :] != label[1:, :]
+            edge[1:, :] |= label[1:, :] != label[:-1, :]
+            edge[:, :-1] |= label[:, :-1] != label[:, 1:]
+            edge[:, 1:] |= label[:, 1:] != label[:, :-1]
+        color[edge] = 0.0
+    return color
+
+
+# I can choose "pastel" for clear regions or "rgb" for continuous composition colors.
+display_style = "pastel"
+before_plot = np.stack([cA, cB, cC]).copy()
+if display_style == "pastel":
+    image = composition_pastel(cA, cB, cC)
+else:
+    image = composition_rgb(cA, cB, cC)
+assert image.shape == (Nx, Ny, 3)
+assert np.array_equal(before_plot, np.stack([cA, cB, cC]))
+
+# I construct a Gibbs-triangle legend with the same colors and shading.
+height = np.sqrt(3.0) / 2.0
+xx, yy = np.meshgrid(np.linspace(0.0, 1.0, 401), np.linspace(0.0, height, 349))
+legend_C = yy / height
+legend_B = xx - legend_C / 2.0
+legend_A = 1.0 - legend_B - legend_C
+inside = (legend_A >= 0) & (legend_B >= 0) & (legend_C >= 0)
+if display_style == "pastel":
+    legend_color = composition_pastel(legend_A, legend_B, legend_C, periodic=False)
+    labels = ("A-rich\nSlate blue", "B-rich\nSage green", "C-rich\nClay")
+else:
+    legend_color = composition_rgb(legend_A, legend_B, legend_C)
+    labels = ("A-rich\nRed", "B-rich\nGreen", "C-rich\nBlue")
+legend_rgba = np.dstack([legend_color, inside.astype(float)])
+
+fig, (ax, triangle) = plt.subplots(1, 2, figsize=(11, 5.5),
+                                  gridspec_kw={"width_ratios": [1.3, 1]},
+                                  constrained_layout=True)
+ax.imshow(image, origin="lower", interpolation="nearest")
+ax.set_title("Ternary microstructure\nDimensionless time " + str(steps*dt))
+ax.set_xlabel("y index (grid cells)")
+ax.set_ylabel("x index (grid cells)")
+triangle.imshow(legend_rgba, extent=[0, 1, 0, height], origin="lower", interpolation="nearest")
+triangle.plot([0, 1, 0.5, 0], [0, 0, height, 0], color="#26333c", lw=1)
+triangle.text(0, -0.045, labels[0], ha="center", va="top")
+triangle.text(1, -0.045, labels[1], ha="center", va="top")
+triangle.text(0.5, height+0.045, labels[2], ha="center", va="bottom")
+triangle.set_title("Gibbs-triangle color legend", pad=28)
+triangle.set_xlim(-0.12, 1.12)
+triangle.set_ylim(-0.14, height+0.14)
+triangle.set_aspect("equal")
+triangle.axis("off")
 plt.show()
 
 np.savez_compressed("ternary-fields.npz", cA=cA, cB=cB, cC=cC,
