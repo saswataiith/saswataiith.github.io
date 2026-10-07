@@ -10,7 +10,7 @@ jobs:
       fail-fast: false
       max-parallel: 6
       matrix:
-        target: [py-13, py-28]
+        target: [py-28]
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5

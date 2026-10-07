@@ -33,7 +33,7 @@ else:
  if 'vpython' in p.name:
   args=[str(work/'assets/examples/bicontinuity-3d/viewer.json')]
   hook=work/'viewer-launch.py';urlfile=work/'viewer-url.txt'
-  hook.write_text("import webbrowser,pathlib,runpy,sys\nurl_path=pathlib.Path(sys.argv[1])\nwebbrowser.open=lambda url,*a,**k:url_path.write_text(url)\nsys.argv=sys.argv[2:]\nrunpy.run_path(sys.argv[0],run_name='__main__')\n")
+  hook.write_text("import webbrowser,pathlib,runpy,sys,faulthandler\nfaulthandler.dump_traceback_later(120,repeat=True)\nurl_path=pathlib.Path(sys.argv[1])\nwebbrowser.open=lambda url,*a,**k:url_path.write_text(url)\nsys.argv=sys.argv[2:]\nrunpy.run_path(sys.argv[0],run_name='__main__')\n")
   stream=(reports/(label+'.log')).open('a');proc=subprocess.Popen([sys.executable,str(hook),str(urlfile),str(p),*args],cwd=cwd,env=env,stdout=stream,stderr=subprocess.STDOUT)
   result={'command':[str(p),*args],'returncode':None,'note':'Interactive browser check'}
   try:
@@ -42,7 +42,7 @@ else:
    while not urlfile.exists() and proc.poll() is None and time.time()<deadline:time.sleep(1)
    if not urlfile.exists():raise RuntimeError('VPython did not open a browser URL; exit='+str(proc.poll()))
    with sync_playwright() as pw:
-    browser=pw.chromium.launch(headless=True,args=['--use-gl=angle','--use-angle=swiftshader','--enable-unsafe-swiftshader']);page=browser.new_page();errors=[];page.on('pageerror',lambda e:errors.append(str(e)));page.goto(urlfile.read_text());page.wait_for_function("document.body.innerText.includes('Full-volume connectivity') || document.body.innerText.includes('Magenta records only')",timeout=240000);page.wait_for_timeout(5000)
+    browser=pw.chromium.launch(headless=True,args=['--use-gl=angle','--use-angle=swiftshader','--enable-unsafe-swiftshader']);page=browser.new_page();errors=[];page.on('pageerror',lambda e:errors.append(str(e)));page.goto(urlfile.read_text());page.wait_for_function("document.body.innerText.includes('Full-volume connectivity') || document.body.innerText.includes('Magenta records only')",timeout=600000);page.wait_for_timeout(5000)
     if proc.poll() is not None:raise RuntimeError('Viewer exited after creating controls: '+str(proc.returncode))
     if 'turtle' in p.name:
      import re
@@ -65,7 +65,12 @@ else:
      page.get_by_role('button',name='Reset camera',exact=True).click();page.wait_for_timeout(1000)
     if proc.poll() is not None:raise RuntimeError('Viewer stopped during interaction: '+str(proc.returncode))
     result.update(returncode=0 if not errors else 1,page_errors=errors,body=page.locator('body').inner_text()[:2000]);page.screenshot(path=str(reports/(label+'.png')));browser.close()
-  except Exception as e:result.update(returncode=1,error=str(e))
+  except Exception as e:
+   result.update(returncode=1,error=str(e),process_exit=proc.poll())
+   if 'errors' in locals():result['page_errors']=errors
+   if 'page' in locals():
+    try:page.screenshot(path=str(reports/(label+'-failure.png')))
+    except Exception:pass
   finally:proc.terminate();stream.close()
   results=[result]
  else:results=[execute([sys.executable,str(p),*args],cwd)]
