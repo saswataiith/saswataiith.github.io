@@ -10,7 +10,7 @@ jobs:
       fail-fast: false
       max-parallel: 6
       matrix:
-        target: [nrcm]
+        target: [py-13, py-28]
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -21,7 +21,7 @@ jobs:
         with:
           version: '1.12'
       - run: sudo apt-get update && sudo apt-get install -y libfftw3-dev
-      - run: pip install numpy scipy numba scikit-image fast-simplification 'pillow>=10.1' matplotlib nbformat nbclient jupyter vpython setuptools playwright
+      - run: pip install numpy scipy numba scikit-image fast-simplification 'pillow>=10.1' matplotlib nbformat nbclient jupyter vpython "setuptools<82" playwright
       - run: python -m playwright install --with-deps chromium
         if: contains(matrix.target, 'py-')
       - run: python audit-verification/run.py ${{ matrix.target }}
