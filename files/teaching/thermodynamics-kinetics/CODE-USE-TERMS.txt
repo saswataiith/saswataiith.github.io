@@ -25,9 +25,10 @@ with @). Identify the code and version and describe the intended use.
 Existing licenses
 These terms do not revoke permissions already granted under an earlier
 MIT, GPL or other valid license. Earlier licensed releases retain their
-existing permissions. The elasticity laboratory and elasticity solver
-packages already distributed under GPL retain that license. Third-party
-code, website-template code and dependencies retain their own licenses.
+existing permissions. Earlier GPL releases of my elasticity laboratory and elasticity solvers
+retain their existing permissions. Current distributions of my original
+code use these teaching-and-permission terms. Third-party code, website-
+template code and dependencies retain their own licenses.
 Follow any applicable copyleft requirements when distributing combined
 programs. These terms do not override GitHub's terms for viewing and
 forking public repositories or rights provided by applicable law.

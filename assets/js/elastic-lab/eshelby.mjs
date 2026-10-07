@@ -1,4 +1,8 @@
-// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2026 Saswata Bhattacharyya.
+// I permit free noncommercial teaching and demonstrations with acknowledgment.
+// I require written permission for research or commercial use.
+// I retain permissions granted by earlier licenses; dependencies keep their licenses.
+// I give the full terms at https://saswataiith.github.io/files/CODE-USE-TERMS.txt.
 // Eshelby inclusion in a homogeneous 2-D (plane-strain) cubic matrix.
 // Tensors are plain 2x2 arrays [[xx, xy], [yx, yy]]; shear is tensor shear.
 import { spectrum, transform } from "./fft.mjs?v=20260924c";

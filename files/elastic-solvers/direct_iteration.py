@@ -1,4 +1,9 @@
-"""Direct perturbative spectral iteration. GPL-3.0-or-later.
+# Copyright (c) 2026 Saswata Bhattacharyya.
+# I permit free noncommercial teaching and demonstrations with acknowledgment.
+# I require written permission for research or commercial use.
+# I retain permissions granted by earlier licenses; dependencies keep their licenses.
+# I give the full terms at https://saswataiith.github.io/files/CODE-USE-TERMS.txt.
+"""Direct perturbative spectral iteration.
 Based on the reference-stiffness split in my earlier research C/Fortran solvers
 and Bhattacharyya et al., CICP 11 (2012), 726–738, Eqs. 2.6–2.16.
 This two-dimensional teaching example explains the reference-stiffness iteration used in my research. It is a separate implementation of the equations, not a copy of the larger research code.

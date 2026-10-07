@@ -1,4 +1,9 @@
-"""Transparent 2-D periodic elasticity helpers. GPL-3.0-or-later.
+# Copyright (c) 2026 Saswata Bhattacharyya.
+# I permit free noncommercial teaching and demonstrations with acknowledgment.
+# I require written permission for research or commercial use.
+# I retain permissions granted by earlier licenses; dependencies keep their licenses.
+# I give the full terms at https://saswataiith.github.io/files/CODE-USE-TERMS.txt.
+"""Transparent 2-D periodic elasticity helpers.
 Arrays have shape (Nx, Ny, 2, 2). Both shear entries are stored:
 epsilon_xy is tensor shear, so sigma_xy = 2*C44*epsilon_xy.
 Use odd grids: they avoid even-grid Nyquist derivative ambiguities.

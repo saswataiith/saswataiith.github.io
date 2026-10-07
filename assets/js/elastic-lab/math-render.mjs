@@ -1,4 +1,8 @@
-// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2026 Saswata Bhattacharyya.
+// I permit free noncommercial teaching and demonstrations with acknowledgment.
+// I require written permission for research or commercial use.
+// I retain permissions granted by earlier licenses; dependencies keep their licenses.
+// I give the full terms at https://saswataiith.github.io/files/CODE-USE-TERMS.txt.
 // Use the site's local MathJax TeX-to-SVG renderer for equations AND plot labels.
 // Numerical routines never depend on MathJax.
 const pending = new Set(),

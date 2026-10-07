@@ -100,6 +100,6 @@ python3 files/elastic-lab/build-guide.py
 
 This writes `_pages/elastic-lab-guide.html`. Keep that generated page with the updated notes when publishing.
 
-## Licence
+## Code-use terms
 
-The laboratory source and new documentation use GPL-3.0-or-later; see `LICENSE.txt`. The existing website template retains its MIT licence. Referenced books, papers and thesis figures retain their original rights.
+I permit free noncommercial teaching, learning and demonstrations with acknowledgment. Research (including academic research) and commercial use require my explicit written permission. Earlier MIT and GPL releases retain their existing permissions. See `CODE-USE-TERMS.txt` or `LICENSE.txt`. The website template and external libraries retain their own licenses. Referenced books, papers and thesis figures retain their original rights.

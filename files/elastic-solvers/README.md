@@ -1,6 +1,6 @@
 # Two ways to solve inhomogeneous elasticity
 
-Teaching examples for mesoscale microstructure modeling. New code is GPL-3.0-or-later. The same two algorithms are supplied in Julia and NumPy so that students can compare the equations line by line. Download the complete ZIP and keep each language's shared helper file beside its solver files. The Jupyter notebooks are self-contained.
+Teaching examples for mesoscale microstructure modeling. I permit free noncommercial teaching, learning and demonstrations with acknowledgment. Research (including academic research) and commercial use require my explicit written permission. Earlier MIT and GPL releases retain their existing permissions. See `CODE-USE-TERMS.txt`. The same two algorithms are supplied in Julia and NumPy so that students can compare the equations line by line. Download the complete ZIP and keep each language's shared helper file beside its solver files. The Jupyter notebooks are self-contained.
 
 Install: `python -m pip install numpy matplotlib jupyter`
 
