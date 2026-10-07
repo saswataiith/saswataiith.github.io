@@ -222,7 +222,7 @@ triangle.set_ylim(-0.14, height+0.14)
 triangle.set_aspect(&quot;equal&quot;)
 triangle.axis(&quot;off&quot;)
 plt.show()</code></pre>
-<figure><img loading="lazy" src="/assets/images/stepwise/ternary-spinodal-python-step-8.png" alt="Checked result: 8. Show all three composition regions in one microstructure"><figcaption>Result from the executed Python notebook.</figcaption></figure>
+<figure><img loading="lazy" src="/assets/images/stepwise/ternary-spinodal-python-step-8.png?v=pastel-1" alt="Checked result: 8. Show all three composition regions in one microstructure"><figcaption>Result from the executed Python notebook.</figcaption></figure>
 <h2>9. Save the fields for structure and correlation analysis</h2>
 <p>I save the unmodified compositions and the run settings in a NumPy archive. The structure-function lesson can read any one of these fields, remove its measured mean, and calculate its spectrum and pair correlation. Spatial correlation measures a length and direction of composition variation; it does not by itself prove connectivity. I keep that question separate from Hoshen–Kopelman labeling.</p>
 <h3>Python</h3><pre><code>np.savez_compressed(&quot;ternary-fields.npz&quot;, cA=cA, cB=cB, cC=cC,

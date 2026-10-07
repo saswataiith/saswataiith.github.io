@@ -58,8 +58,11 @@ def update_page(page_name, python_path, julia_path=None):
                 folder = ROOT / "assets/images/stepwise"
                 folder.mkdir(parents=True, exist_ok=True)
                 (folder / image_name).write_bytes(base64.b64decode(image))
+                # I version an updated figure when the notebook requests a fresh browser copy.
+                version = output.get("metadata", {}).get("website_image_version")
+                image_url = image_name + ("?v=" + html.escape(str(version), quote=True) if version else "")
                 blocks.append('<figure><img loading="lazy" src="/assets/images/stepwise/' +
-                              image_name + '" alt="Checked result: ' + html.escape(title) +
+                              image_url + '" alt="Checked result: ' + html.escape(title) +
                               '"><figcaption>Result from the executed Python notebook.</figcaption></figure>')
     page = ROOT / "_pages" / page_name
     before, rest = page.read_text().split("<!-- CODE-STEPS-START -->", 1)
