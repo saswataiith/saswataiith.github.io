@@ -1,0 +1,29 @@
+Ternary spinodal code: permission required
+Copyright (c) 2026 Saswata Bhattacharyya. All rights reserved.
+Effective date: October 7, 2026.
+
+These terms cover my ternary_spinodal.py program, the code cells in
+ternary-spinodal-python.ipynb, and the corresponding code displayed on
+my ternary spinodal lesson page, including copies in download archives.
+
+I make the source available to read. You must obtain my explicit written
+permission before using this code for academic or commercial purposes.
+This includes running it for teaching or research, adapting it, incorporating
+it into another program, and redistributing it. A citation or acknowledgment
+alone does not give permission. Permission applies only to the uses that
+I approve in writing.
+
+To request permission, email saswata@msme.iith.ac.in. Describe your intended
+use and identify the code version. No permission is granted by this notice.
+
+These terms do not revoke rights granted under a valid earlier license,
+limit rights provided by applicable law, or override GitHub's terms for
+viewing and forking a public repository. Earlier MIT releases retain their
+existing permissions. NumPy, Matplotlib, Jupyter and other dependencies
+retain their own licenses.
+
+These code terms do not change the separate terms for my teaching text,
+notes and figures. See https://saswataiith.github.io/using-my-resources/.
+
+I provide the code as is, without warranty. Use it only after obtaining
+permission and checking that it is suitable for your purpose.

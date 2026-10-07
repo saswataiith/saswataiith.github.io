@@ -1,6 +1,12 @@
 # Using my website code
 
-The MIT licence in [LICENSE-CODE-MIT.txt](LICENSE-CODE-MIT.txt) covers my original Python, Julia and C source in `mesoscale/` (including my source distributed in its ZIP files), code cells in my `pinn/` notebook and my `teaching/thermodynamics-kinetics/` notebooks, and my connectivity tests in `tests/`.
+## Ternary spinodal code
+
+My `mesoscale/examples/stepwise/ternary_spinodal.py` program, the code cells in `ternary-spinodal-python.ipynb`, and the corresponding code on the ternary spinodal page require my explicit written permission for academic or commercial use. This also applies to their copies in download archives. They are excluded from the current general MIT grant below. Read [the code-use terms](mesoscale/examples/stepwise/TERNARY-CODE-TERMS.txt). Earlier MIT releases retain their existing permissions.
+
+## Other website code
+
+The MIT licence in [LICENSE-CODE-MIT.txt](LICENSE-CODE-MIT.txt) covers my other original Python, Julia and C source in `mesoscale/` (including my source distributed in its ZIP files), code cells in my `pinn/` notebook and my `teaching/thermodynamics-kinetics/` notebooks, and my connectivity tests in `tests/`.
 
 It also covers my original website demonstration code in `assets/js/`, except files with an existing licence and third-party or template code. It does not replace the GPL licences for `elastic-lab/`, `elastic-solvers/` or their downloads. Website-template tools, vendor libraries, KTurtle artwork and material credited to others keep their existing terms.
 

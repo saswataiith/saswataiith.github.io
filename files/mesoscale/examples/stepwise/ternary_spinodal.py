@@ -1,3 +1,7 @@
+# Copyright (c) 2026 Saswata Bhattacharyya. All rights reserved.
+# I require explicit written permission for academic or commercial use.
+# I give the scope and earlier-license exception in TERNARY-CODE-TERMS.txt.
+
 # I calculate ternary spinodal decomposition using my polynomial model.
 
 import numpy as np
