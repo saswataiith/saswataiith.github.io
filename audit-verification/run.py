@@ -12,7 +12,7 @@ def execute(command,cwd,timeout=1800):
 if label=='nrcm':
  d=work/'nrcm';zipfile.ZipFile(work/'files/mesoscale/nrcm-2014/spinodal-precipitate-sources.zip').extractall(d);results=[]
  for name,exe in [('Spinodal','spinodal.out'),('PptCodes1D','pptg.out'),('PptCodes2D','pptg.out')]:
-  folder=d/name;p=folder/'InputParams';lines=p.read_text().splitlines();lines=[('2000 '+line.split(maxsplit=1)[1]) if 'numsteps' in line else line for line in lines];p.write_text('\n'.join(lines)+'\n')
+  folder=d/'PFWorkshop2014'/name;p=folder/'InputParams';lines=p.read_text().splitlines();lines=[('numsteps 2000') if 'numsteps' in line else line for line in lines];p.write_text('\n'.join(lines)+'\n')
   results.append(execute(['make'],folder));results.append(execute(['./'+exe],folder))
 else:
  manifest=json.loads((root/'audit-verification/manifest.json').read_text()); rel=manifest[label];p=work/rel;cwd=p.parent;args=[]

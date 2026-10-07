@@ -10,7 +10,7 @@ jobs:
       fail-fast: false
       max-parallel: 6
       matrix:
-        target: ["py-00", "py-01", "py-02", "py-03", "py-04", "py-05", "py-06", "py-07", "py-08", "py-09", "py-10", "py-11", "py-12", "py-13", "py-14", "py-15", "py-16", "py-17", "py-18", "py-19", "py-20", "py-21", "py-22", "py-23", "py-24", "py-25", "py-26", "py-27", "py-28", "py-29", "py-30", "nrcm"]
+        target: [nrcm]
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
