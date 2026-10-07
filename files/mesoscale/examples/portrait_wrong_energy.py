@@ -12,13 +12,26 @@ import sys
 from pathlib import Path
 import numpy as np
 from PIL import Image,ImageDraw,ImageFont
+
+def portrait_font(size):
+    # I try the original macOS font, then a portable font, then Pillow's font.
+    fonts = [Path("/") / "System" / "Library" / "Fonts" / "Helvetica.ttc",
+             "DejaVuSans.ttf"]
+    for font in fonts:
+        try:
+            return ImageFont.truetype(str(font), size)
+        except OSError:
+            pass
+    return ImageFont.load_default(size=size)
+
+
 out=Path(sys.argv[3]);out.mkdir(parents=True,exist_ok=True)
 a=np.array(Image.open(sys.argv[1]).convert('RGB').resize((256,312)),float)/255
 b=np.array(Image.open(sys.argv[2]).convert('RGB').resize((256,312)),float)/255
 # Shuffle rectangular tiles once; both runs start from exactly this field.
 blocks=a.reshape(12,26,8,32,3).transpose(0,2,1,3,4).reshape(96,26,32,3)
 u0=blocks[np.random.default_rng(19).permutation(96)].reshape(12,8,26,32,3).transpose(0,2,1,3,4).reshape(312,256,3)
-font=ImageFont.truetype('/System/Library/Fonts/Helvetica.ttc',24)
+font=portrait_font(24)
 rows=[]
 for i,t in enumerate(np.r_[0,np.geomspace(.1,240,80)]):
  im=Image.new('RGB',(1120,820),'#f5f7f2');d=ImageDraw.Draw(im)

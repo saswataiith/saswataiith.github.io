@@ -40,3 +40,7 @@ Ink-drop defaults now use 100,000 walkers and 256-square density bins in [-128,1
 ## Using my code
 
 See [licence and dependency terms](LICENSING.md).
+
+## Portrait fonts
+
+I use Pillow 10.1 or later for the portrait scripts: `python -m pip install "Pillow>=10.1" numpy`. I try Helvetica on macOS, then DejaVu Sans, then Pillow’s default font at the requested size. Font availability changes the labels, not the calculated fields or diagnostics.

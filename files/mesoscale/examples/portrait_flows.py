@@ -17,6 +17,19 @@ from pathlib import Path
 import numpy as np
 from PIL import Image,ImageDraw,ImageFont
 
+def portrait_font(size):
+    # I try the original macOS font, then a portable font, then Pillow's font.
+    fonts = [Path("/") / "System" / "Library" / "Fonts" / "Helvetica.ttc",
+             "DejaVuSans.ttf"]
+    for font in fonts:
+        try:
+            return ImageFont.truetype(str(font), size)
+        except OSError:
+            pass
+    return ImageFont.load_default(size=size)
+
+
+
 def run(path,output):
  out=Path(output);out.mkdir(parents=True,exist_ok=True)
  ref=np.asarray(Image.open(path).convert('L').resize((256,256)),dtype=float)/127.5-1
@@ -25,7 +38,7 @@ def run(path,output):
  ac=damaged.copy();ch=damaged.copy();n=256;dt=.02;lam=40;kappa=.02;L=.05;M=.2
  k=2*np.pi*np.fft.fftfreq(n,d=32/n);k2=k[:,None]**2+k[None,:]**2;rhat=np.fft.fft2(ref)
  times=set(np.unique(np.round(np.geomspace(1,1000,90)).astype(int)));records=[];counter=0
- font=ImageFont.truetype('/System/Library/Fonts/Helvetica.ttc',24)
+ font=portrait_font(24)
  def field(a):return Image.fromarray(np.uint8(np.clip((a+1)*127.5,0,255))).resize((512,512),Image.Resampling.NEAREST).convert('RGB')
  def frame(a,b,label):
   nonlocal counter

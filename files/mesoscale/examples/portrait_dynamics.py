@@ -12,11 +12,24 @@ import sys
 from pathlib import Path
 import numpy as np
 from PIL import Image,ImageDraw,ImageFont
+
+def portrait_font(size):
+    # I try the original macOS font, then a portable font, then Pillow's font.
+    fonts = [Path("/") / "System" / "Library" / "Fonts" / "Helvetica.ttc",
+             "DejaVuSans.ttf"]
+    for font in fonts:
+        try:
+            return ImageFont.truetype(str(font), size)
+        except OSError:
+            pass
+    return ImageFont.load_default(size=size)
+
+
 out=Path(sys.argv[2]);out.mkdir(parents=True,exist_ok=True)
 u=np.array(Image.open(sys.argv[1]).convert('L').resize((256,256)),float)/127.5-1
 ac=u.copy();ch=u.copy();mean0=u.mean();del u
 k=2*np.pi*np.fft.fftfreq(256);k2=k[:,None]**2+k[None,:]**2;dt=.1;kap=.4;S=2
-font=ImageFont.truetype('/System/Library/Fonts/Helvetica.ttc',27);small=ImageFont.truetype('/System/Library/Fonts/Helvetica.ttc',23)
+font=portrait_font(27);small=portrait_font(23)
 records=[]
 def energy(a):return np.mean((a*a-1)**2/4)+kap/2*np.sum(k2*abs(np.fft.fft2(a))**2)/256**4
 for step in range(2001):

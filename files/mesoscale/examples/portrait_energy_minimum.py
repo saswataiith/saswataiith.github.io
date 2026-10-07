@@ -15,12 +15,25 @@ from pathlib import Path
 import sys
 import numpy as np
 from PIL import Image,ImageDraw,ImageFont
+
+def portrait_font(size):
+    # I try the original macOS font, then a portable font, then Pillow's font.
+    fonts = [Path("/") / "System" / "Library" / "Fonts" / "Helvetica.ttc",
+             "DejaVuSans.ttf"]
+    for font in fonts:
+        try:
+            return ImageFont.truetype(str(font), size)
+        except OSError:
+            pass
+    return ImageFont.load_default(size=size)
+
+
 out=Path(sys.argv[2]);out.mkdir(parents=True,exist_ok=True)
 r=np.asarray(Image.open(sys.argv[1]).convert('L').resize((256,256)),float)/127.5-1
 rng=np.random.default_rng(19)
 u0=rng.permutation(r.ravel()).reshape(r.shape)
 k=2*np.pi*np.fft.fftfreq(256,d=32/256);k2=k[:,None]**2+k[None,:]**2
-e0=np.fft.fft2(u0-r);font=ImageFont.truetype('/System/Library/Fonts/Helvetica.ttc',25);small=ImageFont.truetype('/System/Library/Fonts/Helvetica.ttc',22)
+e0=np.fft.fft2(u0-r);font=portrait_font(25);small=portrait_font(22)
 records=[];times=np.r_[0,np.geomspace(.1,3e7,240)]
 for i,t in enumerate(times):
  ac=r+(u0-r)*np.exp(-.03*t);ch=r+np.fft.ifft2(e0*np.exp(-1e-5*k2*t)).real

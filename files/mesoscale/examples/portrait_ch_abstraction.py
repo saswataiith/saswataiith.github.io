@@ -14,6 +14,19 @@ from pathlib import Path
 import sys
 import numpy as np
 from PIL import Image,ImageDraw,ImageFont
+
+def portrait_font(size):
+    # I try the original macOS font, then a portable font, then Pillow's font.
+    fonts = [Path("/") / "System" / "Library" / "Fonts" / "Helvetica.ttc",
+             "DejaVuSans.ttf"]
+    for font in fonts:
+        try:
+            return ImageFont.truetype(str(font), size)
+        except OSError:
+            pass
+    return ImageFont.load_default(size=size)
+
+
 out=Path(sys.argv[2]);out.mkdir(parents=True,exist_ok=True)
 r=np.asarray(Image.open(sys.argv[1]).convert('RGB').resize((256,312)),float)/127.5-1
 noise=np.random.default_rng(19).normal(0,.12,r.shape);noise-=noise.mean((0,1),keepdims=True)
@@ -22,7 +35,7 @@ kx=2*np.pi*np.fft.fftfreq(256);ky=2*np.pi*np.fft.fftfreq(312);k2=(ky[:,None]**2+
 fft=lambda x:np.fft.fft2(x,axes=axes)
 ifft=lambda x:np.fft.ifft2(x,axes=axes).real
 e0=fft(noise);N=256*312;dt=.1;kap=.4;S=2
-font=ImageFont.truetype('/System/Library/Fonts/Helvetica.ttc',23);rows=[]
+font=portrait_font(23);rows=[]
 def energy(a):return np.mean((a*a-1)**2/4)+kap/2*np.sum(k2*abs(fft(a))**2)/(3*N*N)
 for step in range(2001):
  if step%25==0:
