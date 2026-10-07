@@ -4,7 +4,8 @@
 # I retain permissions granted by earlier licenses; dependencies keep their licenses.
 # I give the full terms at https://saswataiith.github.io/files/CODE-USE-TERMS.txt.
 """Native Python VPython viewer: python turtle_3d_vpython.py viewer.json.
-Install: python -m pip install vpython
+Install: python -m pip install vpython "setuptools<82"
+I use setuptools below 82 because VPython needs pkg_resources.
 Uses identical saved voxel loops to the website; centre motion is phase-valid.
 """
 import json, sys, time
@@ -86,9 +87,10 @@ def pause(_):
     global running
     running=False
 scene.append_to_caption('\nPhase: ')
-phase_menu=menu(choices=['red','blue'],bind=reset)
+# I set the initial selection explicitly in native VPython.
+phase_menu=menu(choices=['red','blue'],selected='red',bind=reset)
 scene.append_to_caption(' Winding direction: ')
-direction_menu=menu(choices=['x','y','z'],bind=reset)
+direction_menu=menu(choices=['x','y','z'],selected='x',bind=reset)
 button(text='Start',bind=start);button(text='Pause',bind=pause);button(text='Reset',bind=reset)
 scene.append_to_caption('\nSpeed (voxels/s): ')
 speed=slider(min=5,max=200,value=40,bind=lambda _:None)
