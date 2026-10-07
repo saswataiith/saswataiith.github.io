@@ -51,3 +51,26 @@ Julia matched the same 1128 independent reference partitions; script checkpoints
 Python notebook executed from a clean kernel with all eight stages and saved outputs.
 Julia script executed; Julia notebook cells are identical to the tested script, but IJulia kernel execution was not tested.
 Historical C sources were inspected and preserved. The historical programs were not certified by these new-implementation checks.
+
+Ternary NumPy notebook: 256 x 256, dt=0.1, 20000 steps, dimensionless final time=2000.
+Initial mean mole fractions: [0.33333333 0.33333333 0.33333333]
+
+Bulk energy at equal composition: 0.053497942386831296
+
+Maximum derivative error: 1.645147906792488e-11
+
+Mobility eigenvalues: [0.5 1.5]
+
+Maximum squared wave number: 19.739208802178716
+
+One-step conservation check passed.
+
+Final time: 2000.0
+Maximum mean drift: 9.43689570931383e-16
+Final minimum and maximum: -0.0019485726370812584 0.9987217522586989
+
+Saved ternary-fields.npz; covariance normalization check passed.
+
+Coupled Fourier solve with unequal gradient coefficients matched an independent NumPy linear solve: maximum error 3.14e-16.
+The saved field is a transient demonstration, not an established equilibrium or convergence study. The minimum mole fraction is slightly negative; no clipping is applied.
+The structure/correlation notebook was executed again from a clean kernel.

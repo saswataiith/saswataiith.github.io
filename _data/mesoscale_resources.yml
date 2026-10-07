@@ -9,6 +9,15 @@
     "level": "Getting started"
   },
   {
+    "title": "Ternary spinodal decomposition in NumPy",
+    "url": "/resources/step-by-step/ternary-spinodal/",
+    "category": "Tutorial",
+    "topic": "ternary spinodal phase separation NumPy Python notebook polynomial free energy Fourier Cahn Hilliard",
+    "description": "Develop my ternary phase-separation calculation in nine checked steps, then save composition fields for structure and correlation analysis.",
+    "label": "Open the notebook lesson",
+    "level": "Intermediate"
+  },
+  {
     "title": "Bicontinuity and connected phases",
     "url": "/notebook/bicontinuity/",
     "category": "Tutorial",

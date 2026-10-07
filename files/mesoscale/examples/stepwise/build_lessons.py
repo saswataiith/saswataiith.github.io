@@ -8,6 +8,7 @@ from pathlib import Path
 import html
 import base64
 import json
+import re
 import zipfile
 
 ROOT = Path(__file__).resolve().parents[4]
@@ -39,7 +40,10 @@ def update_page(page_name, python_path, julia_path=None):
     blocks = []
     for index, (title, text, code, outputs) in enumerate(python_steps):
         blocks.append("<h2>" + html.escape(title) + "</h2>")
-        blocks.append("<p>" + html.escape(text) + "</p>")
+        formatted_text = html.escape(text)
+        formatted_text = re.sub(r'\$\$(.*?)\$\$', lambda match: r'\[' + match[1] + r'\]', formatted_text, flags=re.S)
+        formatted_text = re.sub(r'\$([^$]+)\$', lambda match: r'\(' + match[1] + r'\)', formatted_text)
+        blocks.append("<p>" + formatted_text + "</p>")
         blocks.append("<h3>Python</h3><pre><code>" + html.escape(code) + "</code></pre>")
         if julia_steps is not None:
             julia_code = julia_steps[index][2]
@@ -75,6 +79,8 @@ if __name__ == "__main__":
                 EXAMPLES / "hoshen-kopelman/hoshen-kopelman-julia.ipynb")
     update_page("structure-correlation.html",
                 EXAMPLES / "stepwise/structure-correlation-python.ipynb")
+    update_page("code-ternary-spinodal.html",
+                EXAMPLES / "stepwise/ternary-spinodal-python.ipynb")
 
     archive = EXAMPLES / "step-by-step-teaching-codes.zip"
     with zipfile.ZipFile(archive, "w", zipfile.ZIP_DEFLATED) as bundle:
