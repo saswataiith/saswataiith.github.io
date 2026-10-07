@@ -28,7 +28,7 @@ Use the existing Gemfile: `bundle install`, then `bundle exec jekyll serve`. Ope
 
 ## Source record
 
-Professional profile and selected publications are based on SaswataCV.pdf, inspected September 21, 2026. Name spelling follows the CV heading; author spellings in publication records are retained. The CV lists the Head of Department period as November 2023–July 2026. Project dates are stated as recorded, not as current funding claims. Only public professional information is included. Date of birth, personal phone numbers, personal email addresses, home addresses, personal identifiers, and funding amounts must not be added to the website or its source. The institutional email is used. Project titles, sponsors, and academic dates may be included without financial amounts. The full CV PDF is not redistributed.
+Professional profile and selected publications are based on SaswataCV.pdf, inspected September 21, 2026. Name spelling follows the CV heading; author spellings in publication records are retained. The CV lists the Head of Department period as November 2023–July 2026. Project dates are stated as recorded, not as current funding claims. Only public professional information is included. Date of birth, personal phone numbers, personal email addresses, home addresses, personal identifiers, and funding amounts must not be added to the website or its source. The institutional email is used. Project titles, sponsors, and academic dates may be included without financial amounts. The full CV PDF is currently hosted at `files/saswata-bhattacharyya-full-cv.pdf` and linked from the CV page. It contains a personal email address and mobile number; I need to decide whether to remove the link until a redacted copy is available.
 
 The portrait comes from the user's IIT Hyderabad faculty profile:
 https://iith.ac.in/assets/images/profiles/Saswata_Bhattacharya.jpg
@@ -39,7 +39,7 @@ The original Academic Pages sample content is retained in the source but exclude
 
 ## Restricted course material
 
-This GitHub Pages website is public. TensorLab and the supplied private teaching PDFs are not included. An eventual authenticated IIT Hyderabad-only course application can be linked from Teaching once it has real access controls. A hidden URL or browser-side email check does not protect static files.
+This GitHub Pages website is public. TensorLab is included at `tensorlab/` and linked from Teaching. The supplied private teaching PDFs are not included. An eventual authenticated IIT Hyderabad-only course application can be linked from Teaching once it has real access controls. A hidden URL or browser-side email check does not protect static files.
 
 The MS5033 course collection links to the Google Drive folder supplied by the owner. Only its title and a description of visible teaching materials are included; folder contents and student submissions are not copied. Google Drive controls access; domain-restricted access has not been verified or changed.
 

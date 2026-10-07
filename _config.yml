@@ -159,6 +159,7 @@ include:
   - _pages
   - files
 exclude:
+  - OWNER-GUIDE.md
   - CONTRIBUTING.md
   - files/paper1.pdf
   - files/paper2.pdf
