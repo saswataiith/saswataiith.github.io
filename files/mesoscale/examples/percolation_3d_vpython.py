@@ -4,7 +4,8 @@
 # I retain permissions granted by earlier licenses; dependencies keep their licenses.
 # I give the full terms at https://saswataiith.github.io/files/CODE-USE-TERMS.txt.
 """Static VPython view of both percolating networks. No turtle or simulation.
-Install vpython; run: python percolation_3d_vpython.py viewer.json
+Install: python -m pip install vpython setuptools
+Run: python percolation_3d_vpython.py viewer.json
 """
 import json,sys
 from pathlib import Path

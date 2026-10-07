@@ -4,7 +4,7 @@
 # I retain permissions granted by earlier licenses; dependencies keep their licenses.
 # I give the full terms at https://saswataiith.github.io/files/CODE-USE-TERMS.txt.
 """Native Python VPython viewer: python turtle_3d_vpython.py viewer.json.
-Install: python -m pip install vpython
+Install: python -m pip install vpython setuptools
 Uses identical saved voxel loops to the website; centre motion is phase-valid.
 """
 import json, sys, time
