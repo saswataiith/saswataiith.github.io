@@ -103,8 +103,8 @@
           "works": [
             {
               "title": "Mapping tracer diffusivities in NiAlTi and NiCoFeAlTi",
-              "url": "https://arxiv.org/abs/2509.09486",
-              "kind": "Preprint · 2025"
+              "url": "https://doi.org/10.1016/j.actamat.2026.121986",
+              "kind": "Paper · 2026"
             }
           ]
         },
@@ -212,9 +212,9 @@
               "kind": "Paper · 2023"
             },
             {
-              "title": "Thermomigration of precipitates in a temperature gradient",
-              "url": "https://arxiv.org/abs/2406.00649",
-              "kind": "Manuscript"
+              "title": "Interplay between thermal and compositional gradients decides the microstructure during thermomigration: A phase-field study",
+              "url": "https://doi.org/10.1016/j.actamat.2024.120586",
+              "kind": "Paper · 2025"
             }
           ]
         },
@@ -229,13 +229,13 @@
           "works": [
             {
               "title": "Core-shell and Janus morphology in alloy nanoparticles",
-              "url": "https://arxiv.org/abs/2105.09531",
-              "kind": "Manuscript"
+              "url": "https://doi.org/10.1016/j.actamat.2022.117933",
+              "kind": "Paper"
             },
             {
               "title": "Surface-directed and bulk spinodal decomposition",
-              "url": "https://arxiv.org/abs/2206.08274",
-              "kind": "Manuscript"
+              "url": "https://doi.org/10.1088/1361-651X/aca420",
+              "kind": "Paper"
             }
           ]
         },
@@ -357,7 +357,7 @@
           "image": "/assets/images/group/prof-bernie-rolfe.jpg"
         },
         {
-          "name": "Prof. Sergiy Divinsky",
+          "name": "Prof. Sergiy Divinski",
           "initials": "SD",
           "url": "https://www.uni-muenster.de/Physik.MP/Wilde/Mitarbeiter/ProfDivinskyi.shtml",
           "remote_image": "https://www.uni-muenster.de/imperia/md/images/physik_mp/wilde/mitarbeiter/fittosize_170_128_f5124752ca65cdd06a6918d0cb4514c0_divinskyi2012.jpg",
