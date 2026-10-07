@@ -161,7 +161,7 @@ export function polar(series, title, magnitude = false, direct = false) {
     20,
     334,
     direct
-      ? "Radius proportional to Bpp; centre: Bpp = 0."
+      ? "Radius proportional to Bpp; center: Bpp = 0."
       : magnitude
         ? "Radius = |Bpq|; signs are shown in the angle graph."
         : "Offset radial scale; labels give signed values.",
@@ -270,7 +270,7 @@ export function mohr(t, angle, stage = 4) {
     const roomy = scale * radius > 45;
     b +=
       point(centre, 0, "#183b40", 3) +
-      (roomy ? mathLabel(X(centre) - 16, cy - 8, "c", "centre") : "");
+      (roomy ? mathLabel(X(centre) - 16, cy - 8, "c", "center") : "");
     b +=
       line(X(centre), cy, X(centre), Y(radius), 'stroke-dasharray="4 3"') +
       (roomy ? mathLabel(X(centre) + 7, Y(radius / 2), "R", "radius") : "");
@@ -323,7 +323,7 @@ export function mohr(t, angle, stage = 4) {
     15,
     332,
     `c=${centre.toFixed(3)},\\quad R=${radius.toFixed(3)},\\quad \\theta=${((angle * 180) / Math.PI).toFixed(1)}^\\circ`,
-    "centre, radius and angle",
+    "center, radius and angle",
   );
   return svg("Construct Mohr circle of strain", b);
 }

@@ -40,7 +40,7 @@
   if(cursor>mask.length&&el('hk-periodic').checked){for(let y=0;y<size;y++)if(seen.has(y*size)&&seen.has(y*size+size-1))join(y*size,y*size+size-1);for(let x=0;x<size;x++)if(seen.has(x)&&seen.has((size-1)*size+x))join(x,(size-1)*size+x);}
   const roots=[...new Set([...seen].map(find))];ctx.clearRect(0,0,canvas.width,canvas.height);mask.forEach((occupied,i)=>{ctx.fillStyle=!occupied?'#fbfaf5':!seen.has(i)?'#d8dee4':`hsl(${(roots.indexOf(find(i))*137.508+185)%360} 65% 52%)`;ctx.fillRect(i%size*cell,Math.floor(i/size)*cell,cell-1,cell-1);});
   if(cursor<mask.length){ctx.strokeStyle='#f2af00';ctx.lineWidth=3;ctx.strokeRect(cursor%size*cell,Math.floor(cursor/size)*cell,cell,cell);}
-  el('hk-status').textContent=cursor>mask.length?`${roots.length} final components; ${unions} label merges. ${el('hk-periodic').checked?'Opposite edges joined in the final step.':'Bounded edges.'}`:`Scanned ${cursor} / ${mask.length} cells; ${roots.length} current components; ${unions} label merges. Equal colours share one root label.`;
+  el('hk-status').textContent=cursor>mask.length?`${roots.length} final components; ${unions} label merges. ${el('hk-periodic').checked?'Opposite edges joined in the final step.':'Bounded edges.'}`:`Scanned ${cursor} / ${mask.length} cells; ${roots.length} current components; ${unions} label merges. Equal colors share one root label.`;
   window.hkPlaygroundState={cursor,components:roots.length,merges:unions,mask:[...mask]};
  }
  function reset(){playing=false;epoch++;cursor=0;draw();}

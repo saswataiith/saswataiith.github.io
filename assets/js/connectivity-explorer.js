@@ -27,7 +27,7 @@
   const reached=histograms[state.phase][step],total=analysis.flood[state.phase].reached_voxels,percent=100*reached/total;
   el('reached').textContent=percent.toFixed(1)+'%';el('reached-count').textContent=reached.toLocaleString()+' / '+total.toLocaleString()+' voxels';
   el('wave-label').textContent='Shortest-path distance: '+step+' face-sharing steps from seed ('+analysis.flood[state.phase].root.join(', ')+').';
-  el('flood-status').textContent=step===max?'Every voxel of this phase is reached from one seed. The entire phase is connected.':'The colour front travels only through the selected phase, including periodic links. Apparent separate patches in a slice can join outside that plane.';
+  el('flood-status').textContent=step===max?'Every voxel of this phase is reached from one seed. The entire phase is connected.':'The color front travels only through the selected phase, including periodic links. Apparent separate patches in a slice can join outside that plane.';
   window.connectivityExplorerState={...state,step,reached,total};
   if(window.playgroundUpdate)window.playgroundUpdate(window.connectivityExplorerState);
  }

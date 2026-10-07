@@ -126,7 +126,7 @@ Here sym means the symmetric part. The jump is the inside value minus the outsid
 
 The profiles use separate interior and exterior solutions and terminate at their one-sided interface values. A connector indicates a real jump; it does not interpolate across it. As the ellipse becomes a thin plate, its energy approaches B(m)/2, where m is the plate normal and B is the self elastic coefficient defined below.
 
-The colour map instead uses a periodic square with 256, 512 or 1024 grid points in each direction. It fixes average total strain at zero and includes periodic copies. Its default long semi-axis is 0.16 times the box width. The map limits b/a to at least 0.08 so a very thin shape remains resolved. Fourier oscillations near a sharp interface can remain. The map and the infinite-matrix profiles have different boundary conditions and need not match exactly.
+The color map instead uses a periodic square with 256, 512 or 1024 grid points in each direction. It fixes average total strain at zero and includes periodic copies. Its default long semi-axis is 0.16 times the box width. The map limits b/a to at least 0.08 so a very thin shape remains resolved. Fourier oscillations near a sharp interface can remain. The map and the infinite-matrix profiles have different boundary conditions and need not match exactly.
 
 Reference: Mura, *Micromechanics of Defects in Solids*, section 11. The check program compares the isotropic ellipse solution with Mura's closed expression and separately checks interface continuity and the thin-plate limit.
 
@@ -142,7 +142,7 @@ B_pq has energy-density units for dimensional stiffnesses. It describes the elas
 
 When p = q, the result is a self coefficient. When p and q differ, it is a cross coefficient. Symmetry gives B_pq = B_qp. The matrix of coefficients is positive semidefinite for stable stiffness, although a cross entry can be negative. Reversing one phase's eigenstrain reverses its cross coefficient and leaves its self coefficient unchanged.
 
-Module III plots one self coefficient. Its polar radius is proportional to B_pp, with zero at the centre. Module IV displays B_beta,beta, B_gamma,gamma and B_beta,gamma separately. Its polar panels use a common labelled offset because the cross coefficient can be negative.
+Module III plots one self coefficient. Its polar radius is proportional to B_pp, with zero at the center. Module IV displays B_beta,beta, B_gamma,gamma and B_beta,gamma separately. Its polar panels use a common labeled offset because the cross coefficient can be negative.
 
 Sandeep's X2 example uses mu = 2000, nu = 1/3 and AZ = 3, giving C11 = 7000, C12 = 5000 and C44 = 3000. The in-plane misfits are +0.01 for beta and -0.01 for gamma. Both self coefficients are 0.342857 along the axes and 0.8 along the diagonals. The cross coefficient has the corresponding negative values. These reproduce the coefficients in Chapter 5, Fig. 5.18; they do not reproduce a complete evolving microstructure.
 
@@ -154,7 +154,7 @@ The pair calculation uses two smooth circular Gaussian profiles in a periodic sq
 E_interaction = E_both - E_beta - E_gamma
 ```
 
-The calculation sums the cross contributions from all Fourier modes, including the separation factor cos(k dot R). R is the vector joining the particle centres, measured in length units. The product k dot R is dimensionless. Profile size, separation and periodic copies affect the result. B_pq at a single direction is not this particle-pair energy.
+The calculation sums the cross contributions from all Fourier modes, including the separation factor cos(k dot R). R is the vector joining the particle centers, measured in length units. The product k dot R is dimensionless. Profile size, separation and periodic copies affect the result. B_pq at a single direction is not this particle-pair energy.
 
 A negative interaction energy lowers the combined energy relative to the separate profiles in the same box. It does not make the total elastic energy negative. In the X2 example the beta–gamma pair has lower interaction energy along [11] than along [10]. Shape, composition and interfacial energy would also have to be considered in an evolving microstructure.
 

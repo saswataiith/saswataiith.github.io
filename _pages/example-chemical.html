@@ -3,6 +3,7 @@ layout: scholar
 title: "Chemical spinodal decomposition"
 permalink: /resources/examples/chemical/
 nav_active: resources
+description: "A reproducible Cahn–Hilliard lesson on chemical spinodal decomposition, conservation and free-energy evolution."
 ---
 <section class="page-heading"><span class="eyebrow">MS5033 · WORKED EXAMPLE · JULIA + NUMPY</span><h1>Chemical spinodal decomposition.</h1><p>Let a composition field separate itself.</p></section>
 <section class="section"><h2>The physical idea.</h2><p class="wide-copy">Use f(c) = c²(1−c)² and μ = f′(c) − κ∇²c. The conserved evolution law is ∂c/∂t = M∇²μ, with M = κ = 1. Small fluctuations about c = 0.5 grow into composition domains.</p><div class="formula-box">\[\begin{aligned}f(c)&=c^2(1-c)^2\\\mu&=f^{\prime}(c)-\kappa\nabla^2c\\\frac{\partial c}{\partial t}&=M\nabla^2\mu\end{aligned}\]</div><p class="small muted">This example is based on my teaching notebook, <code>PhaseField_Examples_Spectral.ipynb</code>. I wrote the notebook to explain phase-field models and their solution using Fourier methods. This example shows how composition fluctuations grow during spinodal decomposition.</p>

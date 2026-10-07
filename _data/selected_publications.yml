@@ -1,7 +1,7 @@
 [
   {
     "year": 2026,
-    "journal": "Acta Materialia \u00b7 302 \u00b7 121649",
+    "journal": "Acta Materialia · 302 · 121649",
     "title": "Extracting composition-dependent diffusion coefficients over a very large composition range in NiCoFeCrMn high entropy alloy following strategic design of diffusion couples and physics informed neural network numerical method",
     "authors": "Suman Sadhu, Saswata Bhattacharyya and Aloke Paul",
     "url": "https://doi.org/10.1016/j.actamat.2025.121649",
@@ -9,7 +9,7 @@
   },
   {
     "year": 2025,
-    "journal": "Computational Materials Science \u00b7 246 \u00b7 113438",
+    "journal": "Computational Materials Science · 246 · 113438",
     "title": "MicroSim: A high-performance phase-field solver based on CPU and GPU implementations",
     "authors": "Tanmay Dutta et al., including Saswata Bhattacharyya",
     "url": "https://doi.org/10.1016/j.commatsci.2024.113438",
@@ -17,23 +17,24 @@
   },
   {
     "year": 2025,
-    "journal": "Acta Materialia \u00b7 284 \u00b7 120586",
+    "journal": "Acta Materialia · 284 · 120586",
     "title": "Interplay between thermal and compositional gradients decides the microstructure during thermomigration: A phase-field study",
     "authors": "Sandip Guin, Soumya Bandyopadhyay, Saswata Bhattacharyya and Rajdip Mukherjee",
-    "url": "https://arxiv.org/abs/2406.00649",
-    "topic": "Phase-field"
+    "url": "https://doi.org/10.1016/j.actamat.2024.120586",
+    "topic": "Phase-field",
+    "preprint_url": "https://arxiv.org/abs/2406.00649"
   },
   {
     "year": 2024,
-    "journal": "Intermetallics \u00b7 175 \u00b7 108513",
+    "journal": "Intermetallics · 175 · 108513",
     "title": "Effect of molybdenum addition on precipitate coarsening kinetics in Inconel 740H: A phase-field study",
     "authors": "Sourav Ghosh, Hemanth Kumar, Christian Brandl, Abhik N. Choudhury, Saswata Bhattacharyya and Rajdip Mukherjee",
-    "url": "https://scholar.google.com/scholar?q=Effect+of+molybdenum+addition+precipitate+coarsening+Inconel+740H+108513",
+    "url": "https://doi.org/10.1016/j.intermet.2024.108513",
     "topic": "Phase-field"
   },
   {
     "year": 2023,
-    "journal": "Physical Review B \u00b7 108 \u00b7 134116",
+    "journal": "Physical Review B · 108 · 134116",
     "title": "Role of electrostriction on domain switching near the morphotropic phase region in a ferroelectric solid solution: Thermodynamic analysis and phase-field simulations",
     "authors": "Soumya Bandyopadhyay, Vaishnavi S. M., Tushar Jogi, Ranjith Ramadurai and Saswata Bhattacharyya",
     "url": "https://doi.org/10.1103/PhysRevB.108.134116",
@@ -41,18 +42,115 @@
   },
   {
     "year": 2023,
-    "journal": "AIP Publishing \u00b7 Edited volume",
+    "journal": "AIP Publishing · Edited volume",
     "title": "Strain Engineering in Functional Materials and Devices",
     "authors": "Edited by Ranjith Ramadurai and Saswata Bhattacharyya",
-    "url": "https://scholar.google.com/scholar?q=Strain+Engineering+in+Functional+Materials+and+Devices+Ramadurai+Bhattacharyya",
-    "topic": "Functional materials"
+    "url": "https://doi.org/10.1063/9780735425590",
+    "topic": "Functional materials",
+    "isbn": "978-0-7354-2559-0"
   },
   {
     "year": 2023,
-    "journal": "Philosophical Magazine \u00b7 103(18) \u00b7 1717\u20131737",
+    "journal": "Philosophical Magazine · 103(18) · 1717–1737",
     "title": "Utilising physics-informed neural networks for optimisation of diffusion coefficients in pseudo-binary diffusion couples",
     "authors": "Hemanth Kumar, Neelamegan Esakkiraja, Anuj Dash, Aloke Paul and Saswata Bhattacharyya",
     "url": "https://doi.org/10.1080/14786435.2023.2237900",
     "topic": "Diffusion"
+  },
+  {
+    "year": 2022,
+    "journal": "Acta Materialia · 233 · 117933",
+    "title": "Competition of core-shell and Janus morphology in bimetallic nanoparticles: Insights from a phase-field model",
+    "authors": "P. Pankaj, Saswata Bhattacharyya and Subhradeep Chatterjee",
+    "url": "https://doi.org/10.1016/j.actamat.2022.117933",
+    "topic": "Phase-field"
+  },
+  {
+    "year": 2021,
+    "journal": "Modelling and Simulation in Materials Science and Engineering · 29 · 035010",
+    "title": "Interfacial dislocation network in precipitation strengthened alloys during creep: a discrete dislocation dynamics (DDD) study in three dimensions",
+    "authors": "Tushar Jogi and Saswata Bhattacharya",
+    "url": "https://doi.org/10.1088/1361-651X/abe0a8",
+    "topic": "Dislocation dynamics"
+  },
+  {
+    "year": 2020,
+    "journal": "Computational Materials Science · 172 · 109284",
+    "title": "A phase-field study of elastic stress effects on phase separation in ternary alloys",
+    "authors": "Sandeep Sugathan and Saswata Bhattacharya",
+    "url": "https://doi.org/10.1016/j.commatsci.2019.109284",
+    "topic": "Phase-field"
+  },
+  {
+    "year": 2019,
+    "journal": "Journal of Applied Physics · 125 · 012501",
+    "title": "Realization of rhombohedral, mixed, and tetragonal like phases of BiFeO3 and ferroelectric domain engineering using a strain tuning layer on LaAlO3(001) substrate",
+    "authors": "M. M. Saj Mohan, Soumya Bandyopadhyay, Tushar Jogi, Saswata Bhattacharya and Ranjith Ramadurai",
+    "url": "https://doi.org/10.1063/1.5054372",
+    "topic": "Functional materials"
+  },
+  {
+    "year": 2016,
+    "journal": "Physical Chemistry Chemical Physics · 18 · 9537-9543",
+    "title": "Anisotropic Li intercalation in a LiₓFePO₄ nano-particle: a spectral smoothed boundary phase-field model",
+    "authors": "L. Hong, L. Liang, S. Bhattacharyya, W. Xing and L. Q. Chen",
+    "url": "https://doi.org/10.1039/C6CP00267F",
+    "topic": "Phase-field"
+  },
+  {
+    "year": 2015,
+    "journal": "Computer Methods in Applied Mechanics and Engineering · 285 · 829-848",
+    "title": "An integrated fast Fourier transform-based phase-field and crystal plasticity approach to model recrystallization of three dimensional polycrystals",
+    "authors": "L. Chen, J. Chen, R.A. Lebensohn, Y.Z. Ji, T.W. Heo, S. Bhattacharyya, K. Chang, S. Mathaudhu, Z.K. Liu and L.-Q. Chen",
+    "url": "https://doi.org/10.1016/j.cma.2014.12.007",
+    "topic": "Scientific computing"
+  },
+  {
+    "year": 2013,
+    "journal": "Philosophical Magazine · 93 · 1468-1489",
+    "title": "A phase-field model for elastically anisotropic polycrystalline binary solid solutions",
+    "authors": "Tae Wook Heo, Saswata Bhattacharyya and Long-Qing Chen",
+    "url": "https://doi.org/10.1080/14786435.2012.744880",
+    "topic": "Phase-field"
+  },
+  {
+    "year": 2012,
+    "journal": "Communications in Computational Physics · 11 · 726-738",
+    "title": "A Spectral Iterative Method for the Computation of Effective Properties of Elastically Inhomogeneous Polycrystals",
+    "authors": "Saswata Bhattacharyya, Tae Wook Heo, Kunok Chang and Long-Qing Chen",
+    "url": "https://doi.org/10.4208/cicp.290610.060411a",
+    "topic": "Scientific computing"
+  },
+  {
+    "year": 2012,
+    "journal": "Philosophical Magazine Letters · 1-9",
+    "title": "Elastic solutions with arbitrary elastic inhomogeneity and anisotropy",
+    "authors": "J.J. Wang, S. Bhattacharyya, Q. Li, T.W. Heo, X.Q. Ma and Long-Qing Chen",
+    "url": "https://doi.org/10.1080/09500839.2012.669857",
+    "topic": "Elasticity"
+  },
+  {
+    "year": 2011,
+    "journal": "Modelling and Simulation in Materials Science and Engineering · 19 · 035002",
+    "title": "A phase-field model of stress effect on grain boundary migration",
+    "authors": "Saswata Bhattacharyya, Tae Wook Heo, Kunok Chang and Long-Qing Chen",
+    "url": "https://doi.org/10.1088/0965-0393/19/3/035002",
+    "topic": "Phase-field"
+  },
+  {
+    "year": 2009,
+    "journal": "Acta Materialia · 57 · 646-656",
+    "title": "Evolution of multivariant microstructures with anisotropic misfit: A phase field study",
+    "authors": "Saswata Bhattacharyya and T. A. Abinandanan",
+    "url": "https://doi.org/10.1016/j.actamat.2008.10.008",
+    "topic": "Phase-field"
+  },
+  {
+    "year": 2006,
+    "journal": "Physical Review Letters · 96 · 245503",
+    "title": "Phase Separating Bulk Metallic Glass: A Hierarchical Composite",
+    "authors": "Byung Joo Park, Hye Jung Chang, Do Hyang Kim, Won Tae Kim, Kamanio Chattopadhyay, T. A. Abinandanan and Saswata Bhattacharyya",
+    "url": "https://doi.org/10.1103/PhysRevLett.96.245503",
+    "topic": "Phase-field"
   }
 ]

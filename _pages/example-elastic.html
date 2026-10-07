@@ -3,6 +3,7 @@ layout: scholar
 title: "Elasticity reshapes phase separation"
 permalink: /resources/examples/elastic/
 nav_active: resources
+description: "Compare binary spinodal decomposition with homogeneous elastic stress effects and examine elastic constants and misfit."
 ---
 <section class="page-heading"><span class="eyebrow">MS5033 · WORKED EXAMPLE · JULIA + NUMPY</span><h1>Elasticity reshapes phase separation.</h1><p>Use the elastic energy kernel from my teaching notebook in a phase-field calculation.</p></section>
 <section class="section"><h2>The physical idea.</h2><p class="wide-copy">This is coherent spinodal decomposition. A composition fluctuation produces the dilatational eigenstrain \(\boldsymbol\epsilon^0(c)=\epsilon_c(c-\bar c)\mathbf I\). Under homogeneous linear elasticity, mechanical equilibrium can be solved in Fourier space. Eliminating the displacement field gives the elastic-energy kernel \(B(\mathbf n)\), which adds an elastic penalty to the chemical and interfacial terms in the Cahn–Hilliard equation.</p><div class="formula-box">\[\widehat c^{\,n+1}=\frac{\widehat c^{\,n}-\Delta t\,M k^2\mathcal F[f^{\prime}(c^n)]}{1+\Delta t\,M k^2\!\left(\kappa k^2+B(\mathbf n)\right)}\]</div><p class="small muted">This example is based on the elasticity section of my teaching notebook, <code>PhaseField_Examples_Spectral.ipynb</code>. I wrote that section to explain how elastic strain energy affects phase separation. Here, you can compare the composition patterns with and without elastic effects.</p>

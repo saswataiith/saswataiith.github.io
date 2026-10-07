@@ -1,5 +1,41 @@
 [
   {
+    "title": "Bicontinuity and connected phases",
+    "url": "/notebook/bicontinuity/",
+    "category": "Tutorial",
+    "topic": "spinodal 2D 3D topology phase fraction periodic bicontinuity",
+    "description": "Inspect measured connectivity in 2D and 3D simulations and explore the routes and connected networks within each phase.",
+    "label": "Open the tutorial",
+    "level": "Intermediate"
+  },
+  {
+    "title": "Topology and connectivity of microstructures",
+    "url": "/files/mesoscale/examples/topology-connectivity.html",
+    "category": "Tutorial",
+    "topic": "topology connectivity Hoshen Kopelman percolation winding Betti Euler bicontinuity",
+    "description": "Animate cluster labeling and periodic winding, then compare connected components, loops and percolation in editable patterns.",
+    "label": "Open the tutorial",
+    "level": "Getting started"
+  },
+  {
+    "title": "My NRCM phase-field workshop examples",
+    "url": "/resources/nrcm-phase-field/",
+    "category": "Tutorial",
+    "topic": "NRCM workshop spinodal precipitate growth C code phase field",
+    "description": "Work through my original C examples for spinodal decomposition and precipitate growth, with equations, input files and run instructions.",
+    "label": "Open the tutorial",
+    "level": "Intermediate"
+  },
+  {
+    "title": "Elastic Stress Effects Laboratory",
+    "url": "/research/elastic-lab/",
+    "category": "Tutorial",
+    "topic": "elasticity misfit strain anisotropy stability Eshelby Bitter Crum phase interactions",
+    "description": "Explore elastic stability, misfit tensors, self- and cross-interaction kernels, interface conditions and inhomogeneous elastic fields.",
+    "label": "Open the tutorial",
+    "level": "Intermediate"
+  },
+  {
     "title": "Two ways to solve inhomogeneous elasticity",
     "category": "Tutorial",
     "topic": "elasticity eigenstrain iterative perturbation equivalent eigenstrain NumPy Elastic.ipynb",
@@ -30,7 +66,7 @@
     "title": "Elasticity reshapes phase separation",
     "category": "Tutorial",
     "topic": "Julia NumPy elastic",
-    "description": "A worked lesson with computed visual results, Julia and NumPy source, numerical diagnostics and exercises.",
+    "description": "Compare chemical phase separation with homogeneous elasticity and examine how misfit and elastic constants change the calculated microstructure.",
     "url": "/resources/examples/elastic/",
     "label": "Work through the lesson",
     "level": "Intermediate"
@@ -39,7 +75,7 @@
     "title": "Chemical spinodal decomposition",
     "category": "Tutorial",
     "topic": "Julia NumPy chemical",
-    "description": "A worked lesson with computed visual results, Julia and NumPy source, numerical diagnostics and exercises.",
+    "description": "Follow composition fluctuations as they develop into domains, and check conservation and free-energy changes in a Cahn–Hilliard simulation.",
     "url": "/resources/examples/chemical/",
     "label": "Work through the lesson",
     "level": "Getting started"
@@ -48,7 +84,7 @@
     "title": "Diffusion through Fourier modes",
     "category": "Tutorial",
     "topic": "Julia NumPy diffusion",
-    "description": "A worked lesson with computed visual results, Julia and NumPy source, numerical diagnostics and exercises.",
+    "description": "Watch Fourier modes decay during diffusion and compare the numerical solution with an analytical benchmark.",
     "url": "/resources/examples/diffusion/",
     "label": "Work through the lesson",
     "level": "Getting started"
@@ -57,7 +93,7 @@
     "title": "The ink-drop experiment",
     "category": "Tutorial",
     "topic": "Julia NumPy walkers",
-    "description": "A worked lesson with computed visual results, Julia and NumPy source, numerical diagnostics and exercises.",
+    "description": "Connect random molecular motion to spreading with an interactive ink-drop experiment and Julia and NumPy random-walk codes.",
     "url": "/resources/examples/walkers/",
     "label": "Work through the lesson",
     "level": "Getting started"

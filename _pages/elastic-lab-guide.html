@@ -3,6 +3,7 @@ layout: scholar
 title: "Elastic Lab: equations, checks and instructions"
 permalink: /research/elastic-lab/guide/
 nav_active: research
+description: "Equations, numerical checks and source-code instructions for the Elastic Stress Effects Laboratory."
 ---
 <link rel="stylesheet" href="/assets/js/elastic-lab/lab.css?v=20261007-notes" />
 <link rel="stylesheet" href="/assets/css/elastic-lab-guide.css?v=20261007-notes" />
@@ -41,7 +42,7 @@ I check the calculations by comparing independently calculated results and by re
 | Strain inside an ellipse | Passed | Compare the angular integration with Mura’s closed expression for isotropic stiffness. |
 | Thin-plate limit | Passed | Compare a very flat ellipse with the ideal thin-plate strain and energy. The energy tolerance uses the unrelaxed energy scale because the limiting energy can be nearly zero. |
 | Continuity at the interface | Passed | Check tangential total strain and both traction components at the sampled interface points. |
-| Periodic field map | Passed | Compare the centre strain with the infinite-matrix ellipse result. The allowed difference is 6%, because the periodic map has different boundary conditions. |
+| Periodic field map | Passed | Compare the center strain with the infinite-matrix ellipse result. The allowed difference is 6%, because the periodic map has different boundary conditions. |
 
 ### How to interpret the numerical differences
 
@@ -51,7 +52,7 @@ A relative difference is the difference between two results divided by the speci
 - For the selected soft and hard anisotropic cases, the largest recorded relative displacement difference between the two equilibrium solvers is 8.02e-12.
 - For the selected soft, uniform and hard plate cases, changing the grid from 64 by 64 to 128 by 128 changes energy by about 0.0093% to 0.0275%. These values apply to those cases.
 - The orientation estimate can change with resolution. In one different-stiffness plate example, the lowest sampled angle changes from 60 degrees on a 32 by 32 grid to 65 degrees on a 64 by 64 grid. Reducing the angular step gives 62.5 degrees. This is why small energy differences need spatial and angular checks.
-- The periodic ellipse map is compared with an isolated ellipse in an infinite matrix. These have different boundary conditions. Its check allows a 6% centre-strain difference; it is not an exact equality test.
+- The periodic ellipse map is compared with an isolated ellipse in an infinite matrix. These have different boundary conditions. Its check allows a 6% center-strain difference; it is not an exact equality test.
 
 The laboratory does not evolve a phase field or establish the final shape of a decomposing alloy. The checks concern the elastic calculations described here.
 
@@ -189,7 +190,7 @@ Here sym means the symmetric part. The jump is the inside value minus the outsid
 
 The profiles use separate interior and exterior solutions and terminate at their one-sided interface values. A connector indicates a real jump; it does not interpolate across it. As the ellipse becomes a thin plate, its energy approaches B(m)/2, where m is the plate normal and B is the self elastic coefficient defined below.
 
-The colour map instead uses a periodic square with 256, 512 or 1024 grid points in each direction. It fixes average total strain at zero and includes periodic copies. Its default long semi-axis is 0.16 times the box width. The map limits b/a to at least 0.08 so a very thin shape remains resolved. Fourier oscillations near a sharp interface can remain. The map and the infinite-matrix profiles have different boundary conditions and need not match exactly.
+The color map instead uses a periodic square with 256, 512 or 1024 grid points in each direction. It fixes average total strain at zero and includes periodic copies. Its default long semi-axis is 0.16 times the box width. The map limits b/a to at least 0.08 so a very thin shape remains resolved. Fourier oscillations near a sharp interface can remain. The map and the infinite-matrix profiles have different boundary conditions and need not match exactly.
 
 Reference: Mura, *Micromechanics of Defects in Solids*, section 11. The check program compares the isotropic ellipse solution with Mura's closed expression and separately checks interface continuity and the thin-plate limit.
 
@@ -205,7 +206,7 @@ B_pq has energy-density units for dimensional stiffnesses. It describes the elas
 
 When p = q, the result is a self coefficient. When p and q differ, it is a cross coefficient. Symmetry gives B_pq = B_qp. The matrix of coefficients is positive semidefinite for stable stiffness, although a cross entry can be negative. Reversing one phase's eigenstrain reverses its cross coefficient and leaves its self coefficient unchanged.
 
-Module III plots one self coefficient. Its polar radius is proportional to B_pp, with zero at the centre. Module IV displays B_beta,beta, B_gamma,gamma and B_beta,gamma separately. Its polar panels use a common labelled offset because the cross coefficient can be negative.
+Module III plots one self coefficient. Its polar radius is proportional to B_pp, with zero at the center. Module IV displays B_beta,beta, B_gamma,gamma and B_beta,gamma separately. Its polar panels use a common labeled offset because the cross coefficient can be negative.
 
 Sandeep's X2 example uses mu = 2000, nu = 1/3 and AZ = 3, giving C11 = 7000, C12 = 5000 and C44 = 3000. The in-plane misfits are +0.01 for beta and -0.01 for gamma. Both self coefficients are 0.342857 along the axes and 0.8 along the diagonals. The cross coefficient has the corresponding negative values. These reproduce the coefficients in Chapter 5, Fig. 5.18; they do not reproduce a complete evolving microstructure.
 
@@ -217,7 +218,7 @@ The pair calculation uses two smooth circular Gaussian profiles in a periodic sq
 E_interaction = E_both - E_beta - E_gamma
 ```
 
-The calculation sums the cross contributions from all Fourier modes, including the separation factor cos(k dot R). R is the vector joining the particle centres, measured in length units. The product k dot R is dimensionless. Profile size, separation and periodic copies affect the result. B_pq at a single direction is not this particle-pair energy.
+The calculation sums the cross contributions from all Fourier modes, including the separation factor cos(k dot R). R is the vector joining the particle centers, measured in length units. The product k dot R is dimensionless. Profile size, separation and periodic copies affect the result. B_pq at a single direction is not this particle-pair energy.
 
 A negative interaction energy lowers the combined energy relative to the separate profiles in the same box. It does not make the total elastic energy negative. In the X2 example the beta–gamma pair has lower interaction energy along [11] than along [10]. Shape, composition and interfacial energy would also have to be considered in an evolving microstructure.
 
@@ -436,7 +437,7 @@ The angle has a different meaning in each calculation:
 | --- | --- |
 | Habit line or plate | Direction along the line or long axis of the plate |
 | Elastic energy coefficient | Direction of the Fourier wavevector, normal to a composition modulation |
-| Particle pair | Direction of the line joining the two particle centres |
+| Particle pair | Direction of the line joining the two particle centers |
 
 A plate tangent is perpendicular to its normal. A minimum in an elastic coefficient plot does not, by itself, identify the preferred direction between two particles. Use the particle-pair energy calculation for that comparison.
 

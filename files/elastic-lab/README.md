@@ -27,7 +27,7 @@ The angle has a different meaning in each calculation:
 | --- | --- |
 | Habit line or plate | Direction along the line or long axis of the plate |
 | Elastic energy coefficient | Direction of the Fourier wavevector, normal to a composition modulation |
-| Particle pair | Direction of the line joining the two particle centres |
+| Particle pair | Direction of the line joining the two particle centers |
 
 A plate tangent is perpendicular to its normal. A minimum in an elastic coefficient plot does not, by itself, identify the preferred direction between two particles. Use the particle-pair energy calculation for that comparison.
 

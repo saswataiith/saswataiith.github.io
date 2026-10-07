@@ -84,7 +84,7 @@ function renderHabit(s) {
   const readout = element("mohr-readout");
   clearMath(readout);
   // Separate inline pieces so the readout can wrap on narrow screens.
-  readout.textContent = String.raw`Centre \(c=(1+t)/2=${fmt(circle.centre)}\), radius \(R=|1-t|/2=${fmt(circle.radius)}\). At the selected angle: \(\epsilon^0_{nn}/\epsilon_\eta=${texNumber(fmt(circle.normal))}\), \(\epsilon^0_{nq}/\epsilon_\eta=${texNumber(fmt(circle.shear))}\).`;
+  readout.textContent = String.raw`Center \(c=(1+t)/2=${fmt(circle.centre)}\), radius \(R=|1-t|/2=${fmt(circle.radius)}\). At the selected angle: \(\epsilon^0_{nn}/\epsilon_\eta=${texNumber(fmt(circle.normal))}\), \(\epsilon^0_{nq}/\epsilon_\eta=${texNumber(fmt(circle.shear))}\).`;
   renderMath(readout);
   draw(
     "normal-strain",
@@ -208,7 +208,7 @@ function sandeepCheck(s) {
   }
   html +=
     "</tbody></table></div>" +
-    '<p class="sd-note">Why these shapes: with A<sub>Z</sub> = 3 the crystal is elastically soft along ⟨10⟩, so each self term is lowest along ⟨10⟩ and highest along ⟨11⟩. The two misfits are equal and opposite, so B<sub>ββ</sub> and B<sub>γγ</sub> are identical (the dashed curve lies on the solid one) and B<sub>βγ</sub> is their mirror image. The most negative cross term is along ⟨11⟩, which favours β–γ neighbours along the diagonals; the pair calculation below shows the same preference.</p>';
+    '<p class="sd-note">Why these shapes: with A<sub>Z</sub> = 3 the crystal is elastically soft along ⟨10⟩, so each self term is lowest along ⟨10⟩ and highest along ⟨11⟩. The two misfits are equal and opposite, so B<sub>ββ</sub> and B<sub>γγ</sub> are identical (the dashed curve lies on the solid one) and B<sub>βγ</sub> is their mirror image. The most negative cross term is along ⟨11⟩, which favors β–γ neighbors along the diagonals; the pair calculation below shows the same preference.</p>';
   draw("sandeep-check", html);
 }
 function renderPair(s) {

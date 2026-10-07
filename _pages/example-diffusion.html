@@ -3,6 +3,7 @@ layout: scholar
 title: "Diffusion through Fourier modes"
 permalink: /resources/examples/diffusion/
 nav_active: resources
+description: "Explore diffusion through decaying Fourier modes, an analytical solution and reproducible Julia and NumPy examples."
 ---
 <section class="page-heading"><span class="eyebrow">MS5033 · WORKED EXAMPLE · JULIA + NUMPY</span><h1>Diffusion through Fourier modes.</h1><p>Watch short wavelengths disappear first.</p></section>
 <section class="section"><h2>The physical idea.</h2><p class="wide-copy">For ∂c/∂t = D∇²c, each Fourier amplitude decays as ĉ(k,t) = ĉ(k,0) exp(−Dk²t). Here c(x,0) = 1 + 0.4 cos(x) + 0.2 cos(4x), D = 1 and the periodic domain is [0,2π).</p><div class="formula-box">\[\begin{aligned}\frac{\partial c}{\partial t}&=D\nabla^2c\\\widehat c(k,t)&=\widehat c(k,0)e^{-Dk^2t}\\c(x,0)&=1+0.4\cos x+0.2\cos(4x)\end{aligned}\]</div><p class="small muted">This example is based on my teaching notebook, <code>Fourier_Julia.ipynb</code>. I wrote the notebook to explain how Fourier methods solve the diffusion equation. Here, two Fourier modes show why short-wavelength variations disappear faster.</p>

@@ -3,6 +3,7 @@ layout: scholar
 title: "Academic CV"
 permalink: /cv/
 nav_active: cv
+description: "My academic background, experience, advisers and selected projects at IIT Hyderabad, with my full CV, Google Scholar, ORCID and LinkedIn profiles."
 ---
 <section class="page-heading cv-profile-heading">
   <span class="eyebrow">ACADEMIC PROFILE</span>
