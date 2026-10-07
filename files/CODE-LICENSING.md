@@ -1,15 +1,11 @@
 # Using my website code
 
-## Ternary spinodal code
+I permit free noncommercial teaching, learning and demonstrations with acknowledgment. Research, including academic research, and commercial use require my explicit written permission. Read the [complete code-use terms](CODE-USE-TERMS.txt).
 
-My `mesoscale/examples/stepwise/ternary_spinodal.py` program, the code cells in `ternary-spinodal-python.ipynb`, and the corresponding code on the ternary spinodal page require my explicit written permission for academic or commercial use. This also applies to their copies in download archives. They are excluded from the current general MIT grant below. Read [the code-use terms](mesoscale/examples/stepwise/TERNARY-CODE-TERMS.txt). Earlier MIT releases retain their existing permissions.
+This policy covers my original Julia, Python/NumPy and C code, notebook code cells, connectivity tests and browser demonstrations hosted on this website, including copies in downloads. It does not change the terms in separate research repositories.
 
-## Other website code
+Earlier MIT and GPL releases retain their existing permissions. The MIT notice files are retained as notices for earlier releases, not as a new unrestricted grant for all current code. The elasticity laboratory and elasticity solvers retain their existing GPL licenses. Website-template tools, vendor libraries, KTurtle artwork and code credited to others retain their own terms.
 
-The MIT licence in [LICENSE-CODE-MIT.txt](LICENSE-CODE-MIT.txt) covers my other original Python, Julia and C source in `mesoscale/` (including my source distributed in its ZIP files), code cells in my `pinn/` notebook and my `teaching/thermodynamics-kinetics/` notebooks, and my connectivity tests in `tests/`.
+My original teaching text, notes and figures that I own are available under CC BY 4.0 as described on [Using my resources](https://saswataiith.github.io/using-my-resources/). That license does not apply to software, published papers, student thesis material, or jointly owned or third-party material.
 
-It also covers my original website demonstration code in `assets/js/`, except files with an existing licence and third-party or template code. It does not replace the GPL licences for `elastic-lab/`, `elastic-solvers/` or their downloads. Website-template tools, vendor libraries, KTurtle artwork and material credited to others keep their existing terms.
-
-My original teaching text, notes and figures that I own are covered by CC BY 4.0 as described on [Using my resources](https://saswataiith.github.io/using-my-resources/). This teaching-material licence does not apply to software, published papers, student thesis material or jointly owned or third-party material.
-
-Dependencies retain their own licences. NumPy, FFTW, FFTW.jl and GSL are separate software projects. FFTW and GSL have GPL requirements; distributing a combined program linked to them must comply with the applicable library licence. MIT permission for my source does not replace those requirements. See [FFTW](https://www.fftw.org/faq/section1.html) and [GSL](https://www.gnu.org/software/gsl/).
+Dependencies retain their own licenses. NumPy, FFTW, FFTW.jl and GSL are separate software projects. Distributing a program linked to FFTW or GSL must comply with the applicable library license; my permission does not replace those requirements. See [FFTW](https://www.fftw.org/faq/section1.html) and [GSL](https://www.gnu.org/software/gsl/).

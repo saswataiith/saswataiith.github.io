@@ -37,4 +37,4 @@ Tobin Fricke, The Hoshen–Kopelman Algorithm, https://www.ocf.berkeley.edu/~fri
 
 The downloadable teaching code is a new implementation. Historical C files retain their existing credits, including Prof. T. A. Abinandanan, my PhD adviser (Abi in the original source comments). A separate Fricke C source retains his copyright and GPL notice; it is not included in this download or relicensed here.
 
-New teaching source follows the website's scoped MIT code terms; original prose follows its scoped CC BY 4.0 terms. See /using-my-resources/.
+I permit free noncommercial teaching, learning and demonstrations with acknowledgment. Research (including academic research) and commercial use require my explicit written permission. Earlier MIT and GPL releases retain their existing permissions. See CODE-USE-TERMS.txt. Original prose follows CC BY 4.0.

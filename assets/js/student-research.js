@@ -1,2 +1,7 @@
+// Copyright (c) 2026 Saswata Bhattacharyya.
+// I permit free noncommercial teaching and demonstrations with acknowledgment.
+// I require written permission for research or commercial use.
+// I retain permissions granted by earlier licenses; dependencies keep their licenses.
+// I give the full terms at https://saswataiith.github.io/files/CODE-USE-TERMS.txt.
 (()=>{const image=document.getElementById('student-hero-image');if(!image)return;const ternary=document.getElementById('hero-ternary'),ferro=document.getElementById('hero-ferro');
 function choose(isFerro){const src=isFerro?'/assets/images/student-research/soumya-domains-case3.jpg':'/assets/images/student-research/sandeep-ternary-3.png';image.src=src;image.alt=isFerro?'Coexisting tetragonal, rhombohedral and orthorhombic domains in equimolar BZCT, from Soumya Bandyopadhyay’s thesis':'Red, green and blue domains aligned diagonally during ternary phase separation, from Sandeep Sugathan’s thesis';document.getElementById('student-hero-link').href=src;document.getElementById('student-hero-title').textContent=isFerro?'Polarization finds its pattern.':'Elasticity shapes phase separation.';document.getElementById('student-hero-credit').textContent=isFerro?'From the PhD thesis of Soumya Bandyopadhyay (2020).':'From the PhD thesis of Sandeep Sugathan (2019).';ternary.setAttribute('aria-pressed',String(!isFerro));ferro.setAttribute('aria-pressed',String(isFerro));}ternary.onclick=()=>choose(false);ferro.onclick=()=>choose(true);})();

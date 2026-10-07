@@ -1,3 +1,8 @@
+// Copyright (c) 2026 Saswata Bhattacharyya.
+// I permit free noncommercial teaching and demonstrations with acknowledgment.
+// I require written permission for research or commercial use.
+// I retain permissions granted by earlier licenses; dependencies keep their licenses.
+// I give the full terms at https://saswataiith.github.io/files/CODE-USE-TERMS.txt.
 import { examples, field, residual, losses } from './pinn-model.mjs';
 const controls = {
   a: document.getElementById('pinn-amplitude'),

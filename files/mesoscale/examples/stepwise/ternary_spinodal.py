@@ -1,6 +1,8 @@
-# Copyright (c) 2026 Saswata Bhattacharyya. All rights reserved.
-# I require explicit written permission for academic or commercial use.
-# I give the scope and earlier-license exception in TERNARY-CODE-TERMS.txt.
+# Copyright (c) 2026 Saswata Bhattacharyya.
+# I permit free noncommercial teaching and demonstrations with acknowledgment.
+# I require written permission for research or commercial use.
+# I retain permissions granted by earlier licenses; dependencies keep their licenses.
+# I give the full terms at https://saswataiith.github.io/files/CODE-USE-TERMS.txt.
 
 # I calculate ternary spinodal decomposition using my polynomial model.
 

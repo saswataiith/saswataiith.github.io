@@ -28,7 +28,7 @@ See `../hoshen-kopelman/README.md`. Six C checkpoints each compile and run indep
 
 See check-results.txt. Python notebooks have executed outputs. Julia scripts were executed; IJulia notebook-kernel execution was not tested. Short teaching workloads do not establish numerical convergence of a full simulation. The 256³ spinodal model remains available separately.
 
-The website lessons define the quantities and conventions used by each model. Source follows my scoped MIT code terms except for the ternary spinodal code, which requires my explicit written permission for academic or commercial use. See TERNARY-CODE-TERMS.txt. Earlier MIT releases retain their existing permissions. Original teaching prose follows the scoped CC BY 4.0 terms. Existing third-party terms remain unchanged. See https://saswataiith.github.io/using-my-resources/.
+The website lessons define the quantities and conventions used by each model. I permit free noncommercial teaching, learning and demonstrations with acknowledgment. Research (including academic research) and commercial use require my explicit written permission. Earlier MIT and GPL releases retain their existing permissions. See CODE-USE-TERMS.txt. Original teaching prose follows CC BY 4.0. See https://saswataiith.github.io/using-my-resources/.
 
 ## Ternary spinodal decomposition
 

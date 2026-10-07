@@ -68,7 +68,7 @@ Full Jekyll rendering was not run locally because Ruby/Jekyll was unavailable; t
 
 ## Provenance and license
 
-The numerical reference energies, exposition, code and figures are original teaching material, released under the MIT license embedded in the notebook, consistent with the site's MIT licensing. No external database, third-party figure, textbook extract or restricted course material is redistributed. Dependencies retain their respective licenses.
+I permit free noncommercial teaching and demonstrations with acknowledgment. Research and commercial use require my written permission; see CODE-USE-TERMS.txt. Earlier MIT releases retain their permissions. My original teaching text and figures follow CC BY 4.0. No external database, third-party figure, textbook extract or restricted course material is redistributed. Dependencies retain their respective licenses.
 
 
 ## Revision 4 — 5 October 2026

@@ -1,3 +1,9 @@
+Historical MIT notice
+
+I retain this notice for earlier MIT-licensed releases. Their permissions
+remain valid. Current terms for my original website code are described at
+https://saswataiith.github.io/files/CODE-USE-TERMS.txt.
+
 The MIT License (MIT)
 
 Copyright (c) 2026 Saswata Bhattacharyya

@@ -1,3 +1,8 @@
+# Copyright (c) 2026 Saswata Bhattacharyya.
+# I permit free noncommercial teaching and demonstrations with acknowledgment.
+# I require written permission for research or commercial use.
+# I retain permissions granted by earlier licenses; dependencies keep their licenses.
+# I give the full terms at https://saswataiith.github.io/files/CODE-USE-TERMS.txt.
 """Two prescribed minima, same starting RGB field, same Allen-Cahn law.
 Usage: python portrait_wrong_energy.py portrait.png cubist.png output
 Requires numpy, pillow. Channels evolve independently. F = mean((u-r)^2)/2.

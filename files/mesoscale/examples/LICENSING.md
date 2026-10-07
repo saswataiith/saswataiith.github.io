@@ -1,5 +1,5 @@
-# Using my teaching code
+# Using my code
 
-The ternary spinodal code requires my explicit written permission for academic or commercial use. This covers `stepwise/ternary_spinodal.py`, the code cells in `stepwise/ternary-spinodal-python.ipynb`, and their copies in download archives. Read [the ternary code terms](stepwise/TERNARY-CODE-TERMS.txt). Earlier MIT releases retain their existing permissions.
+I permit free noncommercial teaching, learning and demonstrations with acknowledgment. Research (including academic research) and commercial use require my explicit written permission. Earlier MIT and GPL releases retain their existing permissions. Read [CODE-USE-TERMS.txt](CODE-USE-TERMS.txt).
 
-My other original source code and notebook code cells in this directory are available under the [MIT license](LICENSE-CODE-MIT.txt), unless a file states different terms. My original teaching text follows CC BY 4.0. Existing licenses and third-party rights are unchanged. See [scope and dependency terms](https://saswataiith.github.io/files/CODE-LICENSING.md).
+The MIT notice supplied here records earlier licensed releases; it does not grant unrestricted permission for every current file. Earlier permissions remain valid. My original teaching text and figures follow CC BY 4.0. Existing third-party terms remain unchanged. See [scope and dependency terms](https://saswataiith.github.io/files/CODE-LICENSING.md).

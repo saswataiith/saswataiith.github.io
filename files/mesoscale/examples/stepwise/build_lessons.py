@@ -1,3 +1,8 @@
+# Copyright (c) 2026 Saswata Bhattacharyya.
+# I permit free noncommercial teaching and demonstrations with acknowledgment.
+# I require written permission for research or commercial use.
+# I retain permissions granted by earlier licenses; dependencies keep their licenses.
+# I give the full terms at https://saswataiith.github.io/files/CODE-USE-TERMS.txt.
 """I update displayed code steps from their notebook sources.
 
 Run this from the website checkout after editing a notebook:
@@ -94,7 +99,7 @@ if __name__ == "__main__":
                 if source.suffix == ".zip" or source.name == "build_lessons.py":
                     continue
                 bundle.write(source, "examples/" + str(source.relative_to(EXAMPLES)))
-        for name in ["phase_field.py", "phase_field.jl", "LICENSE-CODE-MIT.txt", "LICENSING.md"]:
+        for name in ["phase_field.py", "phase_field.jl", "LICENSE-CODE-MIT.txt", "LICENSING.md", "CODE-USE-TERMS.txt"]:
             bundle.write(EXAMPLES / name, "examples/" + name)
     hk = EXAMPLES / "hoshen-kopelman"
     with zipfile.ZipFile(hk / "stepwise-hoshen-kopelman.zip", "w", zipfile.ZIP_DEFLATED) as bundle:
@@ -102,4 +107,5 @@ if __name__ == "__main__":
             if source.is_file() and source.suffix != ".zip":
                 bundle.write(source, source.name)
         bundle.write(EXAMPLES / "LICENSE-CODE-MIT.txt", "LICENSE-CODE-MIT.txt")
+        bundle.write(EXAMPLES / "LICENSING.md", "LICENSING.md")
     print("Updated both download archives.")

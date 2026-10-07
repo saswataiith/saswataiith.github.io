@@ -1,3 +1,8 @@
+// Copyright (c) 2026 Saswata Bhattacharyya.
+// I permit free noncommercial teaching and demonstrations with acknowledgment.
+// I require written permission for research or commercial use.
+// I retain permissions granted by earlier licenses; dependencies keep their licenses.
+// I give the full terms at https://saswataiith.github.io/files/CODE-USE-TERMS.txt.
 // Dimensionless steady diffusion: -u'' = 0, u(0) = 0, u(1) = 1.
 export const examples = Object.freeze({
   equation: { a: 0.4, b: 0.25, c: 0 },

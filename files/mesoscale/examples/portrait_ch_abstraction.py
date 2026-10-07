@@ -1,3 +1,8 @@
+# Copyright (c) 2026 Saswata Bhattacharyya.
+# I permit free noncommercial teaching and demonstrations with acknowledgment.
+# I require written permission for research or commercial use.
+# I retain permissions granted by earlier licenses; dependencies keep their licenses.
+# I give the full terms at https://saswataiith.github.io/files/CODE-USE-TERMS.txt.
 """A portrait disintegrating into abstract art under Cahn-Hilliard evolution.
 Usage: python portrait_ch_abstraction.py photo.png output
 Three independent signed RGB fields; image analogy, not a material model.
