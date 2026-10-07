@@ -1,3 +1,6 @@
+# I simulate Ising spin alignment or Potts grain growth on a periodic grid.
+# I run this example with: julia monte_carlo.jl [ising|potts] [output_directory]
+# I use only Julia standard libraries: Random, DelimitedFiles, Statistics and Printf.
 # Copyright (c) 2026 Saswata Bhattacharyya.
 # I permit free noncommercial teaching and demonstrations with acknowledgment.
 # I require written permission for research or commercial use.
@@ -58,7 +61,7 @@ function local_energy(spin::Matrix{Int}, i::Int, j::Int, J::Float64)
     return -J * s * nn
 end
 
-# one Glauber flip attempt (NOT composition-conserving)
+# I attempt one Ising spin flip with Metropolis acceptance; composition is not conserved.
 function glauber_step!(spin::Matrix{Int}, J::Float64, T::Float64, rng)
     Nx, Ny = size(spin)
     i = rand(rng, 1:Nx)

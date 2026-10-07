@@ -6,7 +6,7 @@
 """Native Python VPython viewer: python turtle_3d_vpython.py viewer.json.
 Install: python -m pip install vpython "setuptools<82"
 I use setuptools below 82 because VPython needs pkg_resources.
-Uses identical saved voxel loops to the website; centre motion is phase-valid.
+Uses identical saved voxel loops to the website; center motion is phase-valid.
 """
 import json, sys, time
 from pathlib import Path

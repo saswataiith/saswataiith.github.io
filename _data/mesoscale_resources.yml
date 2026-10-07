@@ -171,7 +171,7 @@
     "level": "Advanced"
   },
   {
-    "title": "Parallel GPU phase-field: KKS FD CUDA MPI",
+    "title": "Parallel GPU phase-field: KKS-FD-CUDA-MPI",
     "category": "Software",
     "topic": "HPC",
     "description": "The finite-difference CUDA/MPI module for parallel phase-field simulations in the MicroSim stack.",
