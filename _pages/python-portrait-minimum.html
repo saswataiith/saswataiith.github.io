@@ -12,7 +12,7 @@ description: "I develop my color portrait as an energy minimum in explained Pyth
 <p>I develop this calculation in small steps. I run a cell, inspect its result and test it before adding the next part. Run the cells in order in Jupyter. A code cell defines a part of the calculation or carries it out; defining a function does not run it.</p>
 <p>I permit free noncommercial teaching, learning and demonstrations with acknowledgment. Research and commercial use require my written permission. Earlier licensed releases retain their permissions. <a href="https://saswataiith.github.io/using-my-resources/">Read the code-use terms</a>.</p>
 <p>Copyright (c) 2026 Saswata Bhattacharyya.</p>
-<h2>1. Prepare the Python environment</h2>
+<h2>Step 1: Prepare the Python environment</h2>
 <p>I install the packages listed in the next cell once in the same environment as the notebook. In Jupyter or Colab, remove the comment marker from the installation line below if a package is missing. NumPy stores arrays and evaluates numerical operations. Matplotlib displays plots. Pillow reads and writes images. This installation does not change the model parameters.</p>
 <pre><code class="language-python"># %pip install numpy &quot;pillow&gt;=10.1&quot; matplotlib
 import numpy as np
@@ -20,8 +20,15 @@ assert np.isfinite(np.array([0.0, 1.0])).all()
 print(&quot;NumPy is ready:&quot;, np.__version__)</code></pre>
 <pre class="cell-result">NumPy is ready: 2.1.3
 </pre>
-<h2>2. Read the image and check its dimensions</h2>
+<h2>Step 2: Read the image and check its dimensions</h2>
 <p>I download my public portrait once, or replace this path with my own image. An RGB array has two position axes and one channel axis. The three channels are red, green and blue.</p>
+<p>I use <strong>Pillow</strong>, imported as <code>PIL</code>, to read, resize and save these images. An RGB image with 256 rows and 256 columns has array shape <code>(256, 256, 3)</code>. The last <code>3</code> counts red, green and blue values at each pixel. It does not represent depth in space. A grayscale image has shape <code>(256, 256)</code> because it has one value per pixel.</p>
+<p><code>target.ndim</code> counts array axes. It is <code>3</code> for the RGB array and <code>2</code> for the grayscale array. Here a three-axis array still represents a two-dimensional image.</p>
+<h3>Resizing is different from padding</h3>
+<p>My source portrait is <strong>1,139 pixels wide and 1,381 pixels high</strong>. Its original NumPy RGB shape is <code>(1381, 1139, 3)</code>, because NumPy lists rows before columns. Here I resize the complete image to <strong>256 pixels wide and 256 pixels high</strong>, giving array shape <code>(256, 256, 3)</code>.</p>
+<p>There is <strong>no padding and no cropping</strong> in this operation. Resizing calculates new pixel values from the original image. Because the width and height are changed by different factors, the proportions of the face change too. This simple example uses the specified grid size; it does not preserve the original aspect ratio, meaning width divided by height. To preserve those proportions, we would choose a matching aspect ratio, crop deliberately, or resize proportionally and add explicitly defined borders. Those are different image-preparation choices.</p>
+<p>Pillow's resize argument is <code>(width, height)</code>. NumPy's image shape is <code>(height, width, channels)</code>. These two orders are easy to confuse, so I state both. Resizing also changes the pixel values through interpolation; the resulting target is the resized image, not the full-resolution source portrait.</p>
+<p>Adding <code>None</code> to a NumPy index is unrelated to image padding. It adds an array axis of length one without adding a border, changing the spatial grid or introducing new pixel values. The periodic boundary condition used later is also separate: the numerical calculation connects opposite image edges without padding the picture.</p>
 <pre><code class="language-python">from pathlib import Path
 from urllib.request import urlretrieve
 
@@ -37,13 +44,13 @@ def get_file(relative_path):
 
 portrait = get_file(&quot;assets/images/saswata-landscape.png&quot;)
 output = &quot;portrait-minimum-results&quot;</code></pre>
-<h2>3. Import arrays and image operations</h2>
+<h2>Step 3: Import arrays and image operations</h2>
 <p>I use NumPy for numerical arrays and Pillow for reading images and writing labeled frames. Path handles file locations. The script also imports argparse for its command-line interface; the notebook does not use that interface.</p>
 <pre><code class="language-python">from pathlib import Path
 import argparse
 import numpy as np
 from PIL import Image, ImageDraw, ImageFont</code></pre>
-<h2>4. Choose a portable display font</h2>
+<h2>Step 4: Choose a portable display font</h2>
 <p>I try the original font, then DejaVu Sans, then Pillow's default font. The font changes labels on the image only; it does not change a numerical field.</p>
 <pre><code class="language-python">def portrait_font(size):
     fonts = [Path(&#x27;/&#x27;) / &#x27;System&#x27; / &#x27;Library&#x27; / &#x27;Fonts&#x27; / &#x27;Helvetica.ttc&#x27;, &#x27;DejaVuSans.ttf&#x27;]
@@ -53,7 +60,7 @@ from PIL import Image, ImageDraw, ImageFont</code></pre>
         except OSError:
             pass
     return ImageFont.load_default(size=size)</code></pre>
-<h2>5. Read and shuffle the color pixels</h2>
+<h2>Step 5: Read and shuffle the color pixels</h2>
 <p>I call the fixed portrait target and the shuffled portrait initial. Each signed RGB channel ranges from −1 to 1. I shuffle whole pixels with seed 19, preserving the three channel means.</p>
 <pre><code class="language-python">def prepare_portrait(path, color=False):
     mode = &#x27;RGB&#x27; if color else &#x27;L&#x27;
@@ -65,19 +72,71 @@ from PIL import Image, ImageDraw, ImageFont</code></pre>
     else:
         initial = rng.permutation(target.ravel()).reshape(target.shape)
     return (target, initial)</code></pre>
-<h2>6. Write the evolution rule</h2>
-<p>I calculate the Fourier wave numbers and the squared magnitude k2. For portrait restoration, the error is the current field minus the fixed target. The Allen–Cahn error decays locally; the Cahn–Hilliard Fourier modes decay at rates proportional to k2. The spatial transform leaves the channel axis unchanged.</p>
-<pre><code class="language-python">def evolve(target, initial, time):
-    k = 2 * np.pi * np.fft.fftfreq(256, d=32 / 256)
-    k2 = k[:, None] ** 2 + k[None, :] ** 2
+<h2>Step 6: Write the discretized evolution equations</h2>
+<p>I first write the equations that the code evaluates. The fixed target is \(r\) and the evolving image is \(u\). Their difference is \(e=u-r\). I apply the same calculation independently to the red, green and blue channels. All quantities here are dimensionless.</p>
+<h3>The image grid</h3>
+<p>There are \(N=256\) grid points along each direction. The periodic domain has width \(\ell=32\), so the grid spacing is \(\Delta x=\Delta y=\ell/N=0.125\). The pixel indices are \(a,b=0,\ldots,N-1\), with positions \(x_a=a\Delta x\) and \(y_b=b\Delta y\). Index \(j\) denotes a color channel. At time \(t_n\), the error at a pixel is \(e^n_{abj}=u^n_{abj}-r_{abj}\).</p>
+<p>The discrete energy is</p>
+<p>\[F_h=\frac{\Delta x\Delta y}{2}\sum_{a,b,j}(u_{abj}-r_{abj})^2.\]</p>
+<p>Here \(F_h\) is the grid approximation of the total energy. Its minimum is zero when every pixel matches the target.</p>
+<h3>Allen–Cahn: a local update at every pixel</h3>
+<p>The equation at each grid point is</p>
+<p>\[\frac{d e_{abj}}{dt}=-L e_{abj},\qquad L=0.03.\]</p>
+<p>Over a time interval \(\Delta t=t_{n+1}-t_n\), its exact update is</p>
+<p>\[u^{n+1}_{abj}=r_{abj}+(u^n_{abj}-r_{abj})\exp(-L\Delta t).\]</p>
+<p>Every pixel relaxes toward its own target value. Neighboring pixels do not enter this particular Allen–Cahn equation because I have not included a gradient-energy term.</p>
+<h3>Cahn–Hilliard: an update for each Fourier mode</h3>
+<p>The error satisfies \(\partial_t e=M\nabla^2e\), with mobility \(M=10^{-5}\). I approximate the spatial derivatives using a discrete Fourier transform on the periodic grid. A hat denotes a Fourier coefficient. The integer mode indices \(p,q\) use NumPy's ordering \(0,1,\ldots,127,-128,\ldots,-1\). Their wave numbers are \(k_p=2\pi p/\ell\) and \(k_q=2\pi q/\ell\).</p>
+<p>For a Fourier mode, the Laplacian becomes multiplication by \(-(k_p^2+k_q^2)\):</p>
+<p>\[\frac{d\widehat e_{pqj}}{dt}=-M(k_p^2+k_q^2)\widehat e_{pqj}.\]</p>
+<p>The exact update for that mode is</p>
+<p>\[\widehat e^{n+1}_{pqj}=\widehat e^n_{pqj}\exp[-M(k_p^2+k_q^2)\Delta t].\]</p>
+<p>I take the inverse discrete Fourier transform, abbreviated IFFT, to return to pixel values:</p>
+<p>\[u^{n+1}_{abj}=r_{abj}+\operatorname{IFFT}_{pq\to ab}(\widehat e^{n+1}_{pqj}).\]</p>
+<p>The mode \(p=q=0\) represents the spatial mean. Its multiplying factor is exactly one, so Cahn–Hilliard preserves the mean of each channel. The other modes decay. These are Fourier spatial derivatives, not a nearest-neighbor finite-difference approximation.</p>
+<h3>Translate these equations into code</h3>
+<p>The function below evaluates the field directly at the requested <code>time</code>, measured from the initial field at time zero. Therefore its exponent uses <code>time</code>, rather than repeatedly advancing by a chosen time step. This is exact time integration of the spatially discretized linear equations. It is not a forward Euler update.</p>
+<p>I keep the grid, rates and numerical calculation unchanged. I name each intermediate quantity so that each line can be compared with the equations above.</p>
+<h3>Why is there a channel axis in the multiplier?</h3>
+<p>The squared wave numbers initially form a <code>(256, 256)</code> array, with one value at each pair of spatial Fourier modes. RGB Fourier coefficients have shape <code>(256, 256, 3)</code>. I therefore write <code>wave_number_squared[:, :, None]</code> to give the multiplier shape <code>(256, 256, 1)</code>. The two colons keep all rows and columns; <code>None</code> adds a last axis of length one. NumPy repeats this same multiplier across the three channels during multiplication. This rule is called broadcasting. There is no Fourier transform along the channel axis.</p>
+<p>The <code>if</code> statement checks whether a channel axis is present. It lets the same function handle either an RGB image or a grayscale image. In this color lesson the condition is true.</p>
+<details><summary>Read this complete operation (36 lines)</summary><pre><code class="language-python">def evolve(target, initial, time):
+    # I keep the original grid and the two relaxation rates.
+    grid_points = 256
+    domain_width = 32.0
+    grid_spacing = domain_width / grid_points
+    allen_cahn_rate = 0.03
+    cahn_hilliard_mobility = 1e-05
+
+    # I construct the wave numbers for the two position directions.
+    wave_numbers = 2 * np.pi * np.fft.fftfreq(grid_points, d=grid_spacing)
+    wave_x = wave_numbers[:, None]
+    wave_y = wave_numbers[None, :]
+    wave_number_squared = wave_x**2 + wave_y**2
+
+    # I check for rows, columns and a color-channel axis.
+    # For RGB, I change (256, 256) to (256, 256, 1).
+    # NumPy then applies the multiplier to all three channels.
     if target.ndim == 3:
-        k2 = k2[:, :, None]
-    error = initial - target
-    transformed_error = np.fft.fft2(error, axes=(0, 1))
-    ac = target + error * np.exp(-0.03 * time)
-    ch = target + np.fft.ifft2(transformed_error * np.exp(-1e-05 * k2 * time), axes=(0, 1)).real
-    return (ac, ch)</code></pre>
-<h2>7. Check the shuffle before evolving anything</h2>
+        wave_number_squared = wave_number_squared[:, :, None]
+
+    # I measure the starting difference from the fixed portrait.
+    initial_error = initial - target
+
+    # I evaluate the Allen–Cahn error at every pixel.
+    ac_decay = np.exp(-allen_cahn_rate * time)
+    ac_error = initial_error * ac_decay
+    ac = target + ac_error
+
+    # I transform only the position axes, keeping channels separate.
+    initial_error_hat = np.fft.fft2(initial_error, axes=(0, 1))
+    ch_decay = np.exp(-cahn_hilliard_mobility * wave_number_squared * time)
+    ch_error_hat = initial_error_hat * ch_decay
+    ch_error = np.fft.ifft2(ch_error_hat, axes=(0, 1)).real
+    ch = target + ch_error
+
+    return ac, ch</code></pre></details>
+<h2>Step 7: Check the shuffle before evolving anything</h2>
 <p>I prepare the target r and starting field u0 as 256 × 256 × 3 arrays. I check that each channel has the same mean before and after shuffling. I display the two arrays side by side; signed values are mapped back to display colors only.</p>
 <pre><code class="language-python">target, initial = prepare_portrait(portrait, color=True)
 assert target.shape == initial.shape == (256, 256, 3)
@@ -93,7 +152,7 @@ print(&quot;Channel means:&quot;, initial.mean((0, 1)))</code></pre>
 <figure><img loading="lazy" src="/assets/images/python-lessons/portrait-minimum-14.png" alt="Computed result from the My color portrait as an energy minimum notebook"><figcaption>Result from the executed notebook cell.</figcaption></figure>
 <pre class="cell-result">Channel means: [0.25635938 0.23498763 0.09989325]
 </pre>
-<h2>8. Define energy and verify its minimum</h2>
+<h2>Step 8: Define energy and verify its minimum</h2>
 <p>I choose \(F=\tfrac12\int_\Omega\sum_j(u_j-r_j)^2\,dA\). Here \(j\) identifies an RGB channel, \(\Omega\) is the image domain and \(dA\) is an area element. The mean energy density below is \(F/(3|\Omega|)\). Every squared difference is nonnegative, so the minimum is exactly \(F=0\) when \(u=r\). This is the number zero. A finite-time solution approaches this minimum asymptotically.</p>
 <pre><code class="language-python">def mean_energy(field):
     return 0.5 * np.mean((field - target)**2)
@@ -104,7 +163,7 @@ print(&quot;Initial energy:&quot;, mean_energy(initial))</code></pre>
 <pre class="cell-result">Target energy: 0.0
 Initial energy: 0.2203078196211593
 </pre>
-<h2>9. Take one step and compare the two laws</h2>
+<h2>Step 9: Evaluate at one time and compare the two laws</h2>
 <p>For channel \(j\), Allen–Cahn gives \(\partial_tu_j=-L(u_j-r_j)\), with \(L=0.03\). Cahn–Hilliard gives \(\partial_tu_j=M\nabla^2(u_j-r_j)\), with \(M=10^{-5}\). Here \(t\) is dimensionless time and \(\nabla^2\) is the spatial Laplacian. This local quadratic energy gives a second-order conserved equation; a gradient energy would supply the familiar fourth-order term. I use the exact propagators at time 100.</p>
 <pre><code class="language-python">ac, ch = evolve(target, initial, 100.0)
 assert mean_energy(ac) &lt;= mean_energy(initial)
@@ -117,7 +176,7 @@ for ax, field, title in zip(axes, (ac, ch), (&quot;Allen–Cahn, t=100&quot;, &q
     ax.axis(&quot;off&quot;)
 plt.show()</code></pre>
 <figure><img loading="lazy" src="/assets/images/python-lessons/portrait-minimum-18.png" alt="Computed result from the My color portrait as an energy minimum notebook"><figcaption>Result from the executed notebook cell.</figcaption></figure>
-<h2>10. Test mean drift separately from motion</h2>
+<h2>Step 10: Test mean drift separately from motion</h2>
 <p>I add a spatially uniform offset of 0.1 to the target. Allen–Cahn removes this mean offset exponentially. Cahn–Hilliard preserves it. Neither rule translates the fixed target across the image. Other Allen–Cahn energies can drive interface motion; this example does not test that.</p>
 <pre><code class="language-python">offset_ac, offset_ch = evolve(target, target + 0.1, 100.0)
 assert np.allclose(offset_ac - target, 0.1 * np.exp(-0.03 * 100), atol=1e-14)
@@ -127,7 +186,7 @@ print(&quot;CH remaining offset:&quot;, (offset_ch - target).mean())</code></pre
 <pre class="cell-result">AC remaining offset: 0.004978706836786389
 CH remaining offset: 0.10000000000000003
 </pre>
-<h2>11. Save the complete portrait sequence</h2>
+<h2>Step 11: Save the complete portrait sequence</h2>
 <p>I keep the original grid, seed, time samples and exact propagators. Each saved row contains time, channel means and energy density. The output folder contains 241 image frames and diagnostics.csv. The movie uses nonuniform simulation times, so its playback speed is not a physical rate comparison.</p>
 <details><summary>Read this complete operation (41 lines)</summary><pre><code class="language-python">def run_example(portrait, output, color=False):
     output = Path(output)
@@ -170,13 +229,13 @@ CH remaining offset: 0.10000000000000003
     np.savetxt(output / &#x27;diagnostics.csv&#x27;, records, delimiter=&#x27;,&#x27;, header=header, comments=&#x27;&#x27;)
     print(&#x27;Final energy densities:&#x27;, energies)
     print(&#x27;CH maximum channel mean drift:&#x27;, np.max(np.abs(ch.mean(axis=(0, 1)) - initial_mean)))</code></pre></details>
-<h2>12. Save the original 241-frame color calculation</h2>
+<h2>Step 12: Save the original 241-frame color calculation</h2>
 <p>I now use the complete frame writer defined in the preceding cell. I preserve the original nonuniform sample times, ending at 30,000,000. The PNG files and diagnostics.csv are written in the chosen output folder. Frames are not uniformly spaced in simulation time.</p>
 <pre><code class="language-python">run_example(portrait, output, color=True)</code></pre>
 <pre class="cell-result">Final energy densities: [np.float64(0.0), np.float64(3.8152048054083335e-12)]
 CH maximum channel mean drift: 1.2245759961615477e-13
 </pre>
-<h2>13. Plot energy and check every saved mean</h2>
+<h2>Step 13: Plot energy and check every saved mean</h2>
 <p>I read the measured diagnostics, rather than infer conservation from the colors. Both energy sequences must be nonincreasing within the stated round-off tolerance. Each Cahn–Hilliard channel mean must remain within 2×10⁻¹³ of its initial value.</p>
 <pre><code class="language-python">records = np.loadtxt(Path(output) / &quot;diagnostics.csv&quot;, delimiter=&quot;,&quot;, skiprows=1)
 assert records.shape == (241, 9)
@@ -195,6 +254,6 @@ print(&quot;Final mean energy densities:&quot;, records[-1, 7:9])</code></pre>
 <figure><img loading="lazy" src="/assets/images/python-lessons/portrait-minimum-26.png" alt="Computed result from the My color portrait as an energy minimum notebook"><figcaption>Result from the executed notebook cell.</figcaption></figure>
 <pre class="cell-result">Final mean energy densities: [0.00000000e+00 3.81520481e-12]
 </pre>
-<h2>14. Review and extend the calculation</h2>
+<h2>Step 14: Review and extend the calculation</h2>
 <p>I first restart the kernel and run all the required cells. Then I change one input, predict its effect and compare the result with that prediction. A successful check establishes the tested property; it does not establish convergence or equilibrium. I retain the <a href="https://saswataiith.github.io/files/mesoscale/examples/portrait_energy_minimum.py">complete script</a> for command-line use. The notebook embeds the calculation directly and does not need that script to run.</p>
 <p><a href="/files/mesoscale/examples/notebooks/notebook-check-results.json">Read the notebook execution checks →</a> · <a href="/resources/step-by-step-codes/">More Python, Julia and C lessons →</a></p></section>
