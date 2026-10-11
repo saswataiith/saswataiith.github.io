@@ -100,7 +100,7 @@ from PIL import Image, ImageDraw, ImageFont</code></pre>
 <h3>Why is there a channel axis in the multiplier?</h3>
 <p>The squared wave numbers initially form a <code>(256, 256)</code> array, with one value at each pair of spatial Fourier modes. RGB Fourier coefficients have shape <code>(256, 256, 3)</code>. I therefore write <code>wave_number_squared[:, :, None]</code> to give the multiplier shape <code>(256, 256, 1)</code>. The two colons keep all rows and columns; <code>None</code> adds a last axis of length one. NumPy repeats this same multiplier across the three channels during multiplication. This rule is called broadcasting. There is no Fourier transform along the channel axis.</p>
 <p>The <code>if</code> statement checks whether a channel axis is present. It lets the same function handle either an RGB image or a grayscale image. In this color lesson the condition is true.</p>
-<details><summary>Read this complete operation (36 lines)</summary><pre><code class="language-python">def evolve(target, initial, time):
+<pre><code class="language-python">def evolve(target, initial, time):
     # I keep the original grid and the two relaxation rates.
     grid_points = 256
     domain_width = 32.0
@@ -135,7 +135,7 @@ from PIL import Image, ImageDraw, ImageFont</code></pre>
     ch_error = np.fft.ifft2(ch_error_hat, axes=(0, 1)).real
     ch = target + ch_error
 
-    return ac, ch</code></pre></details>
+    return ac, ch</code></pre>
 <h2>Step 7: Check the shuffle before evolving anything</h2>
 <p>I prepare the target r and starting field u0 as 256 × 256 × 3 arrays. I check that each channel has the same mean before and after shuffling. I display the two arrays side by side; signed values are mapped back to display colors only.</p>
 <pre><code class="language-python">target, initial = prepare_portrait(portrait, color=True)

@@ -38,7 +38,7 @@ description: {json.dumps('I develop '+title.lower()+' in explained Python cells,
   if c.cell_type=='markdown':blocks.append(render_markdown(c.source.split('\n',1)[1] if idx==0 else c.source))
   else:
    code='<pre><code class="language-python">'+html.escape(c.source)+'</code></pre>'
-   if len(c.source.splitlines())>35:code='<details><summary>Read this complete operation ('+str(len(c.source.splitlines()))+' lines)</summary>'+code+'</details>'
+   if len(c.source.splitlines())>35 and not c.metadata.get('keep_visible',False):code='<details><summary>Read this complete operation ('+str(len(c.source.splitlines()))+' lines)</summary>'+code+'</details>'
    blocks.append(code)
    for output in c.get('outputs',[]):
     if output.get('output_type')=='stream':blocks.append('<pre class="cell-result">'+html.escape(output['text'])+'</pre>')
