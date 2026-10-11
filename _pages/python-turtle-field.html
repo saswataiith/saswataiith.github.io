@@ -1,0 +1,56 @@
+---
+layout: scholar
+title: "Prepare the 2D field for the browser turtle"
+permalink: /resources/python/turtle-field/
+nav_active: resources
+description: "I develop prepare the 2d field for the browser turtle in explained Python cells, with numerical checks and a downloadable notebook."
+---
+
+<style>.python-lesson{max-width:1050px}.python-lesson pre{overflow-x:auto;background:#eef3f0;border:1px solid #d4dfd9;padding:20px;font:14px/1.65 ui-monospace,monospace}.python-lesson h2{margin-top:40px}.python-lesson p,.python-lesson li{line-height:1.8}.python-lesson details{margin:20px 0;padding:18px;background:#f1f5f2}.python-lesson summary{cursor:pointer;font-weight:600}.python-lesson img{max-width:100%;height:auto}.cell-result{padding:12px;background:#f7f8f6}.python-lesson .formula-box{overflow-x:auto}</style>
+<section class="page-heading"><span class="eyebrow">PYTHON · STEP-BY-STEP LESSON</span><h1>Prepare the 2D field for the browser turtle</h1><p>I write a small part, check it, and then add the next part.</p><p><a class="button primary" href="/files/mesoscale/examples/notebooks/turtle-field.ipynb" download>Download the notebook ↓</a> <a class="button secondary" href="https://colab.research.google.com/github/saswataiith/saswataiith.github.io/blob/master/files/mesoscale/examples/notebooks/turtle-field.ipynb">Open in Colab ↗</a></p><p><a href="/resources/python-notebooks/">All Python notebook lessons →</a></p></section><section class="section python-lesson">
+<p>I load the saved 256² field and convert c≥0.5 into a phase mask. c is dimensionless composition. The transpose and reversal match the screen coordinates. I save a JSON array of occupied pixels, not a predefined turtle route.</p>
+<p>I develop this calculation in small steps. I run a cell, inspect its result and test it before adding the next part. Run the cells in order in Jupyter. A code cell defines a part of the calculation or carries it out; defining a function does not run it.</p>
+<p>I permit free noncommercial teaching, learning and demonstrations with acknowledgment. Research and commercial use require my written permission. Earlier licensed releases retain their permissions. <a href="https://saswataiith.github.io/using-my-resources/">Read the code-use terms</a>.</p>
+<p>Copyright (c) 2026 Saswata Bhattacharyya.</p>
+<h2>1. Prepare the Python environment</h2>
+<p>I install the packages listed in the next cell once in the same environment as the notebook. In Jupyter or Colab, remove the comment marker from the installation line below if a package is missing. NumPy stores arrays and evaluates numerical operations. Matplotlib displays plots. Pillow reads and writes images. This installation does not change the model parameters.</p>
+<pre><code class="language-python"># %pip install numpy
+import numpy as np
+assert np.isfinite(np.array([0.0, 1.0])).all()
+print(&quot;NumPy is ready:&quot;, np.__version__)</code></pre>
+<pre class="cell-result">NumPy is ready: 2.1.3
+</pre>
+<h2>2. Read the saved composition</h2>
+<p>I use the original saved 256² field. I check its dimensions and mean before applying a threshold.</p>
+<pre><code class="language-python">from pathlib import Path
+from urllib.request import urlretrieve
+
+work = Path(&quot;lesson-data&quot;)
+work.mkdir(exist_ok=True)
+
+def get_file(relative_path):
+    # I download a public example only when its local copy is missing.
+    destination = work / Path(relative_path).name
+    if not destination.exists():
+        urlretrieve(&quot;https://saswataiith.github.io/&quot; + relative_path, destination)
+    return destination
+
+field_path = get_file(&quot;assets/examples/bicontinuity/composition-0.5.npy&quot;)
+output_path = work / &quot;turtle-field.json&quot;</code></pre>
+<h2>3. Check the result before continuing</h2>
+<p>I check finite values, conservation or the known reference result as specified below. An assertion stops the notebook if the condition fails. Inspect the quantities and tolerance rather than suppressing a failure.</p>
+<pre><code class="language-python">from pathlib import Path
+import json
+import sys
+import numpy as np
+composition = np.load(field_path)
+assert composition.shape == (256, 256)
+assert abs(composition.mean() - 0.5) &lt; 1e-10
+screen_field = composition.T[::-1]
+result = {&#x27;size&#x27;: 256, &#x27;mean&#x27;: float(composition.mean()), &#x27;threshold&#x27;: 0.5, &#x27;source&#x27;: &#x27;bicontinuity.py, seed 20260921, time 400&#x27;, &#x27;mask&#x27;: (screen_field &gt;= 0.5).astype(int).ravel().tolist()}</code></pre>
+<h2>4. Prepare the next part of the calculation</h2>
+<p>I define the following operations. These are the same operations as in the original source, written on separate lines so their order is clear. Inspect their values before running the next cell.</p>
+<pre><code class="language-python">Path(output_path).write_text(json.dumps(result, separators=(&#x27;,&#x27;, &#x27;:&#x27;)))</code></pre>
+<h2>5. Review and extend the calculation</h2>
+<p>I first restart the kernel and run all the required cells. Then I change one input, predict its effect and compare the result with that prediction. A successful check establishes the tested property; it does not establish convergence or equilibrium. I retain the <a href="https://saswataiith.github.io/files/mesoscale/examples/export_turtle_field.py">complete script</a> for command-line use. The notebook embeds the calculation directly and does not need that script to run.</p>
+<p><a href="/files/mesoscale/examples/notebooks/notebook-check-results.json">Read the notebook execution checks →</a> · <a href="/resources/step-by-step-codes/">More Python, Julia and C lessons →</a></p></section>

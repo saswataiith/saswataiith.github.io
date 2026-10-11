@@ -1,0 +1,201 @@
+---
+layout: scholar
+title: "Both phase networks in VPython"
+permalink: /resources/python/percolation-vpython/
+nav_active: resources
+description: "I develop both phase networks in vpython in explained Python cells, with numerical checks and a downloadable notebook."
+---
+
+<style>.python-lesson{max-width:1050px}.python-lesson pre{overflow-x:auto;background:#eef3f0;border:1px solid #d4dfd9;padding:20px;font:14px/1.65 ui-monospace,monospace}.python-lesson h2{margin-top:40px}.python-lesson p,.python-lesson li{line-height:1.8}.python-lesson details{margin:20px 0;padding:18px;background:#f1f5f2}.python-lesson summary{cursor:pointer;font-weight:600}.python-lesson img{max-width:100%;height:auto}.cell-result{padding:12px;background:#f7f8f6}.python-lesson .formula-box{overflow-x:auto}</style>
+<section class="page-heading"><span class="eyebrow">PYTHON · STEP-BY-STEP LESSON</span><h1>Both phase networks in VPython</h1><p>I write a small part, check it, and then add the next part.</p><p><a class="button primary" href="/files/mesoscale/examples/notebooks/percolation-vpython.ipynb" download>Download the notebook ↓</a> </p><p><a href="/resources/python-notebooks/">All Python notebook lessons →</a></p></section><section class="section python-lesson">
+<p><strong>Local Jupyter is required for the native VPython display.</strong> The checked default cells inspect routes without opening a scene. Set <code>open_viewer=True</code> and run the remaining cells interactively; interrupt the final event loop when finished.</p>
+<p>I display connected witness graphs for both phases and their independent wrapping loops. All positions are in voxel coordinates. Opacity, lighting and camera controls affect display only. The witness graphs are subsets of the measured full phase networks.</p>
+<p>I develop this calculation in small steps. I run a cell, inspect its result and test it before adding the next part. Run the cells in order in Jupyter. A code cell defines a part of the calculation or carries it out; defining a function does not run it.</p>
+<p>I permit free noncommercial teaching, learning and demonstrations with acknowledgment. Research and commercial use require my written permission. Earlier licensed releases retain their permissions. <a href="https://saswataiith.github.io/using-my-resources/">Read the code-use terms</a>.</p>
+<p>Copyright (c) 2026 Saswata Bhattacharyya.</p>
+<h2>1. Prepare the Python environment</h2>
+<p>I install the packages listed in the next cell once in the same environment as the notebook. In Jupyter or Colab, remove the comment marker from the installation line below if a package is missing. NumPy stores arrays and evaluates numerical operations. Matplotlib displays plots. Pillow reads and writes images. This installation does not change the model parameters.</p>
+<pre><code class="language-python"># %pip install numpy vpython &quot;setuptools&lt;82&quot;
+import numpy as np
+assert np.isfinite(np.array([0.0, 1.0])).all()
+print(&quot;NumPy is ready:&quot;, np.__version__)</code></pre>
+<pre class="cell-result">NumPy is ready: 2.1.3
+</pre>
+<h2>2. Load data and decide when to open the scene</h2>
+<p>I download the public viewer data, then check the route definitions without opening VPython. I use local Jupyter for the native viewer; Colab does not provide the same interactive VPython environment. I leave the window disabled initially so Run All does not enter an endless display loop.</p>
+<pre><code class="language-python">from pathlib import Path
+from urllib.request import urlretrieve
+
+work = Path(&quot;lesson-data&quot;)
+work.mkdir(exist_ok=True)
+
+def get_file(relative_path):
+    # I download a public example only when its local copy is missing.
+    destination = work / Path(relative_path).name
+    if not destination.exists():
+        urlretrieve(&quot;https://saswataiith.github.io/&quot; + relative_path, destination)
+    return destination
+
+viewer_path = get_file(&quot;assets/examples/bicontinuity-3d/viewer.json&quot;)
+
+viewer_data = __import__(&quot;json&quot;).loads(viewer_path.read_text())
+assert viewer_data[&quot;n&quot;] == 256
+for phase in (&quot;red&quot;, &quot;blue&quot;):
+    for axis in &quot;xyz&quot;:
+        route = np.asarray(viewer_data[&quot;routes&quot;][phase][axis])
+        steps = (np.diff(route, axis=0) + 128) % 256 - 128
+        assert np.all(np.abs(steps).sum(axis=1) == 1)
+        assert np.array_equal(steps.sum(axis=0), np.eye(3, dtype=int)[&quot;xyz&quot;.index(axis)] * 256)
+print(&quot;All six saved routes have face-sharing steps and the stated winding.&quot;)</code></pre>
+<pre class="cell-result">All six saved routes have face-sharing steps and the stated winding.
+</pre>
+<h2>3. Choose whether to open the interactive viewer</h2>
+<p>I first run the data checks with this setting left False. To use the viewer in local Jupyter, change it to True, run this cell, then run the cells below it in order. The last cell runs until I interrupt the kernel. I must restart the kernel before rebuilding a second scene.</p>
+<pre><code class="language-python">open_viewer = False</code></pre>
+<h2>4. Prepare the next part of the calculation</h2>
+<p>I define <code>d</code>, <code>n</code>, <code>scene</code>, <code>scene.forward</code>, <code>scene.lights</code>, <code>scene.ambient</code>. These are the same operations as in the original source, written on separate lines so their order is clear. Inspect their values before running the next cell.</p>
+<pre><code class="language-python">if open_viewer:
+    import json, sys
+    from pathlib import Path
+    from vpython import canvas, vec, vertex, triangle, compound, curve, distant_light, menu, checkbox, slider, button, rate
+    d = json.loads(Path(viewer_path).read_text())
+    n = d[&#x27;n&#x27;]
+    scene = canvas(title=&#x27;Both percolating phase networks&#x27;, width=820, height=540, background=vec(0.98, 0.98, 0.96), center=vec(n / 2, n / 2, n / 2), range=n * 0.75)
+    scene.forward = vec(-1, -0.7, -1)
+    scene.lights = []
+    scene.ambient = vec(0.22, 0.22, 0.22)</code></pre>
+<h2>5. Repeat the operation and inspect each case</h2>
+<p>I repeat the operation over the specified cases. Read the loop variable first, then follow what changes on each pass. The assertions check the stated numerical or topological condition.</p>
+<pre><code class="language-python">if open_viewer:
+    for direction, intensity in [((-0.6, 0.8, -1), 0.45), ((1, -0.2, 0.4), 0.18), ((0.3, 0.7, 1), 0.12)]:
+        distant_light(direction=vec(*direction), color=vec(intensity, intensity, intensity))</code></pre>
+<h2>6. Prepare the next part of the calculation</h2>
+<p>I define <code>surfaces</code>, <code>lines</code>, <code>loops</code>, <code>colors</code>, <code>m</code>. These are the same operations as in the original source, written on separate lines so their order is clear. Inspect their values before running the next cell.</p>
+<pre><code class="language-python">if open_viewer:
+    surfaces = []
+    lines = {&#x27;red&#x27;: [], &#x27;blue&#x27;: []}
+    loops = {&#x27;red&#x27;: [], &#x27;blue&#x27;: []}
+    colors = {&#x27;red&#x27;: vec(0.8, 0.08, 0.06), &#x27;blue&#x27;: vec(0.03, 0.28, 0.85)}
+    m = d[&#x27;meshes&#x27;][&#x27;red&#x27;]</code></pre>
+<h2>7. Repeat the operation and inspect each case</h2>
+<p>I repeat the operation over the specified cases. Read the loop variable first, then follow what changes on each pass. The assertions check the stated numerical or topological condition.</p>
+<pre><code class="language-python">if open_viewer:
+    for start in range(0, len(m[&#x27;triangles&#x27;]), 1500):
+        vertices = {}
+
+        def point(i):
+            if i not in vertices:
+                vertices[i] = vertex(pos=vec(*m[&#x27;vertices&#x27;][i]), normal=vec(*m[&#x27;normals&#x27;][i]), color=vec(0.5, 0.55, 0.58))
+            return vertices[i]
+        faces = [triangle(v0=point(t[0]), v1=point(t[1]), v2=point(t[2])) for t in m[&#x27;triangles&#x27;][start:start + 1500]]
+        obj = compound(faces)
+        obj.opacity = 0.04
+        obj.shininess = 0.25
+        surfaces.append(obj)</code></pre>
+<h2>8. Draw periodic paths without a false shortcut</h2>
+<p>I split a displayed line at a periodic face and resume it at the paired opposite face. I retain turns in the voxel route. A line across the middle of the box would incorrectly suggest passage through another phase.</p>
+<pre><code class="language-python">if open_viewer:
+    def draw_path(path, color, radius, out):
+        points = [[x + 0.5 for x in path[0]]]
+
+        def flush():
+            if len(points) &lt; 2:
+                return
+            simple = [points[0]]
+            for i in range(1, len(points) - 1):
+                a, b, c = points[i - 1:i + 2]
+                u = vec(*(b[j] - a[j] for j in range(3)))
+                v = vec(*(c[j] - b[j] for j in range(3)))
+                if u.cross(v).mag &gt; 1e-08:
+                    simple.append(b)
+            simple.append(points[-1])
+            out.append(curve(pos=[vec(*p) for p in simple], radius=radius, color=color, emissive=True))
+        for a, b in zip(path, path[1:]):
+            a = [x + 0.5 for x in a]
+            b = [x + 0.5 for x in b]
+            axis = next((j for j in range(3) if abs(b[j] - a[j]) &gt; n / 2), None)
+            if axis is not None:
+                face = list(a)
+                face[axis] = n if b[axis] &lt; a[axis] else 0
+                points.append(face)
+                flush()
+                partner = list(face)
+                partner[axis] = 0 if face[axis] == n else n
+                points = [partner, b]
+            else:
+                points.append(b)
+        flush()</code></pre>
+<h2>9. Repeat the operation and inspect each case</h2>
+<p>I repeat the operation over the specified cases. Read the loop variable first, then follow what changes on each pass. The assertions check the stated numerical or topological condition.</p>
+<pre><code class="language-python">if open_viewer:
+    for phase in (&#x27;red&#x27;, &#x27;blue&#x27;):
+        net = d[&#x27;networks&#x27;][phase]
+        adj = [[] for _ in net[&#x27;nodes&#x27;]]
+        seen = set()
+        for u, v in net[&#x27;edges&#x27;]:
+            adj[u].append(v)
+            adj[v].append(u)
+        for root in range(len(adj)):
+            if len(adj[root]) == 2:
+                continue
+            for first in adj[root]:
+                edge = tuple(sorted((root, first)))
+                if edge in seen:
+                    continue
+                prev = root
+                current = first
+                path = [net[&#x27;nodes&#x27;][root]]
+                seen.add(edge)
+                while True:
+                    path.append(net[&#x27;nodes&#x27;][current])
+                    if len(adj[current]) != 2:
+                        break
+                    nxt = next((v for v in adj[current] if v != prev))
+                    edge = tuple(sorted((current, nxt)))
+                    if edge in seen:
+                        break
+                    seen.add(edge)
+                    prev, current = (current, nxt)
+                draw_path(path, colors[phase], n / 650, lines[phase])
+        assert len(seen) == len(net[&#x27;edges&#x27;])
+        for route in d[&#x27;routes&#x27;][phase].values():
+            draw_path(route, colors[phase], n / 330, loops[phase])</code></pre>
+<h2>10. Apply the display controls</h2>
+<p>I apply phase selection, interface visibility and loop highlighting to the scene. These are display operations on saved data.</p>
+<pre><code class="language-python">if open_viewer:
+    def update(_=None):
+        for obj in surfaces:
+            obj.visible = interface.checked
+            obj.opacity = opacity.value
+        for phase in (&#x27;red&#x27;, &#x27;blue&#x27;):
+            visible = selection.selected in (&#x27;both&#x27;, phase)
+            for obj in lines[phase]:
+                obj.visible = visible
+            for obj in loops[phase]:
+                obj.visible = visible and emphasized.checked</code></pre>
+<h2>11. Restore the initial camera</h2>
+<p>I reset the camera center, range and viewing direction. Right-drag rotates the view, and the wheel changes the zoom.</p>
+<pre><code class="language-python">if open_viewer:
+    def reset_camera(_):
+        scene.center = vec(n / 2, n / 2, n / 2)
+        scene.range = n * 0.75
+        scene.forward = vec(-1, -0.7, -1)</code></pre>
+<h2>12. Prepare the next part of the calculation</h2>
+<p>I define <code>selection</code>, <code>interface</code>, <code>emphasized</code>, <code>opacity</code>. These are the same operations as in the original source, written on separate lines so their order is clear. Inspect their values before running the next cell.</p>
+<pre><code class="language-python">if open_viewer:
+    scene.append_to_caption(&#x27;\nRed and blue connected witness networks. Thick lines emphasize independent wrapping loops.\n&#x27;)
+    selection = menu(choices=[&#x27;both&#x27;, &#x27;red&#x27;, &#x27;blue&#x27;], selected=&#x27;both&#x27;, bind=update)
+    interface = checkbox(text=&#x27;Show c=0.5 interface&#x27;, checked=True, bind=update)
+    emphasized = checkbox(text=&#x27;Emphasize wrapping loops&#x27;, checked=True, bind=update)
+    opacity = slider(min=0, max=1, step=0.02, value=0.04, bind=update)
+    button(text=&#x27;Reset camera&#x27;, bind=reset_camera)
+    scene.append_to_caption(&#x27;\nRotate: right-drag / Ctrl-drag. Zoom: wheel. Periodic edges resume at the paired face.\nEach displayed graph connects 125 distributed sites and has winding rank 3.\nFull-volume connectivity: each entire phase is one connected component.\n&#x27;)
+    update()</code></pre>
+<h2>13. Keep the viewer responsive</h2>
+<p>I keep the VPython clock running so mouse and button events can update the scene. Run this cell interactively and interrupt the kernel when finished. This is an event loop, not a simulation of phase separation.</p>
+<pre><code class="language-python">if open_viewer:
+    while True:
+        rate(30)</code></pre>
+<h2>14. Review and extend the calculation</h2>
+<p>I first restart the kernel and run all the required cells. Then I change one input, predict its effect and compare the result with that prediction. A successful check establishes the tested property; it does not establish convergence or equilibrium. I retain the <a href="https://saswataiith.github.io/files/mesoscale/examples/percolation_3d_vpython.py">complete script</a> for command-line use. The notebook embeds the calculation directly and does not need that script to run.</p>
+<p><a href="/files/mesoscale/examples/notebooks/notebook-check-results.json">Read the notebook execution checks →</a> · <a href="/resources/step-by-step-codes/">More Python, Julia and C lessons →</a></p></section>

@@ -1,0 +1,121 @@
+[
+  {
+    "slug": "diffusion",
+    "title": "Fourier diffusion: reproduce the full example",
+    "source": "files/mesoscale/examples/diffusion.py",
+    "notebook": "/files/mesoscale/examples/notebooks/diffusion.ipynb",
+    "mode": "expand"
+  },
+  {
+    "slug": "walkers",
+    "title": "Random walks: from molecular steps to diffusion",
+    "source": "files/mesoscale/examples/walkers.py",
+    "notebook": "/files/mesoscale/examples/notebooks/walkers.ipynb",
+    "mode": "expand"
+  },
+  {
+    "slug": "phase-field",
+    "title": "Chemical and elastic spinodal decomposition",
+    "source": "files/mesoscale/examples/phase_field.py",
+    "notebook": "/files/mesoscale/examples/notebooks/phase-field.ipynb",
+    "mode": "expand"
+  },
+  {
+    "slug": "monte-carlo",
+    "title": "Ising and Potts: reproduce the lattice calculations",
+    "source": "files/mesoscale/examples/monte_carlo.py",
+    "notebook": "/files/mesoscale/examples/notebooks/monte-carlo.ipynb",
+    "mode": "function"
+  },
+  {
+    "slug": "spinodal",
+    "title": "A first binary spinodal simulation",
+    "source": "files/mesoscale/spinodal_demo.py",
+    "notebook": "/files/mesoscale/examples/notebooks/spinodal.ipynb",
+    "mode": "expand"
+  },
+  {
+    "slug": "portrait-minimum",
+    "title": "My color portrait as an energy minimum",
+    "source": "files/mesoscale/examples/portrait_energy_minimum.py",
+    "notebook": "/files/mesoscale/examples/notebooks/portrait-minimum.ipynb",
+    "mode": "portrait"
+  },
+  {
+    "slug": "portrait-dynamics",
+    "title": "One portrait and two double-well evolution laws",
+    "source": "files/mesoscale/examples/portrait_dynamics.py",
+    "notebook": "/files/mesoscale/examples/notebooks/portrait-dynamics.ipynb",
+    "mode": "global"
+  },
+  {
+    "slug": "portrait-targets",
+    "title": "The same starting image with two prescribed minima",
+    "source": "files/mesoscale/examples/portrait_wrong_energy.py",
+    "notebook": "/files/mesoscale/examples/notebooks/portrait-targets.ipynb",
+    "mode": "global"
+  },
+  {
+    "slug": "portrait-flows",
+    "title": "Restoration with a fidelity and gradient energy",
+    "source": "files/mesoscale/examples/portrait_flows.py",
+    "notebook": "/files/mesoscale/examples/notebooks/portrait-flows.ipynb",
+    "mode": "function"
+  },
+  {
+    "slug": "portrait-abstraction",
+    "title": "Reproduce the color portrait and domain movie",
+    "source": "files/mesoscale/examples/portrait_ch_abstraction.py",
+    "notebook": "/files/mesoscale/examples/notebooks/portrait-abstraction.ipynb",
+    "mode": "global"
+  },
+  {
+    "slug": "bicontinuity-2d",
+    "title": "Binary phase separation and periodic connectivity",
+    "source": "files/mesoscale/examples/bicontinuity.py",
+    "notebook": "/files/mesoscale/examples/notebooks/bicontinuity-2d.ipynb",
+    "mode": "expand"
+  },
+  {
+    "slug": "topology",
+    "title": "Connected regions, periodic loops, holes and cavities",
+    "source": "files/mesoscale/examples/topology_connectivity.py",
+    "notebook": "/files/mesoscale/examples/notebooks/topology.ipynb",
+    "mode": "expand"
+  },
+  {
+    "slug": "morphology-3d",
+    "title": "Three-dimensional labeling, winding and morphology",
+    "source": "files/mesoscale/examples/connectivity_morphology.py",
+    "notebook": "/files/mesoscale/examples/notebooks/morphology-3d.ipynb",
+    "mode": "large"
+  },
+  {
+    "slug": "spinodal-3d",
+    "title": "The 256\u00b3 spinodal field, connectivity and display",
+    "source": "files/mesoscale/examples/bicontinuity_3d.py",
+    "notebook": "/files/mesoscale/examples/notebooks/spinodal-3d.ipynb",
+    "mode": "large"
+  },
+  {
+    "slug": "turtle-field",
+    "title": "Prepare the 2D field for the browser turtle",
+    "source": "files/mesoscale/examples/export_turtle_field.py",
+    "notebook": "/files/mesoscale/examples/notebooks/turtle-field.ipynb",
+    "mode": "global"
+  },
+  {
+    "slug": "turtle-vpython",
+    "title": "A VPython turtle on verified periodic routes",
+    "source": "files/mesoscale/examples/turtle_3d_vpython.py",
+    "notebook": "/files/mesoscale/examples/notebooks/turtle-vpython.ipynb",
+    "mode": "viewer"
+  },
+  {
+    "slug": "percolation-vpython",
+    "title": "Both phase networks in VPython",
+    "source": "files/mesoscale/examples/percolation_3d_vpython.py",
+    "notebook": "/files/mesoscale/examples/notebooks/percolation-vpython.ipynb",
+    "mode": "viewer"
+  }
+]

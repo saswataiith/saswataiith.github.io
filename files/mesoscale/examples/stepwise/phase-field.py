@@ -30,19 +30,28 @@ assert abs(one_step.mean() - initial.mean()) < 1e-12
 print("Mean change after one update:", one_step.mean() - initial.mean())
 
 # I work through step 3.
-from pathlib import Path
-import importlib.util
-source = Path("../phase_field.py")
-if not source.exists():
-    raise FileNotFoundError("Extract the download with its folder structure before running this cell.")
-spec = importlib.util.spec_from_file_location("teaching_phase_field", source)
-model = importlib.util.module_from_spec(spec)
-spec.loader.exec_module(model)
+def kernel(kx, ky, c11=4.0, c12=2.0, c44=3.0, eigenstrain=0.2):
+    """B = E:C:E - (sigma0.n).Q^-1.(sigma0.n), E=eigenstrain*I.
+    Q_ik=C_ijkl*n_j*n_l; Q11=C11*nx²+C44*ny² (not C12).
+    This is a 2D constitutive model, not a reduction with epsilon_zz eigenstrain.
+    """
+    k2 = kx * kx + ky * ky
+    radius = np.sqrt(np.where(k2 == 0, 1.0, k2))
+    nx, ny = (kx / radius, ky / radius)
+    q11 = c11 * nx * nx + c44 * ny * ny
+    q22 = c44 * nx * nx + c11 * ny * ny
+    q12 = (c12 + c44) * nx * ny
+    det = q11 * q22 - q12 * q12
+    det = np.where(k2 == 0, 1.0, det)
+    stress = (c11 + c12) * eigenstrain
+    b = 2 * (c11 + c12) * eigenstrain ** 2 - stress ** 2 * (q22 * nx * nx - 2 * q12 * nx * ny + q11 * ny * ny) / det
+    return np.where(k2 == 0, 0.0, b)
+
 angles = np.linspace(0, 2 * np.pi, 33)
-isotropic = model.kernel(np.cos(angles), np.sin(angles), c11=4, c12=2, c44=1)
+isotropic = kernel(np.cos(angles), np.sin(angles), c11=4, c12=2, c44=1)
 assert np.ptp(isotropic) < 1e-12
-assert np.allclose(model.kernel(kx, ky, eigenstrain=0), 0)
-elastic_kernel = model.kernel(kx, ky, c11=4, c12=2, c44=3, eigenstrain=0.2)
+assert np.allclose(kernel(kx, ky, eigenstrain=0), 0)
+elastic_kernel = kernel(kx, ky, c11=4, c12=2, c44=3, eigenstrain=0.2)
 partner = (-np.arange(n)) % n
 elastic_kernel = 0.5 * (elastic_kernel + elastic_kernel[np.ix_(partner, partner)])
 assert np.isfinite(elastic_kernel).all()

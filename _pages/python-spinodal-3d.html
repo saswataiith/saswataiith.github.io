@@ -1,0 +1,479 @@
+---
+layout: scholar
+title: "The 256\u00b3 spinodal field, connectivity and display"
+permalink: /resources/python/spinodal-3d/
+nav_active: resources
+description: "I develop the 256\u00b3 spinodal field, connectivity and display in explained Python cells, with numerical checks and a downloadable notebook."
+---
+
+<style>.python-lesson{max-width:1050px}.python-lesson pre{overflow-x:auto;background:#eef3f0;border:1px solid #d4dfd9;padding:20px;font:14px/1.65 ui-monospace,monospace}.python-lesson h2{margin-top:40px}.python-lesson p,.python-lesson li{line-height:1.8}.python-lesson details{margin:20px 0;padding:18px;background:#f1f5f2}.python-lesson summary{cursor:pointer;font-weight:600}.python-lesson img{max-width:100%;height:auto}.cell-result{padding:12px;background:#f7f8f6}.python-lesson .formula-box{overflow-x:auto}</style>
+<section class="page-heading"><span class="eyebrow">PYTHON · STEP-BY-STEP LESSON</span><h1>The 256³ spinodal field, connectivity and display</h1><p>I write a small part, check it, and then add the next part.</p><p><a class="button primary" href="/files/mesoscale/examples/notebooks/spinodal-3d.ipynb" download>Download the notebook ↓</a> <a class="button secondary" href="https://colab.research.google.com/github/saswataiith/saswataiith.github.io/blob/master/files/mesoscale/examples/notebooks/spinodal-3d.ipynb">Open in Colab ↗</a></p><p><a href="/resources/python-notebooks/">All Python notebook lessons →</a></p></section><section class="section python-lesson">
+<p><strong>The full 256³ calculation is optional.</strong> Small exact-mask checks run by default. Set <code>run_full_calculation=True</code> only when enough memory and time are available. I have not rerun the optional full-volume calculation for this notebook conversion.</p>
+<p>I generate the original 256³ dimensionless Cahn–Hilliard example once. c is composition; A=M=kappa=1, dx=0.25, dt=0.5, stabilization=2 and the run has 400 updates. The seed is 20261005. Connectivity uses the saved float32 field at full resolution. Display simplification does not change the measured field. The full calculation needs several gigabytes of memory.</p>
+<p>I develop this calculation in small steps. I run a cell, inspect its result and test it before adding the next part. Run the cells in order in Jupyter. A code cell defines a part of the calculation or carries it out; defining a function does not run it.</p>
+<p>I permit free noncommercial teaching, learning and demonstrations with acknowledgment. Research and commercial use require my written permission. Earlier licensed releases retain their permissions. <a href="https://saswataiith.github.io/using-my-resources/">Read the code-use terms</a>.</p>
+<p>Copyright (c) 2026 Saswata Bhattacharyya.</p>
+<h2>1. Prepare the Python environment</h2>
+<p>I install the packages listed in the next cell once in the same environment as the notebook. In Jupyter or Colab, remove the comment marker from the installation line below if a package is missing. NumPy stores arrays and evaluates numerical operations. Matplotlib displays plots. Pillow reads and writes images. This installation does not change the model parameters.</p>
+<pre><code class="language-python"># %pip install numpy scipy numba scikit-image fast-simplification matplotlib
+import numpy as np
+assert np.isfinite(np.array([0.0, 1.0])).all()
+print(&quot;NumPy is ready:&quot;, np.__version__)</code></pre>
+<pre class="cell-result">NumPy is ready: 2.1.3
+</pre>
+<h2>2. Prepare the next part of the calculation</h2>
+<p>I define <code>(N, SEED, DT, STEPS)</code>. These are the same operations as in the original source, written on separate lines so their order is clear. Inspect their values before running the next cell.</p>
+<pre><code class="language-python">from pathlib import Path
+import json, sys, time
+from importlib.metadata import version
+import numpy as np
+from scipy import fft
+from numba import njit
+from skimage.measure import marching_cubes
+import fast_simplification
+N, SEED, DT, STEPS = (256, 20261005, 0.5, 400)</code></pre>
+<h2>3. Prepare the next part of the calculation</h2>
+<p>I define <code>A</code>, <code>(DX, STABILIZATION, WORKERS)</code>. These are the same operations as in the original source, written on separate lines so their order is clear. Inspect their values before running the next cell.</p>
+<pre><code class="language-python">A = M = KAPPA = 1.0
+DX, STABILIZATION, WORKERS = (0.25, 2.0, 4)</code></pre>
+<h2>4. Build the periodic voxel graph</h2>
+<p>I use six face-sharing neighbors and a queue to visit each connected phase. Lifted coordinates retain periodic displacements. Non-tree edges can reveal noncontractible wrapping loops. Numba compiles the loops for speed; it does not change the neighbor convention.</p>
+<details><summary>Read this complete operation (81 lines)</summary><pre><code class="language-python">@njit(cache=False)
+def graph(mask, need_routes=False):
+    &quot;&quot;&quot;Periodic six-neighbour BFS with dense lifted coordinates and parent tree.
+    Non-tree edges reveal winding vectors. Explicit unit-axis loops establish
+    independent winding in x,y,z, rather than merely touching opposite faces.
+    &quot;&quot;&quot;
+    n = mask.shape[0]
+    size = n ** 3
+    flat = mask.ravel()
+    visited = np.zeros(size, np.uint8)
+    lift = np.zeros((size, 3), np.int32)
+    parent = np.full(size, -1, np.int32)
+    queue = np.empty(size, np.int32)
+    counts = np.zeros(size, np.int32)
+    wrap = np.zeros((size, 3), np.uint8)
+    vectors = np.zeros((size, 3), np.int32)
+    nv = 0
+    nc = 0
+    edge_u = np.full(3, -1, np.int32)
+    edge_v = np.full(3, -1, np.int32)
+    signs = np.ones(3, np.int32)
+    strides = np.array([n * n, n, 1])
+    for root in range(size):
+        if not flat[root] or visited[root]:
+            continue
+        visited[root] = 1
+        head = 0
+        tail = 1
+        queue[0] = root
+        count = 0
+        while head &lt; tail:
+            u = queue[head]
+            head += 1
+            count += 1
+            coords = np.array([u // (n * n), u // n % n, u % n])
+            for axis in range(3):
+                for sign in (-1, 1):
+                    coord = coords[axis]
+                    v = u + sign * strides[axis]
+                    if coord == 0 and sign == -1:
+                        v += n * strides[axis]
+                    if coord == n - 1 and sign == 1:
+                        v -= n * strides[axis]
+                    if not flat[v]:
+                        continue
+                    if not visited[v]:
+                        visited[v] = 1
+                        parent[v] = u
+                        for j in range(3):
+                            lift[v, j] = lift[u, j] + (sign if j == axis else 0)
+                        queue[tail] = v
+                        tail += 1
+                    else:
+                        w = np.empty(3, np.int32)
+                        norm = 0
+                        for j in range(3):
+                            delta = lift[u, j] + (sign if j == axis else 0) - lift[v, j]
+                            assert delta % n == 0
+                            w[j] = delta // n
+                            norm += abs(w[j])
+                            if w[j] != 0:
+                                wrap[nc, j] = 1
+                        if norm == 0:
+                            continue
+                        seen = False
+                        for k in range(nv):
+                            if vectors[k, 0] == w[0] and vectors[k, 1] == w[1] and (vectors[k, 2] == w[2]):
+                                seen = True
+                                break
+                        if not seen:
+                            vectors[nv] = w
+                            nv += 1
+                        if need_routes and norm == 1:
+                            for j in range(3):
+                                if w[j] != 0 and edge_u[j] == -1:
+                                    edge_u[j] = u
+                                    edge_v[j] = v
+                                    signs[j] = w[j]
+        counts[nc] = count
+        nc += 1
+    return (counts[:nc], wrap[:nc], vectors[:nv], parent, edge_u, edge_v, signs)</code></pre></details>
+<h2>5. Count phase components and their winding directions</h2>
+<p>I obtain voxel counts and winding vectors from the periodic graph. Phase fraction divides occupied voxels by all voxels. Largest fraction divides the largest component by the occupied phase. Independent winding rank distinguishes one diagonal loop from independent x, y and z loops.</p>
+<pre><code class="language-python">def analyze(mask, need_routes=False):
+    counts, wrap, vectors, parent, us, vs, signs = graph(mask, need_routes)
+    n = mask.shape[0]
+    routes = {}
+    if need_routes:
+
+        def chain(u):
+            path = []
+            while u != -1:
+                path.append(int(u))
+                u = parent[u]
+            return path[::-1]
+        for axis in range(3):
+            assert us[axis] != -1, &#x27;No pure axis loop found&#x27;
+            pu, pv = (chain(us[axis]), chain(vs[axis]))
+            k = 0
+            while k &lt; min(len(pu), len(pv)) and pu[k] == pv[k]:
+                k += 1
+            route = pu[k - 1:] + pv[k - 1:][::-1]
+            if signs[axis] &lt; 0:
+                route.reverse()
+            routes[&#x27;xyz&#x27;[axis]] = [[u // (n * n), u // n % n, u % n] for u in route]
+    largest = int(counts.max()) if len(counts) else 0
+    return ({&#x27;phase_fraction&#x27;: float(mask.mean()), &#x27;components&#x27;: len(counts), &#x27;largest_fraction_of_phase&#x27;: largest / int(mask.sum()), &#x27;winding_rank&#x27;: int(np.linalg.matrix_rank(vectors.astype(float))) if len(vectors) else 0, &#x27;component_details&#x27;: [{&#x27;voxels&#x27;: int(count), &#x27;wrap_xyz&#x27;: w.astype(bool).tolist()} for count, w in zip(counts, wrap)]}, routes)</code></pre>
+<h2>6. Check every step of a route</h2>
+<p>I check phase membership, periodic face-sharing adjacency and the sum of the lifted steps. The net displacement must equal one box length along the claimed axis. This establishes a valid route, not an exhaustive visit to the phase.</p>
+<pre><code class="language-python">def validate_route(route, mask, axis):
+    points = np.array(route)
+    n = np.array(mask.shape)
+    assert np.all(mask[tuple(points.T)]) and np.array_equal(points[0], points[-1])
+    d = np.diff(points, axis=0)
+    d = (d + n // 2) % n - n // 2
+    assert np.all(np.abs(d).sum(axis=1) == 1)
+    target = np.zeros(3, dtype=int)
+    target[&#x27;xyz&#x27;.index(axis)] = 1
+    assert np.array_equal(d.sum(axis=0), target * n)
+    return {&#x27;steps&#x27;: len(route) - 1, &#x27;winding&#x27;: target.tolist(), &#x27;valid&#x27;: True}</code></pre>
+<h2>7. Search the phase interior</h2>
+<p>I search admissible voxel neighbors without crossing into the other phase. Parents record the route used to reach a voxel. These parents allow a connected path to be reconstructed.</p>
+<details><summary>Read this complete operation (67 lines)</summary><pre><code class="language-python">@njit(cache=False)
+def interior_bfs(core, axis, start, margin):
+    &quot;&quot;&quot;A lifted slab: transverse faces are excluded; only the winding axis wraps.
+    Start near the box centre, reach the identical voxel one period away.
+    Parent codes store reverse neighbour steps, keeping memory bounded.
+    &quot;&quot;&quot;
+    n = core.shape[0]
+    width = n + 1
+    size = width * n * n
+    parents = np.full(size, -1, np.int32)
+    queue = np.empty(size, np.int32)
+    other0 = (axis + 1) % 3
+    other1 = (axis + 2) % 3
+    s = start[other0] * n + start[other1]
+    target = n * n * n + s
+    queue[0] = s
+    parents[s] = s
+    head = 0
+    tail = 1
+    while head &lt; tail:
+        u = queue[head]
+        head += 1
+        if u == target:
+            break
+        a = u // (n * n)
+        b = u // n % n
+        c = u % n
+        for coordinate in range(3):
+            for sign in (-1, 1):
+                aa = a
+                bb = b
+                cc = c
+                if coordinate == 0:
+                    aa += sign
+                elif coordinate == 1:
+                    bb += sign
+                else:
+                    cc += sign
+                if aa &lt; 0 or aa &gt; n or bb &lt; margin or (bb &gt;= n - margin) or (cc &lt; margin) or (cc &gt;= n - margin):
+                    continue
+                v = (aa * n + bb) * n + cc
+                if parents[v] != -1:
+                    continue
+                xyz = np.empty(3, np.int32)
+                xyz[axis] = (start[axis] + aa) % n
+                xyz[other0] = bb
+                xyz[other1] = cc
+                if not core[xyz[0], xyz[1], xyz[2]]:
+                    continue
+                parents[v] = u
+                queue[tail] = v
+                tail += 1
+    if parents[target] == -1:
+        return np.empty((0, 3), np.int32)
+    count = 1
+    u = target
+    while u != s:
+        u = parents[u]
+        count += 1
+    route = np.empty((count, 3), np.int32)
+    u = target
+    for i in range(count - 1, -1, -1):
+        route[i, axis] = (start[axis] + u // (n * n)) % n
+        route[i, other0] = u // n % n
+        route[i, other1] = u % n
+        u = parents[u]
+    return route</code></pre></details>
+<h2>8. Find and verify three interior routes</h2>
+<p>I find routes through phase-core voxels, then check their membership, neighbor steps and net periodic displacement. Restricting display paths to the core improves visibility without changing the full-volume connectivity measurement.</p>
+<pre><code class="language-python">def interior_routes(c, phase):
+    &quot;&quot;&quot;Select safe core voxels, then route across the interior lifted domain.
+    Core thresholds are a route-clearance choice, not the phase definition.
+    The measured phase boundary remains c=0.5 and is never changed.
+    &quot;&quot;&quot;
+    from scipy.ndimage import binary_erosion, generate_binary_structure
+    n = c.shape[0]
+    mask = c &gt;= 0.5 if phase == &#x27;red&#x27; else c &lt; 0.5
+    padded = np.pad(mask, 2, mode=&#x27;wrap&#x27;)
+    clearance = binary_erosion(padded, structure=generate_binary_structure(3, 1), iterations=2)[2:-2, 2:-2, 2:-2]
+    core = clearance &amp; (c &gt;= 0.75 if phase == &#x27;red&#x27; else c &lt;= 0.25)
+    candidates = np.argwhere(core[n // 2 - 24:n // 2 + 24, n // 2 - 24:n // 2 + 24, n // 2 - 24:n // 2 + 24]) + n // 2 - 24
+    candidates = candidates[np.argsort(np.sum((candidates - n // 2) ** 2, axis=1))]
+    routes = {}
+    checks = {}
+    for axis in range(3):
+        route = np.empty((0, 3), np.int32)
+        for candidate in candidates[:12]:
+            route = interior_bfs(core, axis, candidate.astype(np.int32), 32)
+            if len(route):
+                break
+        assert len(route), f&quot;No interior {phase} {&#x27;xyz&#x27;[axis]} loop&quot;
+        name = &#x27;xyz&#x27;[axis]
+        routes[name] = route.tolist()
+        check = validate_route(routes[name], mask, name)
+        transverse = [j for j in range(3) if j != axis]
+        check.update({&#x27;route_selection&#x27;: &#x27;two-voxel eroded phase core, red c&gt;=0.75 / blue c&lt;=0.25; start near box centre; transverse coordinates bounded 32..223&#x27;, &#x27;minimum_transverse_box_clearance_voxels&#x27;: int(np.minimum(route[:, transverse], n - 1 - route[:, transverse]).min()), &#x27;composition_min&#x27;: float(c[tuple(route.T)].min()), &#x27;composition_max&#x27;: float(c[tuple(route.T)].max())})
+        checks[name] = check
+        print(&#x27;Interior route&#x27;, phase, name, check, flush=True)
+    return (routes, checks)</code></pre>
+<h2>9. Build a rooted tree in the phase core</h2>
+<p>I visit safe voxels from one root and save parent links. The number reached measures this rooted core component, which is a subset of the full phase.</p>
+<pre><code class="language-python">@njit(cache=False)
+def core_tree(core, root):
+    n = core.shape[0]
+    size = n ** 3
+    mask = core.ravel()
+    parents = np.full(size, -1, np.int32)
+    queue = np.empty(size, np.int32)
+    s = (root[0] * n + root[1]) * n + root[2]
+    parents[s] = s
+    queue[0] = s
+    head = 0
+    tail = 1
+    strides = np.array([n * n, n, 1])
+    while head &lt; tail:
+        u = queue[head]
+        head += 1
+        coords = np.array([u // (n * n), u // n % n, u % n])
+        for axis in range(3):
+            for sign in (-1, 1):
+                v = u + sign * strides[axis]
+                if coords[axis] == 0 and sign == -1:
+                    v += n * strides[axis]
+                if coords[axis] == n - 1 and sign == 1:
+                    v -= n * strides[axis]
+                if mask[v] and parents[v] == -1:
+                    parents[v] = u
+                    queue[tail] = v
+                    tail += 1
+    return (parents, tail)</code></pre>
+<h2>10. Join distributed sites into a connected witness</h2>
+<p>I connect sites distributed through the box and include independently checked wrapping routes. The displayed subgraph is a witness of connectivity. It is not the longest path and does not contain every phase voxel.</p>
+<details><summary>Read this complete operation (80 lines)</summary><pre><code class="language-python">def percolation_network(c, phase, routes):
+    &quot;&quot;&quot;A connected witness subgraph: branches to 125 distributed sites plus
+    all three independent wrapping loops. Not a longest path or full skeleton.
+    Every edge uses six-neighbour periodic indexing in the saved phase core.
+    &quot;&quot;&quot;
+    from scipy.ndimage import binary_erosion, generate_binary_structure
+    from itertools import product
+    from collections import deque
+    n = c.shape[0]
+    mask = c &gt;= 0.5 if phase == &#x27;red&#x27; else c &lt; 0.5
+    safe = binary_erosion(np.pad(mask, 2, mode=&#x27;wrap&#x27;), structure=generate_binary_structure(3, 1), iterations=2)[2:-2, 2:-2, 2:-2]
+    safe &amp;= c &gt;= 0.75 if phase == &#x27;red&#x27; else c &lt;= 0.25
+    root = np.array(routes[&#x27;x&#x27;][0], dtype=np.int32)
+    parent, reached = core_tree(safe, root)
+    edges = set()
+    targets = []
+
+    def index(p):
+        return (int(p[0]) * n + int(p[1])) * n + int(p[2])
+
+    def connect(u):
+        assert parent[u] != -1, &#x27;Target outside rooted core component&#x27;
+        while parent[u] != u:
+            v = int(parent[u])
+            edge = tuple(sorted((u, v)))
+            if edge in edges:
+                break
+            edges.add(edge)
+            u = v
+    for site in product((32, 80, 128, 176, 224), repeat=3):
+        for radius in (8, 16, 24, 40):
+            lo = np.maximum(0, np.array(site) - radius)
+            hi = np.minimum(n, np.array(site) + radius + 1)
+            candidates = np.argwhere(safe[lo[0]:hi[0], lo[1]:hi[1], lo[2]:hi[2]]) + lo
+            if not len(candidates):
+                continue
+            ids = (candidates[:, 0] * n + candidates[:, 1]) * n + candidates[:, 2]
+            candidates = candidates[parent[ids] != -1]
+            if len(candidates):
+                p = candidates[np.argmin(np.sum((candidates - np.array(site)) ** 2, axis=1))]
+                connect(index(p))
+                targets.append(p.tolist())
+                break
+        else:
+            raise AssertionError(&#x27;No reached core voxel near distributed site&#x27;)
+    for route in routes.values():
+        connect(index(route[0]))
+        for a, b in zip(route, route[1:]):
+            edges.add(tuple(sorted((index(a), index(b)))))
+    ids = sorted(set((u for edge in edges for u in edge)))
+    lookup = {u: i for i, u in enumerate(ids)}
+    nodes = [[u // (n * n), u // n % n, u % n] for u in ids]
+    pairs = [[lookup[u], lookup[v]] for u, v in sorted(edges)]
+    adjacency = [[] for _ in nodes]
+    for u, v in pairs:
+        adjacency[u].append(v)
+        adjacency[v].append(u)
+    lifts = {0: np.zeros(3, dtype=int)}
+    q = deque([0])
+    windings = []
+    while q:
+        u = q.popleft()
+        for v in adjacency[u]:
+            d = (np.array(nodes[v]) - nodes[u] + n // 2) % n - n // 2
+            assert np.abs(d).sum() == 1
+            proposed = lifts[u] + d
+            if v not in lifts:
+                lifts[v] = proposed
+                q.append(v)
+            elif np.any(proposed - lifts[v]):
+                assert np.all((proposed - lifts[v]) % n == 0)
+                windings.append((proposed - lifts[v]) // n)
+    assert len(lifts) == len(nodes)
+    rank = int(np.linalg.matrix_rank(np.array(windings, dtype=float)))
+    assert rank == 3
+    points = np.array(nodes)
+    assert safe[tuple(points.T)].all()
+    proof = {&#x27;nodes&#x27;: len(nodes), &#x27;edges&#x27;: len(pairs), &#x27;components&#x27;: 1, &#x27;winding_rank&#x27;: rank, &#x27;distributed_targets&#x27;: len(targets), &#x27;rooted_core_voxels_reached&#x27;: int(reached), &#x27;phase_membership_and_six_neighbour_edges_valid&#x27;: True, &#x27;scope&#x27;: &#x27;displayed connected witness subgraph, not every voxel or a longest path&#x27;}
+    print(&#x27;Percolation network&#x27;, phase, proof, flush=True)
+    return {&#x27;nodes&#x27;: nodes, &#x27;edges&#x27;: pairs, &#x27;root&#x27;: root.tolist(), &#x27;targets&#x27;: targets, &#x27;proof&#x27;: proof}</code></pre></details>
+<h2>11. Prepare the display mesh and route data</h2>
+<p>I extract the common c=0.5 interface at the full resolution, then simplify triangles for display only. The two phases use opposite interface normals. Connectivity and path checks still use the saved full-resolution field.</p>
+<pre><code class="language-python">def export_viewer(c, out, routes):
+    &quot;&quot;&quot;Extract the c=0.5 interface itself, without any artificial box-face caps.
+    Both phases share this interface; normals point in opposite directions.
+    &quot;&quot;&quot;
+    print(&#x27;Extracting full-resolution c=0.5 isosurface (no caps)&#x27;, flush=True)
+    verts, faces, _, _ = marching_cubes(c, level=0.5, allow_degenerate=False)
+    verts += 0.5
+    original = len(faces)
+    verts, faces = fast_simplification.simplify(verts, faces, target_count=60000)
+    vertices = np.round(np.clip(verts, 0.5, N - 0.5), 3)
+    normal = np.zeros_like(vertices)
+    triangles = vertices[faces]
+    face_normals = np.cross(triangles[:, 1] - triangles[:, 0], triangles[:, 2] - triangles[:, 0])
+    for corner in range(3):
+        np.add.at(normal, faces[:, corner], face_normals)
+    norm = np.linalg.norm(normal, axis=1)
+    norm[norm == 0] = 1
+    normal /= norm[:, None]
+    meshes = {}
+    for phase in (&#x27;red&#x27;, &#x27;blue&#x27;):
+        meshes[phase] = {&#x27;vertices&#x27;: vertices.tolist(), &#x27;normals&#x27;: np.round(normal if phase == &#x27;red&#x27; else -normal, 5).tolist(), &#x27;triangles&#x27;: (faces if phase == &#x27;red&#x27; else faces[:, [0, 2, 1]]).tolist(), &#x27;full_resolution_triangles&#x27;: original, &#x27;isovalue&#x27;: 0.5, &#x27;box_caps&#x27;: False}
+    viewer = {&#x27;n&#x27;: N, &#x27;threshold&#x27;: 0.5, &#x27;routes&#x27;: routes, &#x27;meshes&#x27;: meshes, &#x27;networks&#x27;: {phase: percolation_network(c, phase, routes[phase]) for phase in (&#x27;red&#x27;, &#x27;blue&#x27;)}, &#x27;display&#x27;: &#x27;c=0.5 isosurface extracted at full resolution, no box-face caps, simplified to 60000 triangles; connectivity and routes use every saved voxel&#x27;}
+    (out / &#x27;viewer.json&#x27;).write_text(json.dumps(viewer, separators=(&#x27;,&#x27;, &#x27;:&#x27;)))
+    print(&#x27;Isosurface display triangles&#x27;, len(faces), &#x27;from&#x27;, original, flush=True)
+    return {p: {&#x27;full_resolution_triangles&#x27;: original, &#x27;display_triangles&#x27;: len(faces), &#x27;isovalue&#x27;: 0.5, &#x27;box_caps&#x27;: False} for p in meshes}</code></pre>
+<h2>12. Run the complete example</h2>
+<p>I keep the original algorithm, parameters, seed and output conventions. I inspect the saved diagnostics before interpreting the pictures. A finite run is not evidence of convergence or equilibrium.</p>
+<details><summary>Read this complete operation (55 lines)</summary><pre><code class="language-python">def run(output):
+    out = Path(output)
+    out.mkdir(parents=True, exist_ok=True)
+    start = time.perf_counter()
+    print(&#x27;Generating actual 256 x 256 x 256 field once&#x27;, flush=True)
+    rng = np.random.default_rng(SEED)
+    c = 0.01 * rng.standard_normal((N, N, N))
+    c -= c.mean()
+    c += 0.5
+    k = 2 * np.pi * fft.fftfreq(N, d=DX)
+    kz = 2 * np.pi * fft.rfftfreq(N, d=DX)
+    k2 = k[:, None, None] ** 2 + k[None, :, None] ** 2 + kz[None, None, :] ** 2
+    denom = 1 + DT * M * k2 * (STABILIZATION + KAPPA * k2)
+    prefactor = 1 + DT * M * STABILIZATION * k2
+    ch = fft.rfftn(c, workers=WORKERS)
+    ch[0, 0, 0] = 0.5 * c.size
+    weights = np.ones(ch.shape[-1])
+    weights[1:-1] = 2
+
+    def energy():
+        bulk = float(np.sum(A * c * c * (1 - c) ** 2))
+        gradient = 0.5 * KAPPA * np.sum(weights[None, None, :] * k2 * (ch.real ** 2 + ch.imag ** 2)) / c.size
+        return float((bulk + gradient) * DX ** 3)
+    energies = [{&#x27;step&#x27;: 0, &#x27;energy&#x27;: energy()}]
+    max_drift = abs(float(c.mean()) - 0.5)
+    for step in range(1, STEPS + 1):
+        df = 2 * A * c * (1 - c) * (1 - 2 * c)
+        dh = fft.rfftn(df, workers=WORKERS)
+        ch = (prefactor * ch - DT * M * k2 * dh) / denom
+        c = fft.irfftn(ch, s=(N, N, N), workers=WORKERS)
+        assert np.isfinite(c).all()
+        max_drift = max(max_drift, abs(float(c.mean()) - 0.5))
+        if step % 20 == 0:
+            energies.append({&#x27;step&#x27;: step, &#x27;energy&#x27;: energy()})
+            print(&#x27;step&#x27;, step, &#x27;time&#x27;, step * DT, &#x27;energy&#x27;, energies[-1][&#x27;energy&#x27;], &#x27;elapsed&#x27;, round(time.perf_counter() - start), flush=True)
+    assert max_drift &lt; 1e-10
+    np.save(out / &#x27;composition.npy&#x27;, c.astype(np.float32))
+    saved = np.load(out / &#x27;composition.npy&#x27;)
+    del c, ch, dh, df, k2, denom, prefactor
+    report = {&#x27;model&#x27;: {&#x27;f&#x27;: &#x27;A*c^2*(1-c)^2&#x27;, &#x27;A&#x27;: A, &#x27;M&#x27;: M, &#x27;kappa&#x27;: KAPPA, &#x27;grid&#x27;: [N] * 3, &#x27;dx&#x27;: DX, &#x27;box_length&#x27;: N * DX, &#x27;dt&#x27;: DT, &#x27;steps&#x27;: STEPS, &#x27;time&#x27;: DT * STEPS, &#x27;seed&#x27;: SEED, &#x27;initial&#x27;: &#x27;0.5 + zero-mean Gaussian noise, standard deviation 0.01&#x27;, &#x27;numpy_version&#x27;: np.__version__, &#x27;units&#x27;: &#x27;dimensionless&#x27;, &#x27;method&#x27;: &#x27;stabilized semi-implicit Fourier, nonlinear f derivative explicit; stabilization S=2; no dealiasing&#x27;, &#x27;stabilization&#x27;: STABILIZATION, &#x27;fft_workers&#x27;: WORKERS}, &#x27;mean&#x27;: float(saved.mean(dtype=np.float64)), &#x27;max_mass_drift&#x27;: max_drift, &#x27;dependencies&#x27;: {p: version(p) for p in (&#x27;numpy&#x27;, &#x27;scipy&#x27;, &#x27;numba&#x27;, &#x27;scikit-image&#x27;, &#x27;fast-simplification&#x27;)}, &#x27;saved_precision&#x27;: &#x27;float32; connectivity measured on saved field&#x27;, &#x27;min&#x27;: float(saved.min()), &#x27;max&#x27;: float(saved.max()), &#x27;energy_initial&#x27;: energies[0][&#x27;energy&#x27;], &#x27;energy_final&#x27;: energies[-1][&#x27;energy&#x27;], &#x27;energy_samples&#x27;: energies, &#x27;maximum_sampled_energy_increase&#x27;: max(np.diff([e[&#x27;energy&#x27;] for e in energies])).item(), &#x27;thresholds&#x27;: {}, &#x27;routes&#x27;: {}}
+    allroutes = {}
+    for threshold in (0.45, 0.5, 0.55):
+        results = {}
+        for phase, mask in [(&#x27;red&#x27;, saved &gt;= threshold), (&#x27;blue&#x27;, saved &lt; threshold)]:
+            print(&#x27;Measuring full 256^3 graph&#x27;, threshold, phase, flush=True)
+            results[phase], _ = analyze(mask, False)
+            assert results[phase][&#x27;winding_rank&#x27;] == 3
+            if threshold == 0.5:
+                allroutes[phase], report[&#x27;routes&#x27;][phase] = interior_routes(saved, phase)
+            print(json.dumps(results[phase]), flush=True)
+        report[&#x27;thresholds&#x27;][str(threshold)] = results
+    report[&#x27;display_mesh&#x27;] = export_viewer(saved, out, allroutes)
+    report[&#x27;displayed_networks&#x27;] = {p: net[&#x27;proof&#x27;] for p, net in json.loads((out / &#x27;viewer.json&#x27;).read_text())[&#x27;networks&#x27;].items()}
+    (out / &#x27;report.json&#x27;).write_text(json.dumps(report, indent=2))
+    print(&#x27;Finished in&#x27;, round(time.perf_counter() - start), &#x27;seconds&#x27;, flush=True)</code></pre></details>
+<h2>13. Test a small case with a known answer</h2>
+<p>I test the measurement routines on a small exact mask before allocating the full volume. This is a function check, not a smaller replacement for the published 256³ simulation. Notebook-defined Numba functions disable only the disk cache; numerical operations are unchanged.</p>
+<pre><code class="language-python">mask = np.ones((8, 8, 8), dtype=bool)
+result, routes = analyze(mask, need_routes=True)
+assert result[&quot;components&quot;] == 1 and result[&quot;winding_rank&quot;] == 3
+for axis in &quot;xyz&quot;:
+    print(axis, validate_route(routes[axis], mask, axis))
+print(result)</code></pre>
+<pre class="cell-result">x {&#x27;steps&#x27;: 8, &#x27;winding&#x27;: [1, 0, 0], &#x27;valid&#x27;: True}
+y {&#x27;steps&#x27;: 8, &#x27;winding&#x27;: [0, 1, 0], &#x27;valid&#x27;: True}
+z {&#x27;steps&#x27;: 8, &#x27;winding&#x27;: [0, 0, 1], &#x27;valid&#x27;: True}
+{&#x27;phase_fraction&#x27;: 1.0, &#x27;components&#x27;: 1, &#x27;largest_fraction_of_phase&#x27;: 1.0, &#x27;winding_rank&#x27;: 3, &#x27;component_details&#x27;: [{&#x27;voxels&#x27;: 512, &#x27;wrap_xyz&#x27;: [True, True, True]}]}
+</pre>
+<h2>14. Choose the optional full-resolution calculation</h2>
+<p>I leave this expensive calculation off by default. Setting run_full_calculation to True runs the unchanged original model or full saved-field analysis. Generation and full morphology each need substantial memory. The small tests above do not certify a new full run; the published reports describe the original full-resolution results.</p>
+<pre><code class="language-python">run_full_calculation = False
+if run_full_calculation:
+    run(&quot;bicontinuity-3d-results&quot;)</code></pre>
+<h2>15. Review and extend the calculation</h2>
+<p>I first restart the kernel and run all the required cells. Then I change one input, predict its effect and compare the result with that prediction. A successful check establishes the tested property; it does not establish convergence or equilibrium. I retain the <a href="https://saswataiith.github.io/files/mesoscale/examples/bicontinuity_3d.py">complete script</a> for command-line use. The notebook embeds the calculation directly and does not need that script to run.</p>
+<p><a href="/files/mesoscale/examples/notebooks/notebook-check-results.json">Read the notebook execution checks →</a> · <a href="/resources/step-by-step-codes/">More Python, Julia and C lessons →</a></p></section>

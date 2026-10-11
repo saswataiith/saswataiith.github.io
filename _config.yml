@@ -159,6 +159,7 @@ include:
   - _pages
   - files
 exclude:
+  - tools/
   - files/teaching/thermodynamics-kinetics/phase-equilibria-01.ipynb
   - files/teaching/thermodynamics-kinetics/phase-equilibria-01-v3.ipynb
   - files/teaching/thermodynamics-kinetics/phase-equilibria-01-v3.html

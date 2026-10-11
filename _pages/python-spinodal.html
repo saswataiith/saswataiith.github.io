@@ -1,0 +1,117 @@
+---
+layout: scholar
+title: "A first binary spinodal simulation"
+permalink: /resources/python/spinodal/
+nav_active: resources
+description: "I develop a first binary spinodal simulation in explained Python cells, with numerical checks and a downloadable notebook."
+---
+
+<style>.python-lesson{max-width:1050px}.python-lesson pre{overflow-x:auto;background:#eef3f0;border:1px solid #d4dfd9;padding:20px;font:14px/1.65 ui-monospace,monospace}.python-lesson h2{margin-top:40px}.python-lesson p,.python-lesson li{line-height:1.8}.python-lesson details{margin:20px 0;padding:18px;background:#f1f5f2}.python-lesson summary{cursor:pointer;font-weight:600}.python-lesson img{max-width:100%;height:auto}.cell-result{padding:12px;background:#f7f8f6}.python-lesson .formula-box{overflow-x:auto}</style>
+<section class="page-heading"><span class="eyebrow">PYTHON · STEP-BY-STEP LESSON</span><h1>A first binary spinodal simulation</h1><p>I write a small part, check it, and then add the next part.</p><p><a class="button primary" href="/files/mesoscale/examples/notebooks/spinodal.ipynb" download>Download the notebook ↓</a> <a class="button secondary" href="https://colab.research.google.com/github/saswataiith/saswataiith.github.io/blob/master/files/mesoscale/examples/notebooks/spinodal.ipynb">Open in Colab ↗</a></p><p><a href="/resources/python-notebooks/">All Python notebook lessons →</a></p></section><section class="section python-lesson">
+<p>I calculate a dimensionless Cahn–Hilliard model with bulk energy (c²−1)²/4. c is the conserved field, not an SI concentration. The mobility and gradient coefficient are both 1, the grid spacing is 1, dt=0.2 and the random seed is 42. The nonlinear bulk term is explicit. Energy decrease alone does not establish numerical convergence.</p>
+<p>I develop this calculation in small steps. I run a cell, inspect its result and test it before adding the next part. Run the cells in order in Jupyter. A code cell defines a part of the calculation or carries it out; defining a function does not run it.</p>
+<p>I permit free noncommercial teaching, learning and demonstrations with acknowledgment. Research and commercial use require my written permission. Earlier licensed releases retain their permissions. <a href="https://saswataiith.github.io/using-my-resources/">Read the code-use terms</a>.</p>
+<p>Copyright (c) 2026 Saswata Bhattacharyya.</p>
+<h2>1. Prepare the Python environment</h2>
+<p>I install the packages listed in the next cell once in the same environment as the notebook. In Jupyter or Colab, remove the comment marker from the installation line below if a package is missing. NumPy stores arrays and evaluates numerical operations. Matplotlib displays plots. Pillow reads and writes images. This installation does not change the model parameters.</p>
+<pre><code class="language-python"># %pip install numpy pillow matplotlib
+import numpy as np
+assert np.isfinite(np.array([0.0, 1.0])).all()
+print(&quot;NumPy is ready:&quot;, np.__version__)</code></pre>
+<pre class="cell-result">NumPy is ready: 2.1.3
+</pre>
+<h2>2. Choose the input values</h2>
+<p>I retain the default values from the original calculation. The output name locates the files written by this notebook.</p>
+<pre><code class="language-python">n = 128
+dt = 0.2
+steps = 1600
+seed = 42
+output = &#x27;spinodal-results&#x27;</code></pre>
+<h2>3. Prepare the next part of the calculation</h2>
+<p>I define the following operations. These are the same operations as in the original source, written on separate lines so their order is clear. Inspect their values before running the next cell.</p>
+<pre><code class="language-python">from pathlib import Path
+import csv
+import numpy as np
+from PIL import Image</code></pre>
+<h2>4. Set up the Fourier grid</h2>
+<p>I calculate wave numbers consistent with the grid spacing and periodic domain. k2 denotes the squared magnitude of a wave vector. The denominator contains the term treated implicitly in the original update. The zero Fourier mode represents the spatial mean.</p>
+<pre><code class="language-python">output = Path(output)
+output.mkdir(parents=True, exist_ok=True)
+rng = np.random.default_rng(seed)
+c = 0.04 * rng.standard_normal((n, n))
+c -= c.mean()
+k = 2 * np.pi * np.fft.fftfreq(n, d=1.0)
+kx, ky = np.meshgrid(k, k, indexing=&#x27;ij&#x27;)
+k2 = kx * kx + ky * ky
+initial_mean = c.mean()</code></pre>
+<h2>5. Prepare the next part of the calculation</h2>
+<p>I define <code>history</code>, <code>snapshots</code>. These are the same operations as in the original source, written on separate lines so their order is clear. Inspect their values before running the next cell.</p>
+<pre><code class="language-python">history = []
+snapshots = {100: 1, 400: 2, steps: 3}</code></pre>
+<h2>6. Define diagnostics</h2>
+<p>I define this operation before calling it. I keep its arguments explicit so I can test it separately.</p>
+<pre><code class="language-python">def diagnostics(field):
+    spectrum = np.fft.fft2(field)
+    gx = np.fft.ifft2(1j * kx * spectrum).real
+    gy = np.fft.ifft2(1j * ky * spectrum).real
+    energy = np.mean((field * field - 1) ** 2 / 4 + (gx * gx + gy * gy) / 2)
+    return (float(field.mean()), float(energy))</code></pre>
+<h2>7. Prepare the next part of the calculation</h2>
+<p>I define <code>stops</code>. These are the same operations as in the original source, written on separate lines so their order is clear. Inspect their values before running the next cell.</p>
+<pre><code class="language-python">stops = np.array([[0, 0, 255], [0, 255, 255], [0, 255, 0], [255, 255, 0], [255, 0, 0]])</code></pre>
+<h2>8. Advance the field and record the result</h2>
+<p>I apply the update in its original order. I record the mean, energy or other diagnostics at the specified intervals. I do not clip the numerical field. A saved picture is a display of the field, not a substitute for a conservation check.</p>
+<pre><code class="language-python">for step in range(steps + 1):
+    if step % 10 == 0:
+        mean, energy = diagnostics(c)
+        history.append((step, step * dt, mean, energy))
+    if step in snapshots:
+        v = np.clip((c + 1) / 2, 0, 1)
+        rgb = np.stack([np.interp(v, [0, 0.25, 0.5, 0.75, 1], stops[:, j]) for j in range(3)], axis=-1)
+        img = Image.fromarray(np.rint(rgb).astype(&#x27;uint8&#x27;))
+        img.resize((640, 640), Image.Resampling.BICUBIC).save(output / f&#x27;spinodal-{snapshots[step]}.png&#x27;)
+    if step == steps:
+        break
+    c_hat = np.fft.fft2(c)
+    bulk_hat = np.fft.fft2(c * c * c - c)
+    c = np.fft.ifft2((c_hat - dt * k2 * bulk_hat) / (1 + dt * k2 * k2)).real
+    if not np.isfinite(c).all():
+        raise RuntimeError(&#x27;Non-finite solution; reduce the time step.&#x27;)</code></pre>
+<h2>9. Prepare the next part of the calculation</h2>
+<p>I define the following operations. These are the same operations as in the original source, written on separate lines so their order is clear. Inspect their values before running the next cell.</p>
+<pre><code class="language-python">with (output / &#x27;diagnostics.csv&#x27;).open(&#x27;w&#x27;, newline=&#x27;&#x27;) as stream:
+    writer = csv.writer(stream)
+    writer.writerow([&#x27;step&#x27;, &#x27;dimensionless_time&#x27;, &#x27;mean_c&#x27;, &#x27;energy_density&#x27;])
+    writer.writerows(history)</code></pre>
+<h2>10. Prepare the next part of the calculation</h2>
+<p>I define <code>drift</code>, <code>max_energy_rise</code>. These are the same operations as in the original source, written on separate lines so their order is clear. Inspect their values before running the next cell.</p>
+<pre><code class="language-python">np.save(output / &#x27;final_field.npy&#x27;, c)
+drift = abs(c.mean() - initial_mean)
+max_energy_rise = max(np.diff([row[3] for row in history]))
+print(f&#x27;Mean drift: {drift:.3e}&#x27;)
+print(f&#x27;Initial/final energy: {history[0][3]:.6f} / {history[-1][3]:.6f}&#x27;)
+print(f&#x27;Max energy change between sampled states: {max_energy_rise:.3e}&#x27;)
+if drift &gt; 1e-10:
+    raise RuntimeError(&#x27;Conservation diagnostic failed.&#x27;)</code></pre>
+<pre class="cell-result">Mean drift: 4.902e-17
+Initial/final energy: 0.254339 / 0.102015
+Max energy change between sampled states: -6.576e-05
+</pre>
+<h2>Plot and interpret the result</h2>
+<p>I show the calculated final field and sampled energy. The composition scale follows this model, whose minima are −1 and 1. These values do not represent a mole fraction between 0 and 1.</p>
+<pre><code class="language-python">import matplotlib.pyplot as plt
+values = np.asarray(history)
+fig, axes = plt.subplots(1, 2, figsize=(10, 4))
+im = axes[0].imshow(c, origin=&quot;lower&quot;, cmap=&quot;turbo&quot;, vmin=-1, vmax=1)
+fig.colorbar(im, ax=axes[0], label=&quot;Dimensionless field c&quot;)
+axes[0].set_title(&quot;Final field&quot;)
+axes[0].set_xlabel(&quot;Grid index&quot;)
+axes[0].set_ylabel(&quot;Grid index&quot;)
+axes[1].plot(values[:, 1], values[:, 3])
+axes[1].set_xlabel(&quot;Dimensionless time&quot;)
+axes[1].set_ylabel(&quot;Mean energy density&quot;)
+plt.show()</code></pre>
+<figure><img loading="lazy" src="/assets/images/python-lessons/spinodal-22.png" alt="Computed result from the A first binary spinodal simulation notebook"><figcaption>Result from the executed notebook cell.</figcaption></figure>
+<h2>11. Review and extend the calculation</h2>
+<p>I first restart the kernel and run all the required cells. Then I change one input, predict its effect and compare the result with that prediction. A successful check establishes the tested property; it does not establish convergence or equilibrium. I retain the <a href="https://saswataiith.github.io/files/mesoscale/spinodal_demo.py">complete script</a> for command-line use. The notebook embeds the calculation directly and does not need that script to run.</p>
+<p><a href="/files/mesoscale/examples/notebooks/notebook-check-results.json">Read the notebook execution checks →</a> · <a href="/resources/step-by-step-codes/">More Python, Julia and C lessons →</a></p></section>

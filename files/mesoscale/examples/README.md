@@ -1,3 +1,9 @@
+# Learn the Python calculations in notebook cells
+
+I develop the Python calculations in explained cells, with checks and plots. Start at [the notebook collection](https://saswataiith.github.io/resources/python-notebooks/) or download the `python-notebook-lessons.zip` collection. The notebooks under `notebooks/` embed their code and do not need companion scripts. I retain the complete command-line programs below.
+
+Run the notebook cells in order in Jupyter or Colab, using the listed dependencies. The native VPython viewers need local Jupyter. The 256³ generation and full-volume morphology are optional and need substantial memory. The default tests use small exact masks; they do not replace the original 256³ simulation. Each lesson states which cells were executed in the published check.
+
 # MS5033 worked examples — Julia and NumPy
 
 These examples are based on my MS5033 teaching codes and notebooks. I wrote the original material to explain random walks, diffusion, phase separation and elastic effects. The website versions focus on one calculation at a time. All quantities are dimensionless. These are simplified educational models, not calibrated materials predictions.

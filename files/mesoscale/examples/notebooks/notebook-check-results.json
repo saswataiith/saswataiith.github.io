@@ -1,0 +1,121 @@
+[
+  {
+    "slug": "bicontinuity-2d",
+    "status": "passed",
+    "seconds": 9.61,
+    "code_cells": 11,
+    "scope": "all cells including original full default run"
+  },
+  {
+    "slug": "diffusion",
+    "status": "passed",
+    "seconds": 1.58,
+    "code_cells": 7,
+    "scope": "all cells including original full default run"
+  },
+  {
+    "slug": "monte-carlo",
+    "status": "passed",
+    "seconds": 1.33,
+    "code_cells": 6,
+    "scope": "required cells; optional full-size Monte Carlo run disabled"
+  },
+  {
+    "slug": "morphology-3d",
+    "status": "passed",
+    "seconds": 3.47,
+    "code_cells": 11,
+    "scope": "required cells; interactive viewer disabled; optional full-volume runs disabled"
+  },
+  {
+    "slug": "percolation-vpython",
+    "status": "passed",
+    "seconds": 1.14,
+    "code_cells": 13,
+    "scope": "required cells; interactive viewer disabled; optional full-volume runs disabled"
+  },
+  {
+    "slug": "phase-field",
+    "status": "passed",
+    "seconds": 2.02,
+    "code_cells": 11,
+    "scope": "all cells including original full default run"
+  },
+  {
+    "slug": "portrait-abstraction",
+    "status": "passed",
+    "seconds": 40.47,
+    "code_cells": 10,
+    "scope": "all cells including original full default run"
+  },
+  {
+    "slug": "portrait-dynamics",
+    "status": "passed",
+    "seconds": 14.42,
+    "code_cells": 9,
+    "scope": "all cells including original full default run"
+  },
+  {
+    "slug": "portrait-flows",
+    "status": "passed",
+    "seconds": 9.63,
+    "code_cells": 6,
+    "scope": "all cells including original full default run"
+  },
+  {
+    "slug": "portrait-minimum",
+    "status": "passed",
+    "seconds": 33.66,
+    "code_cells": 13,
+    "scope": "all cells including original full default run"
+  },
+  {
+    "slug": "portrait-targets",
+    "status": "passed",
+    "seconds": 16.7,
+    "code_cells": 8,
+    "scope": "all cells including original full default run"
+  },
+  {
+    "slug": "spinodal",
+    "status": "passed",
+    "seconds": 2.59,
+    "code_cells": 11,
+    "scope": "all cells including original full default run"
+  },
+  {
+    "slug": "spinodal-3d",
+    "status": "passed",
+    "seconds": 3.19,
+    "code_cells": 14,
+    "scope": "required cells; interactive viewer disabled; optional full-volume runs disabled"
+  },
+  {
+    "slug": "topology",
+    "status": "passed",
+    "seconds": 1.29,
+    "code_cells": 10,
+    "scope": "all cells including original full default run"
+  },
+  {
+    "slug": "turtle-field",
+    "status": "passed",
+    "seconds": 1.1,
+    "code_cells": 4,
+    "scope": "all cells including original full default run"
+  },
+  {
+    "slug": "turtle-vpython",
+    "status": "passed",
+    "seconds": 1.4,
+    "code_cells": 19,
+    "scope": "required cells; interactive viewer disabled; optional full-volume runs disabled"
+  },
+  {
+    "slug": "walkers",
+    "status": "passed",
+    "seconds": 3.12,
+    "code_cells": 7,
+    "scope": "all cells including original full default run"
+  }
+]

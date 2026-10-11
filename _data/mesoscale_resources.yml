@@ -1,5 +1,14 @@
 [
   {
+    "title": "Python calculations developed in notebook cells",
+    "url": "/resources/python-notebooks/",
+    "category": "Tutorial",
+    "topic": "Python notebooks color portrait Allen Cahn Cahn Hilliard step by step tested code",
+    "description": "Build the complete Python examples in explained cells, inspect plots and diagnostics, and run the notebooks in Jupyter.",
+    "label": "Explore the notebook lessons",
+    "level": "Getting started"
+  },
+  {
     "title": "Developing teaching codes in steps",
     "url": "/resources/step-by-step-codes/",
     "category": "Tutorial",

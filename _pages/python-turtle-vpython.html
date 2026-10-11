@@ -1,0 +1,240 @@
+---
+layout: scholar
+title: "A VPython turtle on verified periodic routes"
+permalink: /resources/python/turtle-vpython/
+nav_active: resources
+description: "I develop a vpython turtle on verified periodic routes in explained Python cells, with numerical checks and a downloadable notebook."
+---
+
+<style>.python-lesson{max-width:1050px}.python-lesson pre{overflow-x:auto;background:#eef3f0;border:1px solid #d4dfd9;padding:20px;font:14px/1.65 ui-monospace,monospace}.python-lesson h2{margin-top:40px}.python-lesson p,.python-lesson li{line-height:1.8}.python-lesson details{margin:20px 0;padding:18px;background:#f1f5f2}.python-lesson summary{cursor:pointer;font-weight:600}.python-lesson img{max-width:100%;height:auto}.cell-result{padding:12px;background:#f7f8f6}.python-lesson .formula-box{overflow-x:auto}</style>
+<section class="page-heading"><span class="eyebrow">PYTHON · STEP-BY-STEP LESSON</span><h1>A VPython turtle on verified periodic routes</h1><p>I write a small part, check it, and then add the next part.</p><p><a class="button primary" href="/files/mesoscale/examples/notebooks/turtle-vpython.ipynb" download>Download the notebook ↓</a> </p><p><a href="/resources/python-notebooks/">All Python notebook lessons →</a></p></section><section class="section python-lesson">
+<p><strong>Local Jupyter is required for the native VPython display.</strong> The checked default cells inspect routes without opening a scene. Set <code>open_viewer=True</code> and run the remaining cells interactively; interrupt the final event loop when finished.</p>
+<p>I display the saved c=0.5 interface and checked voxel routes. n is the number of voxels per direction. progress counts route steps, and speed is measured in voxels per second of display time. Display time is unrelated to the original simulation time. An enlarged turtle is a marker; its center follows the checked route.</p>
+<p>I develop this calculation in small steps. I run a cell, inspect its result and test it before adding the next part. Run the cells in order in Jupyter. A code cell defines a part of the calculation or carries it out; defining a function does not run it.</p>
+<p>I permit free noncommercial teaching, learning and demonstrations with acknowledgment. Research and commercial use require my written permission. Earlier licensed releases retain their permissions. <a href="https://saswataiith.github.io/using-my-resources/">Read the code-use terms</a>.</p>
+<p>Copyright (c) 2026 Saswata Bhattacharyya.</p>
+<h2>1. Prepare the Python environment</h2>
+<p>I install the packages listed in the next cell once in the same environment as the notebook. In Jupyter or Colab, remove the comment marker from the installation line below if a package is missing. NumPy stores arrays and evaluates numerical operations. Matplotlib displays plots. Pillow reads and writes images. This installation does not change the model parameters.</p>
+<pre><code class="language-python"># %pip install numpy vpython &quot;setuptools&lt;82&quot;
+import numpy as np
+assert np.isfinite(np.array([0.0, 1.0])).all()
+print(&quot;NumPy is ready:&quot;, np.__version__)</code></pre>
+<pre class="cell-result">NumPy is ready: 2.1.3
+</pre>
+<h2>2. Load data and decide when to open the scene</h2>
+<p>I download the public viewer data, then check the route definitions without opening VPython. I use local Jupyter for the native viewer; Colab does not provide the same interactive VPython environment. I leave the window disabled initially so Run All does not enter an endless display loop.</p>
+<pre><code class="language-python">from pathlib import Path
+from urllib.request import urlretrieve
+
+work = Path(&quot;lesson-data&quot;)
+work.mkdir(exist_ok=True)
+
+def get_file(relative_path):
+    # I download a public example only when its local copy is missing.
+    destination = work / Path(relative_path).name
+    if not destination.exists():
+        urlretrieve(&quot;https://saswataiith.github.io/&quot; + relative_path, destination)
+    return destination
+
+viewer_path = get_file(&quot;assets/examples/bicontinuity-3d/viewer.json&quot;)
+
+viewer_data = __import__(&quot;json&quot;).loads(viewer_path.read_text())
+assert viewer_data[&quot;n&quot;] == 256
+for phase in (&quot;red&quot;, &quot;blue&quot;):
+    for axis in &quot;xyz&quot;:
+        route = np.asarray(viewer_data[&quot;routes&quot;][phase][axis])
+        steps = (np.diff(route, axis=0) + 128) % 256 - 128
+        assert np.all(np.abs(steps).sum(axis=1) == 1)
+        assert np.array_equal(steps.sum(axis=0), np.eye(3, dtype=int)[&quot;xyz&quot;.index(axis)] * 256)
+print(&quot;All six saved routes have face-sharing steps and the stated winding.&quot;)</code></pre>
+<pre class="cell-result">All six saved routes have face-sharing steps and the stated winding.
+</pre>
+<h2>3. Choose whether to open the interactive viewer</h2>
+<p>I first run the data checks with this setting left False. To use the viewer in local Jupyter, change it to True, run this cell, then run the cells below it in order. The last cell runs until I interrupt the kernel. I must restart the kernel before rebuilding a second scene.</p>
+<pre><code class="language-python">open_viewer = False</code></pre>
+<h2>4. Prepare the next part of the calculation</h2>
+<p>I define <code>data</code>, <code>n</code>, <code>scene</code>, <code>scene.forward</code>, <code>scene.lights</code>, <code>scene.ambient</code>. These are the same operations as in the original source, written on separate lines so their order is clear. Inspect their values before running the next cell.</p>
+<pre><code class="language-python">if open_viewer:
+    import json, sys, time
+    from pathlib import Path
+    from vpython import canvas, vec, box, compound, ellipsoid, sphere, rate, menu, button, slider, checkbox, wtext, vertex, triangle, distant_light, curve
+    data = json.loads(Path(viewer_path).read_text())
+    n = data[&#x27;n&#x27;]
+    scene = canvas(title=&#x27;Measured 3D bicontinuity: VPython turtle&#x27;, width=800, height=550, background=vec(0.98, 0.98, 0.96), center=vec(n / 2, n / 2, n / 2), range=n * 0.8)
+    scene.forward = vec(-1, -0.7, -1)
+    scene.lights = []
+    scene.ambient = vec(0.22, 0.22, 0.22)</code></pre>
+<h2>5. Prepare the next part of the calculation</h2>
+<p>I define <code>colors</code>, <code>phases</code>. These are the same operations as in the original source, written on separate lines so their order is clear. Inspect their values before running the next cell.</p>
+<pre><code class="language-python">if open_viewer:
+    distant_light(direction=vec(-0.6, 0.8, -1), color=vec(0.45, 0.45, 0.45))
+    distant_light(direction=vec(1, -0.2, 0.4), color=vec(0.18, 0.18, 0.18))
+    distant_light(direction=vec(0.3, 0.7, 1), color=vec(0.12, 0.12, 0.12))
+    colors = {&#x27;red&#x27;: vec(0.85, 0.14, 0.12), &#x27;blue&#x27;: vec(0.12, 0.38, 0.85)}
+    phases = {}</code></pre>
+<h2>6. Repeat the operation and inspect each case</h2>
+<p>I repeat the operation over the specified cases. Read the loop variable first, then follow what changes on each pass. The assertions check the stated numerical or topological condition.</p>
+<pre><code class="language-python">if open_viewer:
+    for name in colors:
+        mesh = data[&#x27;meshes&#x27;][name]
+        phases[name] = []
+        for start in range(0, len(mesh[&#x27;triangles&#x27;]), 1500):
+            vertices = {}
+
+            def point(i):
+                if i not in vertices:
+                    vertices[i] = vertex(pos=vec(*mesh[&#x27;vertices&#x27;][i]), normal=vec(*mesh[&#x27;normals&#x27;][i]), color=colors[name])
+                return vertices[i]
+            faces = [triangle(v0=point(t[0]), v1=point(t[1]), v2=point(t[2])) for t in mesh[&#x27;triangles&#x27;][start:start + 1500]]
+            surface = compound(faces)
+            surface.opacity = 0.1
+            surface.shininess = 0.25
+            phases[name].append(surface)</code></pre>
+<h2>7. Prepare the next part of the calculation</h2>
+<p>I define <code>marker</code>, <code>parts</code>, <code>offsets</code>. These are the same operations as in the original source, written on separate lines so their order is clear. Inspect their values before running the next cell.</p>
+<pre><code class="language-python">if open_viewer:
+    marker = n / 32
+    parts = [ellipsoid(size=vec(0.85 * marker, 0.65 * marker, 1.1 * marker), color=vec(0.2, 0.65, 0.22)), sphere(radius=0.23 * marker, color=vec(0.35, 0.8, 0.3))]
+    offsets = [vec(0, 0, 0), vec(0, 0, 0.65)]</code></pre>
+<h2>8. Repeat the operation and inspect each case</h2>
+<p>I repeat the operation over the specified cases. Read the loop variable first, then follow what changes on each pass. The assertions check the stated numerical or topological condition.</p>
+<pre><code class="language-python">if open_viewer:
+    for x in (-0.38, 0.38):
+        for z in (-0.32, 0.32):
+            parts.append(sphere(radius=0.16 * marker, color=vec(0.35, 0.8, 0.3)))
+            offsets.append(vec(x, -0.18, z))</code></pre>
+<h2>9. Prepare the next part of the calculation</h2>
+<p>I define <code>phase</code>, <code>direction</code>, <code>progress</code>, <code>running</code>, <code>trails</code>, <code>current_trail</code>, <code>executed</code>. These are the same operations as in the original source, written on separate lines so their order is clear. Inspect their values before running the next cell.</p>
+<pre><code class="language-python">if open_viewer:
+    phase = &#x27;red&#x27;
+    direction = &#x27;x&#x27;
+    progress = 0.0
+    running = False
+    trails = []
+    current_trail = None
+    executed = 0.0
+    crossings = 0
+    route = []</code></pre>
+<h2>10. Control interface visibility</h2>
+<p>I change the displayed opacity and visibility to make the marker easier to see. These controls do not change the field or its connectivity.</p>
+<pre><code class="language-python">if open_viewer:
+    def visibility(_=None):
+        for name, meshes in phases.items():
+            for obj in meshes:
+                obj.visible = name == phase and other.checked
+                obj.opacity = opacity.value</code></pre>
+<h2>11. Interpolate a periodic voxel step</h2>
+<p>I interpolate only between consecutive verified face-sharing voxels. The shortest periodic displacement identifies a seam step. Display coordinates are wrapped back into the box.</p>
+<pre><code class="language-python">if open_viewer:
+    def position_at(q):
+        i = min(int(q), len(route) - 2)
+        t = 1 if q &gt;= len(route) - 1 else q - i
+        a, b = route[i:i + 2]
+        d = [(b[j] - a[j] + n // 2) % n - n // 2 for j in range(3)]
+        return [(a[j] + 0.5 + d[j] * t) % n for j in range(3)]</code></pre>
+<h2>12. Start a new displayed trail</h2>
+<p>I create a new curve at the supplied position. A separate curve after a seam crossing avoids drawing a shortcut through the box.</p>
+<pre><code class="language-python">if open_viewer:
+    def begin_trail(p):
+        global current_trail
+        current_trail = curve(pos=[vec(*p)], radius=n / 350, color=vec(0.68, 0.02, 0.42), emissive=True)
+        trails.append(current_trail)</code></pre>
+<h2>13. Record the executed path</h2>
+<p>I append only the route segments the turtle has executed. At a periodic crossing I end one trail on the face and start another at the opposite face.</p>
+<pre><code class="language-python">if open_viewer:
+    def extend_trail(to):
+        global executed, crossings
+        q = executed
+        while q &lt; to - 1e-09:
+            i = min(int(q + 1e-09), len(route) - 2)
+            end = min(to, i + 1)
+            a, b = route[i:i + 2]
+            axis = next((j for j in range(3) if abs(b[j] - a[j]) &gt; n / 2), None)
+            if axis is not None and q &lt; i + 0.5 - 1e-09 and (end &gt;= i + 0.5):
+                face = [x + 0.5 for x in a]
+                face[axis] = n if b[axis] &lt; a[axis] else 0
+                current_trail.append(pos=vec(*face))
+                partner = list(face)
+                partner[axis] = 0 if face[axis] == n else n
+                begin_trail(partner)
+                q = i + 0.5
+                crossings += 1
+            else:
+                current_trail.append(pos=vec(*position_at(end)))
+                q = end
+        executed = to</code></pre>
+<h2>14. Reset the selected route</h2>
+<p>I reset progress and the executed trail when the phase or winding direction changes. The saved route remains the source of the voxel positions.</p>
+<pre><code class="language-python">if open_viewer:
+    def reset(_=None):
+        global progress, running, phase, direction, executed, crossings, route
+        phase = phase_menu.selected
+        direction = direction_menu.selected
+        progress = 0.0
+        running = False
+        executed = 0.0
+        crossings = 0
+        route = data[&#x27;routes&#x27;][phase][direction]
+        for trail in trails:
+            trail.clear()
+            trail.visible = False
+        trails.clear()
+        begin_trail(position_at(0))
+        visibility()</code></pre>
+<h2>15. Start the animation</h2>
+<p>I change the running state when the user selects Start. The clock loop updates progress while this state is true.</p>
+<pre><code class="language-python">if open_viewer:
+    def start(_):
+        global running, progress
+        if progress &gt;= len(route) - 1:
+            reset()
+        running = True</code></pre>
+<h2>16. Pause the animation</h2>
+<p>I stop advancing progress while keeping the executed trail visible.</p>
+<pre><code class="language-python">if open_viewer:
+    def pause(_):
+        global running
+        running = False</code></pre>
+<h2>17. Prepare the next part of the calculation</h2>
+<p>I define <code>phase_menu</code>, <code>direction_menu</code>, <code>speed</code>. These are the same operations as in the original source, written on separate lines so their order is clear. Inspect their values before running the next cell.</p>
+<pre><code class="language-python">if open_viewer:
+    scene.append_to_caption(&#x27;\nPhase: &#x27;)
+    phase_menu = menu(choices=[&#x27;red&#x27;, &#x27;blue&#x27;], selected=&#x27;red&#x27;, bind=reset)
+    scene.append_to_caption(&#x27; Winding direction: &#x27;)
+    direction_menu = menu(choices=[&#x27;x&#x27;, &#x27;y&#x27;, &#x27;z&#x27;], selected=&#x27;x&#x27;, bind=reset)
+    button(text=&#x27;Start&#x27;, bind=start)
+    button(text=&#x27;Pause&#x27;, bind=pause)
+    button(text=&#x27;Reset&#x27;, bind=reset)
+    scene.append_to_caption(&#x27;\nSpeed (voxels/s): &#x27;)
+    speed = slider(min=5, max=200, value=40, bind=lambda _: None)</code></pre>
+<h2>18. Prepare the next part of the calculation</h2>
+<p>I define <code>opacity</code>, <code>other</code>, <code>status</code>, <code>last</code>. These are the same operations as in the original source, written on separate lines so their order is clear. Inspect their values before running the next cell.</p>
+<pre><code class="language-python">if open_viewer:
+    scene.append_to_caption(&#x27;\nc = 0.5 isosurface opacity: &#x27;)
+    opacity = slider(min=0, max=1, step=0.02, value=0.1, bind=visibility)
+    other = checkbox(text=&#x27;Show c = 0.5 interface&#x27;, checked=True, bind=visibility)
+    scene.append_to_caption(&#x27;\nRotate: right-drag / Ctrl-drag. Zoom: wheel. Face crossings reappear on the opposite face.\nMagenta records only the executed path. The isosurface has no box-face caps.\nThe enlarged turtle body is a marker; its centre follows checked six-neighbour voxel routes.\n&#x27;)
+    status = wtext(text=&#x27;&#x27;)
+    reset()
+    last = time.perf_counter()</code></pre>
+<h2>19. Keep the viewer responsive</h2>
+<p>I keep the VPython clock running so mouse and button events can update the scene. Run this cell interactively and interrupt the kernel when finished. This is an event loop, not a simulation of phase separation.</p>
+<pre><code class="language-python">if open_viewer:
+    while True:
+        rate(60)
+        now = time.perf_counter()
+        dt = min(now - last, 0.1)
+        last = now
+        route = data[&#x27;routes&#x27;][phase][direction]
+        if running:
+            progress = min(len(route) - 1, progress + speed.value * dt)
+            extend_trail(progress)
+            if progress &gt;= len(route) - 1:
+                running = False
+        p = vec(*position_at(progress))
+        for part, offset in zip(parts, offsets):
+            part.pos = p + offset * marker
+        status.text = f&#x27;{phase} · {direction} · step {int(progress)}/{len(route) - 1} · &#x27; + (&#x27;complete (winding +1)&#x27; if progress &gt;= len(route) - 1 else &#x27;running&#x27; if running else &#x27;paused&#x27;)</code></pre>
+<h2>20. Review and extend the calculation</h2>
+<p>I first restart the kernel and run all the required cells. Then I change one input, predict its effect and compare the result with that prediction. A successful check establishes the tested property; it does not establish convergence or equilibrium. I retain the <a href="https://saswataiith.github.io/files/mesoscale/examples/turtle_3d_vpython.py">complete script</a> for command-line use. The notebook embeds the calculation directly and does not need that script to run.</p>
+<p><a href="/files/mesoscale/examples/notebooks/notebook-check-results.json">Read the notebook execution checks →</a> · <a href="/resources/step-by-step-codes/">More Python, Julia and C lessons →</a></p></section>

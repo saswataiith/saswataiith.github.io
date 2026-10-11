@@ -92,7 +92,7 @@ if __name__ == "__main__":
 
     archive = EXAMPLES / "step-by-step-teaching-codes.zip"
     with zipfile.ZipFile(archive, "w", zipfile.ZIP_DEFLATED) as bundle:
-        for folder in [EXAMPLES / "stepwise", EXAMPLES / "hoshen-kopelman"]:
+        for folder in [EXAMPLES / "stepwise", EXAMPLES / "hoshen-kopelman", EXAMPLES / "notebooks"]:
             for source in sorted(folder.rglob("*")):
                 if not source.is_file() or "__pycache__" in source.parts:
                     continue

@@ -1,0 +1,118 @@
+---
+layout: scholar
+title: "Restoration with a fidelity and gradient energy"
+permalink: /resources/python/portrait-flows/
+nav_active: resources
+description: "I develop restoration with a fidelity and gradient energy in explained Python cells, with numerical checks and a downloadable notebook."
+---
+
+<style>.python-lesson{max-width:1050px}.python-lesson pre{overflow-x:auto;background:#eef3f0;border:1px solid #d4dfd9;padding:20px;font:14px/1.65 ui-monospace,monospace}.python-lesson h2{margin-top:40px}.python-lesson p,.python-lesson li{line-height:1.8}.python-lesson details{margin:20px 0;padding:18px;background:#f1f5f2}.python-lesson summary{cursor:pointer;font-weight:600}.python-lesson img{max-width:100%;height:auto}.cell-result{padding:12px;background:#f7f8f6}.python-lesson .formula-box{overflow-x:auto}</style>
+<section class="page-heading"><span class="eyebrow">PYTHON · STEP-BY-STEP LESSON</span><h1>Restoration with a fidelity and gradient energy</h1><p>I write a small part, check it, and then add the next part.</p><p><a class="button primary" href="/files/mesoscale/examples/notebooks/portrait-flows.ipynb" download>Download the notebook ↓</a> <a class="button secondary" href="https://colab.research.google.com/github/saswataiith/saswataiith.github.io/blob/master/files/mesoscale/examples/notebooks/portrait-flows.ipynb">Open in Colab ↗</a></p><p><a href="/resources/python-notebooks/">All Python notebook lessons →</a></p></section><section class="section python-lesson">
+<p>I add a reference-image penalty to the double-well and gradient energy. r is the grayscale reference and u the evolving signed intensity. lambda=40 weights the reference penalty, kappa=0.02 weights gradients, L=0.05 is Allen–Cahn mobility and M=0.2 is Cahn–Hilliard mobility. The time step is 0.02. All quantities are dimensionless. The block-scrambling prelude is a display operation, not PDE evolution.</p>
+<p>I develop this calculation in small steps. I run a cell, inspect its result and test it before adding the next part. Run the cells in order in Jupyter. A code cell defines a part of the calculation or carries it out; defining a function does not run it.</p>
+<p>I permit free noncommercial teaching, learning and demonstrations with acknowledgment. Research and commercial use require my written permission. Earlier licensed releases retain their permissions. <a href="https://saswataiith.github.io/using-my-resources/">Read the code-use terms</a>.</p>
+<p>Copyright (c) 2026 Saswata Bhattacharyya.</p>
+<h2>1. Prepare the Python environment</h2>
+<p>I install the packages listed in the next cell once in the same environment as the notebook. In Jupyter or Colab, remove the comment marker from the installation line below if a package is missing. NumPy stores arrays and evaluates numerical operations. Matplotlib displays plots. Pillow reads and writes images. This installation does not change the model parameters.</p>
+<pre><code class="language-python"># %pip install numpy &quot;pillow&gt;=10.1&quot; matplotlib
+import numpy as np
+assert np.isfinite(np.array([0.0, 1.0])).all()
+print(&quot;NumPy is ready:&quot;, np.__version__)</code></pre>
+<pre class="cell-result">NumPy is ready: 2.1.3
+</pre>
+<h2>2. Read the image and check its dimensions</h2>
+<p>I download my public portrait once, or replace this path with my own image. An RGB array has two position axes and one channel axis. The three channels are red, green and blue.</p>
+<pre><code class="language-python">from pathlib import Path
+from urllib.request import urlretrieve
+
+work = Path(&quot;lesson-data&quot;)
+work.mkdir(exist_ok=True)
+
+def get_file(relative_path):
+    # I download a public example only when its local copy is missing.
+    destination = work / Path(relative_path).name
+    if not destination.exists():
+        urlretrieve(&quot;https://saswataiith.github.io/&quot; + relative_path, destination)
+    return destination
+
+portrait = get_file(&quot;assets/images/saswata-landscape.png&quot;)
+output = &quot;portrait-flows-results&quot;</code></pre>
+<h2>3. Prepare the next part of the calculation</h2>
+<p>I define the following operations. These are the same operations as in the original source, written on separate lines so their order is clear. Inspect their values before running the next cell.</p>
+<pre><code class="language-python">import sys, json
+from pathlib import Path
+import numpy as np
+from PIL import Image, ImageDraw, ImageFont</code></pre>
+<h2>4. Choose a portable display font</h2>
+<p>I try the original font, then DejaVu Sans, then Pillow's default font. The font changes labels on the image only; it does not change a numerical field.</p>
+<pre><code class="language-python">def portrait_font(size):
+    fonts = [Path(&#x27;/&#x27;) / &#x27;System&#x27; / &#x27;Library&#x27; / &#x27;Fonts&#x27; / &#x27;Helvetica.ttc&#x27;, &#x27;DejaVuSans.ttf&#x27;]
+    for font in fonts:
+        try:
+            return ImageFont.truetype(str(font), size)
+        except OSError:
+            pass
+    return ImageFont.load_default(size=size)</code></pre>
+<h2>5. Run the complete example</h2>
+<p>I keep the original algorithm, parameters, seed and output conventions. I inspect the saved diagnostics before interpreting the pictures. A finite run is not evidence of convergence or equilibrium.</p>
+<details><summary>Read this complete operation (55 lines)</summary><pre><code class="language-python">def run(path, output):
+    out = Path(output)
+    out.mkdir(parents=True, exist_ok=True)
+    ref = np.asarray(Image.open(path).convert(&#x27;L&#x27;).resize((256, 256)), dtype=float) / 127.5 - 1
+    rng = np.random.default_rng(19)
+    blocks = ref.reshape(16, 16, 16, 16).transpose(0, 2, 1, 3).reshape(256, 16, 16)
+    damaged = blocks[rng.permutation(256)].reshape(16, 16, 16, 16).transpose(0, 2, 1, 3).reshape(256, 256)
+    ac = damaged.copy()
+    ch = damaged.copy()
+    n = 256
+    dt = 0.02
+    lam = 40
+    kappa = 0.02
+    L = 0.05
+    M = 0.2
+    k = 2 * np.pi * np.fft.fftfreq(n, d=32 / n)
+    k2 = k[:, None] ** 2 + k[None, :] ** 2
+    rhat = np.fft.fft2(ref)
+    times = set(np.unique(np.round(np.geomspace(1, 1000, 90)).astype(int)))
+    records = []
+    counter = 0
+    font = portrait_font(24)
+
+    def field(a):
+        return Image.fromarray(np.uint8(np.clip((a + 1) * 127.5, 0, 255))).resize((512, 512), Image.Resampling.NEAREST).convert(&#x27;RGB&#x27;)
+
+    def frame(a, b, label):
+        nonlocal counter
+        im = Image.new(&#x27;RGB&#x27;, (1600, 660), &#x27;#f5f7f2&#x27;)
+        d = ImageDraw.Draw(im)
+        for x, img, title in [(16, ref, &#x27;Original reference&#x27;), (544, a, &#x27;Allen-Cahn&#x27;), (1072, b, &#x27;Cahn-Hilliard&#x27;)]:
+            d.text((x, 15), title, fill=&#x27;#173d40&#x27;, font=font)
+            im.paste(field(img), (x, 60))
+        d.text((16, 590), label, fill=&#x27;#173d40&#x27;, font=font)
+        d.text((16, 625), &#x27;Reference-assisted restoration | 256 x 256 | grayscale intensity, not material composition&#x27;, fill=&#x27;#173d40&#x27;, font=font)
+        im.save(out / f&#x27;frame-{counter:03d}.png&#x27;)
+        counter += 1
+    for a in np.linspace(0, 1, 17):
+        frame((1 - a) * ref + a * damaged, (1 - a) * ref + a * damaged, &#x27;Disintegration prelude: block scrambling (not PDE evolution)&#x27;)
+
+    def energy(u):
+        return np.mean((u * u - 1) ** 2 / 4 + lam * (u - ref) ** 2 / 2) + kappa / 2 * np.sum(k2 * np.abs(np.fft.fft2(u)) ** 2) / n ** 4
+    for step in range(1001):
+        if step == 0 or step in times:
+            records.append([step * dt, ac.mean(), ch.mean(), np.mean((ac - ref) ** 2), np.mean((ch - ref) ** 2), energy(ac), energy(ch)])
+            frame(ac, ch, f&#x27;Restoration time {step * dt:.2f} | L=0.05, M=0.2 | full original retained as target&#x27;)
+        if step == 1000:
+            break
+        ac = np.fft.ifft2((np.fft.fft2(ac) - dt * L * np.fft.fft2(ac ** 3 - ac) + dt * L * lam * rhat) / (1 + dt * L * (kappa * k2 + lam))).real
+        ch = np.fft.ifft2((np.fft.fft2(ch) - dt * M * k2 * np.fft.fft2(ch ** 3 - ch) + dt * M * k2 * lam * rhat) / (1 + dt * M * k2 * (kappa * k2 + lam))).real
+    assert np.isfinite(ac).all() and np.isfinite(ch).all()
+    assert abs(ch.mean() - damaged.mean()) &lt; 1e-10
+    np.savetxt(out / &#x27;diagnostics.csv&#x27;, records, delimiter=&#x27;,&#x27;, header=&#x27;time,AC_mean,CH_mean,AC_mse,CH_mse,AC_energy,CH_energy&#x27;, comments=&#x27;&#x27;)
+    Image.open(out / &#x27;frame-016.png&#x27;).save(out / &#x27;poster.png&#x27;)
+    print(&#x27;frames&#x27;, counter, &#x27;MSE initial/final AC CH&#x27;, records[0][3:5], records[-1][3:5], &#x27;CH mean drift&#x27;, abs(ch.mean() - ref.mean()))</code></pre></details>
+<pre><code class="language-python">run(portrait, output)</code></pre>
+<pre class="cell-result">frames 87 MSE initial/final AC CH [np.float64(0.3286614710988562), np.float64(0.3286614710988562)] [np.float64(8.463655851368943e-05), np.float64(6.81408479589557e-05)] CH mean drift 1.942890293094024e-16
+</pre>
+<h2>6. Review and extend the calculation</h2>
+<p>I first restart the kernel and run all the required cells. Then I change one input, predict its effect and compare the result with that prediction. A successful check establishes the tested property; it does not establish convergence or equilibrium. I retain the <a href="https://saswataiith.github.io/files/mesoscale/examples/portrait_flows.py">complete script</a> for command-line use. The notebook embeds the calculation directly and does not need that script to run.</p>
+<p><a href="/files/mesoscale/examples/notebooks/notebook-check-results.json">Read the notebook execution checks →</a> · <a href="/resources/step-by-step-codes/">More Python, Julia and C lessons →</a></p></section>

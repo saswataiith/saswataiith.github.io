@@ -1,0 +1,134 @@
+---
+layout: scholar
+title: "Connected regions, periodic loops, holes and cavities"
+permalink: /resources/python/topology/
+nav_active: resources
+description: "I develop connected regions, periodic loops, holes and cavities in explained Python cells, with numerical checks and a downloadable notebook."
+---
+
+<style>.python-lesson{max-width:1050px}.python-lesson pre{overflow-x:auto;background:#eef3f0;border:1px solid #d4dfd9;padding:20px;font:14px/1.65 ui-monospace,monospace}.python-lesson h2{margin-top:40px}.python-lesson p,.python-lesson li{line-height:1.8}.python-lesson details{margin:20px 0;padding:18px;background:#f1f5f2}.python-lesson summary{cursor:pointer;font-weight:600}.python-lesson img{max-width:100%;height:auto}.cell-result{padding:12px;background:#f7f8f6}.python-lesson .formula-box{overflow-x:auto}</style>
+<section class="page-heading"><span class="eyebrow">PYTHON · STEP-BY-STEP LESSON</span><h1>Connected regions, periodic loops, holes and cavities</h1><p>I write a small part, check it, and then add the next part.</p><p><a class="button primary" href="/files/mesoscale/examples/notebooks/topology.ipynb" download>Download the notebook ↓</a> <a class="button secondary" href="https://colab.research.google.com/github/saswataiith/saswataiith.github.io/blob/master/files/mesoscale/examples/notebooks/topology.ipynb">Open in Colab ↗</a></p><p><a href="/resources/python-notebooks/">All Python notebook lessons →</a></p></section><section class="section python-lesson">
+<p>I construct small masks with known topology before analyzing a simulated microstructure. A mask is a Boolean array: True means occupied. In 2D I use four edge-sharing neighbors. In 3D I use six face-sharing neighbors. Distances are measured in cells. A graph loop, a hole in a filled region and a closed boundary contour are different objects.</p>
+<p>I develop this calculation in small steps. I run a cell, inspect its result and test it before adding the next part. Run the cells in order in Jupyter. A code cell defines a part of the calculation or carries it out; defining a function does not run it.</p>
+<p>I permit free noncommercial teaching, learning and demonstrations with acknowledgment. Research and commercial use require my written permission. Earlier licensed releases retain their permissions. <a href="https://saswataiith.github.io/using-my-resources/">Read the code-use terms</a>.</p>
+<p>Copyright (c) 2026 Saswata Bhattacharyya.</p>
+<h2>1. Prepare the Python environment</h2>
+<p>I install the packages listed in the next cell once in the same environment as the notebook. In Jupyter or Colab, remove the comment marker from the installation line below if a package is missing. NumPy stores arrays and evaluates numerical operations. Matplotlib displays plots. Pillow reads and writes images. This installation does not change the model parameters.</p>
+<pre><code class="language-python"># %pip install numpy scikit-image matplotlib
+import numpy as np
+assert np.isfinite(np.array([0.0, 1.0])).all()
+print(&quot;NumPy is ready:&quot;, np.__version__)</code></pre>
+<pre class="cell-result">NumPy is ready: 2.1.3
+</pre>
+<h2>2. Choose the input values</h2>
+<p>I retain the default values from the original calculation. The output name locates the files written by this notebook.</p>
+<h2>3. Prepare the next part of the calculation</h2>
+<p>I define the following operations. These are the same operations as in the original source, written on separate lines so their order is clear. Inspect their values before running the next cell.</p>
+<pre><code class="language-python">from collections import deque
+import numpy as np
+from skimage.measure import label, euler_number, find_contours</code></pre>
+<h2>4. Separate seam joining from periodic winding</h2>
+<p>I keep a wrapped pixel address and a lifted, unwrapped position for each visited pixel. A loop displacement divided by the grid shape is a winding vector. Its independent directions determine winding rank. Four edge-sharing neighbors define this 2D graph. A seam crossing alone does not establish wrapping.</p>
+<details><summary>Read this complete operation (38 lines)</summary><pre><code class="language-python">def periodic_components(mask):
+    &quot;&quot;&quot;Four-neighbour components and independent periodic winding vectors.
+
+    The graph measures connectivity. Its many local cycles must NOT be
+    interpreted as holes of the filled pixel region.
+    &quot;&quot;&quot;
+    mask = np.asarray(mask, dtype=bool)
+    shape = np.array(mask.shape)
+    assert mask.ndim == 2 and min(shape) &gt;= 3
+    seen = np.zeros(mask.shape, dtype=bool)
+    lifts = np.zeros((*mask.shape, 2), dtype=np.int64)
+    result = []
+    for start in map(tuple, np.argwhere(mask)):
+        if seen[start]:
+            continue
+        seen[start] = True
+        queue = deque([start])
+        count, basis = (0, [])
+        while queue:
+            p = queue.popleft()
+            count += 1
+            for step in ((1, 0), (-1, 0), (0, 1), (0, -1)):
+                q = tuple((np.array(p) + step) % shape)
+                if not mask[q]:
+                    continue
+                proposed = lifts[p] + step
+                if not seen[q]:
+                    seen[q] = True
+                    lifts[q] = proposed
+                    queue.append(q)
+                else:
+                    difference = proposed - lifts[q]
+                    assert np.all(difference % shape == 0)
+                    w = difference // shape
+                    if np.any(w) and (not basis or (len(basis) == 1 and basis[0][0] * w[1] - basis[0][1] * w[0] != 0)):
+                        basis.append(tuple(map(int, w)))
+        result.append({&#x27;pixels&#x27;: count, &#x27;winding_rank&#x27;: len(basis), &#x27;basis&#x27;: basis})
+    return result</code></pre></details>
+<h2>5. Check the result before continuing</h2>
+<p>I check finite values, conservation or the known reference result as specified below. An assertion stops the notebook if the condition fails. Inspect the quantities and tolerance rather than suppressing a failure.</p>
+<pre><code class="language-python">seam = np.zeros((8, 8), bool)
+seam[[0, 7], 3:5] = True
+assert label(seam, connectivity=1).max() == 2
+assert periodic_components(seam)[0][&#x27;winding_rank&#x27;] == 0
+stripe = np.zeros((8, 8), bool)
+stripe[:, 3:5] = True
+assert periodic_components(stripe)[0][&#x27;winding_rank&#x27;] == 1
+staircase = np.zeros((8, 8), bool)</code></pre>
+<h2>6. Repeat the operation and inspect each case</h2>
+<p>I repeat the operation over the specified cases. Read the loop variable first, then follow what changes on each pass. The assertions check the stated numerical or topological condition.</p>
+<pre><code class="language-python">for i in range(8):
+    staircase[i, i] = staircase[(i + 1) % 8, i] = True</code></pre>
+<h2>7. Check the result before continuing</h2>
+<p>I check finite values, conservation or the known reference result as specified below. An assertion stops the notebook if the condition fails. Inspect the quantities and tolerance rather than suppressing a failure.</p>
+<pre><code class="language-python">assert periodic_components(staircase)[0][&#x27;winding_rank&#x27;] == 1
+full = np.ones((8, 8), bool)
+assert periodic_components(full)[0][&#x27;winding_rank&#x27;] == 2
+diagonal = np.eye(3, dtype=bool)
+assert label(diagonal, connectivity=1).max() == 3
+assert label(diagonal, connectivity=2).max() == 1
+disk = np.zeros((9, 9), bool)
+disk[2:7, 2:7] = True
+ring = disk.copy()</code></pre>
+<h2>8. Check the result before continuing</h2>
+<p>I check finite values, conservation or the known reference result as specified below. An assertion stops the notebook if the condition fails. Inspect the quantities and tolerance rather than suppressing a failure.</p>
+<pre><code class="language-python">ring[3:6, 3:6] = False
+assert euler_number(disk, connectivity=1) == 1
+assert euler_number(ring, connectivity=1) == 0
+contours = find_contours(ring.astype(float), 0.5, fully_connected=&#x27;low&#x27;)
+assert len(contours) == 2
+assert all((np.allclose(path[0], path[-1]) for path in contours))
+ball = np.zeros((11, 11, 11), bool)
+ball[2:9, 2:9, 2:9] = True
+shell = ball.copy()</code></pre>
+<h2>9. Check the result before continuing</h2>
+<p>I check finite values, conservation or the known reference result as specified below. An assertion stops the notebook if the condition fails. Inspect the quantities and tolerance rather than suppressing a failure.</p>
+<pre><code class="language-python">shell[3:8, 3:8, 3:8] = False
+tunnel = ball.copy()
+tunnel[4:7, 4:7, :] = False
+assert euler_number(ball, connectivity=1) == 1
+assert euler_number(shell, connectivity=1) == 2
+assert euler_number(tunnel, connectivity=1) == 0</code></pre>
+<h2>10. Repeat the operation and inspect each case</h2>
+<p>I repeat the operation over the specified cases. Read the loop variable first, then follow what changes on each pass. The assertions check the stated numerical or topological condition.</p>
+<pre><code class="language-python">for name, region in [(&#x27;seam island&#x27;, seam), (&#x27;stripe&#x27;, stripe), (&#x27;staircase&#x27;, staircase), (&#x27;full periodic grid&#x27;, full)]:
+    print(name, periodic_components(region))</code></pre>
+<pre class="cell-result">seam island [{&#x27;pixels&#x27;: 4, &#x27;winding_rank&#x27;: 0, &#x27;basis&#x27;: []}]
+stripe [{&#x27;pixels&#x27;: 16, &#x27;winding_rank&#x27;: 1, &#x27;basis&#x27;: [(-1, 0)]}]
+staircase [{&#x27;pixels&#x27;: 16, &#x27;winding_rank&#x27;: 1, &#x27;basis&#x27;: [(-1, -1)]}]
+full periodic grid [{&#x27;pixels&#x27;: 64, &#x27;winding_rank&#x27;: 2, &#x27;basis&#x27;: [(-1, 0), (0, -1)]}]
+</pre>
+<h2>11. Prepare the next part of the calculation</h2>
+<p>I define the following operations. These are the same operations as in the original source, written on separate lines so their order is clear. Inspect their values before running the next cell.</p>
+<pre><code class="language-python">print(&#x27;Bounded 2D Euler: disk=1, annulus=0; annulus boundary contours=2&#x27;)
+print(&#x27;Bounded 3D Euler: ball=1, shell=2, solid with one tunnel=0&#x27;)
+print(&#x27;All worked examples passed. Ordinary skimage calls above are NOT periodic.&#x27;)</code></pre>
+<pre class="cell-result">Bounded 2D Euler: disk=1, annulus=0; annulus boundary contours=2
+Bounded 3D Euler: ball=1, shell=2, solid with one tunnel=0
+All worked examples passed. Ordinary skimage calls above are NOT periodic.
+</pre>
+<h2>12. Review and extend the calculation</h2>
+<p>I first restart the kernel and run all the required cells. Then I change one input, predict its effect and compare the result with that prediction. A successful check establishes the tested property; it does not establish convergence or equilibrium. I retain the <a href="https://saswataiith.github.io/files/mesoscale/examples/topology_connectivity.py">complete script</a> for command-line use. The notebook embeds the calculation directly and does not need that script to run.</p>
+<p><a href="/files/mesoscale/examples/notebooks/notebook-check-results.json">Read the notebook execution checks →</a> · <a href="/resources/step-by-step-codes/">More Python, Julia and C lessons →</a></p></section>

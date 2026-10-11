@@ -113,3 +113,21 @@ The Materials Data Explorer link now appears only in the personal notebook story
 Portrait-minimum refinement: individual permutation of all 65,536 pixels, 241 simulation frames at 8 fps plus four-second final hold. CH mobility 1e-5, AC mobility .03; nonuniform times from 0 to 3e7 are explicitly shown. The chosen CH rate M*k² is below L for all nonzero resolved modes. This is an illustrative parameter choice, not a universal claim that CH is slower. Energy monotonicity and CH mean conservation checked.
 
 Bicontinuity table: explicitly uses f(c)=A c²(1-c)² with A=1 (unchanged physics). Shows ideal bulk lever-rule fractions separately from measured threshold-region areas. Diffuse interfaces and finite-time bulk compositions explain differences. Table has readable headers, cell spacing, caption, and keyboard-accessible horizontal scrolling.
+
+
+## Python notebook lessons
+
+I keep the original simulation scripts unchanged and make explained notebooks the main teaching downloads. The collection is at `/resources/python-notebooks/`; the portrait lesson is at `/resources/python/portrait-minimum/`. Each notebook contains its code directly and runs without a companion `.py` file. Small exact-mask checks precede optional full-volume runs. Native VPython scenes require interactive local Jupyter.
+
+After changing a source or explanation, use the same Python environment for these commands:
+
+```text
+python tools/build_python_notebooks.py
+python tools/check_python_notebooks.py
+python tools/publish_python_notebook_previews.py
+python files/mesoscale/examples/stepwise/build_lessons.py
+```
+
+The first command recreates the 17 notebook sources. The second executes their required cells and records the scope of each check. The third updates the website pages and figures from those executed cells. The fourth updates the existing short lessons and their download archive. Review the outputs before publishing. The optional original full Monte Carlo calculations, 256³ simulation, full-volume morphology and VPython event loops are not run by the default checker. Do not describe them as newly verified. Install the dependencies listed in each notebook; the checker also requires `nbformat` and `nbclient`.
+
+The original 2D composition field used by the turtle-export lesson is available at `assets/examples/bicontinuity/composition-0.5.npy`. Its threshold connectivity agrees with the previously published report. Notebook image downloads are public files from this website; replace their paths to use personal images.
