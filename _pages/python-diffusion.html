@@ -10,14 +10,13 @@ description: "I develop fourier diffusion: reproduce the full example in explain
 <section class="page-heading"><span class="eyebrow">PYTHON · STEP-BY-STEP LESSON</span><h1>Fourier diffusion: reproduce the full example</h1><p>I write a small part, check it, and then add the next part.</p><p><a class="button primary" href="/files/mesoscale/examples/notebooks/diffusion.ipynb" download>Download the notebook ↓</a> <a class="button secondary" href="https://colab.research.google.com/github/saswataiith/saswataiith.github.io/blob/master/files/mesoscale/examples/notebooks/diffusion.ipynb">Open in Colab ↗</a></p><p><a href="/resources/python-notebooks/">All Python notebook lessons →</a></p></section><section class="section python-lesson">
 <!-- LESSON-APP-START -->
 <link rel="stylesheet" href="/assets/css/lesson-app.css?v=1">
-<section class="lesson-app" id="code-walkthrough" data-lesson-src="/assets/lesson-apps/python-diffusion.json?v=7d1df8b316" aria-label="Interactive code lesson">
+<section class="lesson-app" id="code-walkthrough" data-lesson-src="/assets/lesson-apps/python-diffusion.json?v=b1d707e980" aria-label="Interactive code lesson">
 <h2>The calculation, one step at a time</h2>
 <p>I show the purpose of each notebook cell beside its code and recorded result. The controls move through those results; they do not execute Python in the browser. The notebook remains available for running or changing the calculation.</p>
 <p class="la-loading" role="status">Loading the lesson…</p>
 </section>
 <script src="/assets/js/lesson-app.js?v=1" defer></script>
 <!-- LESSON-APP-END -->
-
 
 <p>I calculate diffusion of two cosine modes on a periodic line. c is a dimensionless concentration field, x is position on a dimensionless line of length 2π, t is dimensionless time, and D=1 is the dimensionless diffusivity. The mode with wave number 4 decays sixteen times faster than the mode with wave number 1.</p>
 <p>I develop this calculation in small steps. I run a cell, inspect its result and test it before adding the next part. Run the cells in order in Jupyter. A code cell defines a part of the calculation or carries it out; defining a function does not run it.</p>
@@ -40,7 +39,7 @@ print(&quot;NumPy is ready:&quot;, np.__version__)</code></pre>
 from pathlib import Path
 import numpy as np</code></pre>
 <h2>Step 4: Set up the Fourier grid</h2>
-<p>I calculate wave numbers consistent with the grid spacing and periodic domain. k2 denotes the squared magnitude of a wave vector. The denominator contains the term treated implicitly in the original update. The zero Fourier mode represents the spatial mean.</p>
+<p>I construct Fourier wave numbers from the grid spacing and domain size. A Laplacian multiplies each Fourier mode by minus its squared wave number. The zero Fourier mode represents the spatial mean.</p>
 <pre><code class="language-python">out = Path(output)
 out.mkdir(parents=True, exist_ok=True)
 n = 128

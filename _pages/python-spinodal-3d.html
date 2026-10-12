@@ -18,7 +18,6 @@ description: "I develop the 256\u00b3 spinodal field, connectivity and display i
 <script src="/assets/js/lesson-app.js?v=1" defer></script>
 <!-- LESSON-APP-END -->
 
-
 <p><strong>The full 256³ calculation is optional.</strong> Small exact-mask checks run by default. Set <code>run_full_calculation=True</code> only when enough memory and time are available. I have not rerun the optional full-volume calculation for this notebook conversion.</p>
 <p>I generate the original 256³ dimensionless Cahn–Hilliard example once. c is composition; A=M=kappa=1, dx=0.25, dt=0.5, stabilization=2 and the run has 400 updates. The seed is 20261005. Connectivity uses the saved float32 field at full resolution. Display simplification does not change the measured field. The full calculation needs several gigabytes of memory.</p>
 <p>I develop this calculation in small steps. I run a cell, inspect its result and test it before adding the next part. Run the cells in order in Jupyter. A code cell defines a part of the calculation or carries it out; defining a function does not run it.</p>

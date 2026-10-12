@@ -10,14 +10,13 @@ description: "I develop chemical and elastic spinodal decomposition in explained
 <section class="page-heading"><span class="eyebrow">PYTHON · STEP-BY-STEP LESSON</span><h1>Chemical and elastic spinodal decomposition</h1><p>I write a small part, check it, and then add the next part.</p><p><a class="button primary" href="/files/mesoscale/examples/notebooks/phase-field.ipynb" download>Download the notebook ↓</a> <a class="button secondary" href="https://colab.research.google.com/github/saswataiith/saswataiith.github.io/blob/master/files/mesoscale/examples/notebooks/phase-field.ipynb">Open in Colab ↗</a></p><p><a href="/resources/python-notebooks/">All Python notebook lessons →</a></p></section><section class="section python-lesson">
 <!-- LESSON-APP-START -->
 <link rel="stylesheet" href="/assets/css/lesson-app.css?v=1">
-<section class="lesson-app" id="code-walkthrough" data-lesson-src="/assets/lesson-apps/python-phase-field.json?v=e9df59e70b" aria-label="Interactive code lesson">
+<section class="lesson-app" id="code-walkthrough" data-lesson-src="/assets/lesson-apps/python-phase-field.json?v=489d87e9a0" aria-label="Interactive code lesson">
 <h2>The calculation, one step at a time</h2>
 <p>I show the purpose of each notebook cell beside its code and recorded result. The controls move through those results; they do not execute Python in the browser. The notebook remains available for running or changing the calculation.</p>
 <p class="la-loading" role="status">Loading the lesson…</p>
 </section>
 <script src="/assets/js/lesson-app.js?v=1" defer></script>
 <!-- LESSON-APP-END -->
-
 
 <p>I evolve a conserved dimensionless composition c on a periodic grid. The bulk energy is c²(1−c)². The chemical potential contains its derivative, a gradient contribution and, in elastic mode, a homogeneous elastic contribution. n is the number of points per direction, dt is the time step, and steps is the number of updates. All model quantities are dimensionless.</p>
 <p>I develop this calculation in small steps. I run a cell, inspect its result and test it before adding the next part. Run the cells in order in Jupyter. A code cell defines a part of the calculation or carries it out; defining a function does not run it.</p>
@@ -62,7 +61,7 @@ import numpy as np</code></pre>
     b = 2 * (c11 + c12) * eigenstrain ** 2 - stress ** 2 * (q22 * nx * nx - 2 * q12 * nx * ny + q11 * ny * ny) / det
     return np.where(k2 == 0, 0.0, b)</code></pre>
 <h2>Step 5: Set up the Fourier grid</h2>
-<p>I calculate wave numbers consistent with the grid spacing and periodic domain. k2 denotes the squared magnitude of a wave vector. The denominator contains the term treated implicitly in the original update. The zero Fourier mode represents the spatial mean.</p>
+<p>I construct Fourier wave numbers from the grid spacing and domain size. A Laplacian multiplies each Fourier mode by minus its squared wave number. The zero Fourier mode represents the spatial mean.</p>
 <pre><code class="language-python">out = Path(output)
 out.mkdir(parents=True, exist_ok=True)
 if n is None:
@@ -75,7 +74,7 @@ k2 = kx * kx + ky * ky
 b = kernel(kx, ky) if mode == &#x27;elastic&#x27; else np.zeros_like(k2)
 partner = -np.arange(n) % n</code></pre>
 <h2>Step 6: Set up the Fourier grid</h2>
-<p>I calculate wave numbers consistent with the grid spacing and periodic domain. k2 denotes the squared magnitude of a wave vector. The denominator contains the term treated implicitly in the original update. The zero Fourier mode represents the spatial mean.</p>
+<p>I construct Fourier wave numbers from the grid spacing and domain size. A Laplacian multiplies each Fourier mode by minus its squared wave number. The zero Fourier mode represents the spatial mean.</p>
 <pre><code class="language-python">b = 0.5 * (b + b[np.ix_(partner, partner)])
 i, j = np.meshgrid(np.arange(n), np.arange(n), indexing=&#x27;ij&#x27;)
 noise = np.sin((i + 1) * 12.9898 + (j + 1) * 78.233) * 43758.5453

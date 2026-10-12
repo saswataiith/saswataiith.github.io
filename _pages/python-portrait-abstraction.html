@@ -10,14 +10,13 @@ description: "I develop reproduce the color portrait and domain movie in explain
 <section class="page-heading"><span class="eyebrow">PYTHON · STEP-BY-STEP LESSON</span><h1>Reproduce the color portrait and domain movie</h1><p>I write a small part, check it, and then add the next part.</p><p><a class="button primary" href="/files/mesoscale/examples/notebooks/portrait-abstraction.ipynb" download>Download the notebook ↓</a> <a class="button secondary" href="https://colab.research.google.com/github/saswataiith/saswataiith.github.io/blob/master/files/mesoscale/examples/notebooks/portrait-abstraction.ipynb">Open in Colab ↗</a></p><p><a href="/resources/python-notebooks/">All Python notebook lessons →</a></p></section><section class="section python-lesson">
 <!-- LESSON-APP-START -->
 <link rel="stylesheet" href="/assets/css/lesson-app.css?v=1">
-<section class="lesson-app" id="code-walkthrough" data-lesson-src="/assets/lesson-apps/python-portrait-abstraction.json?v=8e6aead757" aria-label="Interactive code lesson">
+<section class="lesson-app" id="code-walkthrough" data-lesson-src="/assets/lesson-apps/python-portrait-abstraction.json?v=098e41dd12" aria-label="Interactive code lesson">
 <h2>The calculation, one step at a time</h2>
 <p>I show the purpose of each notebook cell beside its code and recorded result. The controls move through those results; they do not execute Python in the browser. The notebook remains available for running or changing the calculation.</p>
 <p class="la-loading" role="status">Loading the lesson…</p>
 </section>
 <script src="/assets/js/lesson-app.js?v=1" defer></script>
 <!-- LESSON-APP-END -->
-
 
 <p>I keep both panels under conserved Cahn–Hilliard dynamics and change the energy. r is the reference portrait and u the evolving RGB fields. The portrait energy is quadratic; the domain energy contains a double well and a gradient coefficient kappa=0.4. dt=0.1 and stabilization S=2. Channels are independent and all quantities are dimensionless. This reproduces the full movie source; the shorter introductory notebook remains available separately.</p>
 <p>I develop this calculation in small steps. I run a cell, inspect its result and test it before adding the next part. Run the cells in order in Jupyter. A code cell defines a part of the calculation or carries it out; defining a function does not run it.</p>
@@ -76,7 +75,7 @@ u = u0.copy()
 mean0 = u.mean((0, 1))
 axes = (0, 1)</code></pre>
 <h2>Step 6: Set up the Fourier grid</h2>
-<p>I calculate wave numbers consistent with the grid spacing and periodic domain. k2 denotes the squared magnitude of a wave vector. The denominator contains the term treated implicitly in the original update. The zero Fourier mode represents the spatial mean.</p>
+<p>I construct Fourier wave numbers from the grid spacing and domain size. A Laplacian multiplies each Fourier mode by minus its squared wave number. The zero Fourier mode represents the spatial mean.</p>
 <pre><code class="language-python">kx = 2 * np.pi * np.fft.fftfreq(256)
 ky = 2 * np.pi * np.fft.fftfreq(312)
 k2 = (ky[:, None] ** 2 + kx[None, :] ** 2)[..., None]

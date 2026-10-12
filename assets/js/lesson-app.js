@@ -69,6 +69,7 @@
           figure(lag.product,-.04,.04,true,'Cellwise product. Blue −0.04; white 0; red +0.04.'),
           figure(demo.correlation,-1,1,true,'Directional correlation map. Blue −1; white 0; red +1. Rows are x displacement; columns are y displacement.'));
         answer.textContent=`Mean product (covariance) = ${lag.covariance.toPrecision(5)}. Variance = ${demo.variance.toPrecision(5)}. Normalized correlation = ${lag.correlation.toPrecision(5)}. All three are dimensionless.`;
+        if(Math.abs(lag.correlation)<1e-12)answer.textContent += " The cosine test predicts zero here; the tiny remaining value is floating-point roundoff.";
         chartHost.replaceChildren(correlationChart(demo,shift,index>=5));
       }
       input.addEventListener('input',update);update();view.append(fields,answer,chartHost);
