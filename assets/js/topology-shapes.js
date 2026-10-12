@@ -3,7 +3,19 @@ const root=document.getElementById('shape-playground');
 const dimension=root.querySelector('#shape-dimension'),choice=root.querySelector('#shape-choice');
 const size=root.querySelector('#shape-size'),cut=root.querySelector('#shape-cut'),boundary=root.querySelector('#shape-boundary');
 const plot=root.querySelector('#shape-3d'),diagram=root.querySelector('#shape-2d');
-const colors=['#c85838','#247a93'];let plotted=false;
+const colors=['#c85838','#247a93'];let plotted=false;let mathRevision=0;
+async function renderMath(three,shape) {
+  const revision=++mathRevision;
+  if(!window.MathJax?.startup?.promise) return;
+  await MathJax.startup.promise;
+  const labels=[...root.querySelectorAll('[data-shape-math]')];
+  const nodes=await Promise.all(labels.map(label=>MathJax.tex2chtmlPromise(label.dataset.shapeMath,{display:false})));
+  const equation=three?`\\chi=\\beta_0-\\beta_1+\\beta_2=${shape.betti[0]}-${shape.betti[1]}+${shape.betti[2]}=${euler(shape.betti)}`:`\\chi=\\beta_0-\\beta_1=${shape.betti[0]}-${shape.betti[1]}=${euler(shape.betti)}`;
+  const equationNode=await MathJax.tex2chtmlPromise(equation,{display:false});
+  if(revision!==mathRevision) return;
+  labels.forEach((label,index)=>label.replaceChildren(nodes[index]));
+  root.querySelector('#shape-equation').replaceChildren(document.createTextNode(three?'Solid: ':'Region: '),equationNode);
+}
 function options() {
   choice.replaceChildren(...Object.entries(shapes).filter(([,shape])=>shape.dimension===Number(dimension.value)).map(([key,shape])=>new Option(shape.name,key)));
   choice.value=dimension.value==='2'?'annulus':'torus';draw();
@@ -29,13 +41,14 @@ async function draw() {
   size.disabled=!['annulus','holes','torus','shell'].includes(key);
   root.querySelector('#shape-size-value').textContent=`${size.value}% of the adjustment range`;
   root.querySelector('#shape-note').textContent=shape.note;
-  const names=three?['Components β₀','Tunnels β₁','Cavities β₂']:['Components β₀','Holes β₁'];
-  const cards=shape.betti.map((n,index)=>`<div><span>${names[index]}</span><strong>${n}</strong></div>`);
-  cards.push(`<div><span>Filled ${three?'solid':'region'} χ</span><strong>${euler(shape.betti)}</strong></div>`);
-  if(three) cards.push(`<div><span>Boundary surfaces</span><strong>${shape.surfaceComponents}</strong></div>`,`<div><span>Boundary surface χ</span><strong>${shape.surfaceEuler}</strong></div>`);
+  const names=three?['Components','Tunnels','Cavities']:['Components','Holes'];
+  const cards=shape.betti.map((n,index)=>`<div><span>${names[index]} <span class="shape-math" data-shape-math="\\beta_${index}">beta ${index}</span></span><strong>${n}</strong></div>`);
+  cards.push(`<div><span>Filled ${three?'solid':'region'} <span class="shape-math" data-shape-math="\\chi">chi</span></span><strong>${euler(shape.betti)}</strong></div>`);
+  if(three) cards.push(`<div><span>Boundary surfaces</span><strong>${shape.surfaceComponents}</strong></div>`,`<div><span>Boundary surface <span class="shape-math" data-shape-math="\\chi">chi</span></span><strong>${shape.surfaceEuler}</strong></div>`);
   else cards.push(`<div><span>Boundary contours</span><strong>${shape.contours}</strong></div>`);
   root.querySelector('#shape-counts').innerHTML=cards.join('');
-  root.querySelector('#shape-equation').textContent=three?`Solid: χ = β₀ − β₁ + β₂ = ${shape.betti[0]} − ${shape.betti[1]} + ${shape.betti[2]} = ${euler(shape.betti)}`:`Region: χ = β₀ − β₁ = ${shape.betti[0]} − ${shape.betti[1]} = ${euler(shape.betti)}`;
+  root.querySelector('#shape-equation').textContent=three?'Solid: Euler characteristic':'Region: Euler characteristic';
+  renderMath(three,shape);
   root.querySelector('#shape-view-note').textContent=three?(cut.checked?'Cutaway view: the front half of each boundary surface is hidden to reveal the interior. Counts refer to the complete, uncut solid.':'The surfaces bound the filled solid. Drag to rotate and scroll or pinch to zoom.'):(boundary.checked?'Only the boundary contours are drawn. Counts still refer to the filled region.':'Colored areas are filled regions. White openings inside them are holes.');
   if(key==='shell') root.querySelector('#shape-view-note').textContent+=' Terracotta marks the outer boundary; blue marks the inner boundary around the cavity.';
   if(!three) {draw2D(key,fraction);return;}
