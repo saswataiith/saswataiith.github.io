@@ -9,14 +9,15 @@ description: "I develop three-dimensional labeling, winding and morphology in ex
 <style>.python-lesson{max-width:1050px}.python-lesson pre{overflow-x:auto;background:#eef3f0;border:1px solid #d4dfd9;padding:20px;font:14px/1.65 ui-monospace,monospace}.python-lesson h2{margin-top:40px}.python-lesson p,.python-lesson li{line-height:1.8}.python-lesson details{margin:20px 0;padding:18px;background:#f1f5f2}.python-lesson summary{cursor:pointer;font-weight:600}.python-lesson img{max-width:100%;height:auto}.cell-result{padding:12px;background:#f7f8f6}.python-lesson .formula-box{overflow-x:auto}</style>
 <section class="page-heading"><span class="eyebrow">PYTHON · STEP-BY-STEP LESSON</span><h1>Three-dimensional labeling, winding and morphology</h1><p>I write a small part, check it, and then add the next part.</p><p><a class="button primary" href="/files/mesoscale/examples/notebooks/morphology-3d.ipynb" download>Download the notebook ↓</a> <a class="button secondary" href="https://colab.research.google.com/github/saswataiith/saswataiith.github.io/blob/master/files/mesoscale/examples/notebooks/morphology-3d.ipynb">Open in Colab ↗</a></p><p><a href="/resources/python-notebooks/">All Python notebook lessons →</a></p></section><section class="section python-lesson">
 <!-- LESSON-APP-START -->
-<link rel="stylesheet" href="/assets/css/lesson-app.css?v=1">
+<link rel="stylesheet" href="/assets/css/lesson-app.css?v=f14c968056">
 <section class="lesson-app" id="code-walkthrough" data-lesson-src="/assets/lesson-apps/python-morphology-3d.json?v=39fc2535e9" aria-label="Interactive code lesson">
 <h2>The calculation, one step at a time</h2>
 <p>I show the purpose of each notebook cell beside its code and recorded result. The controls move through those results; they do not execute Python in the browser. The notebook remains available for running or changing the calculation.</p>
 <p class="la-loading" role="status">Loading the lesson…</p>
 </section>
-<script src="/assets/js/lesson-app.js?v=1" defer></script>
+<script src="/assets/js/lesson-app.js?v=dfba9b1d11" defer></script>
 <!-- LESSON-APP-END -->
+
 
 <p><strong>The full 256³ calculation is optional.</strong> Small exact-mask checks run by default. Set <code>run_full_calculation=True</code> only when enough memory and time are available. I have not rerun the optional full-volume calculation for this notebook conversion.</p>
 <p>I measure a saved field without evolving it. c is a dimensionless composition, the phase threshold is 0.5 and dx=0.25 is dimensionless voxel spacing. Six face-sharing neighbors define phase connectivity. Surface area has units of dx² and integrated mean curvature units of dx within this dimensionless model. A simplified display mesh is not used for these measurements.</p>

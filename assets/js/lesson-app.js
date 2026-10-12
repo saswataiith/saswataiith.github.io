@@ -92,7 +92,7 @@
       data.frames.forEach((frame,index)=>{const option=element('option','',frame.title);option.value=index;select.append(option);});
       for(const button of [previous,next,play,reset])button.type='button';
       controls.append(previous,next,play,reset,select,progress);
-      const columns=element('div','la-columns'),result=element('div','la-card'),codeCard=element('div','la-card');
+      const columns=element('div','la-columns'),result=element('div','la-card'),codeCard=element('div','la-card la-code-card');
       columns.append(result,codeCard);panel.append(controls,columns);
       let index=0,timer;
       function pause(){clearInterval(timer);timer=undefined;play.textContent='Play';}
@@ -109,7 +109,7 @@
         if(!frame.executed)result.append(element('p','la-result-note','This cell has no recorded execution result. Its code remains available in the notebook; I do not claim a new result here.'));
         else if(!frame.output&&!frame.images.length)result.append(element('p','la-result-note','This cell was executed without printed output or a figure. Its definitions or values are used by subsequent cells.'));
         frame.images.forEach(path=>{const image=element('img');image.src=path;image.alt='Recorded notebook figure for '+frame.title;result.append(image);});
-        codeCard.replaceChildren(element('h3','','Active Python code'),element('p','la-result-note',`Notebook cell ${frame.cell}, numbered from 0. This is the unchanged code used for this step.`));
+        codeCard.replaceChildren(element('h3','','Active Python code'),element('p','la-result-note',`Notebook cell ${frame.cell}, numbered from 0. This is the unchanged code used for this step. Long lines wrap visually.`));
         const functions=[...frame.code.matchAll(/^def\s+([\w]+)\(/gm)].map(match=>match[1]);
         if(functions.length)codeCard.append(element('p','la-functions','Functions defined here: '+functions.join(', ')));
         const pre=element('pre','la-code'),code=element('code','',frame.code);pre.append(code);codeCard.append(pre);

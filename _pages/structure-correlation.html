@@ -6,13 +6,13 @@ nav_active: resources
 description: "My structure-function and pair-correlation methods, developed in small tested steps with a checked NumPy notebook."
 ---
 <style>.code-lesson{max-width:1100px}.code-lesson h2{margin:44px 0 18px}.code-lesson p{margin:18px 0}.code-lesson pre{white-space:pre;overflow-x:auto;background:#edf2ef;border:1px solid #d4dfd9;padding:20px;font:14px/1.7 ui-monospace,monospace}.code-lesson details{margin:20px 0;padding:18px;background:#f1f5f2}.code-lesson summary{cursor:pointer;font-weight:600}.code-lesson a{text-decoration:underline;text-underline-offset:4px}.code-lesson li{margin:12px 0;line-height:1.7}</style><section class="page-heading"><span class="eyebrow">MICROSTRUCTURE ANALYSIS · STEP-BY-STEP CODE</span><h1>Structure function<br><em>and pair correlation.</em></h1><p>I developed these codes to measure spatial patterns and characteristic lengths in simulated microstructures. Here I start with a known field, calculate its spectrum and correlation, then test each result before continuing.</p></section><section class="section code-lesson"><p><a href="/files/mesoscale/examples/stepwise/structure-correlation-python.ipynb" download>Python notebook ↓</a> · <a href="/files/mesoscale/examples/stepwise/structure_correlation.py" download>Complete worked Python code ↓</a></p><p>I use NumPy here to present my calculation in small, runnable steps. To analyze a simulated field, first work through the <a href="/resources/step-by-step/ternary-spinodal/">ternary spinodal notebook</a>, then read one composition array from its saved ternary-fields.npz file.</p><!-- LESSON-APP-START -->
-<link rel="stylesheet" href="/assets/css/lesson-app.css?v=1">
+<link rel="stylesheet" href="/assets/css/lesson-app.css?v=f14c968056">
 <section class="lesson-app" id="code-walkthrough" data-lesson-src="/assets/lesson-apps/short-structure-correlation.json?v=c58b08e650" aria-label="Interactive code lesson">
 <h2>The calculation, one step at a time</h2>
 <p>I show the purpose of each notebook cell beside its code and recorded result. The controls move through those results; they do not execute Python in the browser. The notebook remains available for running or changing the calculation.</p>
 <p class="la-loading" role="status">Loading the lesson…</p>
 </section>
-<script src="/assets/js/lesson-app.js?v=1" defer></script>
+<script src="/assets/js/lesson-app.js?v=dfba9b1d11" defer></script>
 <!-- LESSON-APP-END -->
 <!-- CODE-STEPS-START --><h2>Step 1: A field with known correlation</h2>
 <p>I choose a cosine composition wave on a periodic 16 by 16 grid. The composition c is dimensionless. Grid spacings dx and dy are one dimensionless length unit. Rows index x and columns index y, following the saved simulation arrays. The wave varies in x and is constant in y, so I can check the full directional result before averaging over directions.</p>

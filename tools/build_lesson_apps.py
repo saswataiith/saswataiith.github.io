@@ -69,16 +69,18 @@ def export(notebook_path, name):
     return hashlib.sha256(path.read_bytes()).hexdigest()[:10]
 
 def install(page, name, revision):
+    css_revision=hashlib.sha256((ROOT/"assets/css/lesson-app.css").read_bytes()).hexdigest()[:10]
+    js_revision=hashlib.sha256((ROOT/"assets/js/lesson-app.js").read_bytes()).hexdigest()[:10]
     text=page.read_text()
     text=re.sub(r'<!-- LESSON-APP-START -->[\s\S]*?<!-- LESSON-APP-END -->\n?', '', text)
     app=f'''<!-- LESSON-APP-START -->
-<link rel="stylesheet" href="/assets/css/lesson-app.css?v=1">
+<link rel="stylesheet" href="/assets/css/lesson-app.css?v={css_revision}">
 <section class="lesson-app" id="code-walkthrough" data-lesson-src="/assets/lesson-apps/{name}.json?v={revision}" aria-label="Interactive code lesson">
 <h2>The calculation, one step at a time</h2>
 <p>I show the purpose of each notebook cell beside its code and recorded result. The controls move through those results; they do not execute Python in the browser. The notebook remains available for running or changing the calculation.</p>
 <p class="la-loading" role="status">Loading the lesson…</p>
 </section>
-<script src="/assets/js/lesson-app.js?v=1" defer></script>
+<script src="/assets/js/lesson-app.js?v={js_revision}" defer></script>
 <!-- LESSON-APP-END -->
 '''
     if '<!-- CODE-STEPS-START -->' in text:

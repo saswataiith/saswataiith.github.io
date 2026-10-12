@@ -6,13 +6,13 @@ nav_active: resources
 description: "Ising and Potts updates, written and checked one part at a time in Python and Julia."
 ---
 <style>.code-lesson{max-width:1100px}.code-lesson h2{margin:44px 0 18px}.code-lesson p{margin:18px 0}.code-lesson pre{white-space:pre;overflow-x:auto;background:#edf2ef;border:1px solid #d4dfd9;padding:20px;font:14px/1.7 ui-monospace,monospace}.code-lesson details{margin:20px 0;padding:18px;background:#f1f5f2}.code-lesson summary{cursor:pointer;font-weight:600}.code-lesson a{text-decoration:underline;text-underline-offset:4px}.code-lesson li{margin:12px 0;line-height:1.7}</style><section class="page-heading"><span class="eyebrow">STEP-BY-STEP TEACHING CODE</span><h1>Ising and Potts updates.</h1><p>I build the calculation in small parts and test each part before continuing. The Python and Julia notebooks follow the same sequence.</p></section><section class="section code-lesson"><p>I build one local Monte Carlo update before repeating it. The square lattice is periodic. In the Ising model a spin has value -1 or +1; the dimensionless interaction strength is one and temperature is measured in units of the interaction energy divided by Boltzmann’s constant. For Potts grain growth the integers identify grains, not compositions. Neighbor-copy proposals describe the supplied grain-growth kinetics and should not be presented as unbiased equilibrium sampling.</p><p><a href="/files/mesoscale/examples/stepwise/monte-carlo-python.ipynb" download>Python notebook ↓</a> · <a href="/files/mesoscale/examples/stepwise/monte-carlo-julia.ipynb" download>Julia notebook ↓</a> · <a href="/files/mesoscale/examples/step-by-step-teaching-codes.zip" download>Complete collection ↓</a></p><p>Run notebook cells in order. Extract the complete collection without changing its folder structure: the phase-field lesson imports the original kernel from its parent folder. Use Python with NumPy, Matplotlib and Jupyter, or Julia with IJulia. Julia Fourier examples also require FFTW. The download includes installation commands and the actual check report.</p><!-- LESSON-APP-START -->
-<link rel="stylesheet" href="/assets/css/lesson-app.css?v=1">
+<link rel="stylesheet" href="/assets/css/lesson-app.css?v=f14c968056">
 <section class="lesson-app" id="code-walkthrough" data-lesson-src="/assets/lesson-apps/short-monte-carlo.json?v=ee04119457" aria-label="Interactive code lesson">
 <h2>The calculation, one step at a time</h2>
 <p>I show the purpose of each notebook cell beside its code and recorded result. The controls move through those results; they do not execute Python in the browser. The notebook remains available for running or changing the calculation.</p>
 <p class="la-loading" role="status">Loading the lesson…</p>
 </section>
-<script src="/assets/js/lesson-app.js?v=1" defer></script>
+<script src="/assets/js/lesson-app.js?v=dfba9b1d11" defer></script>
 <!-- LESSON-APP-END -->
 <!-- CODE-STEPS-START --><h2>Step 1: Inspect periodic neighbors</h2>
 <p>I first test the boundary indexing on a grid of known values. Opposite edges are adjacent. Rows and columns identify sites; they are dimensionless indices.</p>
