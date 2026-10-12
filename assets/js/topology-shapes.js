@@ -4,17 +4,21 @@ const dimension=root.querySelector('#shape-dimension'),choice=root.querySelector
 const size=root.querySelector('#shape-size'),cut=root.querySelector('#shape-cut'),boundary=root.querySelector('#shape-boundary'),curvature=root.querySelector('#shape-curvature');
 const plot=root.querySelector('#shape-3d'),diagram=root.querySelector('#shape-2d');
 const colors=['#c85838','#247a93'];let plotted=false;let mathRevision=0;
-async function renderMath(three,shape) {
+let mathQueue=Promise.resolve();
+function renderMath(three,shape) {
   const revision=++mathRevision;
   if(!window.MathJax?.startup?.promise) return;
-  await MathJax.startup.promise;
-  const labels=[...root.querySelectorAll('[data-shape-math]')];
-  const nodes=await Promise.all(labels.map(label=>MathJax.tex2chtmlPromise(label.dataset.shapeMath,{display:false})));
   const equation=three?`\\chi=\\beta_0-\\beta_1+\\beta_2=${shape.betti[0]}-${shape.betti[1]}+${shape.betti[2]}=${euler(shape.betti)}`:`\\chi=\\beta_0-\\beta_1=${shape.betti[0]}-${shape.betti[1]}=${euler(shape.betti)}`;
-  const equationNode=await MathJax.tex2chtmlPromise(equation,{display:false});
-  if(revision!==mathRevision) return;
-  labels.forEach((label,index)=>label.replaceChildren(nodes[index]));
-  root.querySelector('#shape-equation').replaceChildren(document.createTextNode(three?'Solid: ':'Region: '),equationNode);
+  // I typeset the inserted formulas so MathJax also installs their symbol styles.
+  mathQueue=mathQueue.then(async()=>{
+    await MathJax.startup.promise;
+    if(revision!==mathRevision) return;
+    const targets=[root.querySelector('#shape-counts'),root.querySelector('#shape-curvature-summary'),root.querySelector('#shape-equation')];
+    MathJax.typesetClear(targets);
+    for(const label of root.querySelectorAll('[data-shape-math]')) label.textContent='\\('+label.dataset.shapeMath+'\\)';
+    root.querySelector('#shape-equation').textContent=(three?'Solid: ':'Region: ')+'\\('+equation+'\\)';
+    await MathJax.typesetPromise(targets);
+  });
 }
 function options() {
   choice.replaceChildren(...Object.entries(shapes).filter(([,shape])=>shape.dimension===Number(dimension.value)).map(([key,shape])=>new Option(shape.name,key)));
