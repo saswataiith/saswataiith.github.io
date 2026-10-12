@@ -64,3 +64,36 @@ export function torusCurvatureIntegral(tubeRadius,majorRadius=.8,samples=1024) {
   }
   return {positive,negative,total:positive+negative};
 }
+
+// I draw two generating loops on the torus boundary.
+export function torusLoops(majorRadius=.8,tubeRadius=.3,samples=128) {
+  const aroundOpening=[],aroundTube=[];
+  for(let n=0;n<=samples;n++) {
+    const angle=2*Math.PI*n/samples;
+    aroundOpening.push([majorRadius*Math.cos(angle),majorRadius*Math.sin(angle),tubeRadius]);
+    aroundTube.push([0,-majorRadius-tubeRadius*Math.cos(angle),tubeRadius*Math.sin(angle)]);
+  }
+  return {aroundOpening,aroundTube};
+}
+export function tubeFillingDisk(majorRadius=.8,tubeRadius=.3,sectors=64) {
+  const vertices=[[0,-majorRadius,0]],faces=[];
+  for(let n=0;n<sectors;n++) {
+    const angle=2*Math.PI*n/sectors;
+    vertices.push([0,-majorRadius-tubeRadius*Math.cos(angle),tubeRadius*Math.sin(angle)]);
+  }
+  for(let n=0;n<sectors;n++) faces.push([0,n+1,(n+1)%sectors+1]);
+  return {vertices,faces};
+}
+export function openedSurface(flat=false,rows=24,sectors=64) {
+  const vertices=[],faces=[],width=flat?sectors+1:sectors;
+  for(let row=0;row<=rows;row++) for(let col=0;col<width;col++) {
+    const x=-1+2*row/rows,angle=2*Math.PI*col/sectors;
+    vertices.push(flat?[x,-1+2*col/sectors,0]:[x,.45*Math.cos(angle),.45*Math.sin(angle)]);
+  }
+  for(let row=0;row<rows;row++) for(let col=0;col<(flat?width-1:width);col++) {
+    const next=flat?col+1:(col+1)%width;
+    const a=row*width+col,b=(row+1)*width+col,c=row*width+next,d=(row+1)*width+next;
+    faces.push([a,b,c],[b,d,c]);
+  }
+  return {vertices,faces};
+}
