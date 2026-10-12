@@ -5,7 +5,7 @@ permalink: /resources/structure-correlation/
 nav_active: resources
 description: "My structure-function and pair-correlation methods, developed in small tested steps with a checked NumPy notebook."
 ---
-<style>.code-lesson{max-width:1100px}.code-lesson h2{margin:44px 0 18px}.code-lesson p{margin:18px 0}.code-lesson pre{white-space:pre;overflow-x:auto;background:#edf2ef;border:1px solid #d4dfd9;padding:20px;font:14px/1.7 ui-monospace,monospace}.code-lesson details{margin:20px 0;padding:18px;background:#f1f5f2}.code-lesson summary{cursor:pointer;font-weight:600}.code-lesson a{text-decoration:underline;text-underline-offset:4px}.code-lesson li{margin:12px 0;line-height:1.7}</style><section class="page-heading"><span class="eyebrow">MICROSTRUCTURE ANALYSIS · STEP-BY-STEP CODE</span><h1>Structure function<br><em>and pair correlation.</em></h1><p>I developed these codes to measure spatial patterns and characteristic lengths in simulated microstructures. Here I start with a known field, calculate its spectrum and correlation, then test each result before continuing.</p></section><section class="section code-lesson"><p><a href="/files/mesoscale/examples/stepwise/structure-correlation-python.ipynb" download>Python notebook ↓</a> · <a href="/files/mesoscale/examples/stepwise/structure_correlation.py" download>Complete worked Python code ↓</a></p><p>I use NumPy here to present my calculation in small, runnable steps. To analyze a simulated field, first work through the <a href="/resources/step-by-step/ternary-spinodal/">ternary spinodal notebook</a>, then read one composition array from its saved ternary-fields.npz file.</p><!-- CODE-STEPS-START --><h2>1. Start with a field whose correlation is known</h2>
+<style>.code-lesson{max-width:1100px}.code-lesson h2{margin:44px 0 18px}.code-lesson p{margin:18px 0}.code-lesson pre{white-space:pre;overflow-x:auto;background:#edf2ef;border:1px solid #d4dfd9;padding:20px;font:14px/1.7 ui-monospace,monospace}.code-lesson details{margin:20px 0;padding:18px;background:#f1f5f2}.code-lesson summary{cursor:pointer;font-weight:600}.code-lesson a{text-decoration:underline;text-underline-offset:4px}.code-lesson li{margin:12px 0;line-height:1.7}</style><section class="page-heading"><span class="eyebrow">MICROSTRUCTURE ANALYSIS · STEP-BY-STEP CODE</span><h1>Structure function<br><em>and pair correlation.</em></h1><p>I developed these codes to measure spatial patterns and characteristic lengths in simulated microstructures. Here I start with a known field, calculate its spectrum and correlation, then test each result before continuing.</p></section><section class="section code-lesson"><p><a href="/files/mesoscale/examples/stepwise/structure-correlation-python.ipynb" download>Python notebook ↓</a> · <a href="/files/mesoscale/examples/stepwise/structure_correlation.py" download>Complete worked Python code ↓</a></p><p>I use NumPy here to present my calculation in small, runnable steps. To analyze a simulated field, first work through the <a href="/resources/step-by-step/ternary-spinodal/">ternary spinodal notebook</a>, then read one composition array from its saved ternary-fields.npz file.</p><!-- CODE-STEPS-START --><h2>Step 1: A field with known correlation</h2>
 <p>I choose a cosine composition wave on a periodic 16 by 16 grid. The composition c is dimensionless. Grid spacings dx and dy are one dimensionless length unit. Rows index x and columns index y, following the saved simulation arrays. The wave varies in x and is constant in y, so I can check the full directional result before averaging over directions.</p>
 <h3>Python</h3><pre><code>import numpy as np
 n = 16
@@ -15,14 +15,14 @@ composition = 0.5 + 0.2 * np.cos(2 * np.pi * x[:, None] / (n * dx)) * np.ones((1
 assert composition.shape == (n, n)
 assert abs(composition.mean() - 0.5) &lt; 1e-12
 print(&quot;Mean composition:&quot;, composition.mean())</code></pre>
-<h2>2. Remove the mean and calculate the variance</h2>
+<h2>Step 2: Remove the mean and calculate the variance</h2>
 <p>I use the fluctuation δc = c minus the measured mean of this field. Its variance is the mean of δc². Removing the actual mean avoids a residual zero mode when a nominal alloy composition differs from the saved field mean.</p>
 <h3>Python</h3><pre><code>fluctuation = composition - composition.mean()
 variance = np.mean(fluctuation**2)
 assert abs(fluctuation.mean()) &lt; 1e-12
 assert abs(variance - 0.02) &lt; 1e-12
 print(&quot;Composition variance:&quot;, variance)</code></pre>
-<h2>3. Calculate the structure function</h2>
+<h2>Step 3: Calculate the structure function</h2>
 <p>I define F as the unnormalized forward discrete Fourier transform of δc and N as the total number of grid cells. The structure function is S = |F|²/N. Its units are squared composition units under this discrete convention; here they are dimensionless. It is nonnegative. Its sum divided by N equals the real-space variance. This check detects normalization errors.</p>
 <h3>Python</h3><pre><code>cells = composition.size
 transform = np.fft.fft2(fluctuation)
@@ -31,7 +31,7 @@ assert np.all(structure &gt;= 0)
 assert abs(structure[0, 0]) &lt; 1e-12
 assert abs(structure.sum() / cells - variance) &lt; 1e-12
 print(&quot;Parseval check:&quot;, structure.sum() / cells, variance)</code></pre>
-<h2>4. Invert the spectrum to obtain pair correlation</h2>
+<h2>Step 4: Invert the spectrum to obtain pair correlation</h2>
 <p>The unnormalized covariance C at displacement r is the spatial average of δc(x)δc(x+r). With NumPy’s normalized inverse transform, C = ifft2(S).real. I define the normalized correlation ρ = C/C(0). The origin must be one. A constant field has zero variance, so its normalized correlation is undefined; I reject it rather than divide by zero.</p>
 <h3>Python</h3><pre><code>def correlation_from_field(field):
     deviation = field - field.mean()
@@ -51,7 +51,7 @@ except ValueError:
     print(&quot;Constant-field check passed.&quot;)
 else:
     raise AssertionError(&quot;The constant field must be rejected.&quot;)</code></pre>
-<h2>5. Check every displacement by a direct sum</h2>
+<h2>Step 5: My direct-sum check at each displacement</h2>
 <p>I now calculate the same covariance without using a Fourier transform. np.roll implements periodic displacements. This direct calculation is slow for large grids, but useful as an independent check on a small grid. The cosine field should give ρ(r_x,r_y) = cos(2π r_x/L_x), independent of r_y.</p>
 <h3>Python</h3><pre><code>direct = np.zeros_like(composition)
 for row in range(n):
@@ -62,7 +62,7 @@ expected = np.cos(2 * np.pi * np.arange(n)[:, None] / n) * np.ones((1, n))
 assert np.max(np.abs(direct - covariance)) &lt; 1e-12
 assert np.max(np.abs(correlation - expected)) &lt; 1e-12
 print(&quot;Direct-sum maximum error:&quot;, np.max(np.abs(direct - covariance)))</code></pre>
-<h2>6. Average by radius only after checking the directional data</h2>
+<h2>Step 6: Average by radius only after checking the directional data</h2>
 <p>For the correlation I bin by real-space displacement radius r, in length units, using minimum-image displacements. For the structure function I bin by wave-number magnitude k, in inverse-length units. They need separate radii and bin widths. Radial averaging discards direction information and can conceal anisotropy. Empty bins are omitted rather than divided by zero.</p>
 <h3>Python</h3><pre><code>def radial_average(values, radii, bin_width):
     bins = np.floor(radii / bin_width + 0.5).astype(int)
@@ -84,7 +84,7 @@ assert counts.sum() == cells and mode_counts.sum() == cells
 assert radial_correlation[0] == correlation[0, 0]
 print(&quot;Correlation radii:&quot;, r)
 print(&quot;Wave-number magnitudes:&quot;, k)</code></pre>
-<h2>7. Report a first zero only if one is present</h2>
+<h2>Step 7: Report a first zero only if one is present</h2>
 <p>A first zero is one possible characteristic length. I find the first positive-to-nonpositive crossing and linearly interpolate between the sampled values. If no such crossing is present in the sampled range, I return None. This is not automatically a particle radius, and it is not a connectivity measurement. For the directional cosine test, the first zero is at one quarter of the wavelength.</p>
 <h3>Python</h3><pre><code>def first_zero(distances, values):
     for index in range(1, len(values)):
@@ -112,4 +112,4 @@ axes[1].set_ylabel(&quot;Normalized correlation (dimensionless)&quot;)
 axes[1].legend()
 fig.tight_layout()
 plt.show()</code></pre>
-<figure><img loading="lazy" src="/assets/images/stepwise/structure-correlation-python-step-7.png" alt="Checked result: 7. Report a first zero only if one is present"><figcaption>Result from the executed Python notebook.</figcaption></figure><!-- CODE-STEPS-END --><h2>Fourier normalization</h2><p>FFTW uses an unnormalized backward transform. The original convention S = |F|²/N therefore needs division by N after the backward transform to obtain covariance, followed by division by variance for normalized correlation. NumPy already includes that backward-transform division; applying it again would be an error.</p><p><a href="/resources/step-by-step-codes/">Return to the step-by-step code collection →</a></p></section>
+<figure><img loading="lazy" src="/assets/images/stepwise/structure-correlation-python-step-7.png" alt="Checked result: Step 7: Report a first zero only if one is present"><figcaption>Result from the executed Python notebook.</figcaption></figure><!-- CODE-STEPS-END --><h2>Fourier normalization</h2><p>FFTW uses an unnormalized backward transform. The original convention S = |F|²/N therefore needs division by N after the backward transform to obtain covariance, followed by division by variance for normalized correlation. NumPy already includes that backward-transform division; applying it again would be an error.</p><p><a href="/resources/step-by-step-codes/">Return to the step-by-step code collection →</a></p></section>

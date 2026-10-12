@@ -12,7 +12,7 @@ description: "I develop binary phase separation and periodic connectivity in exp
 <p>I develop this calculation in small steps. I run a cell, inspect its result and test it before adding the next part. Run the cells in order in Jupyter. A code cell defines a part of the calculation or carries it out; defining a function does not run it.</p>
 <p>I permit free noncommercial teaching, learning and demonstrations with acknowledgment. Research and commercial use require my written permission. Earlier licensed releases retain their permissions. <a href="https://saswataiith.github.io/using-my-resources/">Read the code-use terms</a>.</p>
 <p>Copyright (c) 2026 Saswata Bhattacharyya.</p>
-<h2>1. Prepare the Python environment</h2>
+<h2>Step 1: Prepare the Python environment</h2>
 <p>I install the packages listed in the next cell once in the same environment as the notebook. In Jupyter or Colab, remove the comment marker from the installation line below if a package is missing. NumPy stores arrays and evaluates numerical operations. Matplotlib displays plots. Pillow reads and writes images. This installation does not change the model parameters.</p>
 <pre><code class="language-python"># %pip install numpy scikit-image matplotlib
 import numpy as np
@@ -20,10 +20,10 @@ assert np.isfinite(np.array([0.0, 1.0])).all()
 print(&quot;NumPy is ready:&quot;, np.__version__)</code></pre>
 <pre class="cell-result">NumPy is ready: 2.1.3
 </pre>
-<h2>2. Choose the input values</h2>
+<h2>Step 2: Input values</h2>
 <p>I retain the default values from the original calculation. The output name locates the files written by this notebook.</p>
 <pre><code class="language-python">output = &#x27;bicontinuity-results&#x27;</code></pre>
-<h2>3. Prepare the next part of the calculation</h2>
+<h2>Step 3: Prepare the next part of the calculation</h2>
 <p>I define <code>SEED</code>, <code>GRID_SIZE</code>, <code>GRID_SPACING</code>. These are the same operations as in the original source, written on separate lines so their order is clear. Inspect their values before running the next cell.</p>
 <pre><code class="language-python">from collections import deque
 from pathlib import Path
@@ -34,7 +34,7 @@ from skimage.io import imsave
 SEED = 20260921
 GRID_SIZE = 256
 GRID_SPACING = 1.0</code></pre>
-<h2>4. Prepare the next part of the calculation</h2>
+<h2>Step 4: Prepare the next part of the calculation</h2>
 <p>I define <code>TIME_STEP</code>, <code>NUMBER_OF_STEPS</code>, <code>A</code>, <code>MOBILITY</code>, <code>KAPPA</code>, <code>MEAN_COMPOSITIONS</code>, <code>THRESHOLDS</code>. These are the same operations as in the original source, written on separate lines so their order is clear. Inspect their values before running the next cell.</p>
 <pre><code class="language-python">TIME_STEP = 0.2
 NUMBER_OF_STEPS = 2000
@@ -43,7 +43,7 @@ MOBILITY = 1.0
 KAPPA = 1.0
 MEAN_COMPOSITIONS = (0.5, 0.4)
 THRESHOLDS = (0.45, 0.5, 0.55)</code></pre>
-<h2>5. Visit connected pixels and record wrapping</h2>
+<h2>Step 5: Visit connected pixels and record wrapping</h2>
 <p>I start at one occupied pixel and add its edge-sharing neighbors to a queue. Periodic indices wrap at the image boundary. Unwrapped positions continue beyond that boundary. Two visits to the same pixel with different unwrapped positions reveal a winding loop. Coordinate flags indicate wrapping along an axis; they do not measure the number of independent winding directions.</p>
 <details><summary>Read this complete operation (59 lines)</summary><pre><code class="language-python">def connectivity(mask):
     &quot;&quot;&quot;Count regions and detect loops winding around the periodic domain.
@@ -104,7 +104,7 @@ THRESHOLDS = (0.45, 0.5, 0.55)</code></pre>
     if region_pixels &gt; 0:
         largest_fraction = largest_pixels / region_pixels
     return {&#x27;components&#x27;: len(components), &#x27;area_fraction&#x27;: float(mask.mean()), &#x27;largest_fraction_of_phase&#x27;: largest_fraction, &#x27;wrapping_components&#x27;: wrapping_components}</code></pre></details>
-<h2>6. Write the evolution rule</h2>
+<h2>Step 6: The evolution rule</h2>
 <p>I calculate the Fourier wave numbers and the squared magnitude k2. For portrait restoration, the error is the current field minus the fixed target. The Allen–Cahn error decays locally; the Cahn–Hilliard Fourier modes decay at rates proportional to k2. The spatial transform leaves the channel axis unchanged.</p>
 <pre><code class="language-python">def evolve(composition):
     &quot;&quot;&quot;Advance Cahn-Hilliard with a semi-implicit Fourier method.
@@ -129,7 +129,7 @@ THRESHOLDS = (0.45, 0.5, 0.55)</code></pre>
         if iterator % 500 == 0:
             print(f&#x27;  Step {iterator}, time {iterator * TIME_STEP:.1f}&#x27;)
     return composition</code></pre>
-<h2>7. Convert composition to display colors</h2>
+<h2>Step 7: Convert composition to display colors</h2>
 <p>I keep a fixed color scale. Clipping affects the displayed pixels only, not the simulated composition. The transpose and reversal match the coordinate orientation used on the website.</p>
 <pre><code class="language-python">def save_image(composition, filename):
     &quot;&quot;&quot;Save a fixed rainbow scale: blue=0, green=0.5, red=1.
@@ -145,7 +145,7 @@ THRESHOLDS = (0.45, 0.5, 0.55)</code></pre>
         rgb[:, :, channel] = np.interp(display_values, levels, colors[:, channel])
     image_pixels = rgb.astype(&#x27;uint8&#x27;).transpose(1, 0, 2)[::-1]
     imsave(filename, image_pixels)</code></pre>
-<h2>8. Prepare inputs and output locations</h2>
+<h2>Step 8: Prepare inputs and output locations</h2>
 <p>I name the input data and output directory explicitly. Re-running these cells replaces files in that lesson's output directory. I keep the original image or composition field separate from the evolving array.</p>
 <pre><code class="language-python">output_folder = Path(output)
 output_folder.mkdir(exist_ok=True, parents=True)
@@ -153,7 +153,7 @@ generator = np.random.default_rng(SEED)
 perturbation = 0.01 * generator.standard_normal((GRID_SIZE, GRID_SIZE))
 perturbation -= perturbation.mean()
 results = {}</code></pre>
-<h2>9. Advance the field and record the result</h2>
+<h2>Step 9: Advance the field and record the result</h2>
 <p>I apply the update in its original order. I record the mean, energy or other diagnostics at the specified intervals. I do not clip the numerical field. A saved picture is a display of the field, not a substitute for a conservation check.</p>
 <pre><code class="language-python">for mean in MEAN_COMPOSITIONS:
     print(f&#x27;Mean composition {mean}&#x27;)
@@ -187,7 +187,7 @@ results = {}</code></pre>
 </pre>
 <pre class="cell-result">  Step 2000, time 400.0
 </pre>
-<h2>10. Prepare the next part of the calculation</h2>
+<h2>Step 10: Prepare the next part of the calculation</h2>
 <p>I define <code>report</code>. These are the same operations as in the original source, written on separate lines so their order is clear. Inspect their values before running the next cell.</p>
 <pre><code class="language-python">report = output_folder / &#x27;connectivity.json&#x27;
 report.write_text(json.dumps(results, indent=2))
@@ -209,6 +209,6 @@ plt.show()</code></pre>
 0.4 {&#x27;high&#x27;: {&#x27;components&#x27;: 128, &#x27;area_fraction&#x27;: 0.37945556640625, &#x27;largest_fraction_of_phase&#x27;: 0.02871159723339231, &#x27;wrapping_components&#x27;: []}, &#x27;low&#x27;: {&#x27;components&#x27;: 1, &#x27;area_fraction&#x27;: 0.62054443359375, &#x27;largest_fraction_of_phase&#x27;: 1.0, &#x27;wrapping_components&#x27;: [{&#x27;pixels&#x27;: 40668, &#x27;wrap_x&#x27;: True, &#x27;wrap_y&#x27;: True}]}}
 </pre>
 <figure><img loading="lazy" src="/assets/images/python-lessons/bicontinuity-2d-22.png" alt="Computed result from the Binary phase separation and periodic connectivity notebook"><figcaption>Result from the executed notebook cell.</figcaption></figure>
-<h2>11. Review and extend the calculation</h2>
+<h2>Step 11: Review and extend the calculation</h2>
 <p>I first restart the kernel and run all the required cells. Then I change one input, predict its effect and compare the result with that prediction. A successful check establishes the tested property; it does not establish convergence or equilibrium. I retain the <a href="https://saswataiith.github.io/files/mesoscale/examples/bicontinuity.py">complete script</a> for command-line use. The notebook embeds the calculation directly and does not need that script to run.</p>
 <p><a href="/files/mesoscale/examples/notebooks/notebook-check-results.json">Read the notebook execution checks →</a> · <a href="/resources/step-by-step-codes/">More Python, Julia and C lessons →</a></p></section>

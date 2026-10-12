@@ -50,7 +50,7 @@ output = &quot;portrait-minimum-results&quot;</code></pre>
 import argparse
 import numpy as np
 from PIL import Image, ImageDraw, ImageFont</code></pre>
-<h2>Step 4: Choose a portable display font</h2>
+<h2>Step 4: A portable display font</h2>
 <p>I try the original font, then DejaVu Sans, then Pillow's default font. The font changes labels on the image only; it does not change a numerical field.</p>
 <pre><code class="language-python">def portrait_font(size):
     fonts = [Path(&#x27;/&#x27;) / &#x27;System&#x27; / &#x27;Library&#x27; / &#x27;Fonts&#x27; / &#x27;Helvetica.ttc&#x27;, &#x27;DejaVuSans.ttf&#x27;]
@@ -72,7 +72,7 @@ from PIL import Image, ImageDraw, ImageFont</code></pre>
     else:
         initial = rng.permutation(target.ravel()).reshape(target.shape)
     return (target, initial)</code></pre>
-<h2>Step 6: Write the discretized evolution equations</h2>
+<h2>Step 6: The discretized evolution equations</h2>
 <p>I first write the equations that the code evaluates. The fixed target is \(r\) and the evolving image is \(u\). Their difference is \(e=u-r\). I apply the same calculation independently to the red, green and blue channels. All quantities here are dimensionless.</p>
 <h3>The image grid</h3>
 <p>There are \(N=256\) grid points along each direction. The periodic domain has width \(\ell=32\), so the grid spacing is \(\Delta x=\Delta y=\ell/N=0.125\). The pixel indices are \(a,b=0,\ldots,N-1\), with positions \(x_a=a\Delta x\) and \(y_b=b\Delta y\). Index \(j\) denotes a color channel. At time \(t_n\), the error at a pixel is \(e^n_{abj}=u^n_{abj}-r_{abj}\).</p>
@@ -136,7 +136,7 @@ from PIL import Image, ImageDraw, ImageFont</code></pre>
     ch = target + ch_error
 
     return ac, ch</code></pre>
-<h2>Step 7: Check the shuffle before evolving anything</h2>
+<h2>Step 7: My check of the pixel shuffle</h2>
 <p>I prepare the target r and starting field u0 as 256 × 256 × 3 arrays. I check that each channel has the same mean before and after shuffling. I display the two arrays side by side; signed values are mapped back to display colors only.</p>
 <pre><code class="language-python">target, initial = prepare_portrait(portrait, color=True)
 assert target.shape == initial.shape == (256, 256, 3)
@@ -176,7 +176,7 @@ for ax, field, title in zip(axes, (ac, ch), (&quot;Allen–Cahn, t=100&quot;, &q
     ax.axis(&quot;off&quot;)
 plt.show()</code></pre>
 <figure><img loading="lazy" src="/assets/images/python-lessons/portrait-minimum-18.png" alt="Computed result from the My color portrait as an energy minimum notebook"><figcaption>Result from the executed notebook cell.</figcaption></figure>
-<h2>Step 10: Test mean drift separately from motion</h2>
+<h2>Step 10: Mean drift and spatial motion</h2>
 <p>I add a spatially uniform offset of 0.1 to the target. Allen–Cahn removes this mean offset exponentially. Cahn–Hilliard preserves it. Neither rule translates the fixed target across the image. Other Allen–Cahn energies can drive interface motion; this example does not test that.</p>
 <pre><code class="language-python">offset_ac, offset_ch = evolve(target, target + 0.1, 100.0)
 assert np.allclose(offset_ac - target, 0.1 * np.exp(-0.03 * 100), atol=1e-14)

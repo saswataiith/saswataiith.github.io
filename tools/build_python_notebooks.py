@@ -43,24 +43,24 @@ def begin(slug, title, context, deps, source):
     return n
 
 FUNCTIONS = {
- 'portrait_font':('Choose a portable display font','I try the original font, then DejaVu Sans, then Pillow\'s default font. The font changes labels on the image only; it does not change a numerical field.'),
+ 'portrait_font':('A portable display font','I try the original font, then DejaVu Sans, then Pillow\'s default font. The font changes labels on the image only; it does not change a numerical field.'),
  'prepare_portrait':('Read and shuffle the color pixels','I call the fixed portrait target and the shuffled portrait initial. Each signed RGB channel ranges from −1 to 1. I shuffle whole pixels with seed 19, preserving the three channel means.'),
- 'evolve':('Write the evolution rule','I calculate the Fourier wave numbers and the squared magnitude k2. For portrait restoration, the error is the current field minus the fixed target. The Allen–Cahn error decays locally; the Cahn–Hilliard Fourier modes decay at rates proportional to k2. The spatial transform leaves the channel axis unchanged.'),
+ 'evolve':('The evolution rule','I calculate the Fourier wave numbers and the squared magnitude k2. For portrait restoration, the error is the current field minus the fixed target. The Allen–Cahn error decays locally; the Cahn–Hilliard Fourier modes decay at rates proportional to k2. The spatial transform leaves the channel axis unchanged.'),
  'kernel':('Calculate the elastic kernel','I calculate B for each wave-vector direction from the stiffness constants and a dilatational misfit. C11, C12 and C44 are the stiffness constants, and eigenstrain is the prescribed stress-free strain. This example uses dimensionless stiffness and strain. The zero mode corresponds to the specified macroscopic condition; it is not a directional mode.'),
  'connectivity':('Visit connected pixels and record wrapping','I start at one occupied pixel and add its edge-sharing neighbors to a queue. Periodic indices wrap at the image boundary. Unwrapped positions continue beyond that boundary. Two visits to the same pixel with different unwrapped positions reveal a winding loop. Coordinate flags indicate wrapping along an axis; they do not measure the number of independent winding directions.'),
- 'periodic_components':('Separate seam joining from periodic winding','I keep a wrapped pixel address and a lifted, unwrapped position for each visited pixel. A loop displacement divided by the grid shape is a winding vector. Its independent directions determine winding rank. Four edge-sharing neighbors define this 2D graph. A seam crossing alone does not establish wrapping.'),
+ 'periodic_components':('Seam joining and periodic winding','I keep a wrapped pixel address and a lifted, unwrapped position for each visited pixel. A loop displacement divided by the grid shape is a winding vector. Its independent directions determine winding rank. Four edge-sharing neighbors define this 2D graph. A seam crossing alone does not establish wrapping.'),
  'root_offset':('Find a union–find root and its displacement','I follow parent links to the representative root. offset stores the displacement along each parent link. I add these displacements, then shorten the parent chain without losing the displacement from each voxel to its root.'),
  'hk_scan':('Scan voxels and merge connected labels','I merge occupied predecessor neighbors during the first pass, then join periodic seams. If two voxels already have the same root, a nonzero residual displacement identifies a winding loop. Arrays index voxels, and each index has one parent and a three-component displacement.'),
  'label_phase':('Count components and independent windings','I count voxels attached to each root and divide by the occupied voxel count to obtain the largest fraction of that phase. I retain independent winding vectors for each component. The primary convention is six face-sharing neighbors, including periodic neighbors.'),
  'flood_distance':('Measure shortest graph distance from one seed','I visit face-sharing neighbors in breadth-first order. distance counts voxel steps from the seed; it is not physical time. The returned reached count is the number of occupied voxels visited. A disconnected component cannot be reached from this seed.'),
  'periodic_euler':('Calculate a periodic digital Euler characteristic','I classify local voxel configurations and apply scikit-image\'s Euler lookup coefficients. Periodic convolution includes seam cells. Six-connected foreground is paired with 26-connected background. Digital topology depends on this convention.'),
  'interface_morphology':('Measure the unsimplified periodic interface','I extract the c=0.5 surface, include seam cells, and weld paired periodic vertices. Surface area is calculated from triangles. I check that each mesh edge belongs to two triangles before interpreting a closed surface. The Euler characteristic is vertices minus edges plus faces. Curvature is a discrete mesh estimate, not a convergence result.'),
- 'graph':('Build the periodic voxel graph','I use six face-sharing neighbors and a queue to visit each connected phase. Lifted coordinates retain periodic displacements. Non-tree edges can reveal noncontractible wrapping loops. Numba compiles the loops for speed; it does not change the neighbor convention.'),
+ 'graph':('The periodic voxel graph','I use six face-sharing neighbors and a queue to visit each connected phase. Lifted coordinates retain periodic displacements. Non-tree edges can reveal noncontractible wrapping loops. Numba compiles the loops for speed; it does not change the neighbor convention.'),
  'analyze':('Count phase components and their winding directions','I obtain voxel counts and winding vectors from the periodic graph. Phase fraction divides occupied voxels by all voxels. Largest fraction divides the largest component by the occupied phase. Independent winding rank distinguishes one diagonal loop from independent x, y and z loops.'),
- 'validate_route':('Check every step of a route','I check phase membership, periodic face-sharing adjacency and the sum of the lifted steps. The net displacement must equal one box length along the claimed axis. This establishes a valid route, not an exhaustive visit to the phase.'),
+ 'validate_route':('My check of each route step','I check phase membership, periodic face-sharing adjacency and the sum of the lifted steps. The net displacement must equal one box length along the claimed axis. This establishes a valid route, not an exhaustive visit to the phase.'),
  'interior_bfs':('Search the phase interior','I search admissible voxel neighbors without crossing into the other phase. Parents record the route used to reach a voxel. These parents allow a connected path to be reconstructed.'),
  'interior_routes':('Find and verify three interior routes','I find routes through phase-core voxels, then check their membership, neighbor steps and net periodic displacement. Restricting display paths to the core improves visibility without changing the full-volume connectivity measurement.'),
- 'core_tree':('Build a rooted tree in the phase core','I visit safe voxels from one root and save parent links. The number reached measures this rooted core component, which is a subset of the full phase.'),
+ 'core_tree':('A rooted tree in the phase core','I visit safe voxels from one root and save parent links. The number reached measures this rooted core component, which is a subset of the full phase.'),
  'percolation_network':('Join distributed sites into a connected witness','I connect sites distributed through the box and include independently checked wrapping routes. The displayed subgraph is a witness of connectivity. It is not the longest path and does not contain every phase voxel.'),
  'export_viewer':('Prepare the display mesh and route data','I extract the common c=0.5 interface at the full resolution, then simplify triangles for display only. The two phases use opposite interface normals. Connectivity and path checks still use the saved full-resolution field.'),
  'save_image':('Convert composition to display colors','I keep a fixed color scale. Clipping affects the displayed pixels only, not the simulated composition. The transpose and reversal match the coordinate orientation used on the website.'),
@@ -69,12 +69,12 @@ FUNCTIONS = {
  'energy':('Define the energy diagnostic','I calculate the bulk and gradient contributions in the same convention as the source program. Fourier normalization is part of this definition. I compare this quantity through time within one model; energies from different functionals need not have the same meaning.'),
  'draw_path':('Draw periodic paths without a false shortcut','I split a displayed line at a periodic face and resume it at the paired opposite face. I retain turns in the voxel route. A line across the middle of the box would incorrectly suggest passage through another phase.'),
  'position_at':('Interpolate a periodic voxel step','I interpolate only between consecutive verified face-sharing voxels. The shortest periodic displacement identifies a seam step. Display coordinates are wrapped back into the box.'),
- 'extend_trail':('Record the executed path','I append only the route segments the turtle has executed. At a periodic crossing I end one trail on the face and start another at the opposite face.'),
+ 'extend_trail':('The recorded path','I append only the route segments the turtle has executed. At a periodic crossing I end one trail on the face and start another at the opposite face.'),
  'reset':('Reset the selected route','I reset progress and the executed trail when the phase or winding direction changes. The saved route remains the source of the voxel positions.'),
  'visibility':('Control interface visibility','I change the displayed opacity and visibility to make the marker easier to see. These controls do not change the field or its connectivity.'),
- 'start':('Start the animation','I change the running state when the user selects Start. The clock loop updates progress while this state is true.'),
+ 'start':('The animation loop','I change the running state when the user selects Start. The clock loop updates progress while this state is true.'),
  'pause':('Pause the animation','I stop advancing progress while keeping the executed trail visible.'),
- 'begin_trail':('Start a new displayed trail','I create a new curve at the supplied position. A separate curve after a seam crossing avoids drawing a shortcut through the box.'),
+ 'begin_trail':('A new displayed trail','I create a new curve at the supplied position. A separate curve after a seam crossing avoids drawing a shortcut through the box.'),
  'update':('Apply the display controls','I apply phase selection, interface visibility and loop highlighting to the scene. These are display operations on saved data.'),
  'reset_camera':('Restore the initial camera','I reset the camera center, range and viewing direction. Right-drag rotates the view, and the wheel changes the zoom.'),
 }
@@ -133,10 +133,10 @@ def explain(group):
         if 'range(2001)' in s or 'range(steps' in s or 'range(1, steps' in s or 'for mean in ' in s:
             return ('Advance the field and record the result','I apply the update in its original order. I record the mean, energy or other diagnostics at the specified intervals. I do not clip the numerical field. A saved picture is a display of the field, not a substitute for a conservation check.')
         return ('Repeat the operation and inspect each case','I repeat the operation over the specified cases. Read the loop variable first, then follow what changes on each pass. The assertions check the stated numerical or topological condition.')
-    if isinstance(first,ast.While): return ('Keep the viewer responsive','I keep the VPython clock running so mouse and button events can update the scene. Run this cell interactively and interrupt the kernel when finished. This is an event loop, not a simulation of phase separation.')
+    if isinstance(first,ast.While): return ('The viewer event loop','I keep the VPython clock running so mouse and button events can update the scene. Run this cell interactively and interrupt the kernel when finished. This is an event loop, not a simulation of phase separation.')
     names=[ast.unparse(x.targets[0]) for x in group if isinstance(x,ast.Assign)]
     if any(x in names for x in ['k','kx','wave_numbers','k2','denominator']):return ('Set up the Fourier grid','I calculate wave numbers consistent with the grid spacing and periodic domain. k2 denotes the squared magnitude of a wave vector. The denominator contains the term treated implicitly in the original update. The zero Fourier mode represents the spatial mean.')
-    if any(isinstance(x,(ast.Assert,ast.Raise)) for x in group): return ('Check the result before continuing','I check finite values, conservation or the known reference result as specified below. An assertion stops the notebook if the condition fails. Inspect the quantities and tolerance rather than suppressing a failure.')
+    if any(isinstance(x,(ast.Assert,ast.Raise)) for x in group): return ('My check of this result','I check finite values, conservation or the known reference result as specified below. An assertion stops the notebook if the condition fails. Inspect the quantities and tolerance rather than suppressing a failure.')
     if any(x.startswith(('out','output','work')) for x in names):return ('Prepare inputs and output locations','I name the input data and output directory explicitly. Re-running these cells replaces files in that lesson\'s output directory. I keep the original image or composition field separate from the evolving array.')
     return ('Prepare the next part of the calculation','I define '+(', '.join('`'+x+'`' for x in names[:7]) if names else 'the following operations')+'. These are the same operations as in the original source, written on separate lines so their order is clear. Inspect their values before running the next cell.')
 
@@ -164,7 +164,7 @@ for source,title,context,deps,slug,mode,bindings in LESSONS:
     runfun=next((x for x in body if isinstance(x,ast.FunctionDef) and x.name in ('run','main','run_example')),None)
     if mode=='expand':
         nodes=[x for x in body if x is not runfun]
-        heading(n,'Choose the input values','I retain the default values from the original calculation. The output name locates the files written by this notebook.')
+        heading(n,'Input values','I retain the default values from the original calculation. The output name locates the files written by this notebook.')
         if bindings:code(n,'\n'.join(k+' = '+repr(v) for k,v in bindings.items()))
         for group in node_groups(nodes):
             a,b=explain(group);heading(n,a,b);code(n,format_nodes(group))
@@ -176,7 +176,7 @@ for source,title,context,deps,slug,mode,bindings in LESSONS:
     elif mode=='portrait':
         for group in node_groups(body):
             a,b=explain(group);heading(n,a,b);code(n,format_nodes(group))
-        heading(n,'Check the shuffle before evolving anything','I prepare the target r and starting field u0 as 256 × 256 × 3 arrays. I check that each channel has the same mean before and after shuffling. I display the two arrays side by side; signed values are mapped back to display colors only.')
+        heading(n,'My check of the pixel shuffle','I prepare the target r and starting field u0 as 256 × 256 × 3 arrays. I check that each channel has the same mean before and after shuffling. I display the two arrays side by side; signed values are mapped back to display colors only.')
         code(n,'''target, initial = prepare_portrait(portrait, color=True)
 assert target.shape == initial.shape == (256, 256, 3)
 assert np.allclose(initial.mean((0, 1)), target.mean((0, 1)), atol=1e-13, rtol=0)
@@ -206,7 +206,7 @@ for ax, field, title in zip(axes, (ac, ch), ("Allen–Cahn, t=100", "Cahn–Hill
     ax.set_title(title)
     ax.axis("off")
 plt.show()''')
-        heading(n,'Test mean drift separately from motion','I add a spatially uniform offset of 0.1 to the target. Allen–Cahn removes this mean offset exponentially. Cahn–Hilliard preserves it. Neither rule translates the fixed target across the image. Other Allen–Cahn energies can drive interface motion; this example does not test that.')
+        heading(n,'Mean drift and spatial motion','I add a spatially uniform offset of 0.1 to the target. Allen–Cahn removes this mean offset exponentially. Cahn–Hilliard preserves it. Neither rule translates the fixed target across the image. Other Allen–Cahn energies can drive interface motion; this example does not test that.')
         code(n,'''offset_ac, offset_ch = evolve(target, target + 0.1, 100.0)
 assert np.allclose(offset_ac - target, 0.1 * np.exp(-0.03 * 100), atol=1e-14)
 assert np.allclose(offset_ch - target, 0.1, atol=1e-14)
@@ -241,7 +241,7 @@ print("Final mean energy densities:", records[-1, 7:9])''')
                 code(n,'if open_viewer:\n'+textwrap.indent(sourcecode,'    '),['interactive'])
             else:code(n,sourcecode)
         if slug=='monte-carlo':
-            heading(n,'Test a short run before choosing a large calculation','I first run both rules on a 16² grid for five sweeps, with the original seed and temperature. This tests execution and legal labels, not equilibrium. The unchanged full defaults, 256² and 200 or 2000 sweeps, remain available in the optional cell. A pure Python trial loop can take a long time.')
+            heading(n,'My short test run','I first run both rules on a 16² grid for five sweeps, with the original seed and temperature. This tests execution and legal labels, not equilibrium. The unchanged full defaults, 256² and 200 or 2000 sweeps, remain available in the optional cell. A pure Python trial loop can take a long time.')
             code(n,'''ising = run("ising", "ising-check", n=16, sweeps=5, save_every=1)
 potts = run("potts", "potts-check", n=16, sweeps=5, save_every=1)
 assert set(np.unique(ising)).issubset({-1, 1})
@@ -254,7 +254,7 @@ if run_full_calculation:
     run("potts", "potts-results")''')
         if slug=='portrait-flows':code(n,'run(portrait, output)')
         if mode=='large':
-            heading(n,'Test a small case with a known answer','I test the measurement routines on a small exact mask before allocating the full volume. This is a function check, not a smaller replacement for the published 256³ simulation. Notebook-defined Numba functions disable only the disk cache; numerical operations are unchanged.')
+            heading(n,'My check against a known answer','I test the measurement routines on a small exact mask before allocating the full volume. This is a function check, not a smaller replacement for the published 256³ simulation. Notebook-defined Numba functions disable only the disk cache; numerical operations are unchanged.')
             if slug=='spinodal-3d':code(n,'''mask = np.ones((8, 8, 8), dtype=bool)
 result, routes = analyze(mask, need_routes=True)
 assert result["components"] == 1 and result["winding_rank"] == 3
@@ -274,7 +274,7 @@ surface = interface_morphology(shell.astype(float), 1.0)
 assert surface["edge_incidence_two"]
 print(result)
 print(surface)''')
-            heading(n,'Choose the optional full-resolution calculation','I leave this expensive calculation off by default. Setting run_full_calculation to True runs the unchanged original model or full saved-field analysis. Generation and full morphology each need substantial memory. The small tests above do not certify a new full run; the published reports describe the original full-resolution results.')
+            heading(n,'The optional full-resolution calculation','I leave this expensive calculation off by default. Setting run_full_calculation to True runs the unchanged original model or full saved-field analysis. Generation and full morphology each need substantial memory. The small tests above do not certify a new full run; the published reports describe the original full-resolution results.')
             if slug=='spinodal-3d':code(n,'run_full_calculation = False\nif run_full_calculation:\n    run("bicontinuity-3d-results")')
             else:code(n,FETCH+'\nrun_full_calculation = False\nif run_full_calculation:\n    field_path = get_file("assets/examples/bicontinuity-3d/composition.npy")\n    report = run(field_path, "morphology-3d-results", dx=0.25)')
     dest=finish(n,slug,source)

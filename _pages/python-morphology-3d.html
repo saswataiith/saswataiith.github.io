@@ -13,7 +13,7 @@ description: "I develop three-dimensional labeling, winding and morphology in ex
 <p>I develop this calculation in small steps. I run a cell, inspect its result and test it before adding the next part. Run the cells in order in Jupyter. A code cell defines a part of the calculation or carries it out; defining a function does not run it.</p>
 <p>I permit free noncommercial teaching, learning and demonstrations with acknowledgment. Research and commercial use require my written permission. Earlier licensed releases retain their permissions. <a href="https://saswataiith.github.io/using-my-resources/">Read the code-use terms</a>.</p>
 <p>Copyright (c) 2026 Saswata Bhattacharyya.</p>
-<h2>1. Prepare the Python environment</h2>
+<h2>Step 1: Prepare the Python environment</h2>
 <p>I install the packages listed in the next cell once in the same environment as the notebook. In Jupyter or Colab, remove the comment marker from the installation line below if a package is missing. NumPy stores arrays and evaluates numerical operations. Matplotlib displays plots. Pillow reads and writes images. This installation does not change the model parameters.</p>
 <pre><code class="language-python"># %pip install numpy scipy numba scikit-image matplotlib
 import numpy as np
@@ -21,7 +21,7 @@ assert np.isfinite(np.array([0.0, 1.0])).all()
 print(&quot;NumPy is ready:&quot;, np.__version__)</code></pre>
 <pre class="cell-result">NumPy is ready: 2.1.3
 </pre>
-<h2>2. Prepare the next part of the calculation</h2>
+<h2>Step 2: Prepare the next part of the calculation</h2>
 <p>I define the following operations. These are the same operations as in the original source, written on separate lines so their order is clear. Inspect their values before running the next cell.</p>
 <pre><code class="language-python">from pathlib import Path
 import sys, json, gzip, time
@@ -30,7 +30,7 @@ from numba import njit
 from scipy import ndimage
 from skimage.measure import marching_cubes
 from skimage.measure._regionprops_utils import EULER_COEFS3D_26</code></pre>
-<h2>3. Find a union–find root and its displacement</h2>
+<h2>Step 3: Find a union–find root and its displacement</h2>
 <p>I follow parent links to the representative root. offset stores the displacement along each parent link. I add these displacements, then shorten the parent chain without losing the displacement from each voxel to its root.</p>
 <pre><code class="language-python">@njit(cache=False)
 def root_offset(parent, offset, u):
@@ -49,7 +49,7 @@ def root_offset(parent, offset, u):
         prefix += old
         v = nxt
     return (r, delta)</code></pre>
-<h2>4. Scan voxels and merge connected labels</h2>
+<h2>Step 4: Scan voxels and merge connected labels</h2>
 <p>I merge occupied predecessor neighbors during the first pass, then join periodic seams. If two voxels already have the same root, a nonzero residual displacement identifies a winding loop. Arrays index voxels, and each index has one parent and a three-component displacement.</p>
 <details><summary>Read this complete operation (58 lines)</summary><pre><code class="language-python">@njit(cache=False)
 def hk_scan(mask, periodic=True):
@@ -109,7 +109,7 @@ def hk_scan(mask, periodic=True):
         for j in range(3):
             records[i, j + 1] = loops[i][j + 1]
     return (labels.reshape(mask.shape), records)</code></pre></details>
-<h2>5. Count components and independent windings</h2>
+<h2>Step 5: Count components and independent windings</h2>
 <p>I count voxels attached to each root and divide by the occupied voxel count to obtain the largest fraction of that phase. I retain independent winding vectors for each component. The primary convention is six face-sharing neighbors, including periodic neighbors.</p>
 <pre><code class="language-python">def label_phase(mask, periodic=True):
     if mask.ndim != 3 or len(set(mask.shape)) != 1 or mask.shape[0] &lt; 3:
@@ -126,7 +126,7 @@ def hk_scan(mask, periodic=True):
     order = np.argsort(-counts)
     components = [{&#x27;root&#x27;: int(roots[i]), &#x27;voxels&#x27;: int(counts[i]), &#x27;winding_rank&#x27;: len(basis[int(roots[i])]), &#x27;winding_basis&#x27;: basis[int(roots[i])]} for i in order]
     return (labels, {&#x27;components&#x27;: len(roots), &#x27;phase_voxels&#x27;: total, &#x27;phase_fraction&#x27;: total / mask.size, &#x27;largest_fraction_of_phase&#x27;: int(counts.max()) / total if total else 0, &#x27;clusters&#x27;: components, &#x27;method&#x27;: &#x27;Hoshen–Kopelman style scan / union–find; weighted root displacements; per-component winding&#x27;, &#x27;neighbors&#x27;: 6, &#x27;periodic&#x27;: periodic})</code></pre>
-<h2>6. Measure shortest graph distance from one seed</h2>
+<h2>Step 6: Measure shortest graph distance from one seed</h2>
 <p>I visit face-sharing neighbors in breadth-first order. distance counts voxel steps from the seed; it is not physical time. The returned reached count is the number of occupied voxels visited. A disconnected component cannot be reached from this seed.</p>
 <pre><code class="language-python">@njit(cache=False)
 def flood_distance(mask, root):
@@ -160,7 +160,7 @@ def flood_distance(mask, root):
                     queue[tail] = v
                     tail += 1
     return (distance.reshape(mask.shape), tail)</code></pre>
-<h2>7. Calculate a periodic digital Euler characteristic</h2>
+<h2>Step 7: Calculate a periodic digital Euler characteristic</h2>
 <p>I classify local voxel configurations and apply scikit-image's Euler lookup coefficients. Periodic convolution includes seam cells. Six-connected foreground is paired with 26-connected background. Digital topology depends on this convention.</p>
 <pre><code class="language-python">def periodic_euler(mask, neighbors=6):
     &quot;&quot;&quot;Ohser digital Euler LUT as in skimage, with periodic rather than zero edges.
@@ -175,7 +175,7 @@ def flood_distance(mask, root):
     numerator = int(coefficients @ hist)
     assert numerator % 8 == 0
     return numerator // 8</code></pre>
-<h2>8. Measure the unsimplified periodic interface</h2>
+<h2>Step 8: Measure the unsimplified periodic interface</h2>
 <p>I extract the c=0.5 surface, include seam cells, and weld paired periodic vertices. Surface area is calculated from triangles. I check that each mesh edge belongs to two triangles before interpreting a closed surface. The Euler characteristic is vertices minus edges plus faces. Curvature is a discrete mesh estimate, not a convergence result.</p>
 <details><summary>Read this complete operation (56 lines)</summary><pre><code class="language-python">def interface_morphology(c, dx):
     &quot;&quot;&quot;Full-resolution periodic c=.5 interface. Include seam cells explicitly.
@@ -233,7 +233,7 @@ def flood_distance(mask, root):
     answer[&#x27;integrated_gaussian_curvature&#x27;] = float(2 * np.pi * chi)
     answer[&#x27;curvature_convention&#x27;] = &#x27;H=(k1+k2)/2; convex high-c ball has positive integrated H; K integral from Gauss–Bonnet&#x27;
     return answer</code></pre></details>
-<h2>9. Run the complete example</h2>
+<h2>Step 9: Run the complete example</h2>
 <p>I keep the original algorithm, parameters, seed and output conventions. I inspect the saved diagnostics before interpreting the pictures. A finite run is not evidence of convergence or equilibrium.</p>
 <details><summary>Read this complete operation (39 lines)</summary><pre><code class="language-python">def run(field, output, dx=0.25):
     out = Path(output)
@@ -274,7 +274,7 @@ def flood_distance(mask, root):
     (out / &#x27;analysis.json&#x27;).write_text(json.dumps(report, indent=2))
     print(&#x27;Morphology&#x27;, json.dumps(report[&#x27;morphology&#x27;]), flush=True)
     return report</code></pre></details>
-<h2>10. Test a small case with a known answer</h2>
+<h2>Step 10: My check against a known answer</h2>
 <p>I test the measurement routines on a small exact mask before allocating the full volume. This is a function check, not a smaller replacement for the published 256³ simulation. Notebook-defined Numba functions disable only the disk cache; numerical operations are unchanged.</p>
 <pre><code class="language-python">mask = np.ones((8, 8, 8), dtype=bool)
 labels, result = label_phase(mask)
@@ -292,7 +292,7 @@ print(surface)</code></pre>
 <pre class="cell-result">{&#x27;components&#x27;: 1, &#x27;phase_voxels&#x27;: 512, &#x27;phase_fraction&#x27;: 1.0, &#x27;largest_fraction_of_phase&#x27;: 1.0, &#x27;clusters&#x27;: [{&#x27;root&#x27;: 1, &#x27;voxels&#x27;: 512, &#x27;winding_rank&#x27;: 3, &#x27;winding_basis&#x27;: [[0, 0, 1], [0, 1, 0], [1, 0, 0]]}], &#x27;method&#x27;: &#x27;Hoshen–Kopelman style scan / union–find; weighted root displacements; per-component winding&#x27;, &#x27;neighbors&#x27;: 6, &#x27;periodic&#x27;: True}
 {&#x27;threshold&#x27;: 0.5, &#x27;surface_area&#x27;: 97.40522711209204, &#x27;units&#x27;: &#x27;dimensionless; dx applied&#x27;, &#x27;vertices&#x27;: 120, &#x27;edges&#x27;: 348, &#x27;triangles&#x27;: 232, &#x27;edge_incidence_two&#x27;: True, &#x27;boundary_or_nonmanifold_edges&#x27;: 0, &#x27;periodic_welding_tolerance_voxels&#x27;: 1e-06, &#x27;display_mesh_used&#x27;: False, &#x27;coherent_orientation&#x27;: True, &#x27;surface_euler&#x27;: 4, &#x27;surface_components&#x27;: 2, &#x27;sum_surface_genera&#x27;: 0, &#x27;integrated_mean_curvature_high_c_outward&#x27;: 18.84955592153876, &#x27;integrated_gaussian_curvature&#x27;: 25.132741228718345, &#x27;curvature_convention&#x27;: &#x27;H=(k1+k2)/2; convex high-c ball has positive integrated H; K integral from Gauss–Bonnet&#x27;}
 </pre>
-<h2>11. Choose the optional full-resolution calculation</h2>
+<h2>Step 11: The optional full-resolution calculation</h2>
 <p>I leave this expensive calculation off by default. Setting run_full_calculation to True runs the unchanged original model or full saved-field analysis. Generation and full morphology each need substantial memory. The small tests above do not certify a new full run; the published reports describe the original full-resolution results.</p>
 <pre><code class="language-python">from pathlib import Path
 from urllib.request import urlretrieve
@@ -311,6 +311,6 @@ run_full_calculation = False
 if run_full_calculation:
     field_path = get_file(&quot;assets/examples/bicontinuity-3d/composition.npy&quot;)
     report = run(field_path, &quot;morphology-3d-results&quot;, dx=0.25)</code></pre>
-<h2>12. Review and extend the calculation</h2>
+<h2>Step 12: Review and extend the calculation</h2>
 <p>I first restart the kernel and run all the required cells. Then I change one input, predict its effect and compare the result with that prediction. A successful check establishes the tested property; it does not establish convergence or equilibrium. I retain the <a href="https://saswataiith.github.io/files/mesoscale/examples/connectivity_morphology.py">complete script</a> for command-line use. The notebook embeds the calculation directly and does not need that script to run.</p>
 <p><a href="/files/mesoscale/examples/notebooks/notebook-check-results.json">Read the notebook execution checks →</a> · <a href="/resources/step-by-step-codes/">More Python, Julia and C lessons →</a></p></section>

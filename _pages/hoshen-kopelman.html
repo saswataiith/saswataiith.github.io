@@ -1,11 +1,53 @@
 ---
 layout: scholar
-title: "Hoshen–Kopelman: build and test the code"
+title: "Hoshen–Kopelman: how connected cells receive one label"
 permalink: /resources/hoshen-kopelman/
 nav_active: resources
-description: "Build cluster labeling in small tested steps, with Python and Julia notebooks and C checkpoints."
+description: "I explain how Hoshen–Kopelman labels connected cells through a two-pass animation, checked Python and Julia notebooks, and C checkpoints."
 ---
-<style>.code-lesson{max-width:1100px}.code-lesson h2{margin:44px 0 18px}.code-lesson p{margin:18px 0}.code-lesson pre{white-space:pre;overflow-x:auto;background:#edf2ef;border:1px solid #d4dfd9;padding:20px;font:14px/1.7 ui-monospace,monospace}.code-lesson details{margin:20px 0;padding:18px;background:#f1f5f2}.code-lesson summary{cursor:pointer;font-weight:600}.code-lesson a{text-decoration:underline;text-underline-offset:4px}.code-lesson li{margin:12px 0;line-height:1.7}</style><section class="page-heading"><span class="eyebrow">STEP-BY-STEP CODE · CONNECTIVITY</span><h1>Write a small part.<br><em>Test it. Then continue.</em></h1><p>I build the Hoshen–Kopelman algorithm one part at a time. Each step introduces a small piece of code, explains its purpose and checks an expected result before I continue.</p></section><section class="section code-lesson"><p>I start with a small grid that I can check by eye. I retain the complete code alongside the individual steps.</p><p><a href="/files/mesoscale/examples/hoshen-kopelman/hoshen-kopelman-python.ipynb" download>Python notebook ↓</a> · <a href="/files/mesoscale/examples/hoshen-kopelman/hoshen-kopelman-julia.ipynb" download>Julia notebook ↓</a> · <a href="/files/mesoscale/examples/hoshen-kopelman/stepwise-hoshen-kopelman.zip" download>All notebooks, scripts and C checkpoints ↓</a></p><p>Install NumPy and Jupyter for the Python notebook. For Julia, use Julia and the IJulia kernel; the algorithm itself needs no Julia packages. For C, each checkpoint is a complete program: compile it, run its assertions, then move to the next file. The download includes commands and the recorded checks.</p><p>The tutorial uses four-edge adjacency in 2D. Labels, occupancy values and cell counts are dimensionless. Physical area requires the grid spacing. <a href="/files/mesoscale/examples/topology-connectivity.html">The topology playground</a> animates labeling and explains wrapping, holes and surfaces.</p><section><!-- CODE-STEPS-START --><h2>1. Write a small grid and inspect it</h2>
+<style>.code-lesson{max-width:1100px}.code-lesson h2{margin:44px 0 18px}.code-lesson p{margin:18px 0}.code-lesson pre{white-space:pre;overflow-x:auto;background:#edf2ef;border:1px solid #d4dfd9;padding:20px;font:14px/1.7 ui-monospace,monospace}.code-lesson details{margin:20px 0;padding:18px;background:#f1f5f2}.code-lesson summary{cursor:pointer;font-weight:600}.code-lesson a{text-decoration:underline;text-underline-offset:4px}.code-lesson li{margin:12px 0;line-height:1.7}</style><section class="page-heading"><span class="eyebrow">STEP-BY-STEP CODE · CONNECTIVITY</span><h1>How I develop a calculation<br><em>one part at a time.</em></h1><p>I build the Hoshen–Kopelman algorithm one part at a time. Each step introduces a small piece of code, explains its purpose and checks an expected result before I continue.</p></section><section class="section code-lesson"><p>I start with a small grid that I can check by eye. I retain the complete code alongside the individual steps.</p><p><a href="/files/mesoscale/examples/hoshen-kopelman/hoshen-kopelman-python.ipynb" download>Python notebook ↓</a> · <a href="/files/mesoscale/examples/hoshen-kopelman/hoshen-kopelman-julia.ipynb" download>Julia notebook ↓</a> · <a href="/files/mesoscale/examples/hoshen-kopelman/stepwise-hoshen-kopelman.zip" download>All notebooks, scripts and C checkpoints ↓</a></p><p>Install NumPy and Jupyter for the Python notebook. For Julia, use Julia and the IJulia kernel; the algorithm itself needs no Julia packages. For C, each checkpoint is a complete program: compile it, run its assertions, then move to the next file. The download includes commands and the recorded checks.</p><p>The tutorial uses four-edge adjacency in 2D. Labels, occupancy values and cell counts are dimensionless. Physical area requires the grid spacing. <a href="/files/mesoscale/examples/topology-connectivity.html">The topology playground</a> animates labeling and explains wrapping, holes and surfaces.</p>
+<section class="section code-lesson" id="hk-logic">
+<h2>Why one cluster can initially receive two labels</h2>
+<p>I begin with five occupied cells. The first row has two separated cells, but the next row joins them. All five cells belong to one cluster. A cluster is a set of occupied cells connected through shared edges; touching at a corner alone does not connect them.</p>
+<div class="hk-example"><pre aria-label="An occupied grid and its provisional labels">Occupied cells       After the first pass       Final cluster labels
+1  0  1              1  0  2                     1  0  1
+1  1  1              1  1  1                     1  1  1
+0  0  0              0  0  0                     0  0  0</pre></div>
+<p>I scan from left to right, then move to the next row. The cell at the upper right receives label 2 because its connection to label 1 has not yet been visited. When the two arms meet, I record that label 2 belongs to the same cluster as label 1. I do not rewrite every earlier cell at that moment.</p>
+<h3>The parent list records links between labels</h3>
+<p><code>parent[k]</code> stores the next label to follow from label <code>k</code>. These are integer label numbers, not memory addresses. For example, the list <code>[0, 1, 1, 2]</code> gives the following sequence:</p>
+<pre aria-label="Label three leads to label two, which leads to label one">label 3             label 2             label 1
+   3  ───────────────►  2  ───────────────►  1
+parent[3] = 2       parent[2] = 1       parent[1] = 1
+                                        stop here</pre>
+<p>Label 1 is the <strong>root</strong>, also called the representative: it points to itself. The function <code>find_label</code> follows these links and returns that root. Label 0 is reserved for background. This three-label sequence illustrates lookup; the five-cell example needs only labels 1 and 2.</p>
+<p>To merge two labels, I first find both roots. If they differ, <code>merge_labels</code> makes the larger root point to the smaller root. For the two arms, this gives <code>parent[2] = 1</code>. If both labels already lead to the same root, no new link is needed.</p>
+<h3>Pass 1: assign labels and record connections</h3>
+<p><code>scan_grid</code> visits every cell once. At an occupied cell, I inspect the cells above and to the left because they have already been visited. The four-edge connection rule still includes all four directions: connections to the right and below are considered when those cells are visited.</p>
+<table><thead><tr><th>Already visited neighbors</th><th>My next operation</th></tr></thead><tbody>
+<tr><td>Neither is occupied</td><td>I create a new label that points to itself.</td></tr>
+<tr><td>One is occupied</td><td>I follow its label to the root and use that root.</td></tr>
+<tr><td>Both are occupied</td><td>I find both roots. If they differ, I merge them; otherwise they already identify one cluster.</td></tr>
+</tbody></table>
+<h3>Pass 2: resolve the provisional labels</h3>
+<p><code>finish_labels</code> scans the grid again. For each occupied cell, I find its root and assign a final cluster number. Surviving roots receive consecutive numbers starting at 1. This replaces provisional grid labels; the code does not perform path compression on the parent list. I then count the cells in each final cluster.</p>
+<div id="hk-walkthrough" class="hk-panel">
+<h3>Both passes, one cell at a time</h3>
+<p>The dark outline marks the current cell. Dashed outlines mark the above and left neighbors during the first pass. A dot is an occupied cell that has not yet received a label; 0 is background. Colors distinguish label numbers, so two colors can still represent one connected cluster before the final pass.</p>
+<div class="hk-controls"><label>Example <select id="hk-pattern"><option value="arms">Two arms that join</option><option value="islands">Separate islands</option><option value="ring">A ring</option></select></label><button id="hk-previous" type="button">Previous</button><button id="hk-next" type="button">Next cell</button><button id="hk-play" type="button">Play</button><button id="hk-reset" type="button">Reset</button></div>
+<p><strong id="hk-phase"></strong> · <span id="hk-progress"></span></p>
+<p id="hk-message" role="status" aria-live="polite"></p>
+<div class="hk-panels"><div><h4>Provisional labels</h4><div id="hk-provisional" class="hk-grid"></div></div><div><h4>Parent links</h4><div id="hk-parents"></div></div><div><h4>Final labels</h4><div id="hk-final" class="hk-grid"></div></div></div>
+<p>This walkthrough uses nonperiodic boundaries. The periodic-boundary step appears later in the code lesson. The ring has one cluster and one enclosed hole; cluster labeling alone does not measure holes.</p>
+<noscript>The static grids above show the same joining example. JavaScript is needed to step through the animation.</noscript>
+</div>
+<h2>The same sequence in code</h2>
+<p>The functions below follow the operations shown above: look up a root, merge roots, scan the grid, then resolve the labels. I retain the small checks after each function.</p>
+</section>
+<style>.hk-panel{padding:22px;border:1px solid #b8cbc2;border-radius:12px;background:#fafcfb}.hk-controls{display:flex;flex-wrap:wrap;gap:12px;align-items:center}.hk-controls button,.hk-controls select{padding:9px 14px;border:1px solid #759487;border-radius:6px;background:white;color:#18382c;font:inherit}.hk-controls button:disabled{opacity:.45}.hk-panels{display:grid;grid-template-columns:1fr 1.3fr 1fr;gap:20px}.hk-grid{display:grid;gap:6px}.hk-cell{display:grid;place-items:center;min-height:42px;border:2px solid transparent;border-radius:5px;font-weight:700}.hk-current{outline:3px solid #13392b;outline-offset:1px}.hk-neighbor{border:2px dashed #61471c}.hk-link-active{background:#fff0c7}.hk-example pre{font-size:15px}#hk-message{min-height:80px}#hk-parents{font:14px/1.6 ui-monospace,monospace}#hk-parents p{margin:9px 0}@media(max-width:700px){.hk-panels{grid-template-columns:1fr}.hk-grid{max-width:340px}}</style>
+<script src="/assets/js/hk-walkthrough-model.js?v=1" defer></script>
+<script src="/assets/js/hk-walkthrough.js?v=1" defer></script>
+<section><!-- CODE-STEPS-START --><h2>Step 1: My small test grid</h2>
 <p>I begin with a small array that I can inspect by eye. A value of 1 identifies an occupied cell; 0 identifies background. Rows run downward and columns run to the right. These values and the labels are dimensionless. I count connections through shared edges, so corner contact alone does not connect two cells.</p>
 <h3>Python</h3><pre><code>import numpy as np
 
@@ -20,7 +62,7 @@ print(mask.astype(int))
 @assert size(mask) == (3, 3)
 @assert sum(mask) == 5
 println(Int.(mask))</code></pre></details>
-<h2>2. Find the representative of a label</h2>
+<h2>Step 2: Finding the root of a label</h2>
 <p>The first row appears to contain two separate clusters. Later cells connect them. I therefore need a way to record that two labels belong to the same cluster. In the parent list, parent[k] gives the next label to follow. A label that points to itself is the representative. Label 0 is reserved for background. I first test lookup without scanning a grid.</p>
 <h3>Python</h3><pre><code>def find_label(parent, label):
     while parent[label] != label:
@@ -41,7 +83,7 @@ end
 parent = [1, 1, 2]
 @assert find_label(parent, 3) == 1
 println(&quot;Label lookup passed.&quot;)</code></pre></details>
-<h2>3. Merge two labels</h2>
+<h2>Step 3: Merging two labels</h2>
 <p>I find the representatives before merging labels. Otherwise I could link the wrong entries or form a cycle in the parent list. I make the larger representative point to the smaller one. This gives predictable labels in the worked example. I do not need a more elaborate data structure for this small lesson.</p>
 <h3>Python</h3><pre><code>def merge_labels(parent, first, second):
     first_root = find_label(parent, first)
@@ -68,7 +110,7 @@ merge_labels!(parent, 2, 3)
 merge_labels!(parent, 1, 3)
 @assert [find_label(parent, k) for k in 1:3] == [1, 1, 1]
 println(&quot;Label merging passed.&quot;)</code></pre></details>
-<h2>4. Scan the grid once</h2>
+<h2>Step 4: The first grid scan</h2>
 <p>I visit rows from top to bottom, and cells within each row from left to right. Only the upper and left neighbors have already been visited. If both are background, I create a label. If one is occupied, I use its label. If both are occupied, I merge their labels. Each shared-edge connection is considered when its later cell is visited. The returned labels are provisional: some different numbers may already refer to the same cluster.</p>
 <h3>Python</h3><pre><code>def scan_grid(mask):
     rows, columns = mask.shape
@@ -128,7 +170,7 @@ labels, parent = scan_grid(mask)
 @assert labels[1, 1] != labels[1, 3]
 @assert find_label(parent, labels[1, 1]) == find_label(parent, labels[1, 3])
 println(&quot;Provisional labels: &quot;, labels)</code></pre></details>
-<h2>5. Replace provisional labels and count cells</h2>
+<h2>Step 5: The final labels and cluster sizes</h2>
 <p>I now replace each occupied cell label by its representative. I renumber the surviving representatives from 1 upward. The size of a cluster is the number of cells with its final label. For a uniform two-dimensional grid, its area is this count multiplied by the cell area. A count has no units; an area has the units of the squared grid spacing. The largest-cluster fraction is the largest count divided by the occupied-cell count, not the total grid-cell count.</p>
 <h3>Python</h3><pre><code>def finish_labels(labels, parent):
     final = np.zeros(labels.shape, dtype=int)
@@ -176,7 +218,7 @@ final, sizes = finish_labels(labels, parent)
 @assert sizes == [5]
 @assert (final .&gt; 0) == mask
 println(&quot;Final labels: &quot;, final, &quot;; sizes: &quot;, sizes)</code></pre></details>
-<h2>6. Add periodic connections as a separate step</h2>
+<h2>Step 6: Add periodic connections as a separate step</h2>
 <p>I keep the bounded scan unchanged. For periodic data I then connect occupied cells at matching positions on opposite edges. The top cell in a column is adjacent to the bottom cell in that same column. The left and right cells in a row are adjacent in the same way. I merge these labels before producing the final counts. The two-cell example has two bounded clusters and one periodic cluster. It is a small island crossing the displayed seam; it does not form a loop around the whole domain.</p>
 <h3>Python</h3><pre><code>def join_periodic_edges(labels, parent):
     rows, columns = labels.shape
@@ -235,7 +277,7 @@ seam[1, 3] = seam[end, 3] = true
 @assert hoshen_kopelman(seam)[2] == [1, 1]
 @assert hoshen_kopelman(seam; periodic=true)[2] == [2]
 println(&quot;Periodic seam check passed.&quot;)</code></pre></details>
-<h2>7. Test examples before analyzing a microstructure</h2>
+<h2>Step 7: My checks on small grids</h2>
 <p>I test an empty grid, a filled grid, a corner contact and a ring. A ring and a filled square each have one connected component. Cluster labeling cannot distinguish their hole counts. I also test a rectangular grid so that accidentally exchanging the row and column dimensions cannot remain hidden.</p>
 <h3>Python</h3><pre><code>assert hoshen_kopelman(np.zeros((3, 5), bool))[1] == []
 assert hoshen_kopelman(np.ones((3, 5), bool))[1] == [15]
@@ -264,7 +306,7 @@ rectangle[2, 1] = rectangle[2, end] = true
 @assert hoshen_kopelman(rectangle)[2] == [1, 1]
 @assert hoshen_kopelman(rectangle; periodic=true)[2] == [2]
 println(&quot;All small-grid checks passed.&quot;)</code></pre></details>
-<h2>8. Apply a threshold and analyze both phases</h2>
+<h2>Step 8: Thresholds and the two phases</h2>
 <p>The composition c and threshold are dimensionless here. I define the high-composition phase using c &gt;= 0.5 and the other phase using c &lt; 0.5. I measure each separately. The occupied fraction uses all grid cells in its denominator. For an absent phase I report a largest-cluster fraction of zero by convention. In a real simulation I would load the saved field instead of this small example. I do not infer winding, holes or numerical convergence from these counts.</p>
 <h3>Python</h3><pre><code>composition = np.array([[0.8, 0.2, 0.7],
                         [0.9, 0.6, 0.8],
@@ -287,4 +329,5 @@ for (name, phase) in [(&quot;High composition&quot;, composition .&gt;= 0.5),
     @assert sum(phase_sizes) == occupied
     println(name, &quot;: occupied fraction = &quot;, occupied / length(phase),
             &quot;; clusters = &quot;, length(phase_sizes), &quot;; largest fraction = &quot;, largest_fraction)
-end</code></pre></details><!-- CODE-STEPS-END --><h2>What the algorithm establishes</h2><p>Hoshen–Kopelman assigns the same final label to cells connected by the specified neighbor rule. It gives component counts and sizes. A periodic edge connection does not, by itself, prove a loop around the domain. A ring and a filled square can each have one component but different hole counts. Use the separate winding and topology measurements for those questions.</p><h2>References and source credits</h2><p>The algorithm is due to <a href="https://doi.org/10.1103/PhysRevB.14.3438">Hoshen and Kopelman (1976)</a>. <a href="https://www.ocf.berkeley.edu/~fricke/projects/hoshenkopelman/hoshenkopelman.html">Tobin Fricke explains the union–find formulation and provides a C implementation</a>. The code above is a new small teaching implementation. Older C files used in my analysis retain their existing credits, including Prof. T. A. Abinandanan, my PhD adviser (Abi in the original source comments); Fricke’s separate source retains his copyright and GPL notice. No historical source is relabeled as new code.</p></section>
+end</code></pre></details><!-- CODE-STEPS-END --><h2>What the algorithm establishes</h2><p>Hoshen–Kopelman assigns the same final label to cells connected by the specified neighbor rule. It gives component counts and sizes. A periodic edge connection does not, by itself, prove a loop around the domain. A ring and a filled square can each have one component but different hole counts. I use separate winding and topology measurements for those questions.</p><h2>References and source credits</h2><p>The algorithm is due to <a href="https://doi.org/10.1103/PhysRevB.14.3438">Hoshen and Kopelman (1976)</a>. <a href="https://www.ocf.berkeley.edu/~fricke/projects/hoshenkopelman/hoshenkopelman.html">Tobin Fricke explains the union–find formulation and provides a C implementation</a>. The code above is a new small teaching implementation. Older C files used in my analysis retain their existing credits, including Prof. T. A. Abinandanan, my PhD adviser (Abi in the original source comments); Fricke’s separate source retains his copyright and GPL notice. I retain the original credits on historical source files.</p></section>
+</section>

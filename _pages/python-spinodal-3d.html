@@ -13,7 +13,7 @@ description: "I develop the 256\u00b3 spinodal field, connectivity and display i
 <p>I develop this calculation in small steps. I run a cell, inspect its result and test it before adding the next part. Run the cells in order in Jupyter. A code cell defines a part of the calculation or carries it out; defining a function does not run it.</p>
 <p>I permit free noncommercial teaching, learning and demonstrations with acknowledgment. Research and commercial use require my written permission. Earlier licensed releases retain their permissions. <a href="https://saswataiith.github.io/using-my-resources/">Read the code-use terms</a>.</p>
 <p>Copyright (c) 2026 Saswata Bhattacharyya.</p>
-<h2>1. Prepare the Python environment</h2>
+<h2>Step 1: Prepare the Python environment</h2>
 <p>I install the packages listed in the next cell once in the same environment as the notebook. In Jupyter or Colab, remove the comment marker from the installation line below if a package is missing. NumPy stores arrays and evaluates numerical operations. Matplotlib displays plots. Pillow reads and writes images. This installation does not change the model parameters.</p>
 <pre><code class="language-python"># %pip install numpy scipy numba scikit-image fast-simplification matplotlib
 import numpy as np
@@ -21,7 +21,7 @@ assert np.isfinite(np.array([0.0, 1.0])).all()
 print(&quot;NumPy is ready:&quot;, np.__version__)</code></pre>
 <pre class="cell-result">NumPy is ready: 2.1.3
 </pre>
-<h2>2. Prepare the next part of the calculation</h2>
+<h2>Step 2: Prepare the next part of the calculation</h2>
 <p>I define <code>(N, SEED, DT, STEPS)</code>. These are the same operations as in the original source, written on separate lines so their order is clear. Inspect their values before running the next cell.</p>
 <pre><code class="language-python">from pathlib import Path
 import json, sys, time
@@ -32,11 +32,11 @@ from numba import njit
 from skimage.measure import marching_cubes
 import fast_simplification
 N, SEED, DT, STEPS = (256, 20261005, 0.5, 400)</code></pre>
-<h2>3. Prepare the next part of the calculation</h2>
+<h2>Step 3: Prepare the next part of the calculation</h2>
 <p>I define <code>A</code>, <code>(DX, STABILIZATION, WORKERS)</code>. These are the same operations as in the original source, written on separate lines so their order is clear. Inspect their values before running the next cell.</p>
 <pre><code class="language-python">A = M = KAPPA = 1.0
 DX, STABILIZATION, WORKERS = (0.25, 2.0, 4)</code></pre>
-<h2>4. Build the periodic voxel graph</h2>
+<h2>Step 4: The periodic voxel graph</h2>
 <p>I use six face-sharing neighbors and a queue to visit each connected phase. Lifted coordinates retain periodic displacements. Non-tree edges can reveal noncontractible wrapping loops. Numba compiles the loops for speed; it does not change the neighbor convention.</p>
 <details><summary>Read this complete operation (81 lines)</summary><pre><code class="language-python">@njit(cache=False)
 def graph(mask, need_routes=False):
@@ -119,7 +119,7 @@ def graph(mask, need_routes=False):
         counts[nc] = count
         nc += 1
     return (counts[:nc], wrap[:nc], vectors[:nv], parent, edge_u, edge_v, signs)</code></pre></details>
-<h2>5. Count phase components and their winding directions</h2>
+<h2>Step 5: Count phase components and their winding directions</h2>
 <p>I obtain voxel counts and winding vectors from the periodic graph. Phase fraction divides occupied voxels by all voxels. Largest fraction divides the largest component by the occupied phase. Independent winding rank distinguishes one diagonal loop from independent x, y and z loops.</p>
 <pre><code class="language-python">def analyze(mask, need_routes=False):
     counts, wrap, vectors, parent, us, vs, signs = graph(mask, need_routes)
@@ -145,7 +145,7 @@ def graph(mask, need_routes=False):
             routes[&#x27;xyz&#x27;[axis]] = [[u // (n * n), u // n % n, u % n] for u in route]
     largest = int(counts.max()) if len(counts) else 0
     return ({&#x27;phase_fraction&#x27;: float(mask.mean()), &#x27;components&#x27;: len(counts), &#x27;largest_fraction_of_phase&#x27;: largest / int(mask.sum()), &#x27;winding_rank&#x27;: int(np.linalg.matrix_rank(vectors.astype(float))) if len(vectors) else 0, &#x27;component_details&#x27;: [{&#x27;voxels&#x27;: int(count), &#x27;wrap_xyz&#x27;: w.astype(bool).tolist()} for count, w in zip(counts, wrap)]}, routes)</code></pre>
-<h2>6. Check every step of a route</h2>
+<h2>Step 6: My check of each route step</h2>
 <p>I check phase membership, periodic face-sharing adjacency and the sum of the lifted steps. The net displacement must equal one box length along the claimed axis. This establishes a valid route, not an exhaustive visit to the phase.</p>
 <pre><code class="language-python">def validate_route(route, mask, axis):
     points = np.array(route)
@@ -158,7 +158,7 @@ def graph(mask, need_routes=False):
     target[&#x27;xyz&#x27;.index(axis)] = 1
     assert np.array_equal(d.sum(axis=0), target * n)
     return {&#x27;steps&#x27;: len(route) - 1, &#x27;winding&#x27;: target.tolist(), &#x27;valid&#x27;: True}</code></pre>
-<h2>7. Search the phase interior</h2>
+<h2>Step 7: Search the phase interior</h2>
 <p>I search admissible voxel neighbors without crossing into the other phase. Parents record the route used to reach a voxel. These parents allow a connected path to be reconstructed.</p>
 <details><summary>Read this complete operation (67 lines)</summary><pre><code class="language-python">@njit(cache=False)
 def interior_bfs(core, axis, start, margin):
@@ -227,7 +227,7 @@ def interior_bfs(core, axis, start, margin):
         route[i, other1] = u % n
         u = parents[u]
     return route</code></pre></details>
-<h2>8. Find and verify three interior routes</h2>
+<h2>Step 8: Find and verify three interior routes</h2>
 <p>I find routes through phase-core voxels, then check their membership, neighbor steps and net periodic displacement. Restricting display paths to the core improves visibility without changing the full-volume connectivity measurement.</p>
 <pre><code class="language-python">def interior_routes(c, phase):
     &quot;&quot;&quot;Select safe core voxels, then route across the interior lifted domain.
@@ -259,7 +259,7 @@ def interior_bfs(core, axis, start, margin):
         checks[name] = check
         print(&#x27;Interior route&#x27;, phase, name, check, flush=True)
     return (routes, checks)</code></pre>
-<h2>9. Build a rooted tree in the phase core</h2>
+<h2>Step 9: A rooted tree in the phase core</h2>
 <p>I visit safe voxels from one root and save parent links. The number reached measures this rooted core component, which is a subset of the full phase.</p>
 <pre><code class="language-python">@njit(cache=False)
 def core_tree(core, root):
@@ -290,7 +290,7 @@ def core_tree(core, root):
                     queue[tail] = v
                     tail += 1
     return (parents, tail)</code></pre>
-<h2>10. Join distributed sites into a connected witness</h2>
+<h2>Step 10: Join distributed sites into a connected witness</h2>
 <p>I connect sites distributed through the box and include independently checked wrapping routes. The displayed subgraph is a witness of connectivity. It is not the longest path and does not contain every phase voxel.</p>
 <details><summary>Read this complete operation (80 lines)</summary><pre><code class="language-python">def percolation_network(c, phase, routes):
     &quot;&quot;&quot;A connected witness subgraph: branches to 125 distributed sites plus
@@ -372,7 +372,7 @@ def core_tree(core, root):
     proof = {&#x27;nodes&#x27;: len(nodes), &#x27;edges&#x27;: len(pairs), &#x27;components&#x27;: 1, &#x27;winding_rank&#x27;: rank, &#x27;distributed_targets&#x27;: len(targets), &#x27;rooted_core_voxels_reached&#x27;: int(reached), &#x27;phase_membership_and_six_neighbour_edges_valid&#x27;: True, &#x27;scope&#x27;: &#x27;displayed connected witness subgraph, not every voxel or a longest path&#x27;}
     print(&#x27;Percolation network&#x27;, phase, proof, flush=True)
     return {&#x27;nodes&#x27;: nodes, &#x27;edges&#x27;: pairs, &#x27;root&#x27;: root.tolist(), &#x27;targets&#x27;: targets, &#x27;proof&#x27;: proof}</code></pre></details>
-<h2>11. Prepare the display mesh and route data</h2>
+<h2>Step 11: Prepare the display mesh and route data</h2>
 <p>I extract the common c=0.5 interface at the full resolution, then simplify triangles for display only. The two phases use opposite interface normals. Connectivity and path checks still use the saved full-resolution field.</p>
 <pre><code class="language-python">def export_viewer(c, out, routes):
     &quot;&quot;&quot;Extract the c=0.5 interface itself, without any artificial box-face caps.
@@ -399,7 +399,7 @@ def core_tree(core, root):
     (out / &#x27;viewer.json&#x27;).write_text(json.dumps(viewer, separators=(&#x27;,&#x27;, &#x27;:&#x27;)))
     print(&#x27;Isosurface display triangles&#x27;, len(faces), &#x27;from&#x27;, original, flush=True)
     return {p: {&#x27;full_resolution_triangles&#x27;: original, &#x27;display_triangles&#x27;: len(faces), &#x27;isovalue&#x27;: 0.5, &#x27;box_caps&#x27;: False} for p in meshes}</code></pre>
-<h2>12. Run the complete example</h2>
+<h2>Step 12: Run the complete example</h2>
 <p>I keep the original algorithm, parameters, seed and output conventions. I inspect the saved diagnostics before interpreting the pictures. A finite run is not evidence of convergence or equilibrium.</p>
 <details><summary>Read this complete operation (55 lines)</summary><pre><code class="language-python">def run(output):
     out = Path(output)
@@ -456,7 +456,7 @@ def core_tree(core, root):
     report[&#x27;displayed_networks&#x27;] = {p: net[&#x27;proof&#x27;] for p, net in json.loads((out / &#x27;viewer.json&#x27;).read_text())[&#x27;networks&#x27;].items()}
     (out / &#x27;report.json&#x27;).write_text(json.dumps(report, indent=2))
     print(&#x27;Finished in&#x27;, round(time.perf_counter() - start), &#x27;seconds&#x27;, flush=True)</code></pre></details>
-<h2>13. Test a small case with a known answer</h2>
+<h2>Step 13: My check against a known answer</h2>
 <p>I test the measurement routines on a small exact mask before allocating the full volume. This is a function check, not a smaller replacement for the published 256³ simulation. Notebook-defined Numba functions disable only the disk cache; numerical operations are unchanged.</p>
 <pre><code class="language-python">mask = np.ones((8, 8, 8), dtype=bool)
 result, routes = analyze(mask, need_routes=True)
@@ -469,11 +469,11 @@ y {&#x27;steps&#x27;: 8, &#x27;winding&#x27;: [0, 1, 0], &#x27;valid&#x27;: True
 z {&#x27;steps&#x27;: 8, &#x27;winding&#x27;: [0, 0, 1], &#x27;valid&#x27;: True}
 {&#x27;phase_fraction&#x27;: 1.0, &#x27;components&#x27;: 1, &#x27;largest_fraction_of_phase&#x27;: 1.0, &#x27;winding_rank&#x27;: 3, &#x27;component_details&#x27;: [{&#x27;voxels&#x27;: 512, &#x27;wrap_xyz&#x27;: [True, True, True]}]}
 </pre>
-<h2>14. Choose the optional full-resolution calculation</h2>
+<h2>Step 14: The optional full-resolution calculation</h2>
 <p>I leave this expensive calculation off by default. Setting run_full_calculation to True runs the unchanged original model or full saved-field analysis. Generation and full morphology each need substantial memory. The small tests above do not certify a new full run; the published reports describe the original full-resolution results.</p>
 <pre><code class="language-python">run_full_calculation = False
 if run_full_calculation:
     run(&quot;bicontinuity-3d-results&quot;)</code></pre>
-<h2>15. Review and extend the calculation</h2>
+<h2>Step 15: Review and extend the calculation</h2>
 <p>I first restart the kernel and run all the required cells. Then I change one input, predict its effect and compare the result with that prediction. A successful check establishes the tested property; it does not establish convergence or equilibrium. I retain the <a href="https://saswataiith.github.io/files/mesoscale/examples/bicontinuity_3d.py">complete script</a> for command-line use. The notebook embeds the calculation directly and does not need that script to run.</p>
 <p><a href="/files/mesoscale/examples/notebooks/notebook-check-results.json">Read the notebook execution checks →</a> · <a href="/resources/step-by-step-codes/">More Python, Julia and C lessons →</a></p></section>

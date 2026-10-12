@@ -44,7 +44,7 @@ def update_page(page_name, python_path, julia_path=None):
         raise ValueError("Python and Julia must have the same step count.")
     blocks = []
     for index, (title, text, code, outputs) in enumerate(python_steps):
-        blocks.append("<h2>" + html.escape(title) + "</h2>")
+        blocks.append("<h2>" + html.escape(re.sub(r"^(\d+)\. ", r"Step \1: ", title)) + "</h2>")
         formatted_text = html.escape(text)
         formatted_text = re.sub(r'\$\$(.*?)\$\$', lambda match: r'\[' + match[1] + r'\]', formatted_text, flags=re.S)
         formatted_text = re.sub(r'\$([^$]+)\$', lambda match: r'\(' + match[1] + r'\)', formatted_text)

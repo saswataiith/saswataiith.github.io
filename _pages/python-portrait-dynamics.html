@@ -12,7 +12,7 @@ description: "I develop one portrait and two double-well evolution laws in expla
 <p>I develop this calculation in small steps. I run a cell, inspect its result and test it before adding the next part. Run the cells in order in Jupyter. A code cell defines a part of the calculation or carries it out; defining a function does not run it.</p>
 <p>I permit free noncommercial teaching, learning and demonstrations with acknowledgment. Research and commercial use require my written permission. Earlier licensed releases retain their permissions. <a href="https://saswataiith.github.io/using-my-resources/">Read the code-use terms</a>.</p>
 <p>Copyright (c) 2026 Saswata Bhattacharyya.</p>
-<h2>1. Prepare the Python environment</h2>
+<h2>Step 1: Prepare the Python environment</h2>
 <p>I install the packages listed in the next cell once in the same environment as the notebook. In Jupyter or Colab, remove the comment marker from the installation line below if a package is missing. NumPy stores arrays and evaluates numerical operations. Matplotlib displays plots. Pillow reads and writes images. This installation does not change the model parameters.</p>
 <pre><code class="language-python"># %pip install numpy &quot;pillow&gt;=10.1&quot; matplotlib
 import numpy as np
@@ -20,7 +20,7 @@ assert np.isfinite(np.array([0.0, 1.0])).all()
 print(&quot;NumPy is ready:&quot;, np.__version__)</code></pre>
 <pre class="cell-result">NumPy is ready: 2.1.3
 </pre>
-<h2>2. Read the image and check its dimensions</h2>
+<h2>Step 2: Read the image and check its dimensions</h2>
 <p>I download my public portrait once, or replace this path with my own image. An RGB array has two position axes and one channel axis. The three channels are red, green and blue.</p>
 <pre><code class="language-python">from pathlib import Path
 from urllib.request import urlretrieve
@@ -37,13 +37,13 @@ def get_file(relative_path):
 
 portrait = get_file(&quot;assets/images/saswata-landscape.png&quot;)
 output = &quot;portrait-dynamics-results&quot;</code></pre>
-<h2>3. Prepare the next part of the calculation</h2>
+<h2>Step 3: Prepare the next part of the calculation</h2>
 <p>I define the following operations. These are the same operations as in the original source, written on separate lines so their order is clear. Inspect their values before running the next cell.</p>
 <pre><code class="language-python">import sys
 from pathlib import Path
 import numpy as np
 from PIL import Image, ImageDraw, ImageFont</code></pre>
-<h2>4. Choose a portable display font</h2>
+<h2>Step 4: A portable display font</h2>
 <p>I try the original font, then DejaVu Sans, then Pillow's default font. The font changes labels on the image only; it does not change a numerical field.</p>
 <pre><code class="language-python">def portrait_font(size):
     fonts = [Path(&#x27;/&#x27;) / &#x27;System&#x27; / &#x27;Library&#x27; / &#x27;Fonts&#x27; / &#x27;Helvetica.ttc&#x27;, &#x27;DejaVuSans.ttf&#x27;]
@@ -53,7 +53,7 @@ from PIL import Image, ImageDraw, ImageFont</code></pre>
         except OSError:
             pass
     return ImageFont.load_default(size=size)</code></pre>
-<h2>5. Set up the Fourier grid</h2>
+<h2>Step 5: Set up the Fourier grid</h2>
 <p>I calculate wave numbers consistent with the grid spacing and periodic domain. k2 denotes the squared magnitude of a wave vector. The denominator contains the term treated implicitly in the original update. The zero Fourier mode represents the spatial mean.</p>
 <pre><code class="language-python">out = Path(output)
 out.mkdir(parents=True, exist_ok=True)
@@ -64,7 +64,7 @@ mean0 = u.mean()
 del u
 k = 2 * np.pi * np.fft.fftfreq(256)
 k2 = k[:, None] ** 2 + k[None, :] ** 2</code></pre>
-<h2>6. Prepare the next part of the calculation</h2>
+<h2>Step 6: Prepare the next part of the calculation</h2>
 <p>I define <code>dt</code>, <code>kap</code>, <code>S</code>, <code>font</code>, <code>small</code>, <code>records</code>. These are the same operations as in the original source, written on separate lines so their order is clear. Inspect their values before running the next cell.</p>
 <pre><code class="language-python">dt = 0.1
 kap = 0.4
@@ -72,11 +72,11 @@ S = 2
 font = portrait_font(27)
 small = portrait_font(23)
 records = []</code></pre>
-<h2>7. Define the energy diagnostic</h2>
+<h2>Step 7: Define the energy diagnostic</h2>
 <p>I calculate the bulk and gradient contributions in the same convention as the source program. Fourier normalization is part of this definition. I compare this quantity through time within one model; energies from different functionals need not have the same meaning.</p>
 <pre><code class="language-python">def energy(a):
     return np.mean((a * a - 1) ** 2 / 4) + kap / 2 * np.sum(k2 * abs(np.fft.fft2(a)) ** 2) / 256 ** 4</code></pre>
-<h2>8. Advance the field and record the result</h2>
+<h2>Step 8: Advance the field and record the result</h2>
 <p>I apply the update in its original order. I record the mean, energy or other diagnostics at the specified intervals. I do not clip the numerical field. A saved picture is a display of the field, not a substitute for a conservation check.</p>
 <pre><code class="language-python">for step in range(2001):
     if step % 25 == 0:
@@ -95,7 +95,7 @@ records = []</code></pre>
         break
     ac = np.fft.ifft2((np.fft.fft2(ac) - dt * np.fft.fft2(ac ** 3 - ac - S * ac)) / (1 + dt * (S + kap * k2))).real
     ch = np.fft.ifft2((np.fft.fft2(ch) - dt * k2 * np.fft.fft2(ch ** 3 - ch - S * ch)) / (1 + dt * k2 * (S + kap * k2))).real</code></pre>
-<h2>9. Check the result before continuing</h2>
+<h2>Step 9: My check of this result</h2>
 <p>I check finite values, conservation or the known reference result as specified below. An assertion stops the notebook if the condition fails. Inspect the quantities and tolerance rather than suppressing a failure.</p>
 <pre><code class="language-python">assert np.isfinite(ac).all() and np.isfinite(ch).all()
 assert abs(ch.mean() - mean0) &lt; 1e-10
@@ -103,6 +103,6 @@ np.savetxt(out / &#x27;diagnostics.csv&#x27;, records, delimiter=&#x27;,&#x27;, 
 print(&#x27;Initial/final mean:&#x27;, mean0, ac.mean(), ch.mean())</code></pre>
 <pre class="cell-result">Initial/final mean: 0.22601545745251223 0.5506254461057442 0.22601545745251247
 </pre>
-<h2>10. Review and extend the calculation</h2>
+<h2>Step 10: Review and extend the calculation</h2>
 <p>I first restart the kernel and run all the required cells. Then I change one input, predict its effect and compare the result with that prediction. A successful check establishes the tested property; it does not establish convergence or equilibrium. I retain the <a href="https://saswataiith.github.io/files/mesoscale/examples/portrait_dynamics.py">complete script</a> for command-line use. The notebook embeds the calculation directly and does not need that script to run.</p>
 <p><a href="/files/mesoscale/examples/notebooks/notebook-check-results.json">Read the notebook execution checks →</a> · <a href="/resources/step-by-step-codes/">More Python, Julia and C lessons →</a></p></section>

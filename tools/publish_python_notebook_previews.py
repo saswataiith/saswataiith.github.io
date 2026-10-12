@@ -10,6 +10,7 @@ ROOT=Path(__file__).resolve().parents[1]
 lessons=json.loads((ROOT/'tools/python-notebook-lessons.json').read_text())
 style='''<style>.python-lesson{max-width:1050px}.python-lesson pre{overflow-x:auto;background:#eef3f0;border:1px solid #d4dfd9;padding:20px;font:14px/1.65 ui-monospace,monospace}.python-lesson h2{margin-top:40px}.python-lesson p,.python-lesson li{line-height:1.8}.python-lesson details{margin:20px 0;padding:18px;background:#f1f5f2}.python-lesson summary{cursor:pointer;font-weight:600}.python-lesson img{max-width:100%;height:auto}.cell-result{padding:12px;background:#f7f8f6}.python-lesson .formula-box{overflow-x:auto}</style>'''
 def render_markdown(text):
+ text=re.sub(r"^(## )([0-9]+)\. ", r"\1Step \2: ", text, flags=re.M)
  math=[]
  def hold(match):
   math.append(match.group());return 'MATHPLACEHOLDER'+str(len(math)-1)+'END'

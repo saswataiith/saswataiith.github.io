@@ -12,7 +12,7 @@ description: "I develop connected regions, periodic loops, holes and cavities in
 <p>I develop this calculation in small steps. I run a cell, inspect its result and test it before adding the next part. Run the cells in order in Jupyter. A code cell defines a part of the calculation or carries it out; defining a function does not run it.</p>
 <p>I permit free noncommercial teaching, learning and demonstrations with acknowledgment. Research and commercial use require my written permission. Earlier licensed releases retain their permissions. <a href="https://saswataiith.github.io/using-my-resources/">Read the code-use terms</a>.</p>
 <p>Copyright (c) 2026 Saswata Bhattacharyya.</p>
-<h2>1. Prepare the Python environment</h2>
+<h2>Step 1: Prepare the Python environment</h2>
 <p>I install the packages listed in the next cell once in the same environment as the notebook. In Jupyter or Colab, remove the comment marker from the installation line below if a package is missing. NumPy stores arrays and evaluates numerical operations. Matplotlib displays plots. Pillow reads and writes images. This installation does not change the model parameters.</p>
 <pre><code class="language-python"># %pip install numpy scikit-image matplotlib
 import numpy as np
@@ -20,14 +20,14 @@ assert np.isfinite(np.array([0.0, 1.0])).all()
 print(&quot;NumPy is ready:&quot;, np.__version__)</code></pre>
 <pre class="cell-result">NumPy is ready: 2.1.3
 </pre>
-<h2>2. Choose the input values</h2>
+<h2>Step 2: Input values</h2>
 <p>I retain the default values from the original calculation. The output name locates the files written by this notebook.</p>
-<h2>3. Prepare the next part of the calculation</h2>
+<h2>Step 3: Prepare the next part of the calculation</h2>
 <p>I define the following operations. These are the same operations as in the original source, written on separate lines so their order is clear. Inspect their values before running the next cell.</p>
 <pre><code class="language-python">from collections import deque
 import numpy as np
 from skimage.measure import label, euler_number, find_contours</code></pre>
-<h2>4. Separate seam joining from periodic winding</h2>
+<h2>Step 4: Seam joining and periodic winding</h2>
 <p>I keep a wrapped pixel address and a lifted, unwrapped position for each visited pixel. A loop displacement divided by the grid shape is a winding vector. Its independent directions determine winding rank. Four edge-sharing neighbors define this 2D graph. A seam crossing alone does not establish wrapping.</p>
 <details><summary>Read this complete operation (38 lines)</summary><pre><code class="language-python">def periodic_components(mask):
     &quot;&quot;&quot;Four-neighbour components and independent periodic winding vectors.
@@ -67,7 +67,7 @@ from skimage.measure import label, euler_number, find_contours</code></pre>
                         basis.append(tuple(map(int, w)))
         result.append({&#x27;pixels&#x27;: count, &#x27;winding_rank&#x27;: len(basis), &#x27;basis&#x27;: basis})
     return result</code></pre></details>
-<h2>5. Check the result before continuing</h2>
+<h2>Step 5: My check of this result</h2>
 <p>I check finite values, conservation or the known reference result as specified below. An assertion stops the notebook if the condition fails. Inspect the quantities and tolerance rather than suppressing a failure.</p>
 <pre><code class="language-python">seam = np.zeros((8, 8), bool)
 seam[[0, 7], 3:5] = True
@@ -77,11 +77,11 @@ stripe = np.zeros((8, 8), bool)
 stripe[:, 3:5] = True
 assert periodic_components(stripe)[0][&#x27;winding_rank&#x27;] == 1
 staircase = np.zeros((8, 8), bool)</code></pre>
-<h2>6. Repeat the operation and inspect each case</h2>
+<h2>Step 6: Repeat the operation and inspect each case</h2>
 <p>I repeat the operation over the specified cases. Read the loop variable first, then follow what changes on each pass. The assertions check the stated numerical or topological condition.</p>
 <pre><code class="language-python">for i in range(8):
     staircase[i, i] = staircase[(i + 1) % 8, i] = True</code></pre>
-<h2>7. Check the result before continuing</h2>
+<h2>Step 7: My check of this result</h2>
 <p>I check finite values, conservation or the known reference result as specified below. An assertion stops the notebook if the condition fails. Inspect the quantities and tolerance rather than suppressing a failure.</p>
 <pre><code class="language-python">assert periodic_components(staircase)[0][&#x27;winding_rank&#x27;] == 1
 full = np.ones((8, 8), bool)
@@ -92,7 +92,7 @@ assert label(diagonal, connectivity=2).max() == 1
 disk = np.zeros((9, 9), bool)
 disk[2:7, 2:7] = True
 ring = disk.copy()</code></pre>
-<h2>8. Check the result before continuing</h2>
+<h2>Step 8: My check of this result</h2>
 <p>I check finite values, conservation or the known reference result as specified below. An assertion stops the notebook if the condition fails. Inspect the quantities and tolerance rather than suppressing a failure.</p>
 <pre><code class="language-python">ring[3:6, 3:6] = False
 assert euler_number(disk, connectivity=1) == 1
@@ -103,7 +103,7 @@ assert all((np.allclose(path[0], path[-1]) for path in contours))
 ball = np.zeros((11, 11, 11), bool)
 ball[2:9, 2:9, 2:9] = True
 shell = ball.copy()</code></pre>
-<h2>9. Check the result before continuing</h2>
+<h2>Step 9: My check of this result</h2>
 <p>I check finite values, conservation or the known reference result as specified below. An assertion stops the notebook if the condition fails. Inspect the quantities and tolerance rather than suppressing a failure.</p>
 <pre><code class="language-python">shell[3:8, 3:8, 3:8] = False
 tunnel = ball.copy()
@@ -111,7 +111,7 @@ tunnel[4:7, 4:7, :] = False
 assert euler_number(ball, connectivity=1) == 1
 assert euler_number(shell, connectivity=1) == 2
 assert euler_number(tunnel, connectivity=1) == 0</code></pre>
-<h2>10. Repeat the operation and inspect each case</h2>
+<h2>Step 10: Repeat the operation and inspect each case</h2>
 <p>I repeat the operation over the specified cases. Read the loop variable first, then follow what changes on each pass. The assertions check the stated numerical or topological condition.</p>
 <pre><code class="language-python">for name, region in [(&#x27;seam island&#x27;, seam), (&#x27;stripe&#x27;, stripe), (&#x27;staircase&#x27;, staircase), (&#x27;full periodic grid&#x27;, full)]:
     print(name, periodic_components(region))</code></pre>
@@ -120,7 +120,7 @@ stripe [{&#x27;pixels&#x27;: 16, &#x27;winding_rank&#x27;: 1, &#x27;basis&#x27;:
 staircase [{&#x27;pixels&#x27;: 16, &#x27;winding_rank&#x27;: 1, &#x27;basis&#x27;: [(-1, -1)]}]
 full periodic grid [{&#x27;pixels&#x27;: 64, &#x27;winding_rank&#x27;: 2, &#x27;basis&#x27;: [(-1, 0), (0, -1)]}]
 </pre>
-<h2>11. Prepare the next part of the calculation</h2>
+<h2>Step 11: Prepare the next part of the calculation</h2>
 <p>I define the following operations. These are the same operations as in the original source, written on separate lines so their order is clear. Inspect their values before running the next cell.</p>
 <pre><code class="language-python">print(&#x27;Bounded 2D Euler: disk=1, annulus=0; annulus boundary contours=2&#x27;)
 print(&#x27;Bounded 3D Euler: ball=1, shell=2, solid with one tunnel=0&#x27;)
@@ -129,6 +129,6 @@ print(&#x27;All worked examples passed. Ordinary skimage calls above are NOT per
 Bounded 3D Euler: ball=1, shell=2, solid with one tunnel=0
 All worked examples passed. Ordinary skimage calls above are NOT periodic.
 </pre>
-<h2>12. Review and extend the calculation</h2>
+<h2>Step 12: Review and extend the calculation</h2>
 <p>I first restart the kernel and run all the required cells. Then I change one input, predict its effect and compare the result with that prediction. A successful check establishes the tested property; it does not establish convergence or equilibrium. I retain the <a href="https://saswataiith.github.io/files/mesoscale/examples/topology_connectivity.py">complete script</a> for command-line use. The notebook embeds the calculation directly and does not need that script to run.</p>
 <p><a href="/files/mesoscale/examples/notebooks/notebook-check-results.json">Read the notebook execution checks →</a> · <a href="/resources/step-by-step-codes/">More Python, Julia and C lessons →</a></p></section>

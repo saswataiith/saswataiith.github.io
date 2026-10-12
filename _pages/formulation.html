@@ -34,7 +34,7 @@ description: "Elastic-energy formulations and spectral computation for coherent 
       <a href="#film-vacuum">Film, substrate &amp; vacuum</a>
     </div>
 
-    <h3>1. Begin with Mura's sharp coherent inclusion.</h3>
+    <h3>Step 1: Begin with Mura's sharp coherent inclusion.</h3>
     <p>
       Let \(\chi_\Omega\) be one inside an inclusion and zero in the matrix.
       For a homogeneous medium,
@@ -61,7 +61,7 @@ description: "Elastic-energy formulations and spectral computation for coherent 
       benchmark that a diffuse calculation should approach.
     </p>
 
-    <h3>2. Replace the indicator by a resolved diffuse profile.</h3>
+    <h3>Step 2: Replace the indicator by a resolved diffuse profile.</h3>
     <div class="lab-controls">
       <label for="interface-width">Tanh width, w
         <input id="interface-width" type="range" min="0.03" max="0.45" step="0.01" value="0.16" />
@@ -89,7 +89,7 @@ description: "Elastic-energy formulations and spectral computation for coherent 
       sliding, surface elasticity or singular interfacial force.
     </p>
 
-    <h3>3. Choose the interpolation according to what the field means.</h3>
+    <h3>Step 3: The physical meaning of the interpolation.</h3>
     <div class="lab-controls">
       <label for="interface-kind">Highlighted interpolation
         <select id="interface-kind">
@@ -144,7 +144,7 @@ description: "Elastic-energy formulations and spectral computation for coherent 
       eigenstrain.
     </p>
 
-    <h3>4. General inhomogeneous formulation from our CICP paper.</h3>
+    <h3>Step 4: General inhomogeneous formulation from our CICP paper.</h3>
     <p>
       In Eqs. (2.1)–(2.16), the paper writes
       \(C(\mathbf r)=C^0+C'(\mathbf r)\), permits an arbitrary
@@ -172,7 +172,7 @@ description: "Elastic-energy formulations and spectral computation for coherent 
     <p><a href="https://doi.org/10.4208/cicp.290610.060411a">Read the CICP paper and publication details →</a></p>
     <p class="small muted">Primary references for this section: T. Mura, <i>Micromechanics of Defects in Solids</i>, 2nd ed., Chapter 1, especially §§1, 3 and 6; H. Moulinec and P. Suquet's periodic FFT cell formulation and its later mixed-control extensions; S. Bhattacharyya, S. Heo, K. Chang and L.-Q. Chen, <i>Communications in Computational Physics</i> 11 (2012), 726–738.</p>
 
-    <h3>5. The zero mode is the homogeneous strain.</h3>
+    <h3>Step 5: The zero mode is the homogeneous strain.</h3>
     <div class="formula-box">
       \[\epsilon(\mathbf r)=\bar\epsilon+\widetilde\epsilon(\mathbf r),
       \qquad\langle\widetilde\epsilon\rangle=0,\qquad
@@ -198,7 +198,7 @@ description: "Elastic-energy formulations and spectral computation for coherent 
       <li>Inhomogeneous \(C(\mathbf r)\): solve the homogeneous and fluctuating strains together; generally \(\bar\epsilon\ne\langle\epsilon^0\rangle\).</li>
     </ul>
 
-    <h3 id="macroscopic-loading">6. What is periodic, and how is load applied?</h3>
+    <h3 id="macroscopic-loading">Step 6: What is periodic, and how is load applied?</h3>
     <div class="formula-box">
       \[\boxed{u_i(\mathbf x)=\bar\epsilon_{ij}x_j+\widetilde u_i(\mathbf x)},
       \qquad
@@ -226,8 +226,8 @@ description: "Elastic-energy formulations and spectral computation for coherent 
 
     <h4 id="applied-stress">Case B: applied macroscopic stress</h4>
     <p>
-      Prescribe only the average stress. Do not assign the same stress to every
-      grid point. The homogeneous strain is now unknown and must be adjusted
+      I prescribe the average stress. The local stress can vary between
+      grid points. The homogeneous strain is now unknown and must be adjusted
       until the equilibrated local field has the required average:
     </p>
     <div class="formula-box">
@@ -287,7 +287,7 @@ check divergence of the local stress</code></pre>
       this macroscopic loading.
     </p>
 
-    <h3 id="film-vacuum">7. Thin film, substrate and vacuum.</h3>
+    <h3 id="film-vacuum">Step 7: Thin film, substrate and vacuum.</h3>
     <figure class="lab-fig lab-film">
       <svg viewBox="0 0 900 330" role="img" aria-label="Periodic thin film and substrate cell separated by vacuum">
         <defs><marker id="film-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#17313a"/></marker></defs>
@@ -331,7 +331,7 @@ check divergence of the local stress</code></pre>
       surface load or a solver with the corresponding boundary conditions.
     </p>
 
-    <h3>8. Validation before interpretation.</h3>
+    <h3>Step 8: Validation before interpretation.</h3>
     <ul>
       <li>Refine the grid at fixed physical interface width.</li>
       <li>Then reduce the width while retaining enough points across it.</li>
@@ -340,7 +340,7 @@ check divergence of the local stress</code></pre>
       <li>Check equilibrium and the prescribed macroscopic stress separately.</li>
       <li>Recover displacement and traction continuity in the sharp limit.</li>
       <li>For vacuum, vary both residual stiffness and layer thickness.</li>
-      <li>State whether averages use the full cell, the solid volume or a film resultant.</li>
+      <li>The definition of each average specifies the full cell, solid volume or film resultant.</li>
     </ul>
     <details class="lab-insight">
       <summary>Physical insight</summary>
