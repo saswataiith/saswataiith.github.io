@@ -71,3 +71,8 @@ with zipfile.ZipFile(archive,'w',zipfile.ZIP_DEFLATED) as bundle:
         bundle.writestr(info,source.read_bytes() if source.is_file() else data)
     for source in sorted(folder.iterdir()):
         bundle.write(source,'notebooks/'+source.name)
+
+# I refresh the interactive apps after rebuilding their lesson pages.
+if __name__ == "__main__":
+    import subprocess, sys
+    subprocess.run([sys.executable, str(ROOT / "tools/build_lesson_apps.py")], check=True)

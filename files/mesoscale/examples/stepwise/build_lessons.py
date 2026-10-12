@@ -108,3 +108,8 @@ if __name__ == "__main__":
                 bundle.write(source, source.name)
         bundle.write(EXAMPLES / "LICENSING.md", "LICENSING.md")
     print("Updated both download archives.")
+
+# I refresh the interactive apps after rebuilding their lesson pages.
+if __name__ == "__main__":
+    import subprocess, sys
+    subprocess.run([sys.executable, str(ROOT / "tools/build_lesson_apps.py")], check=True)
