@@ -28,19 +28,20 @@ export function sphere(radius=1, center=[0,0,0], rings=22, sectors=48) {
     }
     faces.push([bottom,1+(rings-2)*sectors+next,1+(rings-2)*sectors+col]);
   }
-  return {vertices,faces};
+  return {vertices,faces,gaussianCurvature:vertices.map(()=>1/(radius*radius))};
 }
 export function torus(tubeRadius=.3, majorRadius=.8, sectors=64, rings=32) {
-  const vertices=[],faces=[];
+  const vertices=[],faces=[],gaussianCurvature=[];
   for(let u=0;u<sectors;u++) for(let v=0;v<rings;v++) {
     const theta=2*Math.PI*u/sectors,phi=2*Math.PI*v/rings,r=majorRadius+tubeRadius*Math.cos(phi);
     vertices.push([r*Math.cos(theta),r*Math.sin(theta),tubeRadius*Math.sin(phi)]);
+    gaussianCurvature.push(Math.cos(phi)/(tubeRadius*r));
   }
   for(let u=0;u<sectors;u++) for(let v=0;v<rings;v++) {
     const a=u*rings+v,b=((u+1)%sectors)*rings+v,c=u*rings+(v+1)%rings,d=((u+1)%sectors)*rings+(v+1)%rings;
     faces.push([a,b,c],[b,d,c]);
   }
-  return {vertices,faces};
+  return {vertices,faces,gaussianCurvature};
 }
 export function shapeMeshes(key,size=.4) {
   if(key==='ball') return [sphere()];
@@ -48,4 +49,18 @@ export function shapeMeshes(key,size=.4) {
   if(key==='shell') return [sphere(),sphere(.2+.6*size)];
   if(key==='balls') return [sphere(.55,[-.7,0,0]),sphere(.55,[.7,0,0])];
   return [];
+}
+
+// I integrate the smooth torus parameterization, independently of the display triangles.
+export function torusCurvatureIntegral(tubeRadius,majorRadius=.8,samples=1024) {
+  let positive=0,negative=0;
+  const step=2*Math.PI/samples;
+  for(let n=0;n<samples;n++) {
+    const angle=(n+.5)*step;
+    const curvature=Math.cos(angle)/(tubeRadius*(majorRadius+tubeRadius*Math.cos(angle)));
+    const areaElement=tubeRadius*(majorRadius+tubeRadius*Math.cos(angle))*step*2*Math.PI;
+    const contribution=curvature*areaElement;
+    if(contribution>=0) positive+=contribution;else negative+=contribution;
+  }
+  return {positive,negative,total:positive+negative};
 }

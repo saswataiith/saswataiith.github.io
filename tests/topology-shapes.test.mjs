@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {shapes,euler,shapeMeshes} from '../assets/js/topology-shapes-model.js';
+import {shapes,euler,shapeMeshes,sphere,torus,torusCurvatureIntegral} from '../assets/js/topology-shapes-model.js';
 
 test('Ideal bounded shapes retain their known topology',()=>{
   for(const [key,chi] of Object.entries({disk:1,annulus:0,holes:-1,disks:2,ball:1,torus:0,shell:2,balls:2})) assert.equal(euler(shapes[key].betti),chi,key);
@@ -24,5 +24,26 @@ test('Closed display meshes match the boundary Euler characteristics throughout 
       chi+=mesh.vertices.length-edges.size+mesh.faces.length;
     }
     assert.equal(chi,shapes[key].surfaceEuler,`${key} at size ${size}`);
+  }
+});
+
+test('Sphere curvature is positive and follows inverse radius squared',()=>{
+  for(const radius of [.4,1,2]) {
+    const mesh=sphere(radius);
+    assert.equal(mesh.gaussianCurvature.length,mesh.vertices.length);
+    for(const value of mesh.gaussianCurvature) assert.equal(value,1/(radius*radius));
+    assert.ok(Math.abs(mesh.gaussianCurvature[0]*4*Math.PI*radius*radius-4*Math.PI)<1e-12);
+  }
+});
+test('Torus curvature has both signs and its area-weighted contributions cancel',()=>{
+  for(const radius of [.15,.29,.5]) {
+    const mesh=torus(radius,.8);
+    assert.ok(mesh.gaussianCurvature.some(value=>value<0));
+    assert.ok(mesh.gaussianCurvature.some(value=>value>0));
+    assert.ok(Math.abs(mesh.gaussianCurvature[8])<1e-14);
+    const integral=torusCurvatureIntegral(radius,.8);
+    assert.ok(Math.abs(integral.total)<1e-12);
+    assert.ok(Math.abs(integral.positive-4*Math.PI)<3e-5);
+    assert.ok(Math.abs(integral.negative+4*Math.PI)<3e-5);
   }
 });

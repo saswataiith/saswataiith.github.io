@@ -1,7 +1,7 @@
-import {shapes,euler,shapeMeshes} from './topology-shapes-model.js';
+import {shapes,euler,shapeMeshes} from './topology-shapes-model.js?v=curvature-3';
 const root=document.getElementById('shape-playground');
 const dimension=root.querySelector('#shape-dimension'),choice=root.querySelector('#shape-choice');
-const size=root.querySelector('#shape-size'),cut=root.querySelector('#shape-cut'),boundary=root.querySelector('#shape-boundary');
+const size=root.querySelector('#shape-size'),cut=root.querySelector('#shape-cut'),boundary=root.querySelector('#shape-boundary'),curvature=root.querySelector('#shape-curvature');
 const plot=root.querySelector('#shape-3d'),diagram=root.querySelector('#shape-2d');
 const colors=['#c85838','#247a93'];let plotted=false;let mathRevision=0;
 async function renderMath(three,shape) {
@@ -29,14 +29,25 @@ function draw2D(key,fraction) {
   if(key==='disks') {path=circle(105,200,70)+circle(295,200,70);labels='<text x="105" y="105">Region 1</text><text x="295" y="105">Region 2</text>';}
   diagram.innerHTML=`<svg viewBox="0 0 400 400" role="img" aria-label="${shapes[key].name}"><path d="${path}" fill="${boundary.checked?'none':colors[0]}" fill-rule="evenodd" stroke="#67382d" stroke-width="4"/><g fill="#243237" text-anchor="middle" font-size="15">${labels}</g></svg>`;
 }
-function trace(mesh,index) {
+function trace(mesh,index,limit) {
   // I remove front triangles only for the cutaway display, not for the topology values.
   const faces=cut.checked?mesh.faces.filter(face=>face.every(vertex=>mesh.vertices[vertex][1]>=0)):mesh.faces;
-  return {type:'mesh3d',x:mesh.vertices.map(v=>v[0]),y:mesh.vertices.map(v=>v[1]),z:mesh.vertices.map(v=>v[2]),i:faces.map(f=>f[0]),j:faces.map(f=>f[1]),k:faces.map(f=>f[2]),color:colors[index%2],opacity:boundary.checked?.65:1,flatshading:false,hoverinfo:'skip',lighting:{ambient:.45,diffuse:.8,specular:.25,roughness:.6},name:index===0?'Outer surface':'Inner surface'};
+  const result={type:'mesh3d',x:mesh.vertices.map(v=>v[0]),y:mesh.vertices.map(v=>v[1]),z:mesh.vertices.map(v=>v[2]),i:faces.map(f=>f[0]),j:faces.map(f=>f[1]),k:faces.map(f=>f[2]),color:colors[index%2],opacity:boundary.checked?.65:1,flatshading:false,hoverinfo:'skip',lighting:{ambient:.45,diffuse:.8,specular:.25,roughness:.6},name:`Surface ${index+1}`};
+  if(curvature.checked) Object.assign(result,{
+    intensity:mesh.gaussianCurvature,intensitymode:'vertex',cmin:-limit,cmax:limit,
+    colorscale:[[0,'#2166ac'],[.5,'#f7f7f7'],[1,'#d54a27']],showscale:index===0,
+    colorbar:{title:{text:'Curvature'},thickness:12,len:.75,tickvals:[-limit,0,limit],tickformat:'.2f'},
+    lighting:{ambient:.9,diffuse:.25,specular:0},
+    customdata:mesh.gaussianCurvature,hovertemplate:'Gaussian curvature: %{customdata:.3f}<extra></extra>'
+  });
+  return result;
 }
 async function draw() {
   const key=choice.value,shape=shapes[key],three=shape.dimension===3,fraction=Number(size.value)/100;
   diagram.hidden=three;plot.hidden=!three;root.querySelector('#shape-cut-label').hidden=!three;
+  root.querySelector('#shape-curvature-label').hidden=!three;
+  const curvatureSummary=root.querySelector('#shape-curvature-summary');
+  curvatureSummary.hidden=!three||!curvature.checked;
   root.querySelector('#shape-reset-camera').hidden=!three;
   size.disabled=!['annulus','holes','torus','shell'].includes(key);
   root.querySelector('#shape-size-value').textContent=`${size.value}% of the adjustment range`;
@@ -48,15 +59,24 @@ async function draw() {
   else cards.push(`<div><span>Boundary contours</span><strong>${shape.contours}</strong></div>`);
   root.querySelector('#shape-counts').innerHTML=cards.join('');
   root.querySelector('#shape-equation').textContent=three?'Solid: Euler characteristic':'Region: Euler characteristic';
+  if(three&&curvature.checked) {
+    const positive=key==='torus'?'4\\pi':`${4*shape.surfaceComponents}\\pi`;
+    const negative=key==='torus'?'-4\\pi':'0';
+    const total=key==='torus'?'0':positive;
+    curvatureSummary.innerHTML=`<p><strong>Exact integrals over the complete boundary:</strong></p><p>Positive part: <span data-shape-math="${positive}"></span>. Negative part: <span data-shape-math="${negative}"></span>.</p><p><span data-shape-math="\\int_{\\mathcal S}K\\,dA=${total}=2\\pi\\times ${shape.surfaceEuler}"></span></p><p>${key==='torus'?'The positive outer side and negative inner side cancel after weighting curvature by surface area.':'Every point on each spherical boundary has positive Gaussian curvature.'}</p><p class="muted">Colors show analytical curvature at mesh vertices, interpolated across the display triangles. The scale is symmetric about zero and adjusts to the selected shape. Curvature uses inverse squared display-length units. The integrals are dimensionless and refer to the full surface, including parts hidden by the cutaway.</p>`;
+  } else curvatureSummary.replaceChildren();
   renderMath(three,shape);
   root.querySelector('#shape-view-note').textContent=three?(cut.checked?'Cutaway view: the front half of each boundary surface is hidden to reveal the interior. Counts refer to the complete, uncut solid.':'The surfaces bound the filled solid. Drag to rotate and scroll or pinch to zoom.'):(boundary.checked?'Only the boundary contours are drawn. Counts still refer to the filled region.':'Colored areas are filled regions. White openings inside them are holes.');
-  if(key==='shell') root.querySelector('#shape-view-note').textContent+=' Terracotta marks the outer boundary; blue marks the inner boundary around the cavity.';
+  if(key==='shell'&&!curvature.checked) root.querySelector('#shape-view-note').textContent+=' Terracotta marks the outer boundary; blue marks the inner boundary around the cavity.';
   if(!three) {draw2D(key,fraction);return;}
   if(!window.Plotly) {root.querySelector('#shape-view-note').textContent='The 3D renderer did not load. The shape descriptions and topology values remain available.';return;}
-  await Plotly.react(plot,shapeMeshes(key,fraction).map(trace),{margin:{l:0,r:0,t:0,b:0},paper_bgcolor:'#fff',scene:{aspectmode:'cube',xaxis:{visible:false,range:[-1.4,1.4]},yaxis:{visible:false,range:[-1.4,1.4]},zaxis:{visible:false,range:[-1.4,1.4]},camera:{eye:{x:.9,y:-1.1,z:.7}}},uirevision:'shape-camera'}, {responsive:true,displayModeBar:false});plotted=true;
+  const meshes=shapeMeshes(key,fraction);
+  const limit=Math.max(...meshes.flatMap(mesh=>mesh.gaussianCurvature.map(value=>Math.abs(value))));
+  if(curvature.checked) root.querySelector('#shape-view-note').textContent+=' Orange-red: positive curvature. Blue: negative curvature. White: zero curvature.';
+  await Plotly.react(plot,meshes.map((mesh,index)=>trace(mesh,index,limit)),{margin:{l:0,r:curvature.checked?55:0,t:0,b:0},paper_bgcolor:'#fff',scene:{aspectmode:'cube',xaxis:{visible:false,range:[-1.4,1.4]},yaxis:{visible:false,range:[-1.4,1.4]},zaxis:{visible:false,range:[-1.4,1.4]},camera:{eye:{x:.9,y:-1.1,z:.7}}},uirevision:'shape-camera'}, {responsive:true,displayModeBar:false});plotted=true;
 }
 dimension.addEventListener('change',options);
-for(const control of [choice,size,cut,boundary]) control.addEventListener('input',draw);
+for(const control of [choice,size,cut,boundary,curvature]) control.addEventListener('input',draw);
 root.querySelector('#shape-reset-camera').addEventListener('click',()=>{if(plotted) Plotly.relayout(plot,{'scene.camera.eye':{x:.9,y:-1.1,z:.7}});});
-root.querySelector('#shape-reset').addEventListener('click',()=>{size.value='40';cut.checked=false;boundary.checked=false;options();});
+root.querySelector('#shape-reset').addEventListener('click',()=>{size.value='40';cut.checked=false;boundary.checked=false;curvature.checked=true;options();});
 options();
